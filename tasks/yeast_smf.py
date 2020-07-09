@@ -17,6 +17,10 @@ strain_priorties = [ ('dma',),
 DATASET_PATH = '../data-sources/yeast/strain_ids_and_single_mutant_fitness.xlsx'
 ESSENTIALS_PATH = '../data-sources/yeast/costanzo2016/SGA_ExE.txt'
 
+# min probability of >= 1 to be considered normal
+ALPHA = 0.2
+CUTOFF = 1.0
+
 def main():
     gpath = sys.argv[1]
 
@@ -53,9 +57,18 @@ def create_dataset(df, node_ix, include_lethals, temp, path):
     df = df[df['gene'].isin(node_ix)]
     df['id'] = [node_ix[g] for g in df['gene']]
 
-    print(df.describe())
+    # bin the observations
+    cs = np.array(df['cs'])
+    std = np.array(df['std'])
+    nonlethal_ix = cs > 0
+    prob_healthy = (1 - stats.norm.cdf(CUTOFF, cs[nonlethal_ix], std[nonlethal_ix])) >= ALPHA
+    bins = np.zeros(df.shape[0])
+    bins[nonlethal_ix] = prob_healthy + 1
+    df['bin'] = bins
 
     print("Lethals: %d, Nonlethals: %d" % (np.sum(df['is_lethal']), np.sum(1-df['is_lethal'])))
+    print([np.sum(bins == b) for b in np.unique(bins)])
+    
     df.to_csv(path, index=False)
 
 def extract_data(df, nodes, target_strains, temp, include_lethals):

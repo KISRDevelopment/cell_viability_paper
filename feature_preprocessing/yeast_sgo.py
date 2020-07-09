@@ -66,7 +66,8 @@ def main():
         term_ids = [terms_to_ids[t] for t in genes_to_go[node]]
         F[i, term_ids] = 1
 
-    output_path = '../generated-data/features/%s_go-sgo' % (os.path.basename(gpath))
+    output_path = '../generated-data/features/%s-sgo' % (os.path.basename(gpath))
+    all_go_terms = [names_to_goids[n] for n in all_go_terms]
     np.savez(output_path, F=F, feature_labels=all_go_terms, names_to_goids=names_to_goids)
 
     print(F.shape)
