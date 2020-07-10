@@ -4,11 +4,8 @@ import os
 import glob 
 import sys 
 
-def main():
-    script_name = sys.argv[1]
-    cfgs_dir = sys.argv[2]
-    output_dir = sys.argv[3]
-
+def main(script_name, cfgs_dir, output_dir):
+    
     files = glob.glob(cfgs_dir + "/*.json")
 
     if not os.path.exists(output_dir):
@@ -23,4 +20,9 @@ def main():
         ])
 
 if __name__ == "__main__":
-    main()
+    script_name = sys.argv[1]
+    cfgs_dir = sys.argv[2]
+    output_dir = sys.argv[3]
+
+
+    main(script_name, cfgs_dir, output_dir)

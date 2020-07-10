@@ -9,9 +9,8 @@ from utils import yeast_name_resolver
 
 res = yeast_name_resolver.NameResolver()
 
-def main():
-    gpath = sys.argv[1]
-    file_path = sys.argv[2]
+def main(gpath, file_path):
+    
     
     G = nx.read_gpickle(gpath)
     nodes = sorted(G.nodes())
@@ -68,4 +67,8 @@ def main():
     np.savez(output_path, F=F, feature_labels=['%s_in_degree' % file_path_base, '%s_out_degree' % file_path_base],
         mu=mu, std=std)
     
-if __name__ == "__main__": main()
+if __name__ == "__main__": 
+    gpath = sys.argv[1]
+    file_path = sys.argv[2]
+
+    main(gpath, file_path)

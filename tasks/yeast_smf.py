@@ -21,9 +21,8 @@ ESSENTIALS_PATH = '../data-sources/yeast/costanzo2016/SGA_ExE.txt'
 ALPHA = 0.2
 CUTOFF = 1.0
 
-def main():
-    gpath = sys.argv[1]
-
+def main(gpath):
+    
     G = nx.read_gpickle(gpath) 
     nodes = sorted(G.nodes())
     node_ix = dict(zip(nodes, range(len(nodes))))
@@ -173,5 +172,7 @@ def add_normals(means, stds):
 
     
 if __name__ == "__main__":
-    main()
+    gpath = sys.argv[1]
+
+    main(gpath)
     

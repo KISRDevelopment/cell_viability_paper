@@ -17,9 +17,8 @@ groups = {
 
 res = yeast_name_resolver.NameResolver()
 
-def main():
-    gpath = sys.argv[1]
-
+def main(gpath):
+    
     G = nx.read_gpickle(gpath)
     nodes = sorted(G.nodes())    
     node_ix = dict(zip(nodes, np.arange(len(nodes))))
@@ -62,4 +61,6 @@ def read_chong(path):
     return df 
 
 if __name__ == "__main__":
-    main()
+    gpath = sys.argv[1]
+
+    main(gpath)

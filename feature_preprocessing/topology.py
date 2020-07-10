@@ -38,8 +38,8 @@ ig_features = [
     'complexity_index'
 ]
 
-def main():
-    graph_path = sys.argv[1]
+def main(graph_path):
+    
     
     G = nx.read_gpickle(graph_path)
     nodes = list(sorted(G.nodes()))
@@ -310,5 +310,8 @@ def complexity_index(G):
     return F[:,None]
 
 if __name__ == "__main__":
-    main()
+
+    graph_path = sys.argv[1]
+
+    main(graph_path)
     

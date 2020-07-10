@@ -4,8 +4,7 @@ import sys
 import os 
 import scipy.stats as stats
 
-def main():
-    path = sys.argv[1]
+def main(path):
     
     df = pd.read_csv(path)
     
@@ -19,4 +18,4 @@ def main():
     np.savez(output_path, y=bins)
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv[1])

@@ -18,9 +18,8 @@ BLAST_COMMAND = "blastp -query ../data-sources/yeast/orf_trans_all.fasta -db ../
 blastp_results_path = '../generated-data/blastp_yeast'
 
 
-def main():
-    gpath = sys.argv[1]
-
+def main(gpath):
+    
     G = nx.read_gpickle(gpath)
     nodes = list(sorted(G.nodes()))
     
@@ -84,4 +83,6 @@ def read_blastp_results(path):
     return results
 
 if __name__ == "__main__":
-    main()
+    gpath = sys.argv[1]
+
+    main(gpath)

@@ -5,11 +5,8 @@ import pandas as pd
 import numpy as np 
 import os 
 
-def main():
-    path = sys.argv[1]
-    reps = int(sys.argv[2])
-    folds = int(sys.argv[3])
-    valid_prop = float(sys.argv[4])
+def main(path, reps, folds, valid_prop):
+    
 
     train_sets, valid_sets, test_sets = generate_cv_splits(path, reps, folds, valid_prop)
 
@@ -113,5 +110,11 @@ class StandardCvSplitter(object):
             
 
 if __name__ == "__main__":
-    main()
+
+    path = sys.argv[1]
+    reps = int(sys.argv[2])
+    folds = int(sys.argv[3])
+    valid_prop = float(sys.argv[4])
+
+    main(path, reps, folds, valid_prop)
     

@@ -13,8 +13,8 @@ res = yeast_name_resolver.NameResolver()
 GO_FILE = '../data-sources/yeast/go_slim_mapping.tab'
 
 to_remove = ['C + other', 'P + other', 'F + other', 'F + not_yet_annotated', 'P + biological_process', 'C + cellular_component']
-def main():
-    gpath = sys.argv[1]
+def main(gpath):
+    
 
     G = nx.read_gpickle(gpath)
     nodes = list(sorted(G.nodes()))
@@ -73,5 +73,7 @@ def main():
     print(F.shape)
     
 if __name__ == "__main__":
-    main()
+    gpath = sys.argv[1]
+
+    main(gpath)
     

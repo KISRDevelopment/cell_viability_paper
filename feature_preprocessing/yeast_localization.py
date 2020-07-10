@@ -17,9 +17,8 @@ temporal_conditions = {
     'wt3' : ['WT3']
 }
 
-def main():
-    gpath = sys.argv[1]
-
+def main(gpath):
+    
     G = nx.read_gpickle(gpath)
 
     nodes = sorted(G.nodes())
@@ -71,4 +70,6 @@ def get_compartments(df):
     return list(s.columns[2:])
 
 if __name__ == "__main__":
-    main()
+    gpath = sys.argv[1]
+
+    main(gpath)

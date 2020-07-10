@@ -13,8 +13,8 @@ res = yeast_name_resolver.NameResolver()
 TF_THRESHOLD = 1.0
 
 
-def main():
-    gpath = sys.argv[1]
+def main(gpath):
+    
     
 
     G = nx.read_gpickle(gpath)
@@ -90,4 +90,6 @@ def read_file(node_ix, filepath):
     return F, ['%s_in_degree' % filepath_base, '%s_out_degree' % filepath_base], mu, std
 
 if __name__ == "__main__":
-    main()
+    gpath = sys.argv[1]
+
+    main(gpath)

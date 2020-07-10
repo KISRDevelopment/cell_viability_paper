@@ -1,13 +1,18 @@
 import obonet
 import json
 
-path = '../data-sources/go.obo'
+def main():
 
-G = obonet.read_obo(path)
+    path = '../data-sources/go.obo'
 
-id_to_name = {id_: data.get('name') for id_, data in G.nodes(data=True)}
+    G = obonet.read_obo(path)
 
-print(len(id_to_name))
+    id_to_name = {id_: data.get('name') for id_, data in G.nodes(data=True)}
 
-with open('../generated-data/go_ids_to_names.json', 'w') as f:
-    json.dump(id_to_name, f, indent=4)
+    print(len(id_to_name))
+
+    with open('../generated-data/go_ids_to_names.json', 'w') as f:
+        json.dump(id_to_name, f, indent=4)
+
+if __name__ == "__main__":
+    main()

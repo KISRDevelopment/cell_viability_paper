@@ -30,8 +30,7 @@ admissible_genes = resolver.get_genes()
 # Set to False for GC only
 ALL_GRAPH = False 
 
-def main():
-    output = sys.argv[1]
+def main(output):
     
     copresp_G = nx.Graph()
     copresp_G.add_nodes_from(admissible_genes)
@@ -78,5 +77,7 @@ def extract_locus_tag(s):
     return None
 
 if __name__ == "__main__":
-    main()
+    output = sys.argv[1]
+    
+    main(output)
     
