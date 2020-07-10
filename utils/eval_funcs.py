@@ -1,10 +1,38 @@
 import numpy as np 
 import glob 
 import glob
-
+from collections import defaultdict
 from scipy import interp
 import sklearn.metrics
 
+def average_results(cv_dir):
+
+    files = glob.glob("%s/*" % cv_dir)
+
+    all_results = defaultdict(list)
+    
+    for file in files:
+        d = np.load(file, allow_pickle=True)
+
+        r = d['r'].item()
+        
+        for key, val in r.items():
+            all_results[key].append(val)
+    
+        preds = d['preds']
+        y_target = d['y_target']
+
+        cm = d['cm']
+        cm = cm / np.sum(cm, axis=1, keepdims=True)
+        
+        all_results['cm'].append(cm)
+
+    mean_result = {}
+    for key, vals in all_results.items():
+        mean_result[key] = np.nanmean(vals, axis=0)
+    
+    return mean_result
+    
 def collate_results(cv_dir):
 
     files = glob.glob("%s/*" % cv_dir)
