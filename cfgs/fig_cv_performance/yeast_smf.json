@@ -1,0 +1,43 @@
+{
+    "output_path" : "../tmp/cv_figs_task_yeast_smf_30/",
+    "models" : [
+        {
+            "name" : "Full model",
+            "color" : "#b300ff",
+            "cm_color" : "#b300ff",
+            "path" : "../results/task_yeast_smf_30/topology~go~redundancy~phosphotase~kinase~transcription~abundance_wt3~abundance_rap~abundance_hu~localization_wt3~localization_rap~localization_hu",
+            "show" : true
+        },
+        {
+            "name" : "Refined model",
+            "color" : "#FF0000",
+            "cm_color" : "#FF0000",
+            "path" : "../results/task_yeast_smf_30/lid_go_pident/",
+            "show" : true
+        },
+        {
+            "name" : "OR model",
+            "color" : "#00CC00",
+            "path" : "../results/task_yeast_smf_30/interpretable_ordinal",
+            "show" : true
+        },
+        {
+            "name" : "Null",
+            "color" : "white",
+            "star_color" : "#c3c6c6",
+            "path" : "../results/task_yeast_smf_30/null",
+            "show" : true,
+            "show_roc" : false
+        },
+        {
+            "name" : "Scrambled",
+            "color" : "grey",
+            "path" : "../results/task_yeast_smf_30/null_scrambled",
+            "show" : true,
+            "show_roc" : false
+        }
+    ],
+    "classes" : ["Lethal", "Reduced growth", "Normal"],
+    "short_classes" : ["L", "R", "N"],
+    "ylim" : [0, 0.8]
+}
