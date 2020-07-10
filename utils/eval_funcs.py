@@ -166,6 +166,32 @@ def eval_classifier(y_target, preds):
         "per_class_baccs" : baccs,
         "per_class_pr" : prs,
         "per_class_auc_roc" : aucs,
-        "per_class_auc_pr" : prs
+        "per_class_auc_pr" : prs,
+        "cm" : cm
     }, cm
 
+def print_eval_classifier(r):
+
+    if 'acc' in r:
+        print("Overall Accuracy:                %0.3f" % r['acc'])
+    print("Overall Balanced Accuracy:       %0.3f" % r['bacc'])
+    # print("Average F1:                      %0.3f" % r['f1'])
+    # print("Average Precision:               %0.3f" % r['pres'])
+    # print("Average Recall:                  %0.3f" % r['recall'])
+    # print("Average ROC:                     %0.3f" % r['auc_roc'])
+    # print("Average PR:                      %0.3f" % r['auc_pr'])
+    print("Per-class ROC:")
+    print("  " + ', '.join(['%0.3f' % e for e in r['per_class_auc_roc']]))
+    print("Per-class PR:")
+    print("  " + ', '.join(['%0.3f' % e for e in r['per_class_auc_pr']]))
+    print("Per-class BACC:")
+    print("  " + ', '.join(['%0.3f' % e for e in r['per_class_baccs']]))
+
+    if 'cm' in r:
+        cm = r['cm']
+        cm = cm / np.sum(cm, axis=1, keepdims=True)
+
+        print("Confusion Matrix:")
+        #print(r['cm'])
+        for row in cm:
+            print(",".join(["%0.2f" % e for e in row]))
