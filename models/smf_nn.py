@@ -24,17 +24,18 @@ import utils.eval_funcs as eval_funcs
 
 def main():
     cfg_path = sys.argv[1]
-    dataset_path = sys.argv[2]
-    targets_path = sys.argv[3]
-    train_test_path = sys.argv[4]
-    rep = int(sys.argv[5])
-    fold = int(sys.argv[6])
-    output_path = sys.argv[7]
+    rep = int(sys.argv[2])
+    fold = int(sys.argv[3])
+    output_path = sys.argv[4]
 
     # load model configuration
     with open(cfg_path, 'r') as f:
         cfg = json.load(f)
     
+    dataset_path = cfg['task_path']
+    targets_path = cfg['targets_path']
+    train_test_path = cfg['splits_path']
+
     # load dataset
     df = pd.read_csv(dataset_path)
     

@@ -3,17 +3,21 @@ import numpy as np
 import os 
 import subprocess 
 import shutil 
+import json 
 
 NUM_PROCESSES = 1
 SHOW_OUTPUT = True 
 OVERWRITE_PROMPT = False
+
 def main():
     script_name = sys.argv[1]
     cfg_path = sys.argv[2]
-    dataset_path = sys.argv[3]
-    targets_path = sys.argv[4]
-    train_test_path = sys.argv[5]
-    output_dir = sys.argv[6]
+    output_dir = sys.argv[3]
+
+    with open(cfg_path, 'r') as f:
+        cfg = json.load(f)
+    
+    train_test_path = cfg['splits_path']
 
     d = np.load(train_test_path)
     reps, folds,_ = d['train_sets'].shape
@@ -50,7 +54,7 @@ def main():
 
             processes.append(subprocess.Popen(['python', "-m", 
                 script_name, cfg_path, 
-                dataset_path, targets_path, train_test_path, str(rep), str(fold), 
+                str(rep), str(fold), 
                 output_path
             ],  **kwargs))
         

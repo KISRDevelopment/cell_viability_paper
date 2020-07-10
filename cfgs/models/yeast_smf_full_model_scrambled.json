@@ -104,7 +104,7 @@
             "paths" : ["../generated-data/features/ppc_yeast_localization_wt3.npz"]
         }
     ],
-    "scramble" : false,
+    "scramble" : true,
     "optimizer": "nadam",
     "epochs": 1000,
     "verbose": true,
