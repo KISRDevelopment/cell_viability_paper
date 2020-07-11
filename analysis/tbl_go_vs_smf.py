@@ -8,10 +8,7 @@ import sys
 with open('../generated-data/go_ids_to_names.json', 'r') as f:
     gene_ids_to_names = json.load(f)
 
-def main():
-    task_file = sys.argv[1]
-    go_file = sys.argv[2]
-    output_path = sys.argv[3]
+def main(task_file, go_file, output_path):
 
     d = np.load(go_file)
     F = d['F'].astype(bool)
@@ -57,4 +54,8 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    task_file = sys.argv[1]
+    go_file = sys.argv[2]
+    output_path = sys.argv[3]
+
+    main(task_file, go_file, output_path)

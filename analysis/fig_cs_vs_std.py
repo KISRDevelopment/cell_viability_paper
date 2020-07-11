@@ -10,10 +10,8 @@ LETHAL_COLOR, SICK_COLOR, HEALTHY_COLOR = ['red', '#978c8c', 'green']
 plt.rcParams["font.family"] = "Liberation Serif"
 
 
-def main():
-    path = sys.argv[1]
-    output_path = sys.argv[2]
-
+def main(path, output_path, show=True):
+    
     df = pd.read_csv(path)
     bins = np.array(df['bin'])
 
@@ -51,8 +49,12 @@ def main():
 
     plt.savefig(output_path, bbox_inches='tight', dpi=100)
 
-    plt.show()
+    if show:
+        plt.show()
 
 
 if __name__ == "__main__":
-    main()
+    path = sys.argv[1]
+    output_path = sys.argv[2]
+
+    main(path, output_path)

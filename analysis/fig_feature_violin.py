@@ -16,12 +16,8 @@ BINS = np.array(['L', 'R', 'N'])
 plt.rcParams["font.family"] = "Liberation Serif"
 
 
-def main():
-    task_file = sys.argv[1]
-    feature_file = sys.argv[2]
-    fid = int(sys.argv[3])
-    output_path = sys.argv[4]
-
+def main(task_file, feature_file, fid, output_path):
+    
     # load data
     df = pd.read_csv(task_file)
     df['bin'] = BINS[df['bin'].astype(int)]
@@ -62,4 +58,9 @@ def visualize(df, f, ylabel, ylim=None):
 
 
 if __name__ == "__main__":
-    main()
+    task_file = sys.argv[1]
+    feature_file = sys.argv[2]
+    fid = int(sys.argv[3])
+    output_path = sys.argv[4]
+
+    main(task_file, feature_file, fid, output_path)

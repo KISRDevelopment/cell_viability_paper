@@ -24,6 +24,7 @@ def average_results(cv_dir):
 
         cm = d['cm']
         cm = cm / np.sum(cm, axis=1, keepdims=True)
+        print(cm)
         
         all_results['cm'].append(cm)
 

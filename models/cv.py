@@ -5,15 +5,11 @@ import subprocess
 import shutil 
 import json 
 
-NUM_PROCESSES = 1
-SHOW_OUTPUT = True 
+SHOW_OUTPUT = False 
 OVERWRITE_PROMPT = False
 
-def main():
-    script_name = sys.argv[1]
-    cfg_path = sys.argv[2]
-    output_dir = sys.argv[3]
-
+def main(script_name, cfg_path, output_dir, num_processes=6):
+    
     with open(cfg_path, 'r') as f:
         cfg = json.load(f)
     
@@ -34,8 +30,8 @@ def main():
 
     split_ids = np.arange(reps * folds)
     finished = 0
-    for i in range(0, reps*folds, NUM_PROCESSES):
-        subset = split_ids[i:(i+NUM_PROCESSES)]
+    for i in range(0, reps*folds, num_processes):
+        subset = split_ids[i:(i+num_processes)]
         processes = []
         for j in subset:
             rep = j // folds 
@@ -65,4 +61,8 @@ def main():
 
         
 if __name__ == "__main__":
-    main()
+    script_name = sys.argv[1]
+    cfg_path = sys.argv[2]
+    output_dir = sys.argv[3]
+
+    main(script_name, cfg_path, output_dir)
