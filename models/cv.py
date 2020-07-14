@@ -8,7 +8,7 @@ import json
 SHOW_OUTPUT = False 
 OVERWRITE_PROMPT = False
 
-def main(script_name, cfg_path, output_dir, num_processes=6):
+def main(script_name, cfg_path, output_dir, num_processes=8):
     
     with open(cfg_path, 'r') as f:
         cfg = json.load(f)

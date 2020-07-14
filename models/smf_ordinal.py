@@ -167,35 +167,41 @@ class OrdinalLayer(layers.Layer):
     
     def build(self, input_shape):
 
-        self.deltas = tf.exp(self.add_weight(name='deltas',
-                                 shape=(self.n_classes-1,),
-                                 initializer=kinit.RandomUniform(minval=-1, maxval=1),
-                                 trainable=True))
-        self.offset = self.add_weight(name='offset', shape=(1,), initializer=kinit.RandomUniform(minval=-2, maxval=-1), trainable=True)
+        self.deltas = self.add_weight(name='deltas',
+                                shape=(self.n_classes-1,),
+                                initializer=kinit.Constant(np.linspace(-1, 1, self.n_classes-1)),
+                                trainable=True)
+        self.offset = self.add_weight(name='offset', shape=(1,), 
+            initializer=kinit.Constant(0), trainable=True)
 
-        self.thresholds = tf.math.cumsum(self.deltas) + self.offset
-
+        
         super(OrdinalLayer, self).build(input_shape)
 
     def get_thresholds(self):
         deltas, offset = self.get_weights()
         return np.cumsum(np.exp(deltas)) + offset
-
+        
+        #return self.thresholds.numpy()
+        
     def call(self, x):
         """ X is (Bx1) """
         
-        #self.thresholds = tf.Print(self.thresholds, [self.thresholds])
-        # (B x n_classes-1)
-        diff = self.thresholds - x 
-        prob_less_than_i = tf.sigmoid(diff)
+        thresholds = tf.math.cumsum(tf.exp(self.deltas)) + self.offset
+        
 
+        # (B x n_classes-1)
+        diff = thresholds - x 
+        #tf.print("diff: ", diff)
+        prob_less_than_i = tf.sigmoid(diff)
+        
         #prob_less_than_i = tf.Print(prob_less_than_i, [prob_less_than_i])
         # (B x n_classes+1)
         prob_less_than_i = tf.concat((tf.zeros_like(x), prob_less_than_i, tf.ones_like(x)), axis=1)
-        
+        #tf.print("prob_less_than_i: ", prob_less_than_i)
+
         # compute class probabilities (B x n_classes)
         class_probs = prob_less_than_i[:,1:] - prob_less_than_i[:,:-1]
-        
+        #tf.print("class probs: ", class_probs)
         #class_probs = tf.Print(class_probs, [tf.reduce_sum(class_probs, axis=1)])
 
         return class_probs
