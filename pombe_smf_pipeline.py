@@ -8,6 +8,7 @@ import utils.map_go_ids_to_names
 import ppc_creation.ppc
 import feature_preprocessing.topology
 import feature_preprocessing.sgo 
+import feature_preprocessing.redundancy
 import tasks.pombe_smf
 
 import utils.bin_simple
@@ -45,7 +46,7 @@ utils.bin_simple.main(pombe_smf_task)
 utils.cv_simple.main(pombe_smf_task, 10, 5, 0.2)
 
 # # 8. Execute CV on refined, or, null models
-models.cv.main("models.null_model", "cfgs/models/pombe_smf_refined_model.json", "../results/task_pombe/null")
-models.cv.main("models.smf_nn", "cfgs/models/pombe_smf_refined_model_scrambled.json", "../results/task_pombe/null_scarmbled")
-models.cv.main("models.smf_nn", "cfgs/models/pombe_smf_refined_model.json", "../results/task_pombe/refined")
-models.cv.main("models.smf_ordinal", "cfgs/models/pombe_smf_orm.json", "../results/task_pombe/orm")
+models.cv.main("models.null_model", "cfgs/models/pombe_smf_refined_model.json", "../results/task_pombe_smf/null")
+models.cv.main("models.smf_nn", "cfgs/models/pombe_smf_refined_model_scrambled.json", "../results/task_pombe_smf/null_scarmbled")
+models.cv.main("models.smf_nn", "cfgs/models/pombe_smf_refined_model.json", "../results/task_pombe_smf/refined")
+models.cv.main("models.smf_ordinal", "cfgs/models/pombe_smf_orm.json", "../results/task_pombe_smf/orm")

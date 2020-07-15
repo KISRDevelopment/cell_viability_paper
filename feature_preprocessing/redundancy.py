@@ -29,11 +29,17 @@ def main(organism, gpath):
             "../data-sources/pombe/blastdb/peptide.fa", blastp_results_path)
         get_name_func = pombe_get_name 
 
+    elif organism == "human":
+        blastp_results_path = "../tmp/blastp_human"
+        blast_command = BLAST_COMMAND % ("../data-sources/human/gencode.v32.pc_translations.fa", 
+            "../data-sources/human/blastdb/gencode.v32.pc_translations.fa", blastp_results_path)
+        get_name_func = human_get_name 
+    
     G = nx.read_gpickle(gpath)
     nodes = list(sorted(G.nodes()))
     
     print("Executing blastp ...")
-    subprocess.run(shlex.split(blast_command))
+    #subprocess.run(shlex.split(blast_command))
 
     blastp_results = read_blastp_results(blastp_results_path, get_name_func)
 
@@ -97,6 +103,10 @@ def yeast_get_name(s, res):
 def pombe_get_name(s):
     parts = s.split(':')
     return parts[0].lower()
+
+def human_get_name(col):
+    parts = col.split('|')
+    return parts[6].lower()
 
 if __name__ == "__main__":
     organism = sys.argv[1]

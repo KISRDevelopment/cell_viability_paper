@@ -38,6 +38,14 @@ def main(organism, output):
         gc_only = False 
         extractor = lambda s: pombe_extract_locus_tag(s, admissible_genes)
     
+    elif organism == 'human':
+        genes_to_remove = []
+        gene_names = '../data-sources/human/gene_names'
+        gene_names_df = pd.read_csv(gene_names, sep='\t')
+        admissible_genes =  set([str(e).lower() for e in gene_names_df['Approved symbol']])
+        gc_only = False 
+        extractor = lambda s: pombe_extract_locus_tag(s, admissible_genes)
+    
     copresp_G = nx.Graph()
     copresp_G.add_nodes_from(admissible_genes)
     for file_path in coprespfiles:

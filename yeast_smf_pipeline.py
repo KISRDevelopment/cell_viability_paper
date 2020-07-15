@@ -46,7 +46,7 @@ feature_preprocessing.yeast_phosphotase.main(gpath, "../data-sources/yeast/phosp
 feature_preprocessing.yeast_sgo.main(gpath)
 feature_preprocessing.yeast_transcription.main(gpath)
 feature_preprocessing.topology.main(gpath)
-feature_preprocessing.yeast_redundancy.main(gpath)
+feature_preprocessing.redundancy.main("yeast", gpath)
 
 # 4. Create Task
 tasks.yeast_smf.main(gpath)
