@@ -38,25 +38,23 @@ ig_features = [
     'complexity_index'
 ]
 
-def main(graph_path):
+def main(graph_path, selected_features=None):
     
     
     G = nx.read_gpickle(graph_path)
     nodes = list(sorted(G.nodes()))
-    # np.random.shuffle(nodes)
-    # nodes = nodes[:50]
-    #G = nx.subgraph(G, nodes)
-
+    
     nodes_to_features = collections.defaultdict(dict)
-    extract_features_networkx(G, nx_features, nodes_to_features)
+    extract_features_networkx(G, nx_features, nodes_to_features, selected_features)
 
     iG = ig.read(graph_path + '.gml')
-    extract_features_ig(iG, ig_features, nodes_to_features)
+    extract_features_ig(iG, ig_features, nodes_to_features, selected_features)
     
     # features are ordered according to nodes
     F = []
     feature_labels = []
-    for feature in nx_features + ig_features:
+    selected_features = nx_features + ig_features if selected_features is None else selected_features
+    for feature in selected_features:
         Ff = []
         for n in nodes:
             v = nodes_to_features[n]
@@ -100,10 +98,14 @@ def main(graph_path):
     np.savez(output_path, F=F, feature_labels=feature_labels, mu=mu, std=std)
 
     
-def extract_features_networkx(G, features, nodes_to_features):
+def extract_features_networkx(G, features, nodes_to_features, selected_features):
+
+    selected_features = set(selected_features) if selected_features is not None else set(nx_features)
+
     # embed nodes using the specified features
     for feature in features:
-        
+        if feature not in selected_features: continue 
+
         print("Computing %s" % feature)
 
         # get the function dynamically by name
@@ -130,10 +132,14 @@ def extract_features_networkx(G, features, nodes_to_features):
         for k, v in nodes_to_value.items():
             nodes_to_features[k][feature] = v
 
-def extract_features_ig(G, features, nodes_to_features):
+def extract_features_ig(G, features, nodes_to_features, selected_features):
     
+    selected_features = set(selected_features) if selected_features is not None else set(ig_features)
+
     # embed nodes using the specified features
     for feature in features:
+        if feature not in selected_features: continue 
+
         print("Computing %s" % feature)
         
         func = getattr(thismodule, feature)

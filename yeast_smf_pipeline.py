@@ -35,7 +35,7 @@ if not os.path.exists('../generated-data/targets'):
 utils.map_go_ids_to_names.main()
 
 # 2. Create yeast PPC network
-ppc_creation.yeast_ppc.main(gpath)
+ppc_creation.ppc.main("yeast", gpath)
 
 # 3. Create Features
 

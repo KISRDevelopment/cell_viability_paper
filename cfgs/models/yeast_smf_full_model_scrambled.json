@@ -22,7 +22,6 @@
             "layer_sizes" : [5],
             "type" : "ff",
             "pairwise" : false,
-            "selected_features" : ["pident"],
             "paths" : ["../generated-data/features/ppc_yeast_redundancy.npz"]
         },
         {
