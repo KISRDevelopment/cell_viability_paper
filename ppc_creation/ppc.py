@@ -3,7 +3,7 @@ import sys
 import pandas as pd
 import networkx as nx
 import numpy as np
-
+import json
 from utils import yeast_name_resolver
 
 thismodule = sys.modules[__name__]
@@ -19,7 +19,8 @@ r'../data-sources/biogrid/BIOGRID-SYSTEM-Protein-peptide-3.4.156.mitab.txt',
 ]
 
 def main(organism, output):
-    
+
+    reader = read_mitab_file
     if organism == 'yeast':
         # pseudo genes
         genes_to_remove = ['yar062w  yar062w', 'yir044c  yir044c']
@@ -29,7 +30,7 @@ def main(organism, output):
         admissible_genes = resolver.get_genes()
         gc_only = True 
         extractor = lambda s: yeast_extract_locus_tag(s, resolver, admissible_genes)
-
+        
     elif organism == 'pombe':
         genes_to_remove = []
         gene_names = '../data-sources/pombe/PomBase2UniProt.csv'
@@ -46,11 +47,20 @@ def main(organism, output):
         gc_only = False 
         extractor = lambda s: pombe_extract_locus_tag(s, admissible_genes)
     
+    elif organism == "dro":
+        genes_to_remove = []
+        with open('../tmp/dro_gene_map.json', 'r') as f:
+            en_fbgn = json.load(f)
+        gc_only = False 
+        extractor = lambda s: dro_extract_locus_tag(s, en_fbgn)
+        admissible_genes = set(list(en_fbgn.values()))
+        reader = lambda file_path, copres_G, extractor: read_mitab_file(file_path, copres_G, extractor, '#ID Interactor A', 'ID Interactor B')
+    
     copresp_G = nx.Graph()
     copresp_G.add_nodes_from(admissible_genes)
     for file_path in coprespfiles:
         print("Processing %s" % file_path)
-        read_mitab_file(file_path, copresp_G, extractor)
+        reader(file_path, copresp_G, extractor)
     
     copresp_G.remove_nodes_from(genes_to_remove)
     
@@ -66,11 +76,11 @@ def main(organism, output):
     nx.write_gml(copresp_G, output + '.gml')
 
 
-def read_mitab_file(path, G, extractor):
+def read_mitab_file(path, G, extractor, a_col='Alt IDs Interactor A', b_col='Alt IDs Interactor B'):
     df = pd.read_csv(path, sep='\t')
 
-    interactor_a = list(df['Alt IDs Interactor A'])
-    interactor_b = list(df['Alt IDs Interactor B'])
+    interactor_a = list(df[a_col])
+    interactor_b = list(df[b_col])
     
     for (a, b) in zip(interactor_a, interactor_b):
         a = extractor(a)
@@ -97,6 +107,12 @@ def pombe_extract_locus_tag(s, admissible_genes):
         return part 
     
     return None
+
+def dro_extract_locus_tag(s, en_fbgn):
+    s = s.lower().replace('entrez gene/locuslink:','')
+    if s in en_fbgn:
+        return en_fbgn[s].lower()
+    return None 
 
 if __name__ == "__main__":
     organism = sys.argv[1]

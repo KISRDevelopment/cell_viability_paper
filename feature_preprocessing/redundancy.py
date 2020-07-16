@@ -8,8 +8,9 @@ import scipy.stats as stats
 from collections import defaultdict 
 import subprocess 
 import shlex
-
+from Bio import SeqIO 
 from utils import yeast_name_resolver
+import re 
 
 BLAST_COMMAND = "blastp -query %s -db %s -outfmt '6 qseqid sseqid nident positive mismatch gaps gapopen length pident ppos evalue bitscore' -max_hsps 1 -evalue 0.01 -out %s -seg yes"
 
@@ -34,6 +35,12 @@ def main(organism, gpath):
         blast_command = BLAST_COMMAND % ("../data-sources/human/gencode.v32.pc_translations.fa", 
             "../data-sources/human/blastdb/gencode.v32.pc_translations.fa", blastp_results_path)
         get_name_func = human_get_name 
+    
+    elif organism == "dro":
+        blastp_results_path = "../tmp/blastp_dro"
+        blast_command = BLAST_COMMAND % ("../data-sources/dro/dmel-all-translation-r6.32.fasta", 
+            "../data-sources/dro/blastdb/dmel-all-translation-r6.32.fasta", blastp_results_path)
+        get_name_func = create_dro_get_name_func()
     
     G = nx.read_gpickle(gpath)
     nodes = list(sorted(G.nodes()))
@@ -107,6 +114,29 @@ def pombe_get_name(s):
 def human_get_name(col):
     parts = col.split('|')
     return parts[6].lower()
+
+def create_dro_get_name_func():
+
+    path = '../data-sources/dro/dmel-all-translation-r6.32.fasta'
+
+    records = SeqIO.parse(path, 'fasta')
+
+    pp_to_gn = {}
+    regex = re.compile(r'(FBgn\d+)')
+
+    for r in records:
+        pp_id = r.id 
+        gn_id = regex.search(r.description).group(1)
+
+        if pp_id in pp_to_gn:
+            print("Warning: %s already exists and mapped to %s (attempting %s)" % (pp_id, pp_to_gn[pp_id], gn_id))
+        
+        pp_to_gn[pp_id] = gn_id.lower()
+
+    def get_name_func(col):
+        return pp_to_gn[col]
+    
+    return get_name_func
 
 if __name__ == "__main__":
     organism = sys.argv[1]
