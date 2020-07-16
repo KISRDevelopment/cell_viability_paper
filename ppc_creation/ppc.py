@@ -66,6 +66,9 @@ def main(organism, output):
     
     components = sorted(nx.connected_components(copresp_G), key=len, reverse=True)
 
+    print("Full graph:")
+    print(nx.info(copresp_G))
+    
     # write network to disk
     if gc_only:
         copresp_G = copresp_G.subgraph(components[0])
