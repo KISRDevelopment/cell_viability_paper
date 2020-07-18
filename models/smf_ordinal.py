@@ -21,6 +21,8 @@ import uuid
 
 import utils.eval_funcs as eval_funcs
 
+from termcolor import colored
+
 def main():
     cfg_path = sys.argv[1]
     rep = int(sys.argv[2])
@@ -55,9 +57,8 @@ def main():
     valid_ix = valid_sets[rep,fold,:]
     test_ix = test_sets[rep,fold,:]
 
-    if cfg['train_on_full_dataset']:
-        print("WARNING: TRAINING ON FULL DATASET --------------------------------------- ")
-        # combine training and testing sets
+    if cfg.get("train_on_full_dataset", False):
+        print(colored("******** TRAINING ON FULL DATASET ***********", "red"))
         train_ix = train_ix + test_ix
     
     train_df = df.iloc[train_ix]
@@ -90,19 +91,27 @@ def main():
     
     model.compile(cfg['optimizer'], loss=loss)
 
-    # setup early stopping
-    callbacks = [keras.callbacks.EarlyStopping(monitor='val_loss', 
-        patience=cfg['patience'], restore_best_weights=True)]
+    if cfg.get("train_model", True):
 
-    # train
-    model.fit(
-        x=train_F,
-        y=train_Y,
-        batch_size=cfg['batch_size'],
-        epochs=cfg['epochs'],
-        verbose=cfg['verbose'],
-        validation_data=(valid_F, valid_Y),
-        callbacks=callbacks)
+        # setup early stopping
+        callbacks = [keras.callbacks.EarlyStopping(monitor='val_loss', 
+            patience=cfg['patience'], restore_best_weights=True)]
+
+        # train
+        model.fit(
+            x=train_F,
+            y=train_Y,
+            batch_size=cfg['batch_size'],
+            epochs=cfg['epochs'],
+            verbose=cfg['verbose'],
+            validation_data=(valid_F, valid_Y),
+            callbacks=callbacks)
+
+        if cfg.get("trained_model_path", None) is not None:
+            print("Saving model")
+            model.save_weights(cfg["trained_model_path"])
+    else:
+        model.load_weights(cfg["trained_model_path"]).expect_partial()
     
     preds = model.predict(test_F)
     y_target = np.argmax(test_Y, axis=1)

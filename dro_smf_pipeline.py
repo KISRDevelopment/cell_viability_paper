@@ -37,7 +37,7 @@ ppc_creation.ppc.main("dro", gpath)
 
 # 4. Create Features
 
-subprocess.call(shlex.split("../tools/owltools ../tools/go.obo --gaf ../data-sources/dro/fb.gaf --map2slim --subset goslim_generic --write-gaf ../tmp/dro.sgo.gaf"))
+subprocess.call(shlex.split("../tools/owltools ../tools/go.obo --gaf ../data-sources/dro/fb.gaf --map2slim --subset goslim_drosophila --write-gaf ../tmp/dro.sgo.gaf"))
 feature_preprocessing.sgo.main(gpath, "../tmp/dro.sgo.gaf", 1)
 
 feature_preprocessing.topology.main(gpath, ['lid'])

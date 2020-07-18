@@ -22,15 +22,10 @@ import models.feature_loader as feature_loader
 import models.nn_arch as nn_arch
 import utils.eval_funcs as eval_funcs
 
-def main():
-    cfg_path = sys.argv[1]
-    rep = int(sys.argv[2])
-    fold = int(sys.argv[3])
-    output_path = sys.argv[4]
+from termcolor import colored
 
-    # load model configuration
-    with open(cfg_path, 'r') as f:
-        cfg = json.load(f)
+def main(cfg, rep, fold, output_path):
+    
     
     dataset_path = cfg['task_path']
     targets_path = cfg['targets_path']
@@ -39,7 +34,6 @@ def main():
     # load dataset
     df = pd.read_csv(dataset_path)
     
-
     # create output
     Y = keras.utils.to_categorical(np.load(targets_path)['y'])
     
@@ -57,6 +51,10 @@ def main():
     train_ix = train_sets[rep, fold,:]
     valid_ix = valid_sets[rep,fold,:]
     test_ix = test_sets[rep,fold,:]
+
+    if cfg.get("train_on_full_dataset", False):
+        print(colored("******** TRAINING ON FULL DATASET ***********", "red"))
+        train_ix = train_ix + test_ix
 
     train_df = df.iloc[train_ix]
     valid_df = df.iloc[valid_ix]
@@ -80,12 +78,13 @@ def main():
     # NN definition
     #
 
+    
     # single gene features
     inputs_a = nn_arch.create_input_nodes(single_gene_spec, single_fsets_shapes, base_name="a")
     single_gene_arch = nn_arch.create_input_architecture(output_size=cfg['embedding_size'], 
-        output_activation=cfg['embedding_activation'], 
-        name='single_input', 
-        spec=single_gene_spec)
+            output_activation=cfg['embedding_activation'], 
+            name='single_input', 
+            spec=single_gene_spec)
     output_a = single_gene_arch(inputs_a, name="input_a")
     output_node = layers.Dense(Y.shape[1], activation='softmax')(output_a)
 
@@ -93,23 +92,30 @@ def main():
         loss = weighted_categorical_xentropy
     else:
         loss = 'categorical_crossentropy'
-    
+        
     model = keras.models.Model(inputs=inputs_a, outputs=output_node)
     model.compile(cfg['optimizer'], loss=loss)
 
-    # setup early stopping
-    callbacks = [keras.callbacks.EarlyStopping(monitor='val_loss', 
-        patience=cfg['patience'], restore_best_weights=True)]
+    if cfg.get("train_model", True):
+        # setup early stopping
+        callbacks = [keras.callbacks.EarlyStopping(monitor='val_loss', 
+            patience=cfg['patience'], restore_best_weights=True)]
+        # train
+        model.fit(
+            x=train_fsets,
+            y=train_Y,
+            batch_size=cfg['batch_size'],
+            epochs=cfg['epochs'],
+            verbose=cfg['verbose'],
+            validation_data=(valid_fsets, valid_Y),
+            callbacks=callbacks)
 
-    # train
-    model.fit(
-        x=train_fsets,
-        y=train_Y,
-        batch_size=cfg['batch_size'],
-        epochs=cfg['epochs'],
-        verbose=cfg['verbose'],
-        validation_data=(valid_fsets, valid_Y),
-        callbacks=callbacks)
+        if cfg.get("trained_model_path", None) is not None:
+            print("Saving model")
+            model.save_weights(cfg["trained_model_path"])
+        
+    else:
+        model.load_weights(cfg["trained_model_path"]).expect_partial()
     
     preds = model.predict(test_fsets)
     y_target = np.argmax(test_Y, axis=1)
@@ -144,4 +150,13 @@ def weighted_categorical_xentropy(y_true, y_pred):
 
 
 if __name__ == "__main__":
-    main()
+    cfg_path = sys.argv[1]
+    rep = int(sys.argv[2])
+    fold = int(sys.argv[3])
+    output_path = sys.argv[4]
+
+    # load model configuration
+    with open(cfg_path, 'r') as f:
+        cfg = json.load(f)
+
+    main(cfg, rep, fold, output_path)
