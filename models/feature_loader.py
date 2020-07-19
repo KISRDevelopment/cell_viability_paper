@@ -7,7 +7,7 @@ def read_paths(paths):
     Fs = []
     feature_labels = []
     for p in paths:
-        d = np.load(p)
+        d = np.load(p, allow_pickle=True)
         Fs.append(d['F'])
         feature_labels.extend(d['feature_labels'].tolist())
     fset = np.hstack(Fs)

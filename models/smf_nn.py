@@ -55,6 +55,10 @@ def main(cfg, rep, fold, output_path):
     if cfg.get("train_on_full_dataset", False):
         print(colored("******** TRAINING ON FULL DATASET ***********", "red"))
         train_ix = train_ix + test_ix
+    
+    if cfg.get("test_on_full_dataset", False):
+        print(colored("******** TESTING ON FULL DATASET ***********", "green"))
+        test_ix = train_ix + test_ix + valid_ix
 
     train_df = df.iloc[train_ix]
     valid_df = df.iloc[valid_ix]
