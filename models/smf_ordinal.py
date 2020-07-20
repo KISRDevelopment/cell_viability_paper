@@ -23,15 +23,7 @@ import utils.eval_funcs as eval_funcs
 
 from termcolor import colored
 
-def main():
-    cfg_path = sys.argv[1]
-    rep = int(sys.argv[2])
-    fold = int(sys.argv[3])
-    output_path = sys.argv[4]
-
-    # load model configuration
-    with open(cfg_path, 'r') as f:
-        cfg = json.load(f)
+def main(cfg, rep, fold, output_path, print_results=True):
     
     dataset_path = cfg['task_path']
     targets_path = cfg['targets_path']
@@ -61,6 +53,10 @@ def main():
         print(colored("******** TRAINING ON FULL DATASET ***********", "red"))
         train_ix = train_ix + test_ix
     
+    if cfg.get("test_on_full_dataset", False):
+        print(colored("******** TESTING ON FULL DATASET ***********", "green"))
+        test_ix = train_ix + test_ix + valid_ix
+        
     train_df = df.iloc[train_ix]
     valid_df = df.iloc[valid_ix]
     test_df = df.iloc[test_ix]
@@ -118,7 +114,8 @@ def main():
 
     r, cm = eval_funcs.eval_classifier(y_target, preds)
     
-    eval_funcs.print_eval_classifier(r)
+    if print_results:
+        eval_funcs.print_eval_classifier(r)
 
     np.savez(output_path,
         preds = preds,
@@ -139,10 +136,10 @@ def read_features(cfg):
     labels = []
     for feature_spec in cfg['spec']:
 
-        d = np.load(feature_spec['path'])
+        d = np.load(feature_spec['path'], allow_pickle=True)
         F = d['F']
         feature_labels = d['feature_labels']
-
+        
         if feature_spec['selected_features'] is not None:
             selected_features = set(feature_spec['selected_features'])
             selected_fids = [fid for fid in range(F.shape[1]) if feature_labels[fid] in selected_features]
@@ -151,6 +148,7 @@ def read_features(cfg):
             feature_labels = feature_labels[selected_fids]
         
         Fs.append(F)
+        print(type(feature_labels))
         labels.extend(feature_labels)
     
     return np.hstack(Fs), labels 
@@ -221,4 +219,15 @@ class OrdinalLayer(layers.Layer):
 
 
 if __name__ == "__main__":
-    main()
+
+    cfg_path = sys.argv[1]
+    rep = int(sys.argv[2])
+    fold = int(sys.argv[3])
+    output_path = sys.argv[4]
+
+    # load model configuration
+    with open(cfg_path, 'r') as f:
+        cfg = json.load(f)
+    
+
+    main(cfg, rep, fold, output_path)

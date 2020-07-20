@@ -27,6 +27,8 @@ def main(gpath, gaf_file, gene_name_col, output_path=None, all_go_terms=None, an
                 all_go_terms = all_go_terms.union(associated_go)
         all_go_terms = sorted(all_go_terms)
     
+    all_go_terms = list(all_go_terms)
+    
     terms_to_ids = dict(zip(all_go_terms, range(len(all_go_terms))))
     print("# of terms: %d" % len(all_go_terms))
     

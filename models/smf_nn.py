@@ -24,7 +24,7 @@ import utils.eval_funcs as eval_funcs
 
 from termcolor import colored
 
-def main(cfg, rep, fold, output_path):
+def main(cfg, rep, fold, output_path, print_results=True):
     
     
     dataset_path = cfg['task_path']
@@ -126,7 +126,8 @@ def main(cfg, rep, fold, output_path):
 
     r, cm = eval_funcs.eval_classifier(y_target, preds)
     
-    eval_funcs.print_eval_classifier(r)
+    if print_results:
+        eval_funcs.print_eval_classifier(r)
     
     np.savez(output_path,
         preds = preds,
