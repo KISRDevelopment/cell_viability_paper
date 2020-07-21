@@ -7,7 +7,8 @@ import sklearn.metrics
 
 def average_results(cv_dir):
 
-    files = glob.glob("%s/*" % cv_dir)
+    
+    files = get_files(cv_dir)
 
     all_results = defaultdict(list)
     
@@ -36,8 +37,7 @@ def average_results(cv_dir):
     
 def collate_results(cv_dir):
 
-    files = glob.glob("%s/*" % cv_dir)
-
+    files = get_files(cv_dir)
     baccs = []
     per_class_bacc = []
     per_class_roc = []
@@ -59,7 +59,7 @@ def collate_results(cv_dir):
 
 def average_cm(cv_dir):
 
-    files = glob.glob("%s/*" % cv_dir)
+    files = get_files(cv_dir)
 
     cms = []
     for file in files:
@@ -105,7 +105,7 @@ def average_roc_curve(cv_dir, klass):
 
     BASE_FPR = np.linspace(0, 1, 101)
 
-    files = glob.glob("%s/*" % cv_dir)
+    files = get_files(cv_dir)
 
     tprs = []
     for file in files:
@@ -224,3 +224,8 @@ def print_eval_classifier(r):
         #print(r['cm'])
         for row in cm:
             print(",".join(["%0.2f" % e for e in row]))
+
+def get_files(cv_dir):
+    if cv_dir.endswith('.npz'):
+        return [cv_dir]
+    return glob.glob("%s/*" % cv_dir)

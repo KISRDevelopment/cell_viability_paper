@@ -1,0 +1,36 @@
+{
+    "output_path" : "../tmp/smf_generalization_dro/",
+    "models" : [
+        {
+            "name" : "Refined model",
+            "color" : "#FF0000",
+            "cm_color" : "#FF0000",
+            "path" : "../results/smf_generalization/dro_refined.npz",
+            "show" : true
+        },
+        {
+            "name" : "OR model",
+            "color" : "#00CC00",
+            "path" : "../results/smf_generalization/dro_orm.npz",
+            "show" : true
+        },
+        {
+            "name" : "Null",
+            "color" : "white",
+            "star_color" : "#c3c6c6",
+            "path" : "../results/smf_generalization/dro_null.npz",
+            "show" : true,
+            "show_roc" : false
+        },
+        {
+            "name" : "Scrambled",
+            "color" : "grey",
+            "path" : "../results/smf_generalization/dro_null_scrambled.npz",
+            "show" : true,
+            "show_roc" : false
+        }
+    ],
+    "classes" : ["Lethal", "Reduced growth", "Normal"],
+    "short_classes" : ["L", "R", "N"],
+    "ylim" : [0, 0.8]
+}

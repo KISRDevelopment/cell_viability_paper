@@ -34,9 +34,8 @@ plt.rcParams["font.family"] = "Liberation Serif"
 plt.rcParams["font.weight"] = "bold"
 
 
-def main():
-    cfg_path = sys.argv[1]
-
+def main(cfg_path):
+    
     with open(cfg_path, 'r') as f:
         cfg = json.load(f)
     
@@ -332,5 +331,8 @@ def per_class(df, cfg, y, ylabel, output_path):
 
 
 if __name__ == "__main__":
-    main()
+
+    cfg_path = sys.argv[1]
+
+    main(cfg_path)
 

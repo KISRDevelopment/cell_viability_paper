@@ -12,16 +12,10 @@ import uuid
 
 import utils.eval_funcs
 import keras.utils 
+from termcolor import colored
+def main(cfg, rep, fold, output_path):
+    
 
-def main():
-    cfg_path = sys.argv[1]
-    rep = int(sys.argv[2])
-    fold = int(sys.argv[3])
-    output_path = sys.argv[4]
-
-    # load model configuration --- it just needs dataset, targets, and splits paths
-    with open(cfg_path, 'r') as f:
-        cfg = json.load(f)
     
     dataset_path = cfg['task_path']
     targets_path = cfg['targets_path']
@@ -44,6 +38,14 @@ def main():
     valid_ix = valid_sets[rep,fold,:]
     test_ix = test_sets[rep,fold,:]
 
+    if cfg.get("train_on_full_dataset", False):
+        print(colored("******** TRAINING ON FULL DATASET ***********", "red"))
+        train_ix = train_ix + test_ix
+    
+    if cfg.get("test_on_full_dataset", False):
+        print(colored("******** TESTING ON FULL DATASET ***********", "green"))
+        test_ix = train_ix + test_ix + valid_ix
+    
     train_df = df.iloc[train_ix]
     valid_df = df.iloc[valid_ix]
     test_df = df.iloc[test_ix]
@@ -52,7 +54,14 @@ def main():
     valid_Y = Y[valid_ix,:]
     test_Y = Y[test_ix, :]
 
-    props = np.mean(train_Y, axis=0, keepdims=True)
+    if cfg.get("train_model", True):
+        props = np.mean(train_Y, axis=0, keepdims=True)
+        if cfg.get("trained_model_path", None) is not None:
+            print("Saving model")
+            np.save(cfg["trained_model_path"], props)
+    else:
+        props = np.load(cfg["trained_model_path"])
+    
     preds = np.tile(props, (test_Y.shape[0], 1))
     
     y_target = np.argmax(test_Y, axis=1)
@@ -72,4 +81,13 @@ def main():
     
 
 if __name__ == "__main__":
-    main()
+    cfg_path = sys.argv[1]
+    rep = int(sys.argv[2])
+    fold = int(sys.argv[3])
+    output_path = sys.argv[4]
+
+    # load model configuration --- it just needs dataset, targets, and splits paths
+    with open(cfg_path, 'r') as f:
+        cfg = json.load(f)
+    
+    main(cfg, rep, fold, output_path)
