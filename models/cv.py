@@ -64,5 +64,6 @@ if __name__ == "__main__":
     script_name = sys.argv[1]
     cfg_path = sys.argv[2]
     output_dir = sys.argv[3]
+    num_processes = int(sys.argv[4])
 
-    main(script_name, cfg_path, output_dir)
+    main(script_name, cfg_path, output_dir, num_processes)
