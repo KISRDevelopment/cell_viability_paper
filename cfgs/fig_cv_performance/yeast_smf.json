@@ -5,20 +5,20 @@
             "name" : "Full model",
             "color" : "#b300ff",
             "cm_color" : "#b300ff",
-            "path" : "../results/task_yeast_smf_30/topology~go~redundancy~phosphotase~kinase~transcription~abundance_wt3~abundance_rap~abundance_hu~localization_wt3~localization_rap~localization_hu",
+            "path" : "../results/task_yeast_smf_30/topology~go~redundancy~phosphorylation~transcription~abundance~localization",
             "show" : true
         },
         {
             "name" : "Refined model",
             "color" : "#FF0000",
             "cm_color" : "#FF0000",
-            "path" : "../results/task_yeast_smf_30/lid_go_pident/",
+            "path" : "../results/task_yeast_smf_30/topology--lid~go~redundancy/",
             "show" : true
         },
         {
             "name" : "OR model",
             "color" : "#00CC00",
-            "path" : "../results/task_yeast_smf_30/interpretable_ordinal",
+            "path" : "../results/task_yeast_smf_30/orm",
             "show" : true
         },
         {
@@ -34,7 +34,7 @@
             "color" : "grey",
             "path" : "../results/task_yeast_smf_30/null_scrambled",
             "show" : true,
-            "show_roc" : false
+            "show_roc" : true
         }
     ],
     "classes" : ["Lethal", "Reduced growth", "Normal"],

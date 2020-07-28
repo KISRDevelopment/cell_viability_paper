@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import sklearn.metrics
 import json
 import sys 
-
+import scipy.stats 
 with open('../generated-data/go_ids_to_names.json', 'r') as f:
     gene_ids_to_names = json.load(f)
 
@@ -53,6 +53,22 @@ def main(task_file, go_file, output_path):
          "sick_p", "healthy_p", "total", "diff"])
 
 
+    # run statistical tests
+    bins = ["lethal_p", "sick_p", "healthy_p"]
+    n_comparisons = 0
+    for i in range(len(bins)):
+        for j in range(i+1, len(bins)):
+            col_i = df[bins[i]]
+            col_j = df[bins[j]]
+
+            corr, rho = scipy.stats.spearmanr(col_i, col_j)
+            n_comparisons += 1
+            print("%s %s: %0.2f (%0.6f)" % (bins[i], bins[j], corr, rho))
+    
+    alpha = 0.05
+    adjusted_alpha = alpha / n_comparisons
+    print("Alpha = %0.6f, Adjusted Alpha = %0.6f" % (alpha, adjusted_alpha))
+    
 if __name__ == "__main__":
     task_file = sys.argv[1]
     go_file = sys.argv[2]
