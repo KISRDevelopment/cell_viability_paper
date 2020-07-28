@@ -19,6 +19,7 @@ def load_feature_sets(spec, scramble=False):
     
     for elm in spec:
         paths = elm['paths']
+
         if not elm['pairwise']:
             fset, feature_labels = read_paths(paths)
 
