@@ -30,25 +30,25 @@ if not os.path.exists('../generated-data/targets'):
 #utils.map_go_ids_to_names.main()
 
 # 2. Create Entrez ID to FBGN mapping
-utils.map_entrez_fbgn.main()
+#utils.map_entrez_fbgn.main()
 
 # 3. Create pombe PPC network
-ppc_creation.ppc.main("dro", gpath)
+# ppc_creation.ppc.main("dro", gpath)
 
-# 4. Create Features
+# # 4. Create Features
 
-subprocess.call(shlex.split("../tools/owltools ../tools/go.obo --gaf ../data-sources/dro/fb.gaf --map2slim --subset goslim_drosophila --write-gaf ../tmp/dro.sgo.gaf"))
-feature_preprocessing.sgo.main(gpath, "../tmp/dro.sgo.gaf", 1)
+# subprocess.call(shlex.split("../tools/owltools ../tools/go.obo --gaf ../data-sources/dro/fb.gaf --map2slim --subset goslim_drosophila --write-gaf ../tmp/dro.sgo.gaf"))
+# feature_preprocessing.sgo.main(gpath, "../tmp/dro.sgo.gaf", 1)
 
-feature_preprocessing.topology.main(gpath, ['lid'])
-feature_preprocessing.redundancy.main("dro", gpath)
+# feature_preprocessing.topology.main(gpath, ['lid'])
+# feature_preprocessing.redundancy.main("dro", gpath)
 
-# 5. Create Task
-tasks.dro_smf.main(gpath)
+# # 5. Create Task
+# tasks.dro_smf.main(gpath)
 
-# 6. Create Targets & CV Splits
-utils.bin_simple.main(dro_smf_task)
-utils.cv_simple.main(dro_smf_task, 10, 5, 0.2)
+# # 6. Create Targets & CV Splits
+# utils.bin_simple.main(dro_smf_task)
+# utils.cv_simple.main(dro_smf_task, 10, 5, 0.2)
 
 # 7. Execute CV on refined, or, null models
 models.cv.main("models.null_model", "cfgs/models/dro_smf_refined_model.json", "../results/task_dro_smf/null")

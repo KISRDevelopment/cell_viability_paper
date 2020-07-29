@@ -53,7 +53,8 @@ def main(organism, output):
             en_fbgn = json.load(f)
         gc_only = False 
         extractor = lambda s: dro_extract_locus_tag(s, en_fbgn)
-        admissible_genes = set(list(en_fbgn.values()))
+        admissible_genes = set([e.lower() for e in en_fbgn.values()])
+        
         reader = lambda file_path, copres_G, extractor: read_mitab_file(file_path, copres_G, extractor, '#ID Interactor A', 'ID Interactor B')
     
     copresp_G = nx.Graph()

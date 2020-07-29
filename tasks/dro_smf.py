@@ -6,6 +6,7 @@ import sys
 import networkx as nx
 
 edf = pd.read_csv('../data-sources/dro/Essential genes.csv')
+edf['Gene'] = edf['Gene'].str.lower()
 essential_genes = set(edf['Gene'])
 
 def main(gpath):
@@ -14,7 +15,10 @@ def main(gpath):
     node_set = set(G.nodes())
     node_ix = dict(zip(sorted(G.nodes()), np.arange(len(node_set))))
     
+    print("Essentials in graph: %d" % len(essential_genes.intersection(node_set)))
+
     df = pd.read_excel('../data-sources/dro/elife-36333-supp1-v1.xlsx', sheet_name='Computed MLE result')
+    df['Gene'] = df['Gene'].str.lower()
 
     r1 = df['Rep1']
     r2 = df['Rep2']
@@ -30,7 +34,7 @@ def main(gpath):
     print(np.sum(sick_ix))
     print(np.sum(healthy_ix))
 
-    gene = df['Gene'].str.lower()
+    gene = df['Gene']
 
     lethal = [{ "gene" : e[0], "is_lethal" : 1, "bin" : 0, "cs" : e[1] } for e in 
         zip(gene[lethal_ix], mu[lethal_ix])]
