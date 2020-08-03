@@ -5,7 +5,7 @@ import sys
 
 PATH = '../data-sources/human/NIHMS732683-supplement-supp_table_3.xlsx'
 
-def main(gpath):
+def main(gpath, output_path):
 
     df = pd.read_excel(PATH)
 
@@ -32,7 +32,7 @@ def main(gpath):
 
     df = df[df['bin'] != 0]
     df['bin'] = np.maximum(0, df['bin'])
-    df.to_csv("../generated-data/task_human_smf", columns=['gene', 'id', 'bin', 'pval', 'cs'], index=False)
+    df.to_csv(output_path, columns=['gene', 'id', 'bin', 'pval', 'cs'], index=False)
 
     print("Bin counts:")
     print([np.sum(df['bin'] == b) for b in [0,1,2]])

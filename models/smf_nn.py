@@ -39,7 +39,7 @@ def main(cfg, rep, fold, output_path, print_results=True):
     
     # load input features
     single_gene_spec = [s for s in cfg['spec'] if not s['pairwise']]
-    single_fsets = feature_loader.load_feature_sets(single_gene_spec, scramble=False)
+    single_fsets, single_fsets_shapes = feature_loader.load_feature_sets(single_gene_spec, scramble=False)
     
     # load train/test split 
     data = np.load(train_test_path)
@@ -71,12 +71,10 @@ def main(cfg, rep, fold, output_path, print_results=True):
     # setup feature sets
     train_fsets = [single_fsets[i][train_df['id'], :] for i in range(len(single_fsets))]
     if cfg['scramble']:
-        train_fsets = [f[rng.permutation(f.shape[0]),:] for f in train_fsets]
+        rix = rng.permutation(train_df.shape[0])
+        train_fsets = [f[rix,:] for f in train_fsets]
     valid_fsets = [single_fsets[i][valid_df['id'], :] for i in range(len(single_fsets))]
     test_fsets = [single_fsets[i][test_df['id'], :] for i in range(len(single_fsets))]
-
-    single_fsets_shapes = [F.shape[1:] for F in train_fsets]
-    
 
     #
     # NN definition

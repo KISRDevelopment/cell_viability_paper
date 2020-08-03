@@ -7,7 +7,7 @@
             "layer_sizes" : [5],
             "type" : "ff",
             "pairwise" : false,
-            "paths" : ["../generated-data/features/ppc_yeast-sgo.npz"]
+            "paths" : ["../generated-data/features/ppc_yeast_common_sgo.npz"]
         },
         {
             "name": "smf",
@@ -22,22 +22,18 @@
                 "../generated-data/features/ppc_yeast_smf.npz"
             ]
         },
+
         {
-            "name": "pairwise",
+            "name": "pairwise_comm",
             "group": "pairwise",
+            "sparse" : true,
             "hidden_activation": "tanh",
             "layer_sizes": [
                 5
             ],
             "type": "ff",
             "pairwise": true,
-            "paths": [
-                
-                {
-                    "normalize": false,
-                    "path": "../generated-data/pairwise_features/ppc_yeast_ppc_yeast_5steps_comms.npy"
-                }
-            ]
+            "path": "../generated-data/pairwise_features/ppc_yeast_ppc_yeast_5steps_comms.npz"
         }
     ],
     "optimizer": "nadam",
@@ -50,6 +46,6 @@
     "embedding_activation": "tanh",
     "scramble" : false,
     "task_path" : "../generated-data/task_yeast_hybrid",
-    "targets_path" : "../generated-data/targets/task_yeast_hybrid_bin_simple.npz",
+    "targets_path" : "../generated-data/targets/task_yeast_hybrid_bin_interacting.npz",
     "splits_path" : "../generated-data/splits/task_yeast_hybrid_10reps_4folds_0.20valid.npz"
 }

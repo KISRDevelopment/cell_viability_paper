@@ -9,18 +9,15 @@ from collections import defaultdict
 import numpy.random as rng 
 import pickle
 
-BIOGRID_PATH = '../generated-data/biogrid_yeast_gi'
-COSTANZO_PATH = '../generated-data/costanzo_gi'
-
-def main(gpath, output_path):
+def main(gpath, biogrid_path, costanzo_path, output_path):
 
     G = nx.read_gpickle(gpath)
     nodes = sorted(G.nodes())
     node_ix = dict(zip(nodes, np.arange(len(nodes))))
 
-    biogrid_df = pd.read_csv(BIOGRID_PATH)
+    biogrid_df = pd.read_csv(biogrid_path)
     biogrid_pairs = to_pairs(biogrid_df)
-    costanzo_df = pd.read_csv(COSTANZO_PATH)
+    costanzo_df = pd.read_csv(costanzo_path)
 
     # as per costanzo recommendation
     neg_ix = (costanzo_df['p_value'] < 0.05) & (costanzo_df['gi'] < -0.08)

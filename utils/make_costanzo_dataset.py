@@ -24,7 +24,7 @@ PATHS = ['../data-sources/yeast/costanzo2016/SGA_ExE.txt', # should always come 
          '../data-sources/yeast/costanzo2016/SGA_NxN.txt'
 ]
 
-def main():
+def main(output_path):
     
     essentials = set()
     rows = []
@@ -119,7 +119,7 @@ def main():
     final_df = final_df[ix]
     print("After filtering: ", final_df.shape)
 
-    final_df.to_csv('../generated-data/costanzo_gi', index=False)
+    final_df.to_csv(output_path, index=False)
 
 def get_queries_and_types(df):
 

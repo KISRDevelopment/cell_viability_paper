@@ -15,7 +15,7 @@
             "layer_sizes" : [5],
             "type" : "ff",
             "pairwise" : false,
-            "paths" : ["../generated-data/features/ppc_yeast-sgo.npz"]
+            "paths" : ["../generated-data/features/ppc_yeast_common_sgo.npz"]
         },
         {
             "name" : "redundancy",

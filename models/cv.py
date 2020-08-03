@@ -8,11 +8,18 @@ import json
 SHOW_OUTPUT = False 
 OVERWRITE_PROMPT = False
 
-def main(script_name, cfg_path, output_dir, num_processes=8):
+def main(script_name, cfg_path, output_dir, num_processes=8, scramble=False):
     
     with open(cfg_path, 'r') as f:
         cfg = json.load(f)
     
+    if scramble:
+        cfg_path = "../tmp/scrambled_cfg"
+        cfg['scramble'] = True
+        with open(cfg_path, 'w') as f:
+            json.dump(cfg, f, indent=4)
+    
+
     train_test_path = cfg['splits_path']
 
     d = np.load(train_test_path)

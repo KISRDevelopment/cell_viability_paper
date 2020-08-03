@@ -4,9 +4,6 @@ import numpy as np
 import sys
 import networkx as nx
 import scipy.stats as stats 
-gene_names = '../data-sources/pombe/PomBase2UniProt.csv'
-gene_names_df = pd.read_csv(gene_names, sep='\t', header=None, names=['locus', 'common'])
-admissible_genes =  set([str(e).lower() for e in gene_names_df['locus']])
 
 ESSENTIALS_PATH = "../data-sources/pombe/NIHMS57310-supplement-Supplementary_table_1.xls"
 SMF_PATH = "../data-sources/pombe/michal_paper_s1.xlsx"
@@ -19,16 +16,20 @@ BIOLOGICAL_REPEAT = 1
 ALPHA = 0.2
 CUTOFF = 1.0
 
-def main(gpath):
+def main(gpath, output_path):
+    
+    G = nx.read_gpickle(gpath)
+    nodes = sorted(G.nodes())
+    node_ix = dict(zip(nodes, range(len(nodes))))
+    admissible_genes = set(nodes)
     
     edf = pd.read_excel(ESSENTIALS_PATH)
-    smf_df = pd.read_excel(SMF_PATH, sheet_name="Glycerol_screen_data_2")
-    smf_df = smf_df[~np.isnan(smf_df[CS_COL % BIOLOGICAL_REPEAT])]
-
     essentials_df = edf[edf['Analysis dataset'] == 'E']
     essential_genes = set([l.lower() for l in essentials_df['Systemic ID']])
     essential_genes = essential_genes.intersection(admissible_genes)
-    
+
+    smf_df = pd.read_excel(SMF_PATH, sheet_name="Glycerol_screen_data_2")
+    smf_df = smf_df[~np.isnan(smf_df[CS_COL % BIOLOGICAL_REPEAT])]
     smf_df['gene'] = [l.lower() for l in smf_df['Gene_ID']]
     ix = smf_df['gene'].isin(admissible_genes)
     smf_df = smf_df[ix]
@@ -37,12 +38,12 @@ def main(gpath):
 
     common = viables.intersection(essential_genes)
     print("Common between essentials and viables: %d" % len(common))
-    common_df = smf_df[smf_df['gene'].isin(common) & ~np.isnan(smf_df[CS_COL % BIOLOGICAL_REPEAT])]
-    print("Common that have reading: %d" % common_df.shape[0])
-    essential_genes = essential_genes.difference(common_df['gene'])
-    print("Final essentials list: %d" % len(essential_genes))
 
-    
+    nonessential_genes = viables.difference(common)
+    smf_df = smf_df[smf_df['gene'].isin(nonessential_genes)]
+
+    essential_genes = essential_genes.difference(common)
+
     # get colony sizes
     # those are medians but we treat them as averages
     cs = np.array(smf_df[CS_COL % BIOLOGICAL_REPEAT])
@@ -53,21 +54,20 @@ def main(gpath):
     
     genes = list(smf_df['gene'])
 
-    lethal_rows = [{ 'gene' : g, 'is_lethal' : 1, 'cs' : 0, 'std' : 0 } for g in essential_genes]
-    nonlethal_rows = [{ 'gene' : genes[i], 'is_lethal' : 0, 'cs' : cs[i], 'std' : std[i] } 
-        for i in range(len(genes))]
+    lethal_rows = [{ 'gene' : g, 
+        'is_lethal' : 1, 
+        'cs' : 0, 
+        'std' : 0 } for g in essential_genes]
+    nonlethal_rows = [{ 
+        'gene' : genes[i], 
+        'is_lethal' : 0, 
+        'cs' : cs[i], 
+        'std' : std[i] } for i in range(len(genes))]
     
     rows = lethal_rows + nonlethal_rows
     df = pd.DataFrame(rows)
     
-    G = nx.read_gpickle(gpath)
-    nodes = sorted(G.nodes())
-    node_ix = dict(zip(nodes, range(len(nodes))))
-    
-    df = df[df['gene'].isin(node_ix)]
-
     df['id'] = [node_ix[n] for n in df['gene']]
-
 
     # bin the observations
     cs = np.array(df['cs'])
@@ -78,10 +78,11 @@ def main(gpath):
     bins[nonlethal_ix] = prob_healthy + 1
     df['bin'] = bins
 
-    print("Lethals: %d, Nonlethals: %d" % (np.sum(df['is_lethal']), np.sum(1-df['is_lethal'])))
+    assert len(set(df[nonlethal_ix]['gene']).intersection(df[~nonlethal_ix]['gene'])) == 0
+
     print([np.sum(bins == b) for b in np.unique(bins)])
 
-    df.to_csv('../generated-data/task_pombe_smf', index=False)
+    df.to_csv(output_path, index=False)
 
 
 if __name__ == "__main__":

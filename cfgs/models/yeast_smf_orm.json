@@ -12,13 +12,13 @@
         },
         {
             "name" : "go",
-            "path" : "../generated-data/features/ppc_yeast-sgo.npz",
+            "path" : "../generated-data/features/ppc_yeast_sgo.npz",
             "selected_features" : null
         }
     ],
     "scramble" : false,
     "optimizer": "nadam",
-    "epochs": 1000,
+    "epochs": 10000,
     "verbose": true,
     "patience": 50,
     "balanced_loss" : true,

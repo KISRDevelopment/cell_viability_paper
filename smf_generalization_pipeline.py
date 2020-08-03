@@ -15,7 +15,14 @@ import models.ensemble_model
 import utils.eval_funcs
 import analysis.fig_cv_performance
 
-# 1. unify sGO terms
+n_models = 10
+go_postfix = "unified_sgo"
+output_dir = "../results/smf_generation_unified_sgo"
+
+
+splits = [(i, 0) for i in range(n_models)]
+
+# # 1. unify sGO terms
 # unified_sgo_terms = utils.union_sgo_terms.get_union([
 #     "../generated-data/features/ppc_yeast-sgo.npz", 
 #     "../generated-data/features/ppc_pombe_sgo.npz",
@@ -26,16 +33,16 @@ import analysis.fig_cv_performance
 #     f.write("\n".join(unified_sgo_terms))
 
 # subprocess.call(shlex.split("../tools/owltools ../tools/go.obo --gaf ../data-sources/dro/fb.gaf --map2slim --idfile ../tmp/unified_sgo_terms --write-gaf ../tmp/dro.unified.sgo.gaf"))
-# feature_preprocessing.sgo.main("../generated-data/ppc_dro", "../tmp/dro.unified.sgo.gaf", 1, output_path="../generated-data/features/ppc_dro_sgo_unified", all_go_terms=unified_sgo_terms)
+# feature_preprocessing.sgo.main("../generated-data/ppc_dro", "../tmp/dro.unified.sgo.gaf", 1, output_path="../generated-data/features/ppc_dro_unified_sgo", all_go_terms=unified_sgo_terms)
 
 # subprocess.call(shlex.split("../tools/owltools ../tools/go.obo --gaf ../data-sources/pombe/pombase.gaf --map2slim --idfile ../tmp/unified_sgo_terms --write-gaf ../tmp/pombase.unified.sgo.gaf"))
-# feature_preprocessing.sgo.main("../generated-data/ppc_pombe", "../tmp/pombase.unified.sgo.gaf", 1, output_path="../generated-data/features/ppc_pombe_sgo_unified", all_go_terms=unified_sgo_terms)
+# feature_preprocessing.sgo.main("../generated-data/ppc_pombe", "../tmp/pombase.unified.sgo.gaf", 1, output_path="../generated-data/features/ppc_pombe_unified_sgo", all_go_terms=unified_sgo_terms)
 
 # subprocess.call(shlex.split("../tools/owltools ../tools/go.obo --gaf ../data-sources/human/goa_human.gaf --map2slim --idfile ../tmp/unified_sgo_terms --write-gaf ../tmp/human.unified.sgo.gaf"))
-# feature_preprocessing.sgo.main("../generated-data/ppc_human", "../tmp/human.unified.sgo.gaf", 2, output_path="../generated-data/features/ppc_human_sgo_unified", all_go_terms=unified_sgo_terms)
+# feature_preprocessing.sgo.main("../generated-data/ppc_human", "../tmp/human.unified.sgo.gaf", 2, output_path="../generated-data/features/ppc_human_unified_sgo", all_go_terms=unified_sgo_terms)
 
 # subprocess.call(shlex.split("../tools/owltools ../tools/go.obo --gaf ../data-sources/yeast/sgd.gaf --map2slim --idfile ../tmp/unified_sgo_terms --write-gaf ../tmp/yeast.unified.sgo.gaf"))
-# feature_preprocessing.sgo.main("../generated-data/ppc_yeast", "../tmp/yeast.unified.sgo.gaf", 2, output_path="../generated-data/features/ppc_yeast_sgo_unified", all_go_terms=unified_sgo_terms, annotations_reader=feature_preprocessing.sgo.read_annotations_yeast)
+# feature_preprocessing.sgo.main("../generated-data/ppc_yeast", "../tmp/yeast.unified.sgo.gaf", 2, output_path="../generated-data/features/ppc_yeast_unified_sgo", all_go_terms=unified_sgo_terms, annotations_reader=feature_preprocessing.sgo.read_annotations_yeast)
 
 
 # 1. Train yeast refined model on full yeast dataset and evaluate on the other three
@@ -45,13 +52,12 @@ with open(refined_cfg_path, 'r') as f:
     refined_cfg = json.load(f)
 refined_cfg['train_on_full_dataset'] = True 
 refined_cfg['train_model'] = True 
-refined_cfg['spec'][1]['paths'] = ['../generated-data/features/ppc_yeast_sgo_unified.npz']
-os.makedirs('../results/smf_generalization/refined_model', exist_ok=True)
+refined_cfg['spec'][1]['paths'] = ['../generated-data/features/ppc_yeast_%s.npz' % go_postfix]
+os.makedirs('%s/refined_model' % output_dir, exist_ok=True)
 
-splits = [(i, 0) for i in range(10)]
 model_files = []
 for r, f in splits:
-    refined_cfg['trained_model_path'] = '../results/smf_generalization/refined_model/%d_%d' % (r,f)
+    refined_cfg['trained_model_path'] = '%s/refined_model/%d_%d' % (output_dir, r,f)
     model_files.append(refined_cfg['trained_model_path'])
     models.smf_nn.main(refined_cfg, r, f, '../tmp/dummy')
 
@@ -59,22 +65,22 @@ pombe_cfg_path = 'cfgs/models/pombe_smf_refined_model.json'
 with open(pombe_cfg_path, 'r') as f:
     cfg = json.load(f)
 cfg['test_on_full_dataset'] = True
-cfg['spec'][1]['paths'] = ['../generated-data/features/ppc_pombe_sgo_unified.npz']
-models.ensemble_model.main(models.smf_nn, cfg, model_files, "../results/smf_generalization/pombe_refined")
+cfg['spec'][1]['paths'] = ['../generated-data/features/ppc_pombe_%s.npz' % go_postfix]
+models.ensemble_model.main(models.smf_nn, cfg, model_files, "%s/pombe_refined" % output_dir)
 
 human_cfg_path = 'cfgs/models/human_smf_refined_model.json'
 with open(human_cfg_path, 'r') as f:
     cfg = json.load(f)
 cfg['test_on_full_dataset'] = True
-cfg['spec'][1]['paths'] = ['../generated-data/features/ppc_human_sgo_unified.npz']
-models.ensemble_model.main(models.smf_nn, cfg, model_files, "../results/smf_generalization/human_refined")
+cfg['spec'][1]['paths'] = ['../generated-data/features/ppc_human_%s.npz' % go_postfix]
+models.ensemble_model.main(models.smf_nn, cfg, model_files, "%s/human_refined" % output_dir)
 
 dro_cfg_path = 'cfgs/models/dro_smf_refined_model.json'
 with open(dro_cfg_path, 'r') as f:
     cfg = json.load(f)
 cfg['test_on_full_dataset'] = True
-cfg['spec'][1]['paths'] = ['../generated-data/features/ppc_dro_sgo_unified.npz']
-models.ensemble_model.main(models.smf_nn, cfg, model_files, "../results/smf_generalization/dro_refined")
+cfg['spec'][1]['paths'] = ['../generated-data/features/ppc_dro_%s.npz' % go_postfix]
+models.ensemble_model.main(models.smf_nn, cfg, model_files, "%s/dro_refined" % output_dir)
 
 # 2. Train OR model
 or_cfg_path = "cfgs/models/yeast_smf_orm.json"
@@ -82,12 +88,12 @@ with open(or_cfg_path, 'r') as f:
     or_cfg = json.load(f)
 or_cfg['train_on_full_dataset'] = True 
 or_cfg['train_model'] = True 
-or_cfg['spec'][2]['path'] = '../generated-data/features/ppc_yeast_sgo_unified.npz'
-os.makedirs('../results/smf_generalization/orm', exist_ok=True)
+or_cfg['spec'][2]['path'] = '../generated-data/features/ppc_yeast_%s.npz' % go_postfix
+os.makedirs('%s/orm' % output_dir, exist_ok=True)
 splits = [(i, 0) for i in range(10)]
 model_files = []
 for r, f in splits:
-    or_cfg['trained_model_path'] = '../results/smf_generalization/orm/%d_%d' % (r,f)
+    or_cfg['trained_model_path'] = '%s/orm/%d_%d' % (output_dir, r,f)
     model_files.append(or_cfg['trained_model_path'])
     models.smf_ordinal.main(or_cfg, r, f, '../tmp/dummy')
 
@@ -95,22 +101,22 @@ pombe_cfg_path = 'cfgs/models/pombe_smf_orm.json'
 with open(pombe_cfg_path, 'r') as f:
     cfg = json.load(f)
 cfg['test_on_full_dataset'] = True
-cfg['spec'][2]['path'] = '../generated-data/features/ppc_pombe_sgo_unified.npz'
-models.ensemble_model.main(models.smf_ordinal, cfg, model_files, "../results/smf_generalization/pombe_orm")
+cfg['spec'][2]['path'] = '../generated-data/features/ppc_pombe_%s.npz' % go_postfix
+models.ensemble_model.main(models.smf_ordinal, cfg, model_files, "%s/pombe_orm" % output_dir)
 
 human_cfg_path = 'cfgs/models/human_smf_orm.json'
 with open(human_cfg_path, 'r') as f:
     cfg = json.load(f)
 cfg['test_on_full_dataset'] = True
-cfg['spec'][2]['path'] = '../generated-data/features/ppc_human_sgo_unified.npz'
-models.ensemble_model.main(models.smf_ordinal, cfg, model_files, "../results/smf_generalization/human_orm")
+cfg['spec'][2]['path'] = '../generated-data/features/ppc_human_%s.npz' % go_postfix
+models.ensemble_model.main(models.smf_ordinal, cfg, model_files, "%s/human_orm" % output_dir)
 
 dro_cfg_path = 'cfgs/models/dro_smf_orm.json'
 with open(dro_cfg_path, 'r') as f:
     cfg = json.load(f)
 cfg['test_on_full_dataset'] = True
-cfg['spec'][2]['path'] = '../generated-data/features/ppc_dro_sgo_unified.npz'
-models.ensemble_model.main(models.smf_ordinal, cfg, model_files, "../results/smf_generalization/dro_orm")
+cfg['spec'][2]['path'] = '../generated-data/features/ppc_dro_%s.npz' % go_postfix
+models.ensemble_model.main(models.smf_ordinal, cfg, model_files, "%s/dro_orm" % output_dir)
 
 # 3. Train scrambled Null model
 refined_cfg_path = "cfgs/models/yeast_smf_refined_model.json"
@@ -119,13 +125,13 @@ with open(refined_cfg_path, 'r') as f:
 refined_cfg['scramble'] = True
 refined_cfg['train_on_full_dataset'] = True 
 refined_cfg['train_model'] = True 
-refined_cfg['spec'][1]['paths'] = ['../generated-data/features/ppc_yeast_sgo_unified.npz']
-os.makedirs('../results/smf_generalization/null_scrambled', exist_ok=True)
+refined_cfg['spec'][1]['paths'] = ['../generated-data/features/ppc_yeast_%s.npz' % go_postfix]
+os.makedirs('%s/null_scrambled' % output_dir, exist_ok=True)
 
 splits = [(i, 0) for i in range(10)]
 model_files = []
 for r, f in splits:
-    refined_cfg['trained_model_path'] = '../results/smf_generalization/null_scrambled/%d_%d' % (r,f)
+    refined_cfg['trained_model_path'] = '%s/null_scrambled/%d_%d' % (output_dir, r,f)
     model_files.append(refined_cfg['trained_model_path'])
     models.smf_nn.main(refined_cfg, r, f, '../tmp/dummy')
 
@@ -133,22 +139,22 @@ pombe_cfg_path = 'cfgs/models/pombe_smf_refined_model.json'
 with open(pombe_cfg_path, 'r') as f:
     cfg = json.load(f)
 cfg['test_on_full_dataset'] = True
-cfg['spec'][1]['paths'] = ['../generated-data/features/ppc_pombe_sgo_unified.npz']
-models.ensemble_model.main(models.smf_nn, cfg, model_files, "../results/smf_generalization/pombe_null_scrambled")
+cfg['spec'][1]['paths'] = ['../generated-data/features/ppc_pombe_%s.npz' % go_postfix]
+models.ensemble_model.main(models.smf_nn, cfg, model_files, "%s/pombe_null_scrambled" % output_dir)
 
 human_cfg_path = 'cfgs/models/human_smf_refined_model.json'
 with open(human_cfg_path, 'r') as f:
     cfg = json.load(f)
 cfg['test_on_full_dataset'] = True
-cfg['spec'][1]['paths'] = ['../generated-data/features/ppc_human_sgo_unified.npz']
-models.ensemble_model.main(models.smf_nn, cfg, model_files, "../results/smf_generalization/human_null_scrambled")
+cfg['spec'][1]['paths'] = ['../generated-data/features/ppc_human_%s.npz' % go_postfix]
+models.ensemble_model.main(models.smf_nn, cfg, model_files, "%s/human_null_scrambled" % output_dir)
 
 dro_cfg_path = 'cfgs/models/dro_smf_refined_model.json'
 with open(dro_cfg_path, 'r') as f:
     cfg = json.load(f)
 cfg['test_on_full_dataset'] = True
-cfg['spec'][1]['paths'] = ['../generated-data/features/ppc_dro_sgo_unified.npz']
-models.ensemble_model.main(models.smf_nn, cfg, model_files, "../results/smf_generalization/dro_null_scrambled")
+cfg['spec'][1]['paths'] = ['../generated-data/features/ppc_dro_%s.npz' % go_postfix]
+models.ensemble_model.main(models.smf_nn, cfg, model_files, "%s/dro_null_scrambled" % output_dir)
 
 # 4. Train null model
 refined_cfg_path = "cfgs/models/yeast_smf_refined_model.json"
@@ -156,7 +162,7 @@ with open(refined_cfg_path, 'r') as f:
     refined_cfg = json.load(f)
 refined_cfg['train_on_full_dataset'] = True 
 refined_cfg['train_model'] = True 
-refined_cfg["trained_model_path"]= "../results/smf_generalization/null_model.npz"
+refined_cfg["trained_model_path"]= "%s/null_model.npz" % output_dir
 models.null_model.main(refined_cfg, 0, 0, "../tmp/dummy")
 
 pombe_cfg_path = 'cfgs/models/pombe_smf_refined_model.json'
@@ -164,14 +170,14 @@ with open(pombe_cfg_path, 'r') as f:
     cfg = json.load(f)
 cfg['test_on_full_dataset'] = True
 cfg["trained_model_path"] = refined_cfg["trained_model_path"]
-models.null_model.main(cfg, 0, 0, "../results/smf_generalization/pombe_null")
+models.null_model.main(cfg, 0, 0, "%s/pombe_null" % output_dir)
 
 human_cfg_path = 'cfgs/models/human_smf_refined_model.json'
 with open(human_cfg_path, 'r') as f:
     cfg = json.load(f)
 cfg['test_on_full_dataset'] = True
 cfg["trained_model_path"] = refined_cfg["trained_model_path"]
-models.null_model.main(cfg, 0, 0, "../results/smf_generalization/human_null")
+models.null_model.main(cfg, 0, 0, "%s/human_null" % output_dir)
 
 
 dro_cfg_path = 'cfgs/models/dro_smf_refined_model.json'
@@ -179,9 +185,9 @@ with open(dro_cfg_path, 'r') as f:
     cfg = json.load(f)
 cfg['test_on_full_dataset'] = True
 cfg["trained_model_path"] = refined_cfg["trained_model_path"]
-models.null_model.main(cfg, 0, 0, "../results/smf_generalization/dro_null")
+models.null_model.main(cfg, 0, 0, "%s/dro_null" % output_dir)
 
-# Analysis
-analysis.fig_cv_performance.main("cfgs/fig_cv_performance/generalization_smf_pombe.json")
-analysis.fig_cv_performance.main("cfgs/fig_cv_performance/generalization_smf_human.json")
-analysis.fig_cv_performance.main("cfgs/fig_cv_performance/generalization_smf_dro.json")
+# # Analysis
+# analysis.fig_cv_performance.main("cfgs/fig_cv_performance/generalization_smf_pombe.json")
+# analysis.fig_cv_performance.main("cfgs/fig_cv_performance/generalization_smf_human.json")
+# analysis.fig_cv_performance.main("cfgs/fig_cv_performance/generalization_smf_dro.json")

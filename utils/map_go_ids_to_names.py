@@ -3,7 +3,7 @@ import json
 
 def main():
 
-    path = '../data-sources/go.obo'
+    path = '../tools/go.obo'
 
     G = obonet.read_obo(path)
 

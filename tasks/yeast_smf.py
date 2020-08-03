@@ -21,7 +21,7 @@ ESSENTIALS_PATH = '../data-sources/yeast/costanzo2016/SGA_ExE.txt'
 ALPHA = 0.2
 CUTOFF = 1.0
 
-def main(gpath):
+def main(gpath, temp, output_path):
     
     G = nx.read_gpickle(gpath) 
     nodes = sorted(G.nodes())
@@ -29,8 +29,7 @@ def main(gpath):
     
     df = pd.read_excel(DATASET_PATH)
     
-    create_dataset(df, node_ix, True, 26, '../generated-data/task_yeast_smf_26')
-    create_dataset(df, node_ix, True, 30, '../generated-data/task_yeast_smf_30')
+    create_dataset(df, node_ix, True, temp, output_path)
     
 def create_dataset(df, node_ix, include_lethals, temp, path):
     

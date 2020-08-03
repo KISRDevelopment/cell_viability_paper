@@ -7,7 +7,7 @@ import networkx as nx
 from collections import defaultdict
 import json 
 
-def main(gpath):
+def main(gpath, output_path):
     
     G = nx.read_gpickle(gpath)
     node_set = set(G.nodes())
@@ -41,25 +41,10 @@ def main(gpath):
     
     print([np.sum(smf_df['bin'] == b) for b in [0, 1]])
 
-    smf_df.to_csv('../generated-data/task_dro_smf_org', index=False)
-    #df_lethal = df_allele[ix]
+    smf_df.to_csv(output_path, index=False)
     
-
-    # df_lethal.to_excel('../tmp/dro_org_lethals.xlsx', index=False, columns=['gene', 'allele_FBal#', 'phenotype'])
+    assert len(set(smf_df[smf_df['bin'] == 0]['gene']).intersection(smf_df[smf_df['bin'] == 1])) == 0
     
-    # gene_phenotypes = defaultdict(list)
-    # for i, row in df_lethal.iterrows():
-    #     gene_phenotypes[row['gene']].append(row['phenotype'])
-    
-    # print(len(gene_phenotypes))
-
-    
-    # with open('../tmp/dro', 'w') as f:
-    #     json.dump(gene_phenotypes, f, indent=4)
-def get_top_phenotype(s):
-    parts = s.split(',')
-    return parts[0].strip()
-
 if __name__ == "__main__":
     gpath = sys.argv[1]
     main(gpath)

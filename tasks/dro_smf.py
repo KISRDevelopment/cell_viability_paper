@@ -9,7 +9,9 @@ edf = pd.read_csv('../data-sources/dro/Essential genes.csv')
 edf['Gene'] = edf['Gene'].str.lower()
 essential_genes = set(edf['Gene'])
 
-def main(gpath):
+ALPHA = 0.2
+
+def main(gpath, output_path):
     
     G = nx.read_gpickle(gpath)
     node_set = set(G.nodes())
@@ -27,7 +29,7 @@ def main(gpath):
     lethal_ix = df['Gene'].isin(essential_genes)
     std = np.std(np.vstack((r1, r2)).T, axis=1, ddof=1)
     p = 1-stats.norm.cdf(0.0, mu, std) 
-    healthy_ix = ~lethal_ix & (p >= 0.2)
+    healthy_ix = ~lethal_ix & (p >= ALPHA)
     sick_ix = ~lethal_ix & ~healthy_ix
 
     print(np.sum(lethal_ix))
@@ -55,7 +57,7 @@ def main(gpath):
     print(np.sum(smf_df['bin'] == 1))
     print(np.sum(smf_df['bin'] == 2))
 
-    smf_df.to_csv('../generated-data/task_dro_smf', index=False)
+    smf_df.to_csv(output_path, index=False)
     
 if __name__ == "__main__":
     gpath = sys.argv[1]

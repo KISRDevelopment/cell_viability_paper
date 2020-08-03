@@ -101,6 +101,18 @@ def extract_names_taxid559292(df):
 
     return [extract_locus(e) for e in a_names], [extract_locus(e) for e in b_names]
 
+def extract_names_taxid284812(df):
+
+    a_names = list(df['Alt IDs Interactor A'])
+    b_names = list(df['Alt IDs Interactor B'])
+
+    def extract_locus(e):
+        return e.split('|')[-1].replace('entrez gene/locuslink:', '').lower()
+
+    return [extract_locus(e) for e in a_names], [extract_locus(e) for e in b_names]
+
+extract_names_taxid9606 = extract_names_taxid284812
+
 if __name__ == "__main__":
     taxid = int(sys.argv[1])
     pub_threshold = int(sys.argv[2])
