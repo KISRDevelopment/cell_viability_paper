@@ -26,7 +26,9 @@ plot_cfg = {
     "bar_border_size" : 2.5,
     "bar_label_size" : 48,
     "stars_label_size" : 48,
-    "annot_size" : 82
+    "annot_size" : 82,
+    "iqr_color" : "#303030",
+
 }
 
 def main(task_file, feature_file, fid, ylabel, output_path):
@@ -59,7 +61,7 @@ def visualize(df, f, ylabel, ylim=None):
     #ax.set_xlabel('Phenotype', fontsize=plot_cfg['xlabel_size'])
     ax.set_ylabel(ylabel, fontsize=plot_cfg['ylabel_size'], weight='bold')
     ax.set_xlabel('')
-
+    ax.set_xlim([-0.5, 2.5])
     ax.yaxis.set_tick_params(length=10, width=1, which='both')
     ax.xaxis.set_tick_params(length=0)
 
@@ -81,10 +83,10 @@ def visualize(df, f, ylabel, ylim=None):
     for i in range(len(bins)):
         a = df[df['bin'] == bins[i]]['feature']
         a_med = np.median(a)
-        ax.plot([i, i], [a_med, a_med], 'o', color='black', markersize=20)
+        ax.plot([i, i], [a_med, a_med], 'o', color=plot_cfg['iqr_color'], markersize=15)
         iqr_lower = np.percentile(a, 25)
         iqr_upper = np.percentile(a, 75)
-        ax.plot([i, i], [iqr_lower, iqr_upper], linewidth=10, color='black')
+        ax.plot([i, i], [iqr_lower, iqr_upper], linewidth=5, color=plot_cfg['iqr_color'])
         
         yoffset = max_val
         
