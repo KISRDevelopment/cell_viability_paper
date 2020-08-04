@@ -27,7 +27,7 @@
             "color" : "grey",
             "path" : "../results/smf_generalization/pombe_null_scrambled.npz",
             "show" : true,
-            "show_roc" : false
+            "show_roc" : true
         }
     ],
     "classes" : ["Lethal", "Reduced growth", "Normal"],

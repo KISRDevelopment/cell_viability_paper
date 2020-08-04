@@ -1,5 +1,5 @@
 {
-    "output_path" : "../results/smf_generalization_dro/",
+    "output_path" : "../results/fig_smf_generalization_dro/",
     "models" : [
         {
             "name" : "Refined model",
@@ -27,7 +27,7 @@
             "color" : "grey",
             "path" : "../results/smf_generalization/dro_null_scrambled.npz",
             "show" : true,
-            "show_roc" : false
+            "show_roc" : true
         }
     ],
     "classes" : ["Lethal", "Reduced growth", "Normal"],
