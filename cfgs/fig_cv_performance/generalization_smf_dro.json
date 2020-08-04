@@ -1,5 +1,5 @@
 {
-    "output_path" : "../tmp/smf_generalization_dro/",
+    "output_path" : "../results/smf_generalization_dro/",
     "models" : [
         {
             "name" : "Refined model",

@@ -1,5 +1,5 @@
 {
-    "output_path" : "../tmp/smf_generalization_human/",
+    "output_path" : "../results/fig_smf_generalization_human/",
     "models" : [
         {
             "name" : "Refined model",

@@ -1,38 +1,31 @@
 {
-    "output_path" : "../results/cv_figs_task_yeast_smf_30/",
+    "output_path" : "../results/cv_figs_task_human_smf/",
     "models" : [
-        {
-            "name" : "Full model",
-            "color" : "#b300ff",
-            "cm_color" : "#b300ff",
-            "path" : "../results/task_yeast_smf_30/topology~go~redundancy~phosphorylation~transcription~abundance~localization",
-            "show" : true
-        },
         {
             "name" : "Refined model",
             "color" : "#FF0000",
             "cm_color" : "#FF0000",
-            "path" : "../results/task_yeast_smf_30/refined",
+            "path" : "../results/task_human_smf/refined",
             "show" : true
         },
         {
             "name" : "OR model",
             "color" : "#00CC00",
-            "path" : "../results/task_yeast_smf_30/orm",
+            "path" : "../results/task_human_smf/orm",
             "show" : true
         },
         {
             "name" : "Null",
             "color" : "white",
             "star_color" : "#c3c6c6",
-            "path" : "../results/task_yeast_smf_30/null",
+            "path" : "../results/task_human_smf/null",
             "show" : true,
             "show_roc" : false
         },
         {
             "name" : "Scrambled",
             "color" : "grey",
-            "path" : "../results/task_yeast_smf_30/null_scrambled",
+            "path" : "../results/task_human_smf/null_scrambled",
             "show" : true,
             "show_roc" : true
         }

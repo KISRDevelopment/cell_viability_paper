@@ -22,32 +22,32 @@ models.cv.main("models.smf_nn", "cfgs/models/yeast_smf_refined_model.json", "../
 
 # execute CV on null models
 models.cv.main("models.null_model", "cfgs/models/yeast_smf_full_model.json", "../results/task_yeast_smf_30/null")
-models.cv.main("models.smf_nn", "cfgs/models/yeast_smf_full_model.json", "../results/task_yeast_smf_30/null_scarmbled", scramble=True)
+models.cv.main("models.smf_nn", "cfgs/models/yeast_smf_full_model.json", "../results/task_yeast_smf_30/null_scrambled", scramble=True)
 
 # execute CV on OR model
 models.cv.main("models.smf_ordinal", "cfgs/models/yeast_smf_orm.json", "../results/task_yeast_smf_30/orm")
 
 # pombe
 models.cv.main("models.null_model", "cfgs/models/pombe_smf_refined_model.json", "../results/task_pombe_smf/null")
-models.cv.main("models.smf_nn", "cfgs/models/pombe_smf_refined_model.json", "../results/task_pombe_smf/null_scarmbled", scramble=True)
+models.cv.main("models.smf_nn", "cfgs/models/pombe_smf_refined_model.json", "../results/task_pombe_smf/null_scrambled", scramble=True)
 models.cv.main("models.smf_nn", "cfgs/models/pombe_smf_refined_model.json", "../results/task_pombe_smf/refined")
 models.cv.main("models.smf_ordinal", "cfgs/models/pombe_smf_orm.json", "../results/task_pombe_smf/orm")
 
 # human
 models.cv.main("models.null_model", "cfgs/models/human_smf_refined_model.json", "../results/task_human_smf/null")
-models.cv.main("models.smf_nn", "cfgs/models/human_smf_refined_model.json", "../results/task_human_smf/null_scarmbled", scramble=True)
+models.cv.main("models.smf_nn", "cfgs/models/human_smf_refined_model.json", "../results/task_human_smf/null_scrambled", scramble=True)
 models.cv.main("models.smf_nn", "cfgs/models/human_smf_refined_model.json", "../results/task_human_smf/refined")
 models.cv.main("models.smf_ordinal", "cfgs/models/human_smf_orm.json", "../results/task_human_smf/orm")
 
 # dro
 models.cv.main("models.null_model", "cfgs/models/dro_smf_refined_model.json", "../results/task_dro_smf/null")
-models.cv.main("models.smf_nn", "cfgs/models/dro_smf_refined_model.json", "../results/task_dro_smf/null_scarmbled", scramble=True)
+models.cv.main("models.smf_nn", "cfgs/models/dro_smf_refined_model.json", "../results/task_dro_smf/null_scrambled", scramble=True)
 models.cv.main("models.smf_nn", "cfgs/models/dro_smf_refined_model.json", "../results/task_dro_smf/refined")
 models.cv.main("models.smf_ordinal", "cfgs/models/dro_smf_orm.json", "../results/task_dro_smf/orm")
 
 # dro organsim viability
 models.cv.main("models.null_model", "cfgs/models/dro_smf_org_refined_model.json", "../results/task_dro_smf_org/null")
-models.cv.main("models.smf_nn", "cfgs/models/dro_smf_org_refined_model.json", "../results/task_dro_smf_org/null_scarmbled", scramble=True)
+models.cv.main("models.smf_nn", "cfgs/models/dro_smf_org_refined_model.json", "../results/task_dro_smf_org/null_scrambled", scramble=True)
 models.cv.main("models.smf_nn", "cfgs/models/dro_smf_org_refined_model.json", "../results/task_dro_smf_org/refined")
 models.cv.main("models.smf_ordinal", "cfgs/models/dro_smf_org_orm.json", "../results/task_dro_smf_org/orm")
 

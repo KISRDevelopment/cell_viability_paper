@@ -49,6 +49,7 @@ def main(task_file, go_file, output_path):
         })
 
     df = pd.DataFrame(rows)
+    df = df.sort_values('healthy_p', ascending=False)
     df.to_excel(output_path, index=False, columns=['term', 'lethal', 'sick', 'healthy', "lethal_p",
          "sick_p", "healthy_p", "total", "diff"])
 
