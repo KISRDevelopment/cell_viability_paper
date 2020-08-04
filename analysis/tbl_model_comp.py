@@ -11,6 +11,10 @@ import utils.eval_funcs
 SMF_LABELS = ['Lethal', 'Reduced', 'Normal']
 GI_LABELS = ['Negative', 'Neutral', 'Positive', 'Supp']
 
+FMAP = {
+    "Go" : "sGO"
+}
+
 def main(path, output_path):
     
     paths = [p for p in glob.glob("%s/*" % path) if os.path.isdir(p)]
@@ -20,14 +24,14 @@ def main(path, output_path):
 
         cols = []
         r = utils.eval_funcs.average_results(results_path)
-        
+        model_name = os.path.basename(results_path)
         row = {
-            "model" : os.path.basename(results_path),
+            "model" : make_friendly_model_name(model_name),
+            "no. features" : len(model_name.split('~')),
             "bacc" : r['bacc'],
-            "acc" : r['acc'],
-            "log_prob" : r['log_prob']
+            "acc" : r['acc']
         }
-        cols = ['model', 'bacc', 'acc', 'log_prob']
+        cols = ['model', 'no. features', 'bacc', 'acc']
 
         num_classes = len(r['per_class_f1'])
         labels = SMF_LABELS if num_classes == 3 else GI_LABELS
@@ -47,6 +51,18 @@ def main(path, output_path):
 
     results_df.to_excel(output_path, index=False, columns=cols, float_format='%0.2f')
 
+def make_friendly_model_name(s):
+    
+    def fs_with_selected_feature(f):
+        parts = f.split('--')
+        if len(parts) > 1:
+            return "%s (%s)" % (parts[0].capitalize(), parts[1].capitalize())
+        else: 
+            fname = f.capitalize()
+            return FMAP.get(fname, fname)
+    
+    features = [fs_with_selected_feature(f) for f in s.split('~')]
+    return ", ".join(features)
 
 if __name__ == "__main__":
     path = sys.argv[1]

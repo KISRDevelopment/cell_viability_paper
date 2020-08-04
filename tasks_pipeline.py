@@ -60,7 +60,7 @@ utils.bin_simple.main(smf_task_path)
 utils.cv_simple.main(smf_task_path, 10, 5, 0.2)
 
 gpath = "../generated-data/ppc_dro"
-smf_task_path = "../generated-data/task_dro_org_smf"
+smf_task_path = "../generated-data/task_dro_smf_org"
 tasks.dro_org_smf.main(gpath, smf_task_path)
 utils.bin_simple.main(smf_task_path)
 utils.cv_simple.main(smf_task_path, 10, 5, 0.2)

@@ -12,7 +12,7 @@
         },
         {
             "name" : "go",
-            "path" : "../generated-data/features/ppc_dro_sgo.npz",
+            "path" : "../generated-data/features/ppc_dro_common_sgo.npz",
             "selected_features" : null
         }
     ],
@@ -22,7 +22,7 @@
     "verbose": true,
     "patience": 50,
     "balanced_loss" : true,
-    "batch_size" : 10000,
+    "batch_size" : 100,
     "task_path" : "../generated-data/task_dro_smf",
     "targets_path" : "../generated-data/targets/task_dro_smf_bin_simple.npz",
     "splits_path" : "../generated-data/splits/task_dro_smf_10reps_5folds_0.20valid.npz",
