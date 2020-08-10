@@ -13,6 +13,7 @@ def average_results(cv_dir):
     all_results = defaultdict(list)
     
     for file in files:
+        print(file)
         d = np.load(file, allow_pickle=True)
 
         r = d['r'].item()

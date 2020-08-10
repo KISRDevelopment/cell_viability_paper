@@ -17,7 +17,7 @@ temporal_conditions = {
     'wt3' : ['WT3']
 }
 
-def main(gpath):
+def main(gpath, flatten=False):
     
     G = nx.read_gpickle(gpath)
 
@@ -57,9 +57,16 @@ def main(gpath):
         #F = stats.zscore(F, axis=0)
         #print(stats.describe(F))
 
-        print("Condition %s: %s" % (condition, F.shape))
-        
         output_path = '../generated-data/features/%s_localization_%s' % (os.path.basename(gpath), condition)
+        
+        if flatten:
+            F = np.reshape(F, (F.shape[0], -1))
+            mu = np.reshape(mu, -1)
+            std = np.reshape(std,-1)
+            output_path += "_flat"
+            
+        print("Condition %s: %s" % (condition, F.shape))
+         
         np.savez(output_path, F=F, feature_labels=sheet_names, 
             mu=mu, std=std)
 

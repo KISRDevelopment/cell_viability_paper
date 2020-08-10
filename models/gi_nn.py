@@ -22,6 +22,7 @@ import models.feature_loader as feature_loader
 import models.nn_arch as nn_arch
 import utils.eval_funcs as eval_funcs
 
+
 def main(cfg, rep, fold, output_path, print_results=True):
 
     dataset_path = cfg['task_path']
@@ -155,7 +156,8 @@ def create_data_iterator(df, y, single_fsets, pairwise_fsets, cfg, scramble=Fals
                 batch_F = feature_transform(batch_df, single_fsets, pairwise_fsets)
                 
                 if scramble:
-                    batch_F = [f[rng.permutation(f.shape[0]),:] for f in batch_F]
+                    rix = rng.permutation(batch_F.shape[0])
+                    batch_F = [f[rix,:] for f in batch_F]
                 
                 yield (batch_F, batch_y)
     

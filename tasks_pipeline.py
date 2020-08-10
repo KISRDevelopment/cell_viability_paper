@@ -7,6 +7,7 @@ import shlex
 import tasks.yeast_smf
 import tasks.pombe_smf 
 import tasks.human_smf
+import tasks.human_org
 import tasks.dro_smf
 import tasks.dro_org_smf
 import tasks.pombe_gi
@@ -21,6 +22,7 @@ import utils.cv_gi
 import utils.bin_interacting
 import utils.make_fb_dataset
 import ppc_creation.ppc
+
 
 if not os.path.exists('../generated-data/splits'):
     os.makedirs('../generated-data/splits')
@@ -50,6 +52,13 @@ utils.cv_simple.main(smf_task_path, 10, 5, 0.2)
 gpath = "../generated-data/ppc_human"
 smf_task_path = "../generated-data/task_human_smf"
 tasks.human_smf.main(gpath, smf_task_path)
+utils.bin_simple.main(smf_task_path)
+utils.cv_simple.main(smf_task_path, 10, 5, 0.2)
+
+gpath = "../generated-data/ppc_human"
+cell_smf_task_path = "../generated-data/task_human_smf"
+smf_task_path = "../generated-data/task_human_smf_org"
+tasks.human_org.main(gpath, cell_smf_task_path, smf_task_path)
 utils.bin_simple.main(smf_task_path)
 utils.cv_simple.main(smf_task_path, 10, 5, 0.2)
 

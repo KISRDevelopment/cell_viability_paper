@@ -144,12 +144,20 @@
                 {
                     "normalize": false,
                     "path": "../generated-data/pairwise_features/ppc_yeast_adjacent.npy"
-                },
-                {
-                    "normalize": false,
-                    "path": "../generated-data/pairwise_features/ppc_yeast_ppc_yeast_5steps_comms.npy"
                 }
             ]
+        },
+        {
+            "name": "pairwise_comm",
+            "group": "pairwise",
+            "sparse" : true,
+            "hidden_activation": "tanh",
+            "layer_sizes": [
+                5
+            ],
+            "type": "ff",
+            "pairwise": true,
+            "path": "../generated-data/pairwise_features/ppc_yeast_5steps_comms.npz"
         }
         
     ],
@@ -162,7 +170,7 @@
     "embedding_size": 5,
     "embedding_activation": "tanh",
     "scramble" : false,
-    "task_path" : "../generated-data/task_yeast_hybrid",
-    "targets_path" : "../generated-data/targets/task_yeast_hybrid_bin_simple.npz",
-    "splits_path" : "../generated-data/splits/task_yeast_hybrid_10reps_4folds_0.20valid.npz"
+    "task_path" : "../generated-data/task_yeast_gi_hybrid",
+    "targets_path" : "../generated-data/targets/task_yeast_gi_hybrid_bin_simple.npz",
+    "splits_path" : "../generated-data/splits/task_yeast_gi_hybrid_10reps_4folds_0.20valid.npz"
 }

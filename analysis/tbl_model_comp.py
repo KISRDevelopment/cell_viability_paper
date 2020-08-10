@@ -21,7 +21,7 @@ def main(path, output_path):
     results_summary = []
     
     for results_path in paths:
-
+        print("Processing %s" % results_path, end='')
         cols = []
         r = utils.eval_funcs.average_results(results_path)
         model_name = os.path.basename(results_path)
@@ -44,7 +44,7 @@ def main(path, output_path):
         
         results_summary.append(row)
 
-        print("Processed %s" % results_path)
+        print("... done")
     results_df = pd.DataFrame(results_summary)
     
     results_df = results_df.sort_values(['bacc'], ascending=False)

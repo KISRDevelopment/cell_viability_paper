@@ -29,8 +29,11 @@ analysis.tbl_model_comp.main("../results/task_yeast_smf_30", "../results/yeast_s
 analysis.fig_cv_performance.main("cfgs/fig_cv_performance/yeast_smf.json")
 analysis.fig_cv_performance.main("cfgs/fig_cv_performance/pombe_smf.json")
 analysis.fig_cv_performance.main("cfgs/fig_cv_performance/human_smf.json")
+analysis.fig_cv_performance.main("cfgs/fig_cv_performance/human_smf_org.json")
 analysis.fig_cv_performance.main("cfgs/fig_cv_performance/dro_smf.json")
 analysis.fig_cv_performance.main("cfgs/fig_cv_performance/dro_smf_org.json")
 analysis.fig_cv_performance.main("cfgs/fig_cv_performance/generalization_smf_pombe.json")
 analysis.fig_cv_performance.main("cfgs/fig_cv_performance/generalization_smf_human.json")
 analysis.fig_cv_performance.main("cfgs/fig_cv_performance/generalization_smf_dro.json")
+
+

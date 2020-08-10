@@ -51,3 +51,10 @@ models.cv.main("models.smf_nn", "cfgs/models/dro_smf_org_refined_model.json", ".
 models.cv.main("models.smf_nn", "cfgs/models/dro_smf_org_refined_model.json", "../results/task_dro_smf_org/refined")
 models.cv.main("models.smf_ordinal", "cfgs/models/dro_smf_org_orm.json", "../results/task_dro_smf_org/orm")
 
+# human organsim viability
+models.cv.main("models.null_model", "cfgs/models/human_smf_org_refined_model.json", "../results/task_human_smf_org/null")
+models.cv.main("models.smf_nn", "cfgs/models/human_smf_org_refined_model.json", "../results/task_human_smf_org/null_scrambled", scramble=True)
+models.cv.main("models.smf_nn", "cfgs/models/human_smf_org_refined_model.json", "../results/task_human_smf_org/refined")
+models.cv.main("models.smf_ordinal", "cfgs/models/human_smf_org_orm.json", "../results/task_human_smf_org/orm")
+
+

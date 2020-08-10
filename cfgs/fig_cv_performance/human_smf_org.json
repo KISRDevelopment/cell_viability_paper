@@ -1,31 +1,31 @@
 {
-    "output_path" : "../results/cv_figs_task_dro_smf_org/",
+    "output_path" : "../results/cv_figs_task_human_smf_org/",
     "models" : [
         {
             "name" : "Refined model",
             "color" : "#FF0000",
             "cm_color" : "#FF0000",
-            "path" : "../results/task_dro_smf_org/refined",
+            "path" : "../results/task_human_smf_org/refined",
             "show" : true
         },
         {
             "name" : "OR model",
             "color" : "#00CC00",
-            "path" : "../results/task_dro_smf_org/orm",
+            "path" : "../results/task_human_smf_org/orm",
             "show" : true
         },
         {
             "name" : "Null",
             "color" : "white",
             "star_color" : "#c3c6c6",
-            "path" : "../results/task_dro_smf_org/null",
+            "path" : "../results/task_human_smf_org/null",
             "show" : true,
             "show_roc" : false
         },
         {
             "name" : "Scrambled",
             "color" : "grey",
-            "path" : "../results/task_dro_smf_org/null_scrambled",
+            "path" : "../results/task_human_smf_org/null_scrambled",
             "show" : true,
             "show_roc" : true
         }

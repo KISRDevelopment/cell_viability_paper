@@ -7,7 +7,7 @@ import networkx as nx
 from collections import defaultdict
 import json 
 
-def main(gpath, output_path):
+def main(gpath, cell_smf_task_path, output_path):
     
     G = nx.read_gpickle(gpath)
     node_set = set(G.nodes())
@@ -20,7 +20,7 @@ def main(gpath, output_path):
     df_allele = df_allele[~pd.isnull(df_allele['allele_FBal#'])]
     df_allele['gene'] = [fbal_to_fbgn[r] for r in df_allele['allele_FBal#']]
     
-    edf = pd.read_csv('../data-sources/dro/Essential genes.csv')
+    edf = pd.read_csv(cell_smf_task_path)
     edf['Gene'] = edf['Gene'].str.lower()
     essential_genes = set(edf['Gene'])
     

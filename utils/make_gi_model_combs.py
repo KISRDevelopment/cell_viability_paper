@@ -10,7 +10,7 @@ feature_groups = {
     "redundancy" : ["redundancy"],
     "phosphorylation" : ["phosphotase", "kinase", "transcription"],
     "abundance-and-loc" : ["abundance_wt3", "abundance_rap", "abundance_hu", "localization_wt3", "localization_rap", "localization_hu"],
-    "pairwise" : ["pairwise"],
+    "pairwise" : ["pairwise", "pairwise_comm"],
     "smf" : ["smf"]
 }
 
@@ -74,8 +74,6 @@ def main(base_cfg, output_dir):
         base_cfg['spec'] = sub_spec
 
         cfg_name = '~'.join(group_comb)
-        base_cfg['output_path'] = os.path.join(output_dir, cfg_name+'.json')
-        
         with open('../tmp/model_cfgs/yeast_gi/%s.json' % cfg_name, 'w') as f:
             json.dump(base_cfg, f, indent=4)
 

@@ -3,8 +3,12 @@ import subprocess
 import os 
 import glob 
 import sys 
+import time 
+import sys, select 
 
-def main(script_name, cfgs_dir, output_dir, n_processors=6, exclude=lambda s: False):
+CONTINUE_PROMPT_TIMEOUT_SECS = 5
+
+def main(script_name, cfgs_dir, output_dir, n_processors=6, exclude=lambda s: False, dynamic_dispatch=False, n_runs=40):
     
     files = glob.glob(cfgs_dir + "/*.json")
 
@@ -15,14 +19,28 @@ def main(script_name, cfgs_dir, output_dir, n_processors=6, exclude=lambda s: Fa
         config_name = os.path.basename(file).replace('.json', '')
         if exclude(config_name):
             continue
+        
+        config_output_dir = os.path.join(output_dir, config_name)
+        if os.path.exists(config_output_dir):
+            dir_files = glob.glob(os.path.join(config_output_dir, '*.npz'))
+            if len(dir_files) == n_runs:
+                print("Ignoring %s" % config_name)
+                continue 
         print(config_name)
 
-        subprocess.call(['python', "-m", "models.cv",
+        module = "models.cv_dynamic_dispatch" if dynamic_dispatch else "models.cv"
+        subprocess.call(['python', "-m", module,
             script_name, file, 
-            os.path.join(output_dir, config_name),
+            config_output_dir,
             str(n_processors)
         ])
-
+        
+        print("Stop? ")
+        i, o, e = select.select([sys.stdin], [], [], CONTINUE_PROMPT_TIMEOUT_SECS)
+        if i: 
+            break 
+            print("Stopped.")
+        
 if __name__ == "__main__":
     script_name = sys.argv[1]
     cfgs_dir = sys.argv[2]

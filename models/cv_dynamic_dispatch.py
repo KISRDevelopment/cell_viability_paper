@@ -4,11 +4,17 @@ import os
 import subprocess 
 import shutil 
 import json 
+import psutil
+import time 
 
 SHOW_OUTPUT = False 
 OVERWRITE_PROMPT = False
 
-def main(script_name, cfg_path, output_dir, num_processes=8, scramble=False):
+MEMORY_THRES_PERC = 70
+CPU_THRES_PERC = 70
+SLEEP_TIME_SEC = 20
+
+def main(script_name, cfg_path, output_dir, num_processes=6, scramble=False):
     
     with open(cfg_path, 'r') as f:
         cfg = json.load(f)
@@ -35,26 +41,25 @@ def main(script_name, cfg_path, output_dir, num_processes=8, scramble=False):
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
+    split_ids = np.arange(reps * folds)
     finished = 0
 
-    work_items = []
-    for i in range(reps*folds):
-        rep = i // folds 
-        fold = i % folds 
-        output_path = os.path.join(output_dir, 'run_%d_%d.npz' % (rep, fold))
-        if os.path.exists(output_path):
-            print("Skipping %s" % output_path)
-            continue 
-        work_items.append(i)
-    
-    for i in range(0, len(work_items), num_processes):
-        subset = work_items[i:(i+num_processes)]
+    incr = num_processes
+    i = 0
+    total = reps*folds
+    while i < total:
+        subset = split_ids[i:(i+incr)]
+        i += incr 
+
         processes = []
         for j in subset:
             rep = j // folds 
             fold = j % folds 
 
             output_path = os.path.join(output_dir, 'run_%d_%d.npz' % (rep, fold))
+            # if os.path.exists(output_path):
+            #     print("Skipping %s" % output_path)
+            #     continue 
             
             print("Spawning rep %d fold %d" % (rep,fold))
             kwargs = {}
@@ -67,6 +72,16 @@ def main(script_name, cfg_path, output_dir, num_processes=8, scramble=False):
                 str(rep), str(fold), 
                 output_path
             ],  **kwargs))
+        
+
+        # hack sleep for a while to give processes time to initialize
+        time.sleep(SLEEP_TIME_SEC)
+        mperc = psutil.virtual_memory().percent
+        cperc = psutil.cpu_percent()
+        print("CPU usage: %0.2f, Memory use: %0.2f" % (cperc, mperc))
+        if mperc <= MEMORY_THRES_PERC and cperc <= CPU_THRES_PERC:
+            incr += 1 # add one processor
+            print("Adding one processor: %d" % incr)
         
         for p in processes:
             p.wait()
