@@ -156,7 +156,7 @@ def create_data_iterator(df, y, single_fsets, pairwise_fsets, cfg, scramble=Fals
                 batch_F = feature_transform(batch_df, single_fsets, pairwise_fsets)
                 
                 if scramble:
-                    rix = rng.permutation(batch_F.shape[0])
+                    rix = rng.permutation(batch_F[0].shape[0])
                     batch_F = [f[rix,:] for f in batch_F]
                 
                 yield (batch_F, batch_y)

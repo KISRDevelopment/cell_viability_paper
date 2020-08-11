@@ -8,7 +8,7 @@ import json
 SHOW_OUTPUT = False 
 OVERWRITE_PROMPT = False
 
-def main(script_name, cfg_path, output_dir, num_processes=8, scramble=False):
+def main(script_name, cfg_path, output_dir, num_processes=8, scramble=False, **kwargs):
     
     with open(cfg_path, 'r') as f:
         cfg = json.load(f)
@@ -19,6 +19,11 @@ def main(script_name, cfg_path, output_dir, num_processes=8, scramble=False):
         with open(cfg_path, 'w') as f:
             json.dump(cfg, f, indent=4)
     
+    if kwargs:
+        cfg_path = "../tmp/override_cfg"
+        cfg.update(kwargs)
+        with open(cfg_path, 'w') as f:
+            json.dump(cfg, f, indent=4)
 
     train_test_path = cfg['splits_path']
 

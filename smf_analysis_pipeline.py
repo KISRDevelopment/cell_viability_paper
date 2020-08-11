@@ -37,3 +37,7 @@ analysis.fig_cv_performance.main("cfgs/fig_cv_performance/generalization_smf_hum
 analysis.fig_cv_performance.main("cfgs/fig_cv_performance/generalization_smf_dro.json")
 
 
+analysis.fig_cv_performance.main("cfgs/fig_cv_performance/yeast_smf_binary.json")
+analysis.fig_cv_performance.main("cfgs/fig_cv_performance/pombe_smf_binary.json")
+analysis.fig_cv_performance.main("cfgs/fig_cv_performance/human_smf_binary.json")
+analysis.fig_cv_performance.main("cfgs/fig_cv_performance/dro_smf_binary.json")

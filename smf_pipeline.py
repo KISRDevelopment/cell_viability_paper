@@ -57,4 +57,53 @@ models.cv.main("models.smf_nn", "cfgs/models/human_smf_org_refined_model.json", 
 models.cv.main("models.smf_nn", "cfgs/models/human_smf_org_refined_model.json", "../results/task_human_smf_org/refined")
 models.cv.main("models.smf_ordinal", "cfgs/models/human_smf_org_orm.json", "../results/task_human_smf_org/orm")
 
+# binary classification
 
+# Yeast
+models.cv.main("models.smf_nn", "cfgs/models/yeast_smf_refined_model.json", "../results/task_yeast_smf_30_binary/refined", 
+    targets_path = "../generated-data/targets/task_yeast_smf_30_bin_lethal.npz"
+)
+models.cv.main("models.smf_nn", "cfgs/models/yeast_smf_full_model.json", "../results/task_yeast_smf_30_binary/full", 
+    targets_path = "../generated-data/targets/task_yeast_smf_30_bin_lethal.npz"
+)
+models.cv.main("models.smf_ordinal", "cfgs/models/yeast_smf_orm.json", "../results/task_yeast_smf_30_binary/orm",
+    targets_path = "../generated-data/targets/task_yeast_smf_30_bin_lethal.npz")
+models.cv.main("models.null_model", "cfgs/models/yeast_smf_full_model.json", "../results/task_yeast_smf_30_binary/null",
+    targets_path = "../generated-data/targets/task_yeast_smf_30_bin_lethal.npz"
+)
+models.cv.main("models.smf_nn", "cfgs/models/yeast_smf_full_model.json", "../results/task_yeast_smf_30_binary/null_scrambled", scramble=True, 
+    targets_path = "../generated-data/targets/task_yeast_smf_30_bin_lethal.npz"
+)
+
+# Pombe
+models.cv.main("models.null_model", "cfgs/models/pombe_smf_refined_model.json", "../results/task_pombe_smf_binary/null", 
+    targets_path = "../generated-data/targets/task_pombe_smf_bin_lethal.npz"
+)
+models.cv.main("models.smf_nn", "cfgs/models/pombe_smf_refined_model.json", "../results/task_pombe_smf_binary/null_scrambled", scramble=True, 
+    targets_path = "../generated-data/targets/task_pombe_smf_bin_lethal.npz")
+models.cv.main("models.smf_nn", "cfgs/models/pombe_smf_refined_model.json", "../results/task_pombe_smf_binary/refined", 
+    targets_path = "../generated-data/targets/task_pombe_smf_bin_lethal.npz")
+models.cv.main("models.smf_ordinal", "cfgs/models/pombe_smf_orm.json", "../results/task_pombe_smf_binary/orm", 
+    targets_path = "../generated-data/targets/task_pombe_smf_bin_lethal.npz")
+
+# human
+models.cv.main("models.null_model", "cfgs/models/human_smf_refined_model.json", "../results/task_human_smf_binary/null", 
+    targets_path = "../generated-data/targets/task_human_smf_bin_lethal.npz"
+)
+models.cv.main("models.smf_nn", "cfgs/models/human_smf_refined_model.json", "../results/task_human_smf_binary/null_scrambled", scramble=True, 
+    targets_path = "../generated-data/targets/task_human_smf_bin_lethal.npz")
+models.cv.main("models.smf_nn", "cfgs/models/human_smf_refined_model.json", "../results/task_human_smf_binary/refined", 
+    targets_path = "../generated-data/targets/task_human_smf_bin_lethal.npz")
+models.cv.main("models.smf_ordinal", "cfgs/models/human_smf_orm.json", "../results/task_human_smf_binary/orm", 
+    targets_path = "../generated-data/targets/task_human_smf_bin_lethal.npz")
+
+# dro
+models.cv.main("models.null_model", "cfgs/models/dro_smf_refined_model.json", "../results/task_dro_smf_binary/null", 
+    targets_path = "../generated-data/targets/task_dro_smf_bin_lethal.npz"
+)
+models.cv.main("models.smf_nn", "cfgs/models/dro_smf_refined_model.json", "../results/task_dro_smf_binary/null_scrambled", scramble=True, 
+    targets_path = "../generated-data/targets/task_dro_smf_bin_lethal.npz")
+models.cv.main("models.smf_nn", "cfgs/models/dro_smf_refined_model.json", "../results/task_dro_smf_binary/refined", 
+    targets_path = "../generated-data/targets/task_dro_smf_bin_lethal.npz")
+models.cv.main("models.smf_ordinal", "cfgs/models/dro_smf_orm.json", "../results/task_dro_smf_binary/orm", 
+    targets_path = "../generated-data/targets/task_dro_smf_bin_lethal.npz")
