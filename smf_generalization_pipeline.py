@@ -17,7 +17,7 @@ import analysis.fig_cv_performance
 
 n_models = 10
 go_postfix = "common_sgo"
-output_dir = "../results/smf_generation"
+output_dir = "../results/smf_generalization"
 splits = [(i, 0) for i in range(n_models)]
 
 # 1. Train yeast refined model on full yeast dataset and evaluate on the other three

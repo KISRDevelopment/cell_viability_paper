@@ -8,20 +8,30 @@ import json
 SHOW_OUTPUT = False 
 OVERWRITE_PROMPT = False
 
-def main(script_name, cfg_path, output_dir, num_processes=8, scramble=False, **kwargs):
-    
+def main(script_name, cfg_path, output_dir, num_processes=8, interpreation=False, scramble=False, **kwargs):
+    orig_cfg_path = cfg_path
+
     with open(cfg_path, 'r') as f:
         cfg = json.load(f)
     
+
+    if interpreation:
+        cfg['bootstrap_training'] = True 
+        cfg['early_stopping'] = False 
+        cfg['train_on_full_dataset'] = True
+        cfg['train_model'] = True 
+        cfg_path = "../tmp/override_cfg"
+
     if scramble:
-        cfg_path = "../tmp/scrambled_cfg"
+        cfg_path = "../tmp/override_cfg"
         cfg['scramble'] = True
-        with open(cfg_path, 'w') as f:
-            json.dump(cfg, f, indent=4)
-    
+
     if kwargs:
         cfg_path = "../tmp/override_cfg"
         cfg.update(kwargs)
+        print(cfg)
+        
+    if orig_cfg_path != cfg_path:
         with open(cfg_path, 'w') as f:
             json.dump(cfg, f, indent=4)
 

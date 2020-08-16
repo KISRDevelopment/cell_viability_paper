@@ -49,6 +49,9 @@ def main(cfg, rep, fold, output_path, print_results=True):
     valid_ix = valid_sets[rep,fold,:]
     test_ix = test_sets[rep,fold,:]
 
+    if not cfg.get("early_stopping", True):
+        train_ix = train_ix + valid_ix
+        
     if cfg.get("train_on_full_dataset", False):
         print(colored("******** TRAINING ON FULL DATASET ***********", "red"))
         train_ix = train_ix + test_ix
@@ -65,12 +68,19 @@ def main(cfg, rep, fold, output_path, print_results=True):
     valid_Y = Y[valid_ix,:]
     test_Y = Y[test_ix, :]
 
-    
     F = all_features[df['id'], :]
     train_F = F[train_ix, :]
     valid_F = F[valid_ix, :]
     test_F = F[test_ix, :]
     
+
+    if cfg.get("bootstrap_training", False):
+        print(colored("******** BOOTSTRAPPING TRAINING ***********", "blue"))
+        rix = rng.choice(train_df.shape[0], train_df.shape[0], replace=True)
+        train_df = train_df.iloc[rix]
+        train_Y = train_Y[rix,:]
+        train_F = train_F[rix,:]
+
     # ordinal model
     input_node = layers.Input(shape=(F.shape[1],))
     linear_layer = layers.Dense(1, activation='linear')
@@ -90,9 +100,12 @@ def main(cfg, rep, fold, output_path, print_results=True):
     if cfg.get("train_model", True):
 
         # setup early stopping
-        callbacks = [keras.callbacks.EarlyStopping(monitor='val_loss', 
-            patience=cfg['patience'], restore_best_weights=True)]
-
+        if cfg.get("early_stopping", True):
+            callbacks = [keras.callbacks.EarlyStopping(monitor='val_loss', 
+                patience=cfg['patience'], restore_best_weights=True)]
+        else:
+            callbacks = []
+        
         # train
         model.fit(
             x=train_F,

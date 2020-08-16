@@ -62,8 +62,11 @@ def generate_cv_splits(path, reps, folds, valid_prop):
             
             # ensure total count
             assert(np.sum(train_sets[r,fid,:]) + np.sum(valid_sets[r,fid,:]) + np.sum(test_sets[r,fid,:]) == n)
-            print([np.sum(train_sets[r,fid,:]) , np.sum(valid_sets[r,fid,:]) , np.sum(test_sets[r,fid,:])])
+            #print([np.sum(train_sets[r,fid,:]) , np.sum(valid_sets[r,fid,:]) , np.sum(test_sets[r,fid,:])])
 
+            # print test class distribution
+            test_df = df[test_ix]
+            print([np.sum(test_df['bin'] == b) for b in sorted(set(test_df['bin']))])
         # ensure each instance is tested exactly once
         curr_ix = np.zeros(n)
         for fid in range(folds):

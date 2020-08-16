@@ -1,51 +1,69 @@
-#
-#   Examples:
-#       
-#   - To generated LID figure:
-#        python -m analysis.fig_feature_violin ../generated-data/task_yeast_smf_30 ../generated-data/features/ppc_yeast_topology.npz 11 ../tmp/fig1_e.png
-# 
 
 import seaborn as sns 
 import numpy as np 
 import pandas as pd 
 import matplotlib.pyplot as plt 
 import sys 
+import json 
 
 BINS = np.array(['L', 'R', 'N'])
 
 plt.rcParams["font.family"] = "Liberation Serif"
 
+plot_cfg = {
+    "tick_label_size" : 50,
+    "xlabel_size" : 60,
+    "ylabel_size" : 60,
+    "border_size" : 6,
+    "bar_border_size" : 2.5,
+    "bar_label_size" : 48,
+    "stars_label_size" : 48,
+    "annot_size" : 82,
+    "iqr_color" : "#303030",
 
-def main(feature_file, fid, output_path, remove_zeros=False):
+}
+plt.rcParams["font.weight"] = "bold"
+plt.rcParams['mathtext.fontset'] = 'stix'
+
+def main(cfg):
     
-    d = np.load(feature_file)
-    labels = d['feature_labels'].tolist()
-    f = d['F'][:, fid]
-    f = f * d['std'][fid] + d['mu'][fid]
-    
-    if remove_zeros:
-        ix = f > 0
-        f = f[ix]
     
     _, ax = plt.subplots(1, 1, figsize=(10, 10))
-    sns.distplot(a=f, norm_hist=True, kde=False, ax=ax)
-    ax.yaxis.set_tick_params(labelsize=20)
-    ax.xaxis.set_tick_params(labelsize=20)
-    ax.set_xlabel(labels[fid], fontsize=22)
-    ax.set_ylabel('Frequency', fontsize=22)
 
-    ax.yaxis.set_tick_params(length=10, width=1, which='both')
-    ax.xaxis.set_tick_params(length=0)
+    for spec in cfg['species']:
+        d = np.load(spec['path'])
+        labels = d['feature_labels'].tolist()
+        f = d['F'][:, cfg['fid']]
+        f = f * d['std'][cfg['fid']] + d['mu'][cfg['fid']]
+        
+        if cfg['remove_zeros']:
+            ix = f > 0
+            f = f[ix]
+        
+        sns.kdeplot(f, ax=ax, linewidth=5, color=spec['color'], label=spec['name'])
+        
+    ax.legend(fontsize=36, frameon=False)
+    ax.yaxis.set_tick_params(labelsize=plot_cfg['tick_label_size'])
+    ax.xaxis.set_tick_params(labelsize=plot_cfg['tick_label_size'])
+    ax.set_xlabel(cfg['xlabel'], fontsize=plot_cfg['xlabel_size'], fontweight='bold')
+    ax.set_ylabel('Probability', fontsize=plot_cfg['ylabel_size'], fontweight='bold')
 
+    #ax.yaxis.set_tick_params(length=10, width=1, which='both')
+    #ax.xaxis.set_tick_params(length=0)
+    
+    ax.set_xlim(cfg['xlim'])
     ax.grid(False)
     plt.setp(ax.spines.values(), linewidth=2, color='black')
 
-    plt.savefig(output_path, bbox_inches='tight', dpi=100)
+    yticks = ax.yaxis.get_major_ticks()
+    yticks[0].label1.set_visible(False)
+
+    plt.savefig(cfg['output_path'], bbox_inches='tight', dpi=100)
     plt.close()
 
 if __name__ == "__main__":
-    feature_file = sys.argv[1]
-    fid = int(sys.argv[2])
-    output_path = sys.argv[3]
-
-    main(feature_file, fid, output_path)
+    cfg_path = sys.argv[1]
+    with open(cfg_path, 'r') as f:
+        cfg = json.load(f)
+    
+    main(cfg)

@@ -1,0 +1,32 @@
+{
+    "species" : [
+        {
+            "path" : "../generated-data/features/ppc_yeast_redundancy.npz",
+            "name" : "$\\it{S. cerevisiae}$",
+            "color" : "#FF3AF2"
+        },
+        {
+            "path" : "../generated-data/features/ppc_pombe_redundancy.npz",
+            "name" : "$\\it{S. pombe}$",
+            "color" : "#FFA93A"
+        },
+        {
+            "path" : "../generated-data/features/ppc_human_redundancy.npz",
+            "name" : "$\\it{H. sapiens}$",
+            "fsize" : 40,
+            "color" : "#3AFF46"
+        },
+        {
+            "path" : "../generated-data/features/ppc_dro_redundancy.npz",
+            "name" : "$\\it{D. melanogaster}$",
+            "color" : "#3A90FF",
+            "size" : 18053,
+            "fsize" : 46
+        }
+    ],
+    "fid" : 0,
+    "xlabel" : "Percent Identity",
+    "output_path" : "../tmp/redundancy_distrib.png",
+    "remove_zeros" : false,
+    "xlim" : [0, 100]
+}

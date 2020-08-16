@@ -12,7 +12,7 @@
         },
         {
             "name" : "go",
-            "path" : "../generated-data/features/ppc_yeast_sgo.npz",
+            "path" : "../generated-data/features/ppc_yeast_common_sgo.npz",
             "selected_features" : null
         }
     ],

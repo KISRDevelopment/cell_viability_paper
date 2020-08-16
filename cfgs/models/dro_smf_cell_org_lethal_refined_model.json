@@ -1,0 +1,42 @@
+{
+    "spec" : [
+        {
+            "name" : "topology",
+            "hidden_activation" : "tanh",
+            "layer_sizes" : [5],
+            "type" : "ff",
+            "pairwise" : false,
+            "selected_features" : ["lid"],
+            "paths" : ["../generated-data/features/ppc_dro_topology.npz"]
+        },
+        {
+            "name" : "go",
+            "hidden_activation" : "tanh",
+            "layer_sizes" : [5],
+            "type" : "ff",
+            "pairwise" : false,
+            "paths" : ["../generated-data/features/ppc_dro_common_sgo.npz"]
+        },
+        {
+            "name" : "redundancy",
+            "hidden_activation" : "tanh",
+            "layer_sizes" : [5],
+            "type" : "ff",
+            "pairwise" : false,
+            "selected_features" : ["pident"],
+            "paths" : ["../generated-data/features/ppc_dro_redundancy.npz"]
+        }
+    ],
+    "scramble" : false,
+    "optimizer": "nadam",
+    "epochs": 1000,
+    "verbose": true,
+    "patience": 50,
+    "balanced_loss" : true,
+    "batch_size" : 10000,
+    "embedding_size" : 5,
+    "embedding_activation" : "tanh",
+    "task_path" : "../generated-data/task_dro_cell_org_lethal",
+    "targets_path" : "../generated-data/targets/task_dro_cell_org_lethal_bin_simple.npz",
+    "splits_path" : "../generated-data/splits/task_dro_cell_org_lethal_10reps_5folds_0.20valid.npz"
+}

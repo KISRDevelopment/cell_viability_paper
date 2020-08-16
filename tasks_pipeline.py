@@ -23,6 +23,7 @@ import utils.bin_interacting
 import utils.make_fb_dataset
 import ppc_creation.ppc
 import utils.bin_lethal
+import tasks.cell_org_lethal
 
 if not os.path.exists('../generated-data/splits'):
     os.makedirs('../generated-data/splits')
@@ -38,25 +39,25 @@ if not os.path.exists('../generated-data/targets'):
 # # smf tasks
 
 # gpath = "../generated-data/ppc_yeast"
-smf_task_path = "../generated-data/task_yeast_smf_30"
+# smf_task_path = "../generated-data/task_yeast_smf_30"
 # tasks.yeast_smf.main(gpath, 30, smf_task_path)
 # utils.bin_simple.main(smf_task_path)
 # utils.cv_simple.main(smf_task_path, 10, 5, 0.2)
-utils.bin_lethal.main(smf_task_path)
+# utils.bin_lethal.main(smf_task_path)
 
 # gpath = "../generated-data/ppc_pombe"
-smf_task_path = "../generated-data/task_pombe_smf"
+# smf_task_path = "../generated-data/task_pombe_smf"
 # tasks.pombe_smf.main(gpath, smf_task_path)
 # utils.bin_simple.main(smf_task_path)
 # utils.cv_simple.main(smf_task_path, 10, 5, 0.2)
-utils.bin_lethal.main(smf_task_path)
+# utils.bin_lethal.main(smf_task_path)
 
 # gpath = "../generated-data/ppc_human"
-smf_task_path = "../generated-data/task_human_smf"
+# smf_task_path = "../generated-data/task_human_smf"
 # tasks.human_smf.main(gpath, smf_task_path)
 # utils.bin_simple.main(smf_task_path)
 # utils.cv_simple.main(smf_task_path, 10, 5, 0.2)
-utils.bin_lethal.main(smf_task_path)
+# utils.bin_lethal.main(smf_task_path)
 
 # gpath = "../generated-data/ppc_human"
 # cell_smf_task_path = "../generated-data/task_human_smf"
@@ -66,17 +67,29 @@ utils.bin_lethal.main(smf_task_path)
 # utils.cv_simple.main(smf_task_path, 10, 5, 0.2)
 
 # gpath = "../generated-data/ppc_dro"
-smf_task_path = "../generated-data/task_dro_smf"
+# smf_task_path = "../generated-data/task_dro_smf"
 # tasks.dro_smf.main(gpath, smf_task_path)
 # utils.bin_simple.main(smf_task_path)
 # utils.cv_simple.main(smf_task_path, 10, 5, 0.2)
-utils.bin_lethal.main(smf_task_path)
+# utils.bin_lethal.main(smf_task_path)
 
 # gpath = "../generated-data/ppc_dro"
 # smf_task_path = "../generated-data/task_dro_smf_org"
 # tasks.dro_org_smf.main(gpath, smf_task_path)
 # utils.bin_simple.main(smf_task_path)
 # utils.cv_simple.main(smf_task_path, 10, 5, 0.2)
+
+smf_task_path = "../generated-data/task_human_cell_org_lethal"
+tasks.cell_org_lethal.main("../generated-data/ppc_human", "../generated-data/task_human_smf", 
+    "../generated-data/task_human_smf_org", smf_task_path)
+utils.bin_simple.main(smf_task_path)
+utils.cv_simple.main(smf_task_path, 10, 5, 0.2)
+
+smf_task_path = "../generated-data/task_dro_cell_org_lethal"
+tasks.cell_org_lethal.main("../generated-data/ppc_dro", "../generated-data/task_dro_smf", 
+    "../generated-data/task_dro_smf_org", smf_task_path)
+utils.bin_simple.main(smf_task_path)
+utils.cv_simple.main(smf_task_path, 10, 5, 0.2)
 
 # # GI tasks
 
