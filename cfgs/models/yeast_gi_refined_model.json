@@ -24,16 +24,20 @@
         },
 
         {
-            "name": "pairwise_comm",
+            "name": "pairwise",
             "group": "pairwise",
-            "sparse" : true,
             "hidden_activation": "tanh",
             "layer_sizes": [
                 5
             ],
             "type": "ff",
             "pairwise": true,
-            "path": "../generated-data/pairwise_features/ppc_yeast_5steps_comms.npz"
+            "paths": [
+                {
+                    "normalize": true,
+                    "path": "../generated-data/pairwise_features/ppc_yeast_shortest_path_len.npy"
+                }
+            ]
         }
     ],
     "optimizer": "nadam",

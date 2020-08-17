@@ -22,8 +22,14 @@ import analysis.tbl_model_comp
 #     num_processes=1)
 # models.multiple_cv.main("models.gi_nn", "../tmp/model_cfgs/yeast_gi_pairwisesweep", 
 #     "../results/task_yeast_gi_hybrid", 10, n_runs=40)
+# models.cv.main("models.gi_nn", "cfgs/models/yeast_gi_refined_model.json", 
+#     "../results/task_yeast_gi_hybrid/refined", 
+#     num_processes=10)
+models.cv.main("models.gi_mn", "cfgs/models/yeast_gi_mn.json", 
+    "../results/task_yeast_gi_hybrid/mn", 
+    num_processes=4)
 
-if not os.path.exists('../results/yeast_gi_hybrid_figures'):
-    os.makedirs('../results/yeast_gi_hybrid_figures')
+# if not os.path.exists('../results/yeast_gi_hybrid_figures'):
+#     os.makedirs('../results/yeast_gi_hybrid_figures')
 
-analysis.tbl_model_comp.main("../results/task_yeast_gi_hybrid", "../results/yeast_gi_hybrid_figures/model_comp.xlsx")
+# analysis.tbl_model_comp.main("../results/task_yeast_gi_hybrid", "../results/yeast_gi_hybrid_figures/model_comp.xlsx")

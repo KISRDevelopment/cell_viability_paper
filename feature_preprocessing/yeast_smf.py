@@ -10,9 +10,7 @@ import json
 
 INPUT_PATH = '../generated-data/costanzo_gi'
 
-STANDARDIZE = True 
-
-def main(gpath):
+def main(gpath, output_path=None, standardize=True, fix_lethal_30=False):
     
     G = nx.read_gpickle(gpath)
     node_set = set(G.nodes())
@@ -69,16 +67,23 @@ def main(gpath):
     F = np.nan_to_num(F)
     print(F.shape)
 
-    output_path = '../generated-data/features/%s_smf' % (os.path.basename(gpath))
-    if STANDARDIZE:
+    if fix_lethal_30:
+        F[:,1] = F[:,1] * (1-F[:,2])
+        
+    if not output_path:
+        output_path = '../generated-data/features/%s_smf' % (os.path.basename(gpath))
+    if standardize:
         F[:, 0] = stats.zscore(F[:, 0])
         F[:, 1] = stats.zscore(F[:, 1])
-        
+    
+    print(F[F[:,2] == 1, :])
+
     np.savez(output_path, F=F, feature_labels=['smf26', 'smf30', 'essential'])
 
 
 if __name__ == "__main__":
     gpath = sys.argv[1]
+    output_path = sys.argv[2]
 
-    main(gpath)
+    main(gpath, output_path, True, True)
     
