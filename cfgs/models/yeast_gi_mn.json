@@ -1,0 +1,19 @@
+{
+    "smf_path" : "../generated-data/features/ppc_yeast_smf_binned.npz",
+    "go_path" : "../generated-data/features/ppc_yeast_common_sgo.npz",
+    "shortest_path_len_path" : "../generated-data/pairwise_features/ppc_yeast_shortest_path_len.npy",
+    "pairwise_comm_path" : "../generated-data/pairwise_features/ppc_yeast_5steps_comms.npz",
+    "optimizer": "nadam",
+    "epochs": 100,
+    "verbose": true,
+    "patience": 10,
+    "balanced_loss": true,
+    "batch_size": 10000,
+    "scramble" : false,
+    "train_model" : true,
+    "trained_model_path" : "../tmp/mnmodel",
+    "task_path" : "../generated-data/task_yeast_gi_hybrid",
+    "targets_path" : "../generated-data/targets/task_yeast_gi_hybrid_bin_simple.npz",
+    "splits_path" : "../generated-data/splits/task_yeast_gi_hybrid_10reps_4folds_0.20valid.npz",
+    "type" : "mn"
+}

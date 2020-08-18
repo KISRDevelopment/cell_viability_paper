@@ -17,6 +17,19 @@
             "paths" : ["../generated-data/features/ppc_yeast_common_sgo.npz"]
         },
         {
+            "name": "smf",
+            "group": "smf",
+            "hidden_activation": "tanh",
+            "layer_sizes": [
+                5
+            ],
+            "type": "ff",
+            "pairwise": false,
+            "paths": [
+                "../generated-data/features/ppc_yeast_smf_binned.npz"
+            ]
+        },
+        {
             "name" : "redundancy",
             "hidden_activation" : "tanh",
             "layer_sizes" : [5],

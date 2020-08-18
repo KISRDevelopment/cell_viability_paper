@@ -25,9 +25,9 @@ import analysis.tbl_model_comp
 # models.cv.main("models.gi_nn", "cfgs/models/yeast_gi_refined_model.json", 
 #     "../results/task_yeast_gi_hybrid/refined", 
 #     num_processes=10)
-models.cv.main("models.gi_mn", "cfgs/models/yeast_gi_mn.json", 
-    "../results/task_yeast_gi_hybrid/mn", 
-    num_processes=4)
+# models.cv.main("models.gi_mn", "cfgs/models/yeast_gi_mn.json", 
+#     "../results/task_yeast_gi_hybrid/mn", 
+#     num_processes=4)
 
 # if not os.path.exists('../results/yeast_gi_hybrid_figures'):
 #     os.makedirs('../results/yeast_gi_hybrid_figures')
