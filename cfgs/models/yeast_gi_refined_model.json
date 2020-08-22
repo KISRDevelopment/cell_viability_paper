@@ -1,6 +1,14 @@
 {
     "spec": [
-
+        {
+            "name" : "topology",
+            "hidden_activation" : "tanh",
+            "layer_sizes" : [5],
+            "type" : "ff",
+            "pairwise" : false,
+            "selected_features" : ["lac"],
+            "paths" : ["../generated-data/features/ppc_yeast_topology.npz"]
+        },
         {
             "name" : "go",
             "hidden_activation" : "tanh",
@@ -19,7 +27,7 @@
             "type": "ff",
             "pairwise": false,
             "paths": [
-                "../generated-data/features/ppc_yeast_smf_binned.npz"
+                "../generated-data/features/ppc_yeast_smf.npz"
             ]
         },
 

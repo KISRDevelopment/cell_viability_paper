@@ -19,7 +19,7 @@
                 "type": "ff",
                 "pairwise": false,
                 "paths": [
-                    "../generated-data/features/ppc_yeast_smf.npz"
+                    "../generated-data/features/ppc_yeast_smf_binned.npz"
                 ]
             },
     
@@ -56,7 +56,7 @@
                 "type": "ff",
                 "pairwise": false,
                 "paths": [
-                    "../generated-data/features/ppc_yeast_smf.npz"
+                    "../generated-data/features/ppc_yeast_smf_binned.npz"
                 ]
             },
     
@@ -97,7 +97,7 @@
                 "type": "ff",
                 "pairwise": false,
                 "paths": [
-                    "../generated-data/features/ppc_yeast_smf.npz"
+                    "../generated-data/features/ppc_yeast_smf_binned.npz"
                 ]
             },
     
@@ -138,7 +138,7 @@
                 "type": "ff",
                 "pairwise": false,
                 "paths": [
-                    "../generated-data/features/ppc_yeast_smf.npz"
+                    "../generated-data/features/ppc_yeast_smf_binned.npz"
                 ]
             },
     
@@ -179,7 +179,7 @@
                 "type": "ff",
                 "pairwise": false,
                 "paths": [
-                    "../generated-data/features/ppc_yeast_smf.npz"
+                    "../generated-data/features/ppc_yeast_smf_binned.npz"
                 ]
             },
     
@@ -220,7 +220,7 @@
                 "type": "ff",
                 "pairwise": false,
                 "paths": [
-                    "../generated-data/features/ppc_yeast_smf.npz"
+                    "../generated-data/features/ppc_yeast_smf_binned.npz"
                 ]
             },
     

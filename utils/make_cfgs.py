@@ -4,7 +4,10 @@ import sys
 import models.feature_loader as feature_loader
 import copy 
 
-def main(cfg, output_dir):
+def main(cfg_path, output_dir):
+    
+    with open(cfg_path, 'r') as f:
+        cfg = json.load(f)
     
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
@@ -23,7 +26,4 @@ if __name__ == "__main__":
     cfg_path = sys.argv[1]
     output_dir = sys.argv[2]
 
-    with open(cfg_path, 'r') as f:
-        cfg = json.load(f)
-    
-    main(cfg, output_dir)
+    main(cfg_path, output_dir)

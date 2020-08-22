@@ -1,8 +1,28 @@
 {
-    "smf_path" : "../generated-data/features/ppc_yeast_smf_binned.npz",
-    "go_path" : "../generated-data/features/ppc_yeast_common_sgo.npz",
-    "shortest_path_len_path" : "../generated-data/pairwise_features/ppc_yeast_shortest_path_len.npy",
-    "pairwise_comm_path" : "../generated-data/pairwise_features/ppc_yeast_5steps_comms.npz",
+    "spec" : [
+        {
+            "name" : "smf",
+            "path" : "../generated-data/features/ppc_yeast_smf_binned.npz",
+            "processor" : "BinnedSmfProcessor"
+        },
+        {
+            "name" : "sgo",
+            "path" : "../generated-data/features/ppc_yeast_common_sgo.npz",
+            "processor" : "GoProcessor"
+        },
+        {
+            "name" : "spl",
+            "normalize" : true,
+            "path" : "../generated-data/pairwise_features/ppc_yeast_shortest_path_len.npy",
+            "processor" : "PairwiseProcessor"
+        },
+        {
+            "name" : "topology",
+            "path" : "../generated-data/features/ppc_yeast_topology.npz",
+            "feature" : "lid",
+            "processor" : "StandardProcessor"
+        }
+    ],
     "optimizer": "nadam",
     "epochs": 100,
     "verbose": true,

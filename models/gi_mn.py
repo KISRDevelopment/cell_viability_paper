@@ -144,50 +144,20 @@ def main(cfg, rep, fold, output_path, print_results=True):
 
 def load_features(cfg):
     feature_labels = []
+    processors = []
 
-    d_smf = np.load(cfg['smf_path'], allow_pickle=True)
-    
-    d_go = np.load(cfg['go_path'])
-    
-    F_spl = np.load(cfg['shortest_path_len_path'])
-    iu = np.triu_indices(F_spl.shape[0], 1)
-    vals = F_spl[:,:][iu]
-    mu = np.mean(vals)
-    std = np.std(vals, ddof=1)
-    F_spl = (F_spl - mu) / std 
+    for spec in cfg['spec']:
+        klass = globals()[spec['processor']]
+        proc = klass(spec)
+        feature_labels.extend(proc.feature_labels)
+        processors.append(proc)
 
-    # d = np.load(cfg['pairwise_comm_path'])
-    # indecies = d['indecies']
-    # data = d['data']
-    # indexed_data = {}
-    # for i in range(data.shape[0]):
-    #     index = tuple(indecies[i, :])
-    #     indexed_data[index] = data[i,:]
-    # pairwise_comm = indexed_data
+    return processors, feature_labels
 
-    # feature_labels.extend(['delta_%s' % lbl for lbl in d_smf['feature_labels'][:-1]])
-    # feature_labels.extend(['sum_%s' % lbl for lbl in d_smf['feature_labels'][:-1]])
-    # feature_labels.append('ess')
-
-    feature_labels.extend(['t' for i in range(6)])
-
-    feature_labels.extend(['sgo_either_%s' % s for s in d_go['feature_labels']])
-    feature_labels.extend(['sgo_both_%s' % s for s in d_go['feature_labels']])
-    feature_labels.append('shortest_path_len')
-
-    return (d_smf, d_go, F_spl), feature_labels
-
-def create_data_iterator(df, y, fsets, cfg, shuffle=True):
+def create_data_iterator(df, y, processors, cfg, shuffle=True):
     idx = np.arange(df.shape[0])
     batch_size = cfg['batch_size']
 
-    d_smf, d_go, F_spl = fsets 
-    # first_val = next(iter(pcomm.values()))
-    # pcomm_shape = len(first_val)
-
-    F_smf = d_smf['F']
-    
-    F_go = d_go['F']
 
     def iterator():
         while True:
@@ -200,44 +170,95 @@ def create_data_iterator(df, y, fsets, cfg, shuffle=True):
                 batch_y = y[indecies,:]
                 
                 features = []
+
+                for proc in processors:
+                    features.append(proc.transform(batch_df))
                 
-                # compute features
-                # sum_essentials =  F_smf[batch_df['a_id'], -1] + F_smf[batch_df['b_id'], -1]
-                # smf_features = []
-                # for i in range(F_smf.shape[1]-1):
-                #     delta_smf = np.abs(F_smf[batch_df['a_id'], i] - F_smf[batch_df['b_id'], i])
-                #     smf_features.append(delta_smf)
-
-                # for i in range(F_smf.shape[1]-1):
-                #     sum_smf = np.abs(F_smf[batch_df['a_id'], i] + F_smf[batch_df['b_id'], i])
-                #     smf_features.append(sum_smf)
-
-                # smf_features.append(sum_essentials)
-                # smf_features = np.vstack(smf_features).T 
-
-                smf_features = []
-                for u in range(F_smf.shape[1]):
-                    for w in range(u, F_smf.shape[1]):
-                        smf_features.append(
-                            (F_smf[batch_df['a_id'], u] * F_smf[batch_df['b_id'], w]).astype(bool) | \
-                            (F_smf[batch_df['a_id'], w] * F_smf[batch_df['b_id'], u]).astype(bool))
-                
-                smf_features = np.vstack(smf_features).T.astype(int)
-                # print(np.sum(smf_features, axis=0))
-
-                go_a = F_go[batch_df['a_id'], :]
-                go_b = F_go[batch_df['b_id'], :]
-                go_either = ((go_a + go_b) > 0).astype(int)
-                go_both = go_a * go_b 
-                
-                spl = F_spl[batch_df['a_id'], batch_df['b_id'],np.newaxis]
-
-                batch_F = np.hstack([smf_features, go_either, go_both, spl])
+                batch_F = np.hstack(features)
                 
                 yield (batch_F, batch_y)
     
     return iterator
 
+class BinnedSmfProcessor(object):
+
+    def __init__(self, cfg):
+        d_smf = np.load(cfg['path'], allow_pickle=True)
+        self.F = d_smf['F']
+        self.feature_labels = []
+
+        orig_feature_labels = d_smf['feature_labels']
+        for i in range(len(orig_feature_labels)):
+            for j in range(i, len(orig_feature_labels)):
+                self.feature_labels.append('smf_%s%s' % (orig_feature_labels[i], orig_feature_labels[j]))
+
+    def transform(self, df):
+        smf_features = []
+        F = self.F 
+
+        for u in range(F.shape[1]):
+            for w in range(u, F.shape[1]):
+                smf_features.append(
+                    (F[df['a_id'], u] * F[df['b_id'], w]).astype(bool) | \
+                    (F[df['a_id'], w] * F[df['b_id'], u]).astype(bool))
+                
+        smf_features = np.vstack(smf_features).T.astype(int)
+        return smf_features
+    
+class GoProcessor(object):
+
+    def __init__(self, cfg):
+        d_go = np.load(cfg['path'])
+        self.F = d_go['F']
+
+        self.feature_labels = []
+
+        self.feature_labels.extend(['sgo_either_%s' % s for s in d_go['feature_labels']])
+        self.feature_labels.extend(['sgo_both_%s' % s for s in d_go['feature_labels']])
+
+    def transform(self, df):
+        F = self.F 
+
+        go_a = F[df['a_id'], :]
+        go_b = F[df['b_id'], :]
+        go_either = ((go_a + go_b) > 0).astype(int)
+        go_both = go_a * go_b 
+
+        return np.hstack((go_either, go_both))
+
+class PairwiseProcessor(object):
+
+    def __init__(self, cfg):
+        F = np.load(cfg['path'])
+
+        if cfg['normalize']:
+            iu = np.triu_indices(F.shape[0], 1)
+            vals = F[:,:][iu]
+            mu = np.mean(vals)
+            std = np.std(vals, ddof=1)
+            F = (F - mu) / std 
+
+        self.F = F 
+        self.feature_labels = [cfg['name']]
+    
+    def transform(self, df):
+        return self.F[df['a_id'], df['b_id'], np.newaxis]
+
+class StandardProcessor(object):
+
+    def __init__(self, cfg):
+        d = np.load(cfg['path'])
+        ix = d['feature_labels'] == cfg['feature']
+        self.F = d['F'][:, ix]
+
+        print(self.F.shape) 
+        self.feature_labels = ['sum_%s' % cfg['feature'], 'mult_%s' % cfg['feature']]
+
+    def transform(self, df):
+        sum_F = self.F[df['a_id']] + self.F[df['b_id']]
+        mult_F = self.F[df['a_id']] * self.F[df['b_id']]
+        return np.hstack((sum_F, mult_F))
+        
 def weighted_categorical_xentropy(y_true, y_pred):
     
     xe = y_true * tf.math.log(y_pred)
