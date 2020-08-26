@@ -1,0 +1,41 @@
+{
+    "output_path" : "../results/cv_figs_pombe_gi/",
+    "models" : [
+        {
+            "name" : "Refined model",
+            "color" : "#FF0000",
+            "cm_color" : "#FF0000",
+            "path" : "../results/task_pombe_gi/refined",
+            "show" : true
+        },
+        {
+            "name" : "MN Model",
+            "color" : "#3A90FF",
+            "cm_color" : "#3A90FF",
+            "path" : "../results/task_pombe_gi/mn",
+            "show" : true
+        },
+        {
+            "name" : "Null",
+            "color" : "white",
+            "star_color" : "#c3c6c6",
+            "path" : "../results/task_pombe_gi/null",
+            "show" : true,
+            "show_roc" : false
+        },
+        {
+            "name" : "Scrambled",
+            "color" : "grey",
+            "path" : "../results/task_pombe_gi/null_scrambled",
+            "show" : true,
+            "show_roc" : true
+        }
+    ],
+    "classes" : ["Negative", "Neutral", "Positive", "Suppression"],
+    "short_classes" : ["-", "N", "+", "S"],
+    "ylim" : [0, 0.8],
+    "plot_cfg" : {
+        "annot_size" : 72,
+        "bar_label_size" : 42
+    }
+}

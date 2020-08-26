@@ -1,6 +1,14 @@
 {
     "spec": [
-
+        {
+            "name" : "topology",
+            "hidden_activation" : "tanh",
+            "layer_sizes" : [5],
+            "type" : "ff",
+            "pairwise" : false,
+            "selected_features" : ["lid"],
+            "paths" : ["../generated-data/features/ppc_pombe_topology.npz"]
+        },
         {
             "name" : "go",
             "hidden_activation" : "tanh",
@@ -19,22 +27,22 @@
             "type": "ff",
             "pairwise": false,
             "paths": [
-                "../generated-data/features/ppc_pombe_smf.npz"
+                "../generated-data/features/ppc_pombe_smf_binned.npz"
             ]
         },
-
         {
-            "name": "pairwise_comm",
+            "name": "pairwise",
             "group": "pairwise",
-            "sparse" : true,
             "hidden_activation": "tanh",
             "layer_sizes": [
                 5
             ],
             "type": "ff",
             "pairwise": true,
-            "path": "../generated-data/pairwise_features/ppc_pombe_ppc_pombe_5steps_comms.npz"
+            "pairwise_sparse" : true,
+            "path": "../generated-data/pairwise_features/ppc_pombe_shortest_path_len_sparse.npz"
         }
+        
     ],
     "optimizer": "nadam",
     "epochs": 200,
@@ -46,6 +54,6 @@
     "embedding_activation": "tanh",
     "scramble" : false,
     "task_path" : "../generated-data/task_pombe_gi",
-    "targets_path" : "../generated-data/targets/task_pombe_gi_bin_interacting.npz",
+    "targets_path" : "../generated-data/targets/task_pombe_gi_bin_simple.npz",
     "splits_path" : "../generated-data/splits/task_pombe_gi_10reps_4folds_0.20valid.npz"
 }

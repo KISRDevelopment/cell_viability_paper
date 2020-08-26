@@ -1,8 +1,8 @@
 import numpy as np 
 import json
 import numpy.random as rng 
-
-
+import scipy.sparse
+import scipy.stats 
 def read_paths(paths):
     Fs = []
     feature_labels = []
@@ -36,12 +36,27 @@ def load_feature_sets(spec, scramble=False):
             fshapes.append(fset.shape[1:])
 
         else:
-            pFs = []
-            iu = None
+            
+            # if elm.get('csr_sparse', False):
+            #     F = scipy.sparse.load_npz(elm['path'])
+            #     feature_sets.append(F)
+            #     fshapes.append((1,))
+
+            #     continue 
+
+            if elm.get('pairwise_sparse', False):
+                F = SparsePairwiseMatrix(elm['path'])
+                feature_sets.append(F)
+                fshapes.append(F.shape())
+                continue 
             
             if not elm.get('sparse', False):
-                paths = elm['paths']
 
+                paths = elm['paths']
+                
+                pFs = []
+                iu = None
+            
                 for p in paths:
                     pF = np.load(p['path'])
 
@@ -101,6 +116,82 @@ def load_feature_sets(spec, scramble=False):
                 fshapes.append([data.shape[1],])
 
     return feature_sets, fshapes
+
+class SparsePairwiseMatrix(object):
+
+    def __init__(self, path):
+        d = np.load(path, allow_pickle=True)
+
+
+        self.Ps = d['Ps']
+        self.node_id_to_comp = d['node_id_to_comp']
+
+        eligible_Ps = [P for P in self.Ps if len(P) > 1]
+        n = len(self.node_id_to_comp)
+        possible_combs = n * (n-1) / 2 
+        avail_combs = sum([len(P)*(len(P)-1)/2 for P in eligible_Ps])
+
+        print("Possible combinations: %d, available: %f" % (possible_combs, avail_combs))
+
+        all_vals = []
+        for P in eligible_Ps:
+            P = np.array(P)
+            iu = np.triu_indices(P.shape[0], 1)
+            
+            vals = P[iu]
+            all_vals.extend(vals)
+        
+        sum_vals = np.sum(all_vals) + (possible_combs - avail_combs) * 1e5
+        self.mu = sum_vals / possible_combs
+        self.std = (np.sum(np.square(all_vals - self.mu)) + (possible_combs - avail_combs) * np.square(1e5 - self.mu)) / (possible_combs-1)
+        self.std = np.sqrt(self.std)
+
+        #print("Mean: %f, std: %f" % (self.mu, self.std))
+    def shape(self):
+        return (1,)
+    
+    def transform(self, df):
+
+        a_id = np.array(df['a_id'])
+        b_id = np.array(df['b_id'])
+
+        F = np.zeros((df.shape[0], 1))
+
+        # things that belong to diff components have _infinite_ distance 
+        ix_same_comp = self.node_id_to_comp[a_id, 0] == self.node_id_to_comp[b_id, 0]
+        F[~ix_same_comp] = 1e5
+
+        # get things that belong to same components
+        ix_same_comp = np.where(ix_same_comp)[0]
+        for idx in ix_same_comp:
+            
+            # get the node ids
+            a, b = a_id[idx], b_id[idx]
+            
+            assert self.node_id_to_comp[a,0] == self.node_id_to_comp[b,0]
+
+            # get the corresponding distance matrix
+            P = self.Ps[self.node_id_to_comp[a,0]]
+
+            # get their index within the distance matrix
+            a_idx = self.node_id_to_comp[a,1]
+            b_idx = self.node_id_to_comp[b,1]
+            assert a_idx != b_idx, "%s %s" % (a, b)
+
+            # ensure that we haven't processed this already
+            assert F[idx] == 0
+
+            # set value
+            F[idx] = P[a_idx][b_idx]
+
+            assert not np.isnan(F[idx])
+
+        F = (F-self.mu) / self.std 
+
+        #F = scipy.stats.zscore(F)
+        #assert np.sum(np.isnan(new_F)) == 0, "Min: %d, Max: %d" % (np.min(F), np.max(F))
+
+        return F 
 
 if __name__ == "__main__":
     main()

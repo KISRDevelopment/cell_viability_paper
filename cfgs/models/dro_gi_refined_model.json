@@ -1,6 +1,14 @@
 {
     "spec": [
-
+        {
+            "name" : "topology",
+            "hidden_activation" : "tanh",
+            "layer_sizes" : [5],
+            "type" : "ff",
+            "pairwise" : false,
+            "selected_features" : ["lid"],
+            "paths" : ["../generated-data/features/ppc_dro_topology.npz"]
+        },
         {
             "name" : "go",
             "hidden_activation" : "tanh",
@@ -19,21 +27,20 @@
             "type": "ff",
             "pairwise": false,
             "paths": [
-                "../generated-data/features/ppc_dro_smf.npz"
+                "../generated-data/features/ppc_dro_smf_binned.npz"
             ]
         },
-
         {
-            "name": "pairwise_comm",
+            "name": "pairwise",
             "group": "pairwise",
-            "sparse" : true,
             "hidden_activation": "tanh",
             "layer_sizes": [
                 5
             ],
             "type": "ff",
             "pairwise": true,
-            "path": "../generated-data/pairwise_features/ppc_dro_5steps_comms.npz"
+            "pairwise_sparse" : true,
+            "path": "../generated-data/pairwise_features/ppc_dro_shortest_path_len_sparse.npz"
         }
     ],
     "optimizer": "nadam",

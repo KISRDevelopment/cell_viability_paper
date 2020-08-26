@@ -6,7 +6,7 @@
             "layer_sizes" : [5],
             "type" : "ff",
             "pairwise" : false,
-            "selected_features" : ["lac"],
+            "selected_features" : ["lid"],
             "paths" : ["../generated-data/features/ppc_yeast_topology.npz"]
         },
         {

@@ -79,17 +79,17 @@ if not os.path.exists('../generated-data/targets'):
 # utils.bin_simple.main(smf_task_path)
 # utils.cv_simple.main(smf_task_path, 10, 5, 0.2)
 
-smf_task_path = "../generated-data/task_human_cell_org_lethal"
-tasks.cell_org_lethal.main("../generated-data/ppc_human", "../generated-data/task_human_smf", 
-    "../generated-data/task_human_smf_org", smf_task_path)
-utils.bin_simple.main(smf_task_path)
-utils.cv_simple.main(smf_task_path, 10, 5, 0.2)
+# smf_task_path = "../generated-data/task_human_cell_org_lethal"
+# tasks.cell_org_lethal.main("../generated-data/ppc_human", "../generated-data/task_human_smf", 
+#     "../generated-data/task_human_smf_org", smf_task_path)
+# utils.bin_simple.main(smf_task_path)
+# utils.cv_simple.main(smf_task_path, 10, 5, 0.2)
 
-smf_task_path = "../generated-data/task_dro_cell_org_lethal"
-tasks.cell_org_lethal.main("../generated-data/ppc_dro", "../generated-data/task_dro_smf", 
-    "../generated-data/task_dro_smf_org", smf_task_path)
-utils.bin_simple.main(smf_task_path)
-utils.cv_simple.main(smf_task_path, 10, 5, 0.2)
+# smf_task_path = "../generated-data/task_dro_cell_org_lethal"
+# tasks.cell_org_lethal.main("../generated-data/ppc_dro", "../generated-data/task_dro_smf", 
+#     "../generated-data/task_dro_smf_org", smf_task_path)
+# utils.bin_simple.main(smf_task_path)
+# utils.cv_simple.main(smf_task_path, 10, 5, 0.2)
 
 # # GI tasks
 
@@ -119,12 +119,12 @@ utils.cv_simple.main(smf_task_path, 10, 5, 0.2)
 # utils.bin_interacting.main(gi_task_path)
 # utils.cv_gi.main(gi_task_path, 10, 4, 0.2)
 
-# gpath = "../generated-data/ppc_human"
-# gi_task_path = "../generated-data/task_human_gi"
-# tasks.biogrid_plus_negative_sampling.main(gpath, "../generated-data/biogrid_human", gi_task_path, 1000000)
-# utils.bin_simple.main(gi_task_path)
-# utils.bin_interacting.main(gi_task_path)
-# utils.cv_gi.main(gi_task_path, 10, 4, 0.2)
+gpath = "../generated-data/ppc_human"
+gi_task_path = "../generated-data/task_human_gi"
+tasks.biogrid_plus_negative_sampling.main(gpath, "../generated-data/biogrid_human", gi_task_path, 1000000)
+utils.bin_simple.main(gi_task_path)
+utils.bin_interacting.main(gi_task_path)
+utils.cv_gi.main(gi_task_path, 10, 4, 0.2)
 
 # gpath = "../generated-data/ppc_dro"
 # gi_task_path = "../generated-data/task_dro_gi"

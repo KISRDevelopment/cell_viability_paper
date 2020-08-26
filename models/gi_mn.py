@@ -18,6 +18,9 @@ import scipy.stats as stats
 import numpy.random as rng
 import utils.eval_funcs as eval_funcs
 
+import scipy.sparse 
+import models.feature_loader
+
 def main(cfg, rep, fold, output_path, print_results=True):
 
     dataset_path = cfg['task_path']
@@ -27,10 +30,12 @@ def main(cfg, rep, fold, output_path, print_results=True):
     # load dataset
     df = pd.read_csv(dataset_path)
     
-    # shuffle the order of the pairs to eliminate pathological cases
-    A = np.array(df[['a_id', 'b_id']]).T
-    np.random.shuffle(A)
-    df[['a_id', 'b_id']] = A.T 
+    # # shuffle the order of the pairs to eliminate pathological cases
+    # A = np.array(df[['a_id', 'b_id']]).T
+    # print(A)
+    # np.random.shuffle(A)
+    # print(A)
+    # df[['a_id', 'b_id']] = A.T 
 
     # create output
     Y = keras.utils.to_categorical(np.load(targets_path)['y'])
@@ -107,6 +112,12 @@ def main(cfg, rep, fold, output_path, print_results=True):
     preds = model.predict(test_iterator(), steps=np.ceil(test_df.shape[0] / cfg['batch_size']))
     y_target = np.argmax(test_Y, axis=1)
 
+
+    ix = np.sum(np.isnan(preds), axis=1) > 0
+    print("Nan: %d" % np.sum(ix))
+
+    print(test_df[ix])
+    
     r, cm = eval_funcs.eval_classifier(y_target, preds)
     
     if print_results:
@@ -175,7 +186,9 @@ def create_data_iterator(df, y, processors, cfg, shuffle=True):
                     features.append(proc.transform(batch_df))
                 
                 batch_F = np.hstack(features)
-                
+                if np.sum(np.isnan(batch_F)) > 0:
+                    print(batch_F)
+                    print(batch_F.shape)
                 yield (batch_F, batch_y)
     
     return iterator
@@ -244,6 +257,16 @@ class PairwiseProcessor(object):
     def transform(self, df):
         return self.F[df['a_id'], df['b_id'], np.newaxis]
 
+class SparsePairwiseProcessor(object):
+
+    def __init__(self, cfg):
+       
+        self.F = models.feature_loader.SparsePairwiseMatrix(cfg['path'])
+        self.feature_labels = [cfg['name']]
+    
+    def transform(self, df):
+        return self.F.transform(df)
+        
 class StandardProcessor(object):
 
     def __init__(self, cfg):

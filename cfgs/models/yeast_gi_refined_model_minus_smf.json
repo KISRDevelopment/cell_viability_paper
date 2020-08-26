@@ -7,7 +7,7 @@
             "type" : "ff",
             "pairwise" : false,
             "selected_features" : ["lid"],
-            "paths" : ["../generated-data/features/ppc_human_topology.npz"]
+            "paths" : ["../generated-data/features/ppc_yeast_topology.npz"]
         },
         {
             "name" : "go",
@@ -15,22 +15,8 @@
             "layer_sizes" : [5],
             "type" : "ff",
             "pairwise" : false,
-            "paths" : ["../generated-data/features/ppc_human_common_sgo.npz"]
+            "paths" : ["../generated-data/features/ppc_yeast_common_sgo.npz"]
         },
-        {
-            "name": "smf",
-            "group": "smf",
-            "hidden_activation": "tanh",
-            "layer_sizes": [
-                5
-            ],
-            "type": "ff",
-            "pairwise": false,
-            "paths": [
-                "../generated-data/features/ppc_human_smf_binned.npz"
-            ]
-        },
-
         {
             "name": "pairwise",
             "group": "pairwise",
@@ -40,8 +26,12 @@
             ],
             "type": "ff",
             "pairwise": true,
-            "pairwise_sparse" : true,
-            "path": "../generated-data/pairwise_features/ppc_human_shortest_path_len_sparse.npz"
+            "paths": [
+                {
+                    "normalize": true,
+                    "path": "../generated-data/pairwise_features/ppc_yeast_shortest_path_len.npy"
+                }
+            ]
         }
     ],
     "optimizer": "nadam",
@@ -53,7 +43,7 @@
     "embedding_size": 5,
     "embedding_activation": "tanh",
     "scramble" : false,
-    "task_path" : "../generated-data/task_human_gi",
-    "targets_path" : "../generated-data/targets/task_human_gi_bin_interacting.npz",
-    "splits_path" : "../generated-data/splits/task_human_gi_10reps_4folds_0.20valid.npz"
+    "task_path" : "../generated-data/task_yeast_gi_hybrid",
+    "targets_path" : "../generated-data/targets/task_yeast_gi_hybrid_bin_simple.npz",
+    "splits_path" : "../generated-data/splits/task_yeast_gi_hybrid_10reps_4folds_0.20valid.npz"
 }

@@ -42,6 +42,9 @@ def main(gpath, biogrid_path, output_path, n_samples=1000000):
     df['a_id'] = [node_ix[e] for e in df['a']]
     df['b_id'] = [node_ix[e] for e in df['b']]
 
+    ix = df['a_id'] != df['b_id']
+    df = df[ix]
+
     print("Data size: ", df.shape)
     print("Bin counts:")
     print([np.sum(df['bin'] == b) for b in [0,1,2,3]])

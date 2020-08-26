@@ -117,7 +117,8 @@ def overall_bacc(cfg):
             b_ix = df['model'] == model_names[j]
             b_bacc = df[b_ix].sort_values(by=['rep', 'fold'])['bacc']
             print(model_names[i])
-            print(len(b_bacc))
+            print("%d %d" % (len(a_bacc), len(b_bacc)))
+
             statistic, pvalue = scipy.stats.ttest_rel(a_bacc, b_bacc)
 
             if pvalue < adjusted_alpha:

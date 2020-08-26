@@ -21,7 +21,7 @@ import uuid
 import models.feature_loader as feature_loader
 import models.nn_arch as nn_arch
 import utils.eval_funcs as eval_funcs
-
+import scipy.sparse
 
 def main(cfg, rep, fold, output_path, print_results=True):
 
@@ -176,8 +176,22 @@ def feature_transform(df, single_fsets, pairwise_fsets):
 
 
     for fset in pairwise_fsets:
-        if type(fset) != dict:
+
+        if type(fset) == feature_loader.SparsePairwiseMatrix:
+            inputs_AB.append(fset.transform(df))
+        # if type(fset) == scipy.sparse.csr.csr_matrix:
+            
+        #     F = np.zeros((df.shape[0], 1))
+        #     for i, pair in enumerate(zip(a_id, b_id)):
+        #         aid, bid = pair 
+        #         F[i, 0] = fset[aid, bid]
+        #         if F[i, 0] == 0:
+        #             F[i, 0] = 1e5
+        #     F = stats.zscore(F)
+        #     inputs_AB.append(F)
+        elif type(fset) != dict:
             inputs_AB.append(fset[df['a_id'], df['b_id'], :])
+
         else:
             first_val = next(iter(fset.values()))
             fset_shape = len(first_val)
