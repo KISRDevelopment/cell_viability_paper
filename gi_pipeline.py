@@ -240,30 +240,30 @@ import utils.make_cfgs
 # Dro
 #
 
-models.cv.main("models.gi_nn", "cfgs/models/dro_gi_refined_model.json", 
-    "../results/task_dro_gi/refined", 
-    num_processes = 20
-)
+# models.cv.main("models.gi_nn", "cfgs/models/dro_gi_refined_model.json", 
+#     "../results/task_dro_gi/refined", 
+#     num_processes = 20
+# )
 
-models.cv.main("models.gi_nn", "cfgs/models/dro_gi_refined_model_minus_smf.json", 
-    "../results/task_dro_gi/refined_minus_smf", 
-    num_processes = 20
-)
+# models.cv.main("models.gi_nn", "cfgs/models/dro_gi_refined_model_minus_smf.json", 
+#     "../results/task_dro_gi/refined_minus_smf", 
+#     num_processes = 20
+# )
 
-models.cv.main("models.gi_mn", "cfgs/models/dro_gi_mn.json", 
-    "../results/task_dro_gi/mn", 
-    num_processes = 20
-)
+# models.cv.main("models.gi_mn", "cfgs/models/dro_gi_mn.json", 
+#     "../results/task_dro_gi/mn", 
+#     num_processes = 20
+# )
 
-models.cv.main("models.gi_mn", "cfgs/models/dro_gi_mn_minus_smf.json", 
-    "../results/task_dro_gi/mn_minus_smf", 
-    num_processes = 20
-)
+# models.cv.main("models.gi_mn", "cfgs/models/dro_gi_mn_minus_smf.json", 
+#     "../results/task_dro_gi/mn_minus_smf", 
+#     num_processes = 20
+# )
 
-models.cv.main("models.null_model", "cfgs/models/dro_gi_mn_minus_smf.json", 
-    "../results/task_dro_gi/null", 
-    num_processes=20)
+# models.cv.main("models.null_model", "cfgs/models/dro_gi_mn_minus_smf.json", 
+#     "../results/task_dro_gi/null", 
+#     num_processes=20)
 
-models.cv.main("models.gi_nn", "cfgs/models/dro_gi_refined_model.json", 
-    "../results/task_dro_gi/null_scrambled", 
-    num_processes=20, scramble=True)
+# models.cv.main("models.gi_nn", "cfgs/models/dro_gi_refined_model.json", 
+#     "../results/task_dro_gi/null_scrambled", 
+#     num_processes=20, scramble=True)

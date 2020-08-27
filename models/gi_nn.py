@@ -22,7 +22,7 @@ import models.feature_loader as feature_loader
 import models.nn_arch as nn_arch
 import utils.eval_funcs as eval_funcs
 import scipy.sparse
-
+from termcolor import colored
 def main(cfg, rep, fold, output_path, print_results=True):
 
     dataset_path = cfg['task_path']
@@ -59,6 +59,14 @@ def main(cfg, rep, fold, output_path, print_results=True):
     valid_ix = valid_sets[rep,fold,:]
     test_ix = test_sets[rep,fold,:]
 
+    if cfg.get("train_on_full_dataset", False):
+        print(colored("******** TRAINING ON FULL DATASET ***********", "red"))
+        train_ix = train_ix + test_ix
+    
+    if cfg.get("test_on_full_dataset", False):
+        print(colored("******** TESTING ON FULL DATASET ***********", "green"))
+        test_ix = train_ix + test_ix + valid_ix
+        
     train_df = df.iloc[train_ix]
     valid_df = df.iloc[valid_ix]
     test_df = df.iloc[test_ix]
