@@ -12,7 +12,7 @@
             "name" : "Refined model",
             "color" : "#FF0000",
             "cm_color" : "#FF0000",
-            "path" : "../tmp/topology--lid~go~pairwise--spl~smf",
+            "path" : "../results/task_yeast_gi_hybrid/refined",
             "show" : true
         },
         {

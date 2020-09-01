@@ -1,7 +1,7 @@
 {
     "output_path" : "../results/fig_smf_generalization_human_binary/",
     "models" : [
-        
+        {
             "name" : "OR model",
             "color" : "#00CC00",
             "path" : "../results/smf_generalization_binary/human_orm.npz",
