@@ -1,24 +1,32 @@
 {
-    "output_path" : "../results/fig_smf_generalization_pombe_binary/",
-    "models" : [
-        
+    "output_path": "../figures/fig_smf_generalization_pombe_binary/",
+    "models": [
         {
-            "name" : "OR model",
-            "color" : "#00CC00",
-            "path" : "../results/smf_generalization_binary/pombe_orm.npz",
-            "show" : true
+            "name": "OR model",
+            "color": "#00CC00",
+            "path": "../results/smf_generalization_binary/pombe_orm.npz",
+            "show": true
         },
         {
-            "name" : "Null",
-            "color" : "white",
-            "star_color" : "#c3c6c6",
-            "cm_color" : "#c3c6c6",
-            "path" : "../results/smf_generalization_binary/pombe_null.npz",
-            "show" : true,
-            "show_roc" : false
+            "name": "Null",
+            "color": "white",
+            "star_color": "grey",
+            "cm_color": "grey",
+            "path": "../results/smf_generalization_binary/pombe_null.npz",
+            "show": true,
+            "show_roc": false
         }
     ],
-    "classes" : ["Lethal", "Viable"],
-    "short_classes" : ["L", "V"],
-    "ylim" : [0, 0.9]
+    "classes": [
+        "Lethal",
+        "Viable"
+    ],
+    "short_classes": [
+        "L",
+        "V"
+    ],
+    "ylim": [
+        0,
+        0.9
+    ]
 }

@@ -1,25 +1,33 @@
 {
-    "output_path" : "../results/fig_gi_generalization_pombe/",
-    "models" : [
-       
+    "output_path": "../figures/fig_gi_generalization_pombe/",
+    "models": [
         {
-            "name" : "MN model",
-            "color" : "#3A90FF",
-            "cm_color" : "#3A90FF",
-            "path" : "../results/gi_generalization/pombe_mn.npz",
-            "show" : true
+            "name": "MN model",
+            "color": "#3A90FF",
+            "cm_color": "#3A90FF",
+            "path": "../results/gi_generalization/pombe_mn.npz",
+            "show": true
         },
         {
-            "name" : "Null",
-            "color" : "white",
-            "star_color" : "#c3c6c6",
-            "cm_color" : "#c3c6c6",
-            "path" : "../results/gi_generalization/pombe_null.npz",
-            "show" : true,
-            "show_roc" : false
+            "name": "Null",
+            "color": "white",
+            "star_color": "grey",
+            "cm_color": "grey",
+            "path": "../results/gi_generalization/pombe_null.npz",
+            "show": true,
+            "show_roc": false
         }
     ],
-    "classes" : ["Interacting", "Neutral"],
-    "short_classes" : ["I", "N"],
-    "ylim" : [0, 1.0]
+    "classes": [
+        "Interacting",
+        "Neutral"
+    ],
+    "short_classes": [
+        "I",
+        "N"
+    ],
+    "ylim": [
+        0,
+        1.0
+    ]
 }

@@ -1,32 +1,40 @@
 {
-    "output_path" : "../results/cv_figs_dro_gi_binary/",
-    "models" : [
+    "output_path": "../figures/cv_figs_dro_gi_binary/",
+    "models": [
         {
-            "name" : "Refined model",
-            "color" : "#FF0000",
-            "cm_color" : "#FF0000",
-            "path" : "../results/task_dro_gi/refined",
-            "show" : true
+            "name": "Refined model",
+            "color": "#FF0000",
+            "cm_color": "#FF0000",
+            "path": "../results/task_dro_gi/refined",
+            "show": true
         },
         {
-            "name" : "MN Model",
-            "color" : "#3A90FF",
-            "cm_color" : "#3A90FF",
-            "path" : "../results/task_dro_gi/mn",
-            "show" : true
+            "name": "MN Model",
+            "color": "#3A90FF",
+            "cm_color": "#3A90FF",
+            "path": "../results/task_dro_gi/mn",
+            "show": true
         },
         {
-            "name" : "Null",
-            "color" : "white",
-            "star_color" : "#c3c6c6",
-            "cm_color" : "#c3c6c6",
-            "path" : "../results/task_dro_gi/null",
-            "show" : true,
-            "show_roc" : false
+            "name": "Null",
+            "color": "white",
+            "star_color": "grey",
+            "cm_color": "grey",
+            "path": "../results/task_dro_gi/null",
+            "show": true,
+            "show_roc": false
         }
     ],
-    "classes" : ["Interacting", "Neutral"],
-    "short_classes" : ["I", "N"],
-    "ylim" : [0, 1.0]
-    
+    "classes": [
+        "Interacting",
+        "Neutral"
+    ],
+    "short_classes": [
+        "I",
+        "N"
+    ],
+    "ylim": [
+        0,
+        1.0
+    ]
 }

@@ -1,30 +1,39 @@
 {
-    "output_path" : "../results/cv_figs_task_dro_smf_binary/",
-    "models" : [
+    "output_path": "../figures/cv_figs_task_dro_smf_binary/",
+    "models": [
         {
-            "name" : "Refined model",
-            "color" : "#FF0000",
-            "cm_color" : "#FF0000",
-            "path" : "../results/task_dro_smf_binary/refined",
-            "show" : true
+            "name": "Refined model",
+            "color": "#FF0000",
+            "cm_color": "#FF0000",
+            "path": "../results/task_dro_smf_binary/refined",
+            "show": true
         },
         {
-            "name" : "OR model",
-            "color" : "#00CC00",
-            "path" : "../results/task_dro_smf_binary/orm",
-            "show" : true
+            "name": "OR model",
+            "color": "#00CC00",
+            "path": "../results/task_dro_smf_binary/orm",
+            "show": true
         },
         {
-            "name" : "Null",
-            "color" : "white",
-            "star_color" : "#c3c6c6",
-            "cm_color" : "#c3c6c6",
-            "path" : "../results/task_dro_smf_binary/null",
-            "show" : true,
-            "show_roc" : false
+            "name": "Null",
+            "color": "white",
+            "star_color": "grey",
+            "cm_color": "grey",
+            "path": "../results/task_dro_smf_binary/null",
+            "show": true,
+            "show_roc": false
         }
     ],
-    "classes" : ["Lethal", "Viable"],
-    "short_classes" : ["L", "V"],
-    "ylim" : [0, 0.9]
+    "classes": [
+        "Lethal",
+        "Viable"
+    ],
+    "short_classes": [
+        "L",
+        "V"
+    ],
+    "ylim": [
+        0,
+        0.9
+    ]
 }

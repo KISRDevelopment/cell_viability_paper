@@ -1,30 +1,41 @@
 {
-    "output_path" : "../results/cv_figs_task_dro_smf_cell_org_lethal/",
-    "models" : [
+    "output_path": "../figures/cv_figs_task_dro_smf_cell_org_lethal/",
+    "models": [
         {
-            "name" : "Refined model",
-            "color" : "#FF0000",
-            "cm_color" : "#FF0000",
-            "path" : "../results/task_dro_smf_cell_org_lethal/refined",
-            "show" : true
+            "name": "Refined model",
+            "color": "#FF0000",
+            "cm_color": "#FF0000",
+            "path": "../results/task_dro_smf_cell_org_lethal/refined",
+            "show": true
         },
         {
-            "name" : "OR model",
-            "color" : "#00CC00",
-            "path" : "../results/task_dro_smf_cell_org_lethal/orm",
-            "show" : true
+            "name": "OR model",
+            "color": "#00CC00",
+            "path": "../results/task_dro_smf_cell_org_lethal/orm",
+            "show": true
         },
         {
-            "name" : "Null",
-            "color" : "white",
-            "star_color" : "#c3c6c6",
-            "cm_color" : "#c3c6c6",
-            "path" : "../results/task_dro_smf_cell_org_lethal/null",
-            "show" : true,
-            "show_roc" : false
+            "name": "Null",
+            "color": "white",
+            "star_color": "grey",
+            "cm_color": "grey",
+            "path": "../results/task_dro_smf_cell_org_lethal/null",
+            "show": true,
+            "show_roc": false
         }
     ],
-    "classes" : ["Cell Lethal", "Organism Lethal", "Viable"],
-    "short_classes" : ["CL", "OL", "V"],
-    "ylim" : [0, 1.0]
+    "classes": [
+        "Cell Lethal",
+        "Organism Lethal",
+        "Viable"
+    ],
+    "short_classes": [
+        "CL",
+        "OL",
+        "V"
+    ],
+    "ylim": [
+        0,
+        1.0
+    ]
 }
