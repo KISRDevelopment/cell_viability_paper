@@ -18,16 +18,10 @@
             "name" : "Null",
             "color" : "white",
             "star_color" : "#c3c6c6",
+            "cm_color" : "#c3c6c6",
             "path" : "../results/task_dro_smf_org/null",
             "show" : true,
             "show_roc" : false
-        },
-        {
-            "name" : "Scrambled",
-            "color" : "grey",
-            "path" : "../results/task_dro_smf_org/null_scrambled",
-            "show" : true,
-            "show_roc" : true
         }
     ],
     "classes" : ["Lethal", "Viable"],

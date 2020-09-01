@@ -21,14 +21,8 @@
             "star_color" : "#c3c6c6",
             "path" : "../results/gi_generalization/human_null.npz",
             "show" : true,
+            "cm_color" : "#c3c6c6",
             "show_roc" : false
-        },
-        {
-            "name" : "Scrambled",
-            "color" : "grey",
-            "path" : "../results/gi_generalization/human_null_scrambled.npz",
-            "show" : true,
-            "show_roc" : true
         }
     ],
     "classes" : ["Interacting", "Neutral"],

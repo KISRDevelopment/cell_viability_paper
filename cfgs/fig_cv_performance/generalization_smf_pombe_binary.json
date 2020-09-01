@@ -18,16 +18,10 @@
             "name" : "Null",
             "color" : "white",
             "star_color" : "#c3c6c6",
+            "cm_color" : "#c3c6c6",
             "path" : "../results/smf_generalization_binary/pombe_null.npz",
             "show" : true,
             "show_roc" : false
-        },
-        {
-            "name" : "Scrambled",
-            "color" : "grey",
-            "path" : "../results/smf_generalization_binary/pombe_null_scrambled.npz",
-            "show" : true,
-            "show_roc" : true
         }
     ],
     "classes" : ["Lethal", "Viable"],
