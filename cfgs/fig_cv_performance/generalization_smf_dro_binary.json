@@ -1,13 +1,7 @@
 {
     "output_path" : "../results/fig_smf_generalization_dro_binary/",
     "models" : [
-        {
-            "name" : "Refined model",
-            "color" : "#FF0000",
-            "cm_color" : "#FF0000",
-            "path" : "../results/smf_generalization_binary/dro_refined.npz",
-            "show" : true
-        },
+        
         {
             "name" : "OR model",
             "color" : "#00CC00",
