@@ -52,6 +52,9 @@ def main(cfg, rep, fold, output_path, print_results=True):
     valid_ix = valid_sets[rep,fold,:]
     test_ix = test_sets[rep,fold,:]
     
+    if not cfg.get("early_stopping", True):
+        train_ix = train_ix + valid_ix
+        
     if cfg.get("train_on_full_dataset", False):
         print(colored("******** TRAINING ON FULL DATASET ***********", "red"))
         train_ix = train_ix + test_ix
@@ -63,12 +66,17 @@ def main(cfg, rep, fold, output_path, print_results=True):
     valid_df = df.iloc[valid_ix]
     test_df = df.iloc[test_ix]
 
+    
     train_Y = Y[train_ix,:]
     valid_Y = Y[valid_ix,:]
     test_Y = Y[test_ix, :]
 
-    
-    
+    if cfg.get("bootstrap_training", False):
+        print(colored("******** BOOTSTRAPPING TRAINING ***********", "blue"))
+        rix = rng.choice(train_df.shape[0], train_df.shape[0], replace=True)
+        train_df = train_df.iloc[rix]
+        train_Y = train_Y[rix,:]
+        
     fsets, feature_labels = load_features(cfg)
 
     #
@@ -97,9 +105,12 @@ def main(cfg, rep, fold, output_path, print_results=True):
         train_iterator = create_data_iterator(train_df, train_Y, fsets, cfg)
         valid_iterator = create_data_iterator(valid_df, valid_Y, fsets, cfg)
 
-        callbacks = [keras.callbacks.EarlyStopping(monitor='val_loss', 
-            patience=cfg['patience'], restore_best_weights=True)]
-
+        if cfg.get("early_stopping", True):
+            callbacks = [keras.callbacks.EarlyStopping(monitor='val_loss', 
+                patience=cfg['patience'], restore_best_weights=True)]
+        else:
+            callbacks = []
+        
         model.fit_generator(train_iterator(),
             steps_per_epoch=np.ceil(train_df.shape[0] / cfg['batch_size']),
             epochs=cfg['epochs'],
@@ -283,12 +294,13 @@ class StandardProcessor(object):
         self.F = d['F'][:, ix]
 
         print(self.F.shape) 
-        self.feature_labels = ['sum_%s' % cfg['feature'], 'mult_%s' % cfg['feature']]
+        self.feature_labels = ['sum_%s' % cfg['feature']]
 
     def transform(self, df):
         sum_F = self.F[df['a_id']] + self.F[df['b_id']]
-        mult_F = self.F[df['a_id']] * self.F[df['b_id']]
-        return np.hstack((sum_F, mult_F))
+        return sum_F
+        #mult_F = self.F[df['a_id']] * self.F[df['b_id']]
+        #return np.hstack((sum_F, mult_F))
         
 def weighted_categorical_xentropy(y_true, y_pred):
     

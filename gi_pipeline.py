@@ -36,11 +36,11 @@ import utils.make_cfgs
 #     num_processes=10)
 
 # models.cv.main("models.gi_mn", "cfgs/models/yeast_gi_mn.json", 
-#     "../results/task_yeast_gi_hybrid/mn", 
+#     "../results/task_yeast_gi_hybrid/mn_without_prod", 
 #     num_processes=20)
 
 # models.cv.main("models.gi_mn", "cfgs/models/yeast_gi_mn.json", 
-#     "../results/task_yeast_gi_hybrid/orm", 
+#     "../results/task_yeast_gi_hybrid/orm_without_prod", 
 #     num_processes=20, type="orm")
 
 # models.cv.main("models.null_model", "cfgs/models/yeast_gi_mn.json", 
@@ -57,9 +57,9 @@ import utils.make_cfgs
 
 #analysis.tbl_model_comp.main("../results/task_yeast_gi_hybrid", "../results/yeast_gi_hybrid_figures/model_comp.xlsx")
 
-# costanzo_task_path = "../generated-data/task_yeast_gi_costanzo"
-# costanzo_targets_path = "../generated-data/targets/task_yeast_gi_costanzo_bin_simple.npz"
-# costanzo_splits_path = "../generated-data/splits/task_yeast_gi_costanzo_10reps_4folds_0.20valid.npz"
+costanzo_task_path = "../generated-data/task_yeast_gi_costanzo"
+costanzo_targets_path = "../generated-data/targets/task_yeast_gi_costanzo_bin_simple.npz"
+costanzo_splits_path = "../generated-data/splits/task_yeast_gi_costanzo_10reps_4folds_0.20valid.npz"
 
 # models.cv.main("models.gi_nn", "cfgs/models/yeast_gi_full_model.json", 
 #     "../results/task_yeast_gi_costanzo/full", 
@@ -78,19 +78,19 @@ import utils.make_cfgs
 #     splits_path = costanzo_splits_path
 # )
 
-# models.cv.main("models.gi_mn", "cfgs/models/yeast_gi_mn.json", 
-#     "../results/task_yeast_gi_costanzo/mn", 
-#     num_processes=20,
-#     task_path = costanzo_task_path,
-#     targets_path = costanzo_targets_path,
-#     splits_path = costanzo_splits_path)
+models.cv.main("models.gi_mn", "cfgs/models/yeast_gi_mn.json", 
+    "../results/task_yeast_gi_costanzo/mn_without_prod", 
+    num_processes=20,
+    task_path = costanzo_task_path,
+    targets_path = costanzo_targets_path,
+    splits_path = costanzo_splits_path)
 
-# models.cv.main("models.gi_mn", "cfgs/models/yeast_gi_mn.json", 
-#     "../results/task_yeast_gi_costanzo/orm", 
-#     num_processes=20, type="orm",
-#     task_path = costanzo_task_path,
-#     targets_path = costanzo_targets_path,
-#     splits_path = costanzo_splits_path)
+models.cv.main("models.gi_mn", "cfgs/models/yeast_gi_mn.json", 
+    "../results/task_yeast_gi_costanzo/orm_without_prod", 
+    num_processes=20, type="orm",
+    task_path = costanzo_task_path,
+    targets_path = costanzo_targets_path,
+    splits_path = costanzo_splits_path)
 
 # models.cv.main("models.null_model", "cfgs/models/yeast_gi_mn.json", 
 #     "../results/task_yeast_gi_costanzo/null", 
@@ -111,7 +111,7 @@ import utils.make_cfgs
 # Yeast binary
 #
 
-# targets_path = "../generated-data/targets/task_yeast_gi_hybrid_bin_interacting.npz"
+targets_path = "../generated-data/targets/task_yeast_gi_hybrid_bin_interacting.npz"
 
 # models.cv.main("models.gi_nn", "cfgs/models/yeast_gi_refined_model.json", 
 #     "../results/task_yeast_gi_hybrid_binary/refined", 
@@ -125,10 +125,10 @@ import utils.make_cfgs
 #     targets_path = targets_path
 # )
 
-# models.cv.main("models.gi_mn", "cfgs/models/yeast_gi_mn.json", 
-#     "../results/task_yeast_gi_hybrid_binary/mn", 
-#     num_processes=20,
-#     targets_path = targets_path)
+models.cv.main("models.gi_mn", "cfgs/models/yeast_gi_mn.json", 
+    "../results/task_yeast_gi_hybrid_binary/mn_without_prod", 
+    num_processes=20,
+    targets_path = targets_path)
 
 # models.cv.main("models.gi_mn", "cfgs/models/yeast_gi_mn_minus_smf.json", 
 #     "../results/task_yeast_gi_hybrid_binary/mn_minus_smf", 
@@ -158,10 +158,11 @@ import utils.make_cfgs
 #     "../results/task_pombe_gi/refined_minus_smf", 
 #     num_processes = 20
 # )
-# models.cv.main("models.gi_mn", "cfgs/models/pombe_gi_mn.json", 
-#     "../results/task_pombe_gi/mn", 
-#     num_processes = 20
-# )
+models.cv.main("models.gi_mn", "cfgs/models/pombe_gi_mn.json", 
+    "../results/task_pombe_gi/mn_without_prod", 
+    num_processes = 20
+)
+
 # models.cv.main("models.gi_mn", "cfgs/models/pombe_gi_mn_minus_smf.json", 
 #     "../results/task_pombe_gi/mn_minus_smf", 
 #     num_processes = 20
@@ -177,7 +178,7 @@ import utils.make_cfgs
 #
 # Pombe Binary
 #
-# targets_path = "../generated-data/targets/task_pombe_gi_bin_interacting.npz"
+targets_path = "../generated-data/targets/task_pombe_gi_bin_interacting.npz"
 # models.cv.main("models.gi_nn", "cfgs/models/pombe_gi_refined_model.json", 
 #     "../results/task_pombe_gi_binary/refined", 
 #     num_processes = 20,
@@ -188,11 +189,11 @@ import utils.make_cfgs
 #     num_processes = 20,
 #     targets_path=targets_path
 # )
-# models.cv.main("models.gi_mn", "cfgs/models/pombe_gi_mn.json", 
-#     "../results/task_pombe_gi_binary/mn", 
-#     num_processes = 20,
-#     targets_path=targets_path
-# )
+models.cv.main("models.gi_mn", "cfgs/models/pombe_gi_mn.json", 
+    "../results/task_pombe_gi_binary/mn_without_prod", 
+    num_processes = 20,
+    targets_path=targets_path
+)
 # models.cv.main("models.gi_mn", "cfgs/models/pombe_gi_mn_minus_smf.json", 
 #     "../results/task_pombe_gi_binary/mn_minus_smf", 
 #     num_processes = 20,
@@ -220,10 +221,10 @@ import utils.make_cfgs
 #     "../results/task_human_gi/refined_minus_smf", 
 #     num_processes = 20
 # )
-# models.cv.main("models.gi_mn", "cfgs/models/human_gi_mn.json", 
-#     "../results/task_human_gi/mn", 
-#     num_processes = 20
-# )
+models.cv.main("models.gi_mn", "cfgs/models/human_gi_mn.json", 
+    "../results/task_human_gi/mn_without_prod", 
+    num_processes = 20
+)
 # models.cv.main("models.gi_mn", "cfgs/models/human_gi_mn_minus_smf.json", 
 #     "../results/task_human_gi/mn_minus_smf", 
 #     num_processes = 20
@@ -250,10 +251,10 @@ import utils.make_cfgs
 #     num_processes = 20
 # )
 
-# models.cv.main("models.gi_mn", "cfgs/models/dro_gi_mn.json", 
-#     "../results/task_dro_gi/mn", 
-#     num_processes = 20
-# )
+models.cv.main("models.gi_mn", "cfgs/models/dro_gi_mn.json", 
+    "../results/task_dro_gi/mn_without_prod", 
+    num_processes = 20
+)
 
 # models.cv.main("models.gi_mn", "cfgs/models/dro_gi_mn_minus_smf.json", 
 #     "../results/task_dro_gi/mn_minus_smf", 

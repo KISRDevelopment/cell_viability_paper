@@ -11,6 +11,11 @@ OVERWRITE_PROMPT = False
 def main(script_name, cfg_path, output_dir, num_processes=8, interpreation=False, scramble=False, **kwargs):
     orig_cfg_path = cfg_path
 
+    CUDA_VISIBLE_DEVICES = os.getenv('CUDA_VISIBLE_DEVICES')
+    if num_processes > 1 and (CUDA_VISIBLE_DEVICES != "-1"):
+        print("Cannot run CV without setting CUDA_VISIBLE_DEVICES=-1")
+        return 
+    
     with open(cfg_path, 'r') as f:
         cfg = json.load(f)
     

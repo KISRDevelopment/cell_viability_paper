@@ -164,12 +164,34 @@ def create_data_iterator(df, y, single_fsets, pairwise_fsets, cfg, scramble=Fals
                 batch_F = feature_transform(batch_df, single_fsets, pairwise_fsets)
                 
                 if scramble:
-                    rix = rng.permutation(batch_F[0].shape[0])
-                    batch_F = [f[rix,:] for f in batch_F]
-                
+                    # scramble across examples
+                    # rix = rng.permutation(batch_F[0].shape[0])
+                    # print([f.shape for f in batch_F])
+                    #batch_F = [f[rix,:] for f in batch_F]
+                    #batch_F = [f[rng.permutation(f.shape[0]), :] for f in batch_F]
+                    #batch_F = [rng.sample(f.shape) for f in batch_F]
+
+                    #batch_F = [shuffle_cols(f) for f in batch_F]
+                    batch_y = batch_y[rng.permutation(batch_y.shape[0]), :]
+
                 yield (batch_F, batch_y)
     
     return iterator 
+
+def shuffle_cols(A):
+
+    # create a random 2d index matrix
+    rix = rng.sample(A.shape).argsort(axis = 1)
+
+    # convert to flattened indecies
+    offset = np.arange(A.shape[0]) * A.shape[1]
+
+    # flatten it
+    orix = (rix + offset[:,np.newaxis])
+
+    # permute
+    return A.flatten()[orix.flatten()].reshape(A.shape)
+
 
 def feature_transform(df, single_fsets, pairwise_fsets):
     inputs_A = []

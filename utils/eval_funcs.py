@@ -122,10 +122,12 @@ def average_roc_curve(cv_dir, klass):
 
     return BASE_FPR, np.mean(tprs, axis=0)
 
-def eval_classifier(y_target, preds):
+def eval_classifier(y_target, preds, hard_pred=None):
 
     y_pred = np.argmax(preds, axis=1)
-
+    if hard_pred is not None:
+        y_pred = np.argmax(hard_pred, axis=1)
+    
     cm = sklearn.metrics.confusion_matrix(y_target, y_pred)
 
     overall_acc = sklearn.metrics.accuracy_score(y_target, y_pred)

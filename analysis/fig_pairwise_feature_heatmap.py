@@ -109,8 +109,8 @@ def main(task_path, feature_path, feature_name, label, output_path):
     print("Test kernel logprob: %f" % under_test_kernel)
     print("Test/ref diff: %f" % diff)
 
-    print("Ref integral over [-1,1]: %f" % ref_kernel.integrate_box([-1, -1], [1, 1]))
-    print("Test integral over [-1,1]: %f" % test_kernel.integrate_box([-1, -1], [1, 1]))
+    print("Ref integral over [0,15]: %f" % ref_kernel.integrate_box([-1, -1], [1, 1]))
+    print("Test integral over [0,15]: %f" % test_kernel.integrate_box([-1, -1], [1, 1]))
     
 if __name__ == "__main__":
     task_path = sys.argv[1]

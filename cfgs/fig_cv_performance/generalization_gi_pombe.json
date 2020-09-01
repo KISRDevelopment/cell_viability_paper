@@ -1,0 +1,37 @@
+{
+    "output_path" : "../results/fig_gi_generalization_pombe/",
+    "models" : [
+        {
+            "name" : "Refined model",
+            "color" : "#FF0000",
+            "cm_color" : "#FF0000",
+            "path" : "../results/gi_generalization/pombe_refined.npz",
+            "show" : true
+        },
+        {
+            "name" : "MN model",
+            "color" : "#3A90FF",
+            "cm_color" : "#3A90FF",
+            "path" : "../results/gi_generalization/pombe_mn.npz",
+            "show" : true
+        },
+        {
+            "name" : "Null",
+            "color" : "white",
+            "star_color" : "#c3c6c6",
+            "path" : "../results/gi_generalization/pombe_null.npz",
+            "show" : true,
+            "show_roc" : false
+        },
+        {
+            "name" : "Scrambled",
+            "color" : "grey",
+            "path" : "../results/gi_generalization/pombe_null_scrambled.npz",
+            "show" : true,
+            "show_roc" : true
+        }
+    ],
+    "classes" : ["Interacting", "Neutral"],
+    "short_classes" : ["I", "N"],
+    "ylim" : [0, 1.0]
+}
