@@ -83,10 +83,14 @@ def main(cfg, rep, fold, output_path, print_results=True):
 
     # ordinal model
     input_node = layers.Input(shape=(F.shape[1],))
-    linear_layer = layers.Dense(1, activation='linear')
-    latent_variable = linear_layer(input_node)
-    ordinal_layer = OrdinalLayer(train_Y.shape[1])
-    output_node = ordinal_layer(latent_variable)
+    if cfg['type'] == 'orm':
+        linear_layer = layers.Dense(1, activation='linear')
+        latent_variable = linear_layer(input_node)
+        ordinal_layer = OrdinalLayer(train_Y.shape[1])
+        output_node = ordinal_layer(latent_variable)
+    else:
+        output_layer = layers.Dense(Y.shape[1], activation='softmax')
+        output_node = output_layer(input_node)
 
     if cfg['balanced_loss']:
         loss = weighted_categorical_xentropy
@@ -130,19 +134,34 @@ def main(cfg, rep, fold, output_path, print_results=True):
     if print_results:
         eval_funcs.print_eval_classifier(r)
 
-    np.savez(output_path,
-        preds = preds,
-        y_target = y_target,
-        cfg = cfg, 
-        r=r,
-        cm=cm,
-        rep=rep,
-        biases=linear_layer.get_weights()[1],
-        weights=linear_layer.get_weights()[0],
-        thresholds=ordinal_layer.get_thresholds(),
-        labels=labels,
-        fold=fold)
+    if cfg['type'] == 'orm':
+        np.savez(output_path,
+            preds = preds,
+            y_target = y_target,
+            cfg = cfg, 
+            r=r,
+            cm=cm,
+            rep=rep,
+            biases=linear_layer.get_weights()[1],
+            weights=linear_layer.get_weights()[0],
+            thresholds=ordinal_layer.get_thresholds(),
+            labels=labels,
+            fold=fold)
+    else:
+        weights_list = output_layer.get_weights()
 
+        np.savez(output_path,
+            preds = preds,
+            y_target = y_target,
+            cfg = cfg, 
+            r=r,
+            cm=cm,
+            rep=rep,
+            weights=weights_list[0],
+            biases=weights_list[1],
+            labels=labels,
+            fold=fold)
+        
 def read_features(cfg):
 
     Fs = []

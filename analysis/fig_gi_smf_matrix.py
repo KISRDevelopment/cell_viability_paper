@@ -12,8 +12,11 @@ import numpy.random as rng
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import sys 
 
-BIN_LABELS = ['Interacting', 'Neutral']
-COLORS = ['#FF00DA', 'orange']
+BINARY_BIN_LABELS = ['Interacting', 'Neutral']
+BINARY_COLORS = ['#FF00DA', 'orange']
+
+BIN_LABELS = ['Negative', 'Neutral', 'Positive', 'Suppression']
+COLORS = ['#FF0000', 'orange', '#00CC00', '#3d77ff']
 
 plt.rcParams["font.family"] = "Liberation Serif"
 plt.rcParams["font.weight"] = "bold"
@@ -32,13 +35,10 @@ plot_cfg = {
 }
 
 
-def main(task_path, smf_path, output_path):
+def main(task_path, smf_path, output_path, binary=False):
 
     df = pd.read_csv(task_path)
-    A = np.array(df[['a_id', 'b_id']]).T
-    np.random.shuffle(A)
-    df[['a_id', 'b_id']] = A.T 
-
+    
     smf_df = pd.read_csv(smf_path)
 
     smf = dict(zip(smf_df['id'], smf_df['bin']))
@@ -48,14 +48,16 @@ def main(task_path, smf_path, output_path):
     with_smf_ix = (df['a_id'].isin(genes_with_smf)) & (df['b_id'].isin(genes_with_smf))
     print("# pairs without smf: %d" % np.sum(~with_smf_ix))
 
-    for bin in range(len(BIN_LABELS)):
-        if bin == 0:
-            ix = (df['bin'] != 1) & with_smf_ix
-            print("# observation in %d: %d, # obs with smf: %d" % (bin, np.sum(df['bin'] != 1), np.sum(ix)))
+    labels = BIN_LABELS
+    colors = COLORS
+    if binary:
+        df['bin'] = (df['bin'] == 1).astype(int)
+        labels = BINARY_BIN_LABELS
+        colors = BINARY_COLORS
 
-        else:
-            ix = (df['bin'] == 1) & with_smf_ix
-            print("# observation in %d: %d, # obs with smf: %d" % (bin, np.sum(df['bin'] == bin), np.sum(ix)))
+    for bin in range(len(labels)):
+        ix = (df['bin'] == bin) & with_smf_ix
+        print("# observation in %d: %d" % (bin, np.sum(ix)))
 
         sdf = df[ix]
 
@@ -76,7 +78,7 @@ def main(task_path, smf_path, output_path):
 
         f, ax = plt.subplots(figsize=(10, 10))
 
-        cmap = matplotlib.colors.LinearSegmentedColormap.from_list("",["white",COLORS[bin]])
+        cmap = matplotlib.colors.LinearSegmentedColormap.from_list("",["white",colors[bin]])
 
         ax.imshow(Mnormed, cmap=cmap)
         for i in range(M.shape[0]):
@@ -93,19 +95,20 @@ def main(task_path, smf_path, output_path):
         ax.set_xticklabels(xlabels, fontsize=plot_cfg['annot_size'])
         ax.set_yticklabels(xlabels, fontsize=plot_cfg['annot_size'])
         
-        ax.xaxis.set_tick_params(length=0, width=0, which='both', colors=COLORS[bin])
-        ax.yaxis.set_tick_params(length=0, width=0, which='both', colors=COLORS[bin])
+        ax.xaxis.set_tick_params(length=0, width=0, which='both', colors=colors[bin])
+        ax.yaxis.set_tick_params(length=0, width=0, which='both', colors=colors[bin])
         ax.xaxis.tick_top()
         plt.setp(ax.spines.values(), linewidth=0)
 
-        plt.savefig("%s/smf_interacting_matrix_%s.png" % (output_path, BIN_LABELS[bin]), bbox_inches='tight', dpi=100)
+        plt.savefig("%s_%s.png" % (output_path, labels[bin]), bbox_inches='tight', dpi=100)
 
 
-        plt.show()
+        plt.close()
+        #plt.show()
 
 if __name__ == "__main__":
     task_path = sys.argv[1]
     smf_path = sys.argv[2]
     output_path = sys.argv[3]
 
-    main(task_path, smf_path, output_path)
+    main(task_path, smf_path, output_path, True)

@@ -118,13 +118,16 @@ import models.cv
 #     "../results/task_human_smf_cell_org_lethal/null_scrambled", num_processes=20, scramble=True)
 # models.cv.main("models.null_model", "cfgs/models/human_smf_cell_org_lethal_refined_model.json", 
 #     "../results/task_human_smf_cell_org_lethal/null", num_processes=20)
+models.cv.main("models.smf_ordinal", "cfgs/models/human_smf_cell_org_lethal_orm.json", 
+    "../results/task_human_smf_cell_org_lethal/mn", type="mn", num_processes=20)
 
 # models.cv.main("models.smf_nn", "cfgs/models/dro_smf_cell_org_lethal_refined_model.json", 
 #     "../results/task_dro_smf_cell_org_lethal/refined", num_processes=20)
 # models.cv.main("models.smf_ordinal", "cfgs/models/dro_smf_cell_org_lethal_orm.json", 
 #     "../results/task_dro_smf_cell_org_lethal/orm", num_processes=20)
-models.cv.main("models.smf_nn", "cfgs/models/dro_smf_cell_org_lethal_refined_model.json", 
-    "../results/task_dro_smf_cell_org_lethal/null_scrambled", num_processes=20, scramble=True)
-models.cv.main("models.null_model", "cfgs/models/dro_smf_cell_org_lethal_refined_model.json", 
-    "../results/task_dro_smf_cell_org_lethal/null", num_processes=20)
-
+# models.cv.main("models.smf_nn", "cfgs/models/dro_smf_cell_org_lethal_refined_model.json", 
+#     "../results/task_dro_smf_cell_org_lethal/null_scrambled", num_processes=20, scramble=True)
+# models.cv.main("models.null_model", "cfgs/models/dro_smf_cell_org_lethal_refined_model.json", 
+#     "../results/task_dro_smf_cell_org_lethal/null", num_processes=20)
+models.cv.main("models.smf_ordinal", "cfgs/models/dro_smf_cell_org_lethal_orm.json", 
+    "../results/task_dro_smf_cell_org_lethal/mn", type="mn", num_processes=20)

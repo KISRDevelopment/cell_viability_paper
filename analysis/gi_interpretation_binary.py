@@ -13,7 +13,7 @@ import scipy.stats as stats
 COLORS = ["#FF3AF2", "#FFA93A", "#3AFF46", "#3A90FF"]
 plot_cfg = {
     "x_tick_label_size" : 24,
-    "y_tick_label_size" : 14,
+    "y_tick_label_size" : 22,
     "xlabel_size" : 40,
     "ylabel_size" : 20,
     "border_size" : 6,
@@ -61,7 +61,7 @@ with open('../generated-data/go_ids_to_names.json', 'r') as f:
 
 def main(paths, output_path):
 
-    f, axes = plt.subplots(1, len(paths), figsize=(40, 20), sharey=True, sharex=True)
+    f, axes = plt.subplots(1, len(paths), figsize=(40, 30), sharey=True, sharex=True)
 
     ix = None 
     all_mus = []
@@ -90,6 +90,7 @@ def main(paths, output_path):
         ax.tick_params(axis='y', labelsize=plot_cfg['y_tick_label_size'])
         ax.tick_params(axis='x', labelsize=plot_cfg['x_tick_label_size'])
         ax.set_xlabel('Coefficient Value', fontsize=plot_cfg['xlabel_size'], fontweight='bold')
+        ax.set_ylim([-0.5, errors.shape[0] - 0.5])
 
     plt.savefig(output_path + ".png", bbox_inches='tight', dpi=150)
     plt.close()
@@ -143,7 +144,7 @@ def main(paths, output_path):
     ax.yaxis.set_tick_params(length=0, width=0, which='both')
     plt.savefig(output_path + "_corr_matrix.png", bbox_inches='tight')
 
-    plt.show()
+    #plt.show()
 
 def load_weights(path):
 

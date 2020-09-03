@@ -13,7 +13,7 @@ import models.cv
 import scipy.stats as stats
 
 plot_cfg = {
-    "tick_label_size" : 24,
+    "tick_label_size" : 22,
     "xlabel_size" : 40,
     "ylabel_size" : 60,
     "border_size" : 6,
@@ -75,7 +75,7 @@ for label, mu, std in zip(labels, muW, stdW):
     #print("%64s %8.4f (%0.3f - %0.3f)" % (label, mu, ci[0], ci[1]))
 errors = np.array(errors)
 
-f, axes = plt.subplots(1, 4, figsize=(40, 20), sharey=True, sharex=True)
+f, axes = plt.subplots(1, 4, figsize=(40, 30), sharey=True, sharex=True)
 
 errors[:,0] = muW - errors[:,0]
 errors[:,1] = errors[:,1] - muW 
@@ -133,9 +133,9 @@ for i, species in enumerate(['pombe', 'human', 'dro']):
     ax.tick_params(axis='y', labelsize=plot_cfg['tick_label_size'])
     ax.tick_params(axis='x', labelsize=plot_cfg['tick_label_size'])
     ax.set_xlabel('Coefficient Value', fontsize=plot_cfg['xlabel_size'], fontweight='bold')
-
+    ax.set_ylim([-0.5, W.shape[1] - 0.5])
 #plt.show()
-plt.savefig("../tmp/smf_interpreation_coeff.png", bbox_inches='tight')
+plt.savefig("../tmp/smf_interpreation_coeff.png", bbox_inches='tight', dpi=150)
 
 
 corr_matrix = np.zeros((3, 4))
