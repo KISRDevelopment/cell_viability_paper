@@ -1,0 +1,20 @@
+{
+    "spec" : [
+        {
+            "name" : "Human",
+            "path" : "../results/smf_org_interpretation/human/",
+            "color" : "#00c20d"
+        },
+        {
+            "name" : "Dmel",
+            "path" : "../results/smf_org_interpretation/dro/",
+            "color" : "#3A90FF"
+        }
+    ],
+    "model" : "mn",
+    "ref_class" : 1,
+    "target_class" : 0,
+    "output_path" : "../figures/smf_cell_org_lethal_interpretation",
+    "plot_cfg" : {},
+    "errorbar_props" : {}
+}

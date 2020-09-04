@@ -1,0 +1,31 @@
+{
+    "spec" : [
+        {
+            "name" : "Yeast",
+            "path" : "../results/gi_interpretation/yeast_mn/",
+            "color" : "#FF3AF2"
+        },
+        {
+            "name" : "Pombe",
+            "path" : "../results/gi_interpretation/pombe_mn/",
+            "color" : "#FFA93A"
+        },
+        {
+            "name" : "Human",
+            "path" : "../results/gi_interpretation/human_mn/",
+            "color" : "#00c20d"
+        },
+        {
+            "name" : "Dmel",
+            "path" : "../results/gi_interpretation/dro_mn/",
+            "color" : "#3A90FF"
+        }
+    ],
+    "model" : "mn",
+    "ref_class" : 1,
+    "target_class" : 0,
+    "output_path" : "../figures/gi_interpretation",
+    "plot_cfg" : {
+        "x_tick_label_size" : 22
+    }
+}

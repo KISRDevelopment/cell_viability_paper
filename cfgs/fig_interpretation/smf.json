@@ -1,0 +1,28 @@
+{
+    "spec" : [
+        {
+            "name" : "Yeast",
+            "path" : "../results/smf_interpretation/yeast_orm/",
+            "color" : "#FF3AF2"
+        },
+        {
+            "name" : "Pombe",
+            "path" : "../results/smf_interpretation/pombe_orm/",
+            "color" : "#FFA93A"
+        },
+        {
+            "name" : "Human",
+            "path" : "../results/smf_interpretation/human_orm/",
+            "color" : "#00c20d"
+        },
+        {
+            "name" : "Dmel",
+            "path" : "../results/smf_interpretation/dro_orm/",
+            "color" : "#3A90FF"
+        }
+    ],
+    "model" : "orm",
+    "output_path" : "../figures/smf_interpretation",
+    "plot_cfg" : {},
+    "errorbar_props" : {}
+}
