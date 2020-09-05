@@ -15,6 +15,7 @@
     "ref_class" : 1,
     "target_class" : 0,
     "output_path" : "../figures/smf_cell_org_lethal_interpretation",
+    "subplots" : 4,
     "plot_cfg" : {},
     "errorbar_props" : {}
 }

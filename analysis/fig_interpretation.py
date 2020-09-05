@@ -41,7 +41,8 @@ def main(cfg):
 
     plot_cfg.update(cfg['plot_cfg'])
 
-    f, axes = plt.subplots(len(cfg['spec']), 1, figsize=(30, 20), sharey=True, sharex=True)
+    n_subplots = cfg.get('subplots', len(cfg['spec']))
+    f, axes = plt.subplots(n_subplots, 1, figsize=(30, 20), sharey=True, sharex=True)
 
     ix = None
     all_mus = []
@@ -72,7 +73,7 @@ def main(cfg):
 
         all_mus.append(c_muW)
 
-        ax = axes[len(cfg['spec'])-i-1]
+        ax = axes[n_subplots-i-1]
 
         ax.plot([-0.5, c_errors.shape[0] - 0.5], [0.0, 0.0], linewidth=5, 
             color='grey', linestyle='--')
