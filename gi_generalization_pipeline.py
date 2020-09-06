@@ -10,7 +10,6 @@ import models.gi_mn
 import models.ensemble_model
 import utils.eval_funcs
 import analysis.fig_cv_performance
-import models.null_model_stochastic
 n_models = 10
 splits = [(i, 0) for i in range(n_models)]
 
@@ -74,14 +73,14 @@ def load_cfg(path, **kwargs):
 # generalize(yeast_cfg, models.gi_nn, [pombe_cfg, human_cfg, dro_cfg],"../results/gi_generalization")
 
 # null
-yeast_cfg = load_cfg("cfgs/models/yeast_gi_refined_model.json",
-    targets_path="../generated-data/targets/task_yeast_gi_hybrid_bin_interacting.npz", 
-    name="yeast_null_stochastic")
-pombe_cfg = load_cfg("cfgs/models/pombe_gi_refined_model.json",
-    targets_path="../generated-data/targets/task_pombe_gi_bin_interacting.npz", name="pombe_null_stochastic")
-human_cfg = load_cfg("cfgs/models/human_gi_refined_model.json", name="human_null_stochastic")
-dro_cfg = load_cfg("cfgs/models/dro_gi_refined_model.json", name="dro_null_stochastic")
-generalize(yeast_cfg, models.null_model_stochastic, [pombe_cfg, human_cfg, dro_cfg],"../results/gi_generalization")
+# yeast_cfg = load_cfg("cfgs/models/yeast_gi_refined_model.json",
+#     targets_path="../generated-data/targets/task_yeast_gi_hybrid_bin_interacting.npz", 
+#     name="yeast_null_stochastic")
+# pombe_cfg = load_cfg("cfgs/models/pombe_gi_refined_model.json",
+#     targets_path="../generated-data/targets/task_pombe_gi_bin_interacting.npz", name="pombe_null_stochastic")
+# human_cfg = load_cfg("cfgs/models/human_gi_refined_model.json", name="human_null_stochastic")
+# dro_cfg = load_cfg("cfgs/models/dro_gi_refined_model.json", name="dro_null_stochastic")
+# generalize(yeast_cfg, models.null_model_stochastic, [pombe_cfg, human_cfg, dro_cfg],"../results/gi_generalization")
 
 # Analysis
 analysis.fig_cv_performance.main("cfgs/fig_cv_performance/generalization_gi_pombe.json")
