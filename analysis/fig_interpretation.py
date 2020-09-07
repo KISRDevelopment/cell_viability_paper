@@ -19,7 +19,7 @@ plot_cfg = {
     "bar_border_size" : 2.5,
     "bar_label_size" : 48,
     "stars_label_size" : 48,
-    "annot_size" : 24,
+    "annot_size" : 60,
     "title_size" : 50
 }
 errorbar_props = {
@@ -86,7 +86,9 @@ def main(cfg):
         ax.set_ylabel('Coefficient\nValue', fontsize=plot_cfg['ylabel_size'], fontweight='bold')
         ax.set_xlim([-0.5, c_errors.shape[0] - 0.5])
         ax.grid()
-        
+    
+    f.subplots_adjust(hspace=0.05)
+
     plt.savefig(cfg['output_path'], bbox_inches='tight', dpi=150)
 
     n = len(cfg['spec'])
@@ -103,6 +105,42 @@ def main(cfg):
             
     
     print(corr_matrix)
+
+    # drop the first column and last row
+    corr_matrix = corr_matrix[:, 1:]
+    corr_matrix = corr_matrix[:-1, :]
+    print(corr_matrix)
+
+    f, ax = plt.subplots(1, 1, figsize=(10, 10))
+
+    ax.imshow(corr_matrix, cmap=plt.get_cmap('Reds'), vmin=0, vmax=1)
+    for i in range(corr_matrix.shape[0]):
+        for j in range(i, corr_matrix.shape[1]):
+            ax.text(j, i, "%0.2f" % corr_matrix[i, j], 
+                ha="center", va="center", 
+                fontsize=plot_cfg['annot_size'])
+        plt.setp(ax.spines.values(), linewidth=0)
+    
+
+    xlabels = ax.get_xticks()
+    ix = np.isin(xlabels, np.arange(n-1))
+    xlabels = xlabels.astype(str)
+    xlabels[ix] = [e["name"] for e in cfg["spec"]][1:]
+    xlabels[~ix] = ''
+
+    ylabels = ax.get_xticks()
+    ix = np.isin(ylabels, np.arange(n-1))
+    ylabels = ylabels.astype(str)
+    ylabels[ix] = [e["name"] for e in cfg["spec"]][:-1]
+    ylabels[~ix] = ''
+
+    ax.xaxis.tick_top()
+    ax.set_xticklabels(xlabels, fontsize=plot_cfg['annot_size'], rotation=90)
+    ax.set_yticklabels(ylabels, fontsize=plot_cfg['annot_size'])
+    ax.xaxis.set_tick_params(length=0, width=0, which='both', pad=10)
+    ax.yaxis.set_tick_params(length=0, width=0, which='both', pad=10)
+    
+    plt.savefig(cfg['output_path'] + '_corr_matrix.png', bbox_inches='tight')
 
 def load_weights_orm(path):
     files = glob.glob(path + '/*.npz')

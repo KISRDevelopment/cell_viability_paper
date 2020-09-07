@@ -1,22 +1,22 @@
 {
     "spec" : [
         {
-            "name" : "Yeast",
+            "name" : "$\\it{S. cerevisiae}$",
             "path" : "../results/gi_interpretation/yeast_mn/",
             "color" : "#FF3AF2"
         },
         {
-            "name" : "Pombe",
+            "name" : "$\\it{S. pombe}$",
             "path" : "../results/gi_interpretation/pombe_mn/",
             "color" : "#FFA93A"
         },
         {
-            "name" : "Human",
+            "name" : "$\\it{H. sapiens}$",
             "path" : "../results/gi_interpretation/human_mn/",
             "color" : "#00c20d"
         },
         {
-            "name" : "Dmel",
+            "name" : "$\\it{D. melanogaster}$",
             "path" : "../results/gi_interpretation/dro_mn/",
             "color" : "#3A90FF"
         }

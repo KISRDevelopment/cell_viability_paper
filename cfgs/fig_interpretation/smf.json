@@ -1,22 +1,22 @@
 {
     "spec" : [
         {
-            "name" : "Yeast",
+            "name" : "$\\it{S. cerevisiae}$",
             "path" : "../results/smf_interpretation/yeast_orm/",
             "color" : "#FF3AF2"
         },
         {
-            "name" : "Pombe",
+            "name" : "$\\it{S. pombe}$",
             "path" : "../results/smf_interpretation/pombe_orm/",
             "color" : "#FFA93A"
         },
         {
-            "name" : "Human",
+            "name" : "$\\it{H. sapiens}$",
             "path" : "../results/smf_interpretation/human_orm/",
             "color" : "#00c20d"
         },
         {
-            "name" : "Dmel",
+            "name" : "$\\it{D. melanogaster}$",
             "path" : "../results/smf_interpretation/dro_orm/",
             "color" : "#3A90FF"
         }
