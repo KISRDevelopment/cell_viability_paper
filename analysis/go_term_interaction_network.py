@@ -11,7 +11,17 @@ from networkx.drawing.nx_pydot import write_dot
 import sys 
 
 BIN_LABELS = ['Negative', 'Neutral', 'Positive', 'Suppression']
-COLORS = ['#FF0000', '#FFFF00', '#00CC00', '#3d77ff']
+COLORS = [
+    (1, 0, 0, 1),
+    (1, 1, 0, 1),
+    (0, 204/255, 0, 1),
+    (61/255, 119/255, 1, 1)
+]
+
+plt.rcParams["font.family"] = "Liberation Serif"
+plt.rcParams["font.weight"] = "bold"
+plt.rcParams['mathtext.fontset'] = 'stix'
+
 with open('../generated-data/go_ids_to_names.json', 'r') as f:
     gene_ids_to_names = json.load(f)
     
@@ -25,19 +35,14 @@ def main(task_path, go_path, output_path, selected_bin=3):
     transform = create_transform(0.5, 0.75)
     R = np.load("../tmp/go_enrichment_matrix.npy")
     
-    R_tot = np.sum(R[:, :, [0, 1, 2, 3]], axis=2)
+    R_tot = np.sum(R[:, :, [0, 2, 3]], axis=2)
 
     G = nx.Graph()
     
     bin = selected_bin
 
-
     R_b = R[:, :, bin].copy()
-    #R_b /= R_tot
-    #R_b[R_tot == 0] = 0
-
-    #R[:,:,bin] = R_b 
-
+    
     n_total_bin = np.sum(np.triu(R_b, 1)) + np.sum(np.diagonal(R_b))
     print("Num interactions in bin: %d" % n_total_bin)
 
@@ -55,7 +60,9 @@ def main(task_path, go_path, output_path, selected_bin=3):
         prop = n_interactions / total
         if prop >= thres:
             break
-
+    
+    R_b = R_b / R_tot
+    
     ix = ix[:i]
     R_b = R_b[ix, :]
     R_b = R_b[:, ix]
@@ -68,16 +75,16 @@ def main(task_path, go_path, output_path, selected_bin=3):
 
     interaction_distrib = [r[3] for r in rows]
 
-    median = np.percentile(interaction_distrib, 0)
     median_weight = np.percentile([r[2]  for r in rows], 50)
-    max_weight = np.max([r[2] for r in rows])
     
+    max_weight = np.max([r[2] for r in rows if r[0] != r[1]])
+    max_weight = 1
+
+    print("Max weight: %d" % max_weight)
+
     covered_interactions = 0
     for a, b, weight, tot in rows:
         if a == b:
-            continue 
-        
-        if tot < median:
             continue 
         
         if weight < median_weight:
@@ -85,11 +92,13 @@ def main(task_path, go_path, output_path, selected_bin=3):
         
         covered_interactions += weight
 
-        #weight = transform(weight)
+        color = list(COLORS[bin])
+        
         G.add_edge(a, b, 
-            weight=weight*10/max_weight, penwidth=weight*2, 
             rank=2,
-            bin=bin, color=COLORS[bin])
+            weight=(weight/max_weight)*10,
+            bin=bin, 
+            color=color)
 
     print("Covered: %d (%0.2f)" % (covered_interactions, covered_interactions / n_total_bin))
 
@@ -101,7 +110,7 @@ def main(task_path, go_path, output_path, selected_bin=3):
         G.nodes[n]['shape'] = 'box'
         G.nodes[n]['rank'] = 1
     
-    fixed_labels = { n: break_label(n) for n in G.nodes() }
+    fixed_labels = { n: process_label(n) for n in G.nodes() }
     #print(nx.info(G))
     #write_dot(G, output_path)
     
@@ -113,7 +122,7 @@ def main(task_path, go_path, output_path, selected_bin=3):
     nx.draw_networkx_edges(G, edgelist=edges, pos=pos, 
         width=[G[e[0]][e[1]]['weight'] for e in edges],
         edge_color=[G[e[0]][e[1]]['color'] for e in edges])
-    nx.draw_networkx_labels(G, labels=fixed_labels, pos=pos, font_size=20, font_weight='bold')
+    nx.draw_networkx_labels(G, labels=fixed_labels, pos=pos, font_family="Liberation Serif", font_size=40, font_weight='bold')
     plt.savefig(output_path, bbox_inches='tight')
 
 
@@ -134,7 +143,8 @@ def create_transform(m, c):
 
     return transform
 
-def break_label(s):
+def process_label(s):
+    s = s[0].upper() + s[1:]
 
     if len(s) < 8:
         return s 
@@ -148,8 +158,6 @@ def break_label(s):
     half_n = n // 2
 
     return "%s\n%s" % (" ".join(parts[:half_n]), " ".join(parts[half_n:]))
-
-
 
 
 if __name__ == "__main__":
