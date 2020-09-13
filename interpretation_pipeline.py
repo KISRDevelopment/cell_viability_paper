@@ -9,10 +9,15 @@ import numpy as np
 import models.cv 
 import scipy.stats as stats
 import analysis.fig_interpretation
-
+import pandas as pd 
 def load_cfg(path):
     with open(path, 'r') as f:
         return json.load(f)
+
+smf_cfg = load_cfg('cfgs/fig_interpretation/smf.json')
+smf_org_cfg = load_cfg('cfgs/fig_interpretation/smf_cell_org_lethal.json')
+gi_cfg = load_cfg('cfgs/fig_interpretation/gi_binary.json')
+
 
 # # SMF Interpretation
 # models.cv.main("models.smf_ordinal", "cfgs/models/yeast_smf_orm.json", 
@@ -27,7 +32,7 @@ def load_cfg(path):
 # models.cv.main("models.smf_ordinal", "cfgs/models/dro_smf_orm.json", 
 #     "../results/smf_interpretation/dro_orm", interpreation=True, num_processes=10, epochs=500)
 
-analysis.fig_interpretation.main(load_cfg('cfgs/fig_interpretation/smf.json'))
+#analysis.fig_interpretation.main(smf_cfg)
 
 
 # # SMF Organismal Cell Lethal Interpreation
@@ -36,7 +41,7 @@ analysis.fig_interpretation.main(load_cfg('cfgs/fig_interpretation/smf.json'))
 
 # models.cv.main("models.smf_ordinal", "cfgs/models/dro_smf_cell_org_lethal_orm.json", 
 #     "../results/smf_org_interpretation/dro", interpreation=True, num_processes=20, epochs=150)
-analysis.fig_interpretation.main(load_cfg('cfgs/fig_interpretation/smf_cell_org_lethal.json'))
+#analysis.fig_interpretation.main(smf_org_cfg)
 
 
 # # GI Binary Interpreation
@@ -56,4 +61,15 @@ analysis.fig_interpretation.main(load_cfg('cfgs/fig_interpretation/smf_cell_org_
 # models.cv.main("models.gi_mn", "cfgs/models/dro_gi_mn.json", 
 #     "../results/gi_interpretation/dro_mn", interpreation=True, num_processes=20, epochs=50)
 
-analysis.fig_interpretation.main(load_cfg('cfgs/fig_interpretation/gi_binary.json'))
+#analysis.fig_interpretation.main(gi_cfg)
+
+# merge everything into one file
+writer = pd.ExcelWriter('../figures/interpretation_results.xlsx')
+for cfg, name in zip([smf_cfg, smf_org_cfg, gi_cfg], ['SMF', 'SMF Organismal', 'GI']):
+
+    results_file = cfg['output_path'] + '.xlsx'
+    df = pd.read_excel(results_file, index_col=0, header=[0,1])
+    df = df.rename(columns=lambda x: x if not 'Unnamed' in str(x) else '')
+    print(df.columns)
+    df.to_excel(writer, sheet_name=name, index=True)
+writer.save()

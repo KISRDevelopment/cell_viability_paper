@@ -24,7 +24,9 @@ plot_cfg = {
     "bar_border_size" : 2.5,
     "bar_label_size" : 48,
     "stars_label_size" : 48,
-    "annot_size" : 82
+    "annot_size" : 72,
+    "max_cm_classes" : 4,
+    "max_bars" : 4
 }
 
 ALPHA = 0.05
@@ -76,7 +78,11 @@ def overall_bacc(cfg):
                 "rep" : order[i][0],
                 "fold" : order[i][1]
             })
-
+    
+    rem_bars = plot_cfg['max_bars'] - len(model_names) 
+    for i in range(rem_bars):
+        rows.append({"model" : "%d" % i, "bacc" : 0, "rep" : 0, "fold" : 0 })
+    
     df = pd.DataFrame(rows)
 
     num_comparisons = cfg['n_models'] * (cfg['n_models'] - 1) / 2
@@ -163,6 +169,11 @@ def per_class_figures(cfg):
                     "fold" : order[1]
                 })
 
+    rem_bars = plot_cfg['max_bars'] - len(model_names) 
+    for i in range(rem_bars):
+        for c in range(len(classes)):
+            rows.append({"model" : "%d" % i, "bin" : classes[c], "bacc" : 0, "roc" : 0, "rep" : 0, "fold" : 0 })
+
     df = pd.DataFrame(rows)
 
     per_class(df, cfg, "bacc", "Balanced Accuracy", "%s/per_class_bacc" % output_path)
@@ -187,8 +198,11 @@ def cms(cfg):
 
         f, ax = plt.subplots(figsize=(10, 10))
 
+        displayed_cm = np.zeros((plot_cfg['max_cm_classes'], plot_cfg['max_cm_classes']))
+        displayed_cm[:cm.shape[0], :cm.shape[0]] = cm 
+
         #print(cm)
-        ax.imshow(cm, cmap=cmap)
+        ax.imshow(displayed_cm, cmap=cmap)
         for i in range(len(classes)):
             for j in range(len(classes)):
                 ax.text(j, i, "%0.2f" % cm[i, j], ha="center", va="center", 
@@ -231,7 +245,7 @@ def per_class_roc(cfg):
 
         for p, path in enumerate(paths):
             fpr, roc_curve = eval_funcs.average_roc_curve(path, klass)
-            ax.plot(fpr, roc_curve, linewidth=5, color=colors[p])
+            ax.plot(fpr, roc_curve, linewidth=7, color=colors[p])
 
         ax.plot(fpr, fpr, linewidth=2, color='black', linestyle='dashed')
         ax.set_xlim([0, 1])
@@ -264,8 +278,11 @@ def per_class(df, cfg, y, ylabel, output_path):
     
     max_val = np.max(all_vals)
     
+
+    
     print("%s max val: %f" % (output_path, max_val*1.25))
-    ylim = [0, max_val*1.25]
+    #ylim = [0, max_val*1.25]
+    ylim = [0, 1]
     
     offset_val = 0.05 * ylim[1]
     incr_val = 0.04 * ylim[1]
@@ -287,7 +304,7 @@ def per_class(df, cfg, y, ylabel, output_path):
             linewidth=plot_cfg["bar_border_size"],
             saturation=1)
 
-
+        
         ax = g.ax
         for i, m in enumerate(model_names):
             a_ix = sdf['model'] == m

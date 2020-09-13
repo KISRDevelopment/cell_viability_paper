@@ -85,43 +85,47 @@ def main(task_path, go_path, output_path):
                     continue 
                 node_b = labels[b]
                 weights.append(R_b[a, b])
-        
-        min_weight = np.percentile(weights, 50)
-        max_weight = np.max(weights)
+        weights = np.array(weights)
+        median_weight = np.median(weights)
 
+        min_weight = np.min(weights[weights >= median_weight])
+        max_weight = np.max(weights)
+        print("Min weight: %f, Max weight: %f" % (min_weight, max_weight))
         for a in selected_terms:
             node_a = labels[a]
             for b in selected_terms:
                 if a == b:
                     continue 
+                if R_b[a, b] < median_weight:
+                    continue
                 node_b = labels[b]
-                if R_b[a, b] > min_weight:
-                    G.add_edge(node_a, node_b, weight=R_b[a, b], prop_interactions=R_b[a, b], color=COLORS[bin])
+                
+                G.add_edge(node_a, node_b, weight=R_b[a, b], prop_interactions=(R_b[a, b]-min_weight)/(max_weight-min_weight), color=COLORS[bin])
 
         f, ax = plt.subplots(1, 1, figsize=(30, 30))
     
         edges = list(G.edges())
         if pos is None:
-            #pos = nx.spring_layout(G, k=12/np.sqrt(G.number_of_nodes()))
-            pos = nx.shell_layout(G)
+            pos = nx.spring_layout(G, k=12/np.sqrt(G.number_of_nodes()))
+            #pos = nx.shell_layout(G)
 
         nx.draw_networkx_nodes(G, pos=pos, node_color="#f7f7f7")
         nx.draw_networkx_edges(G, edgelist=edges, pos=pos, 
-            width=[G[e[0]][e[1]]['prop_interactions']*5/max_weight for e in edges],
+            width=[G[e[0]][e[1]]['prop_interactions']*10 for e in edges],
             edge_color=[G[e[0]][e[1]]['color'] for e in edges])
         nx.draw_networkx_labels(G, labels=fixed_labels, 
-            pos=pos, font_family="Liberation Serif", font_size=40, font_weight='bold')
+            pos=pos, font_family="Liberation Serif", font_size=55, font_weight='bold')
         
         # fix margins
         # https://stackoverflow.com/questions/50453043/networkx-drawing-label-partially-outside-the-box
         x_values, y_values = zip(*pos.values())
         x_max = max(x_values)
         x_min = min(x_values)
-        x_margin = (x_max - x_min) * 0.1
+        x_margin = (x_max - x_min) * 0.2
         ax.set_xlim(x_min - x_margin, x_max + x_margin)
         y_max = max(y_values)
         y_min = min(y_values)
-        y_margin = (y_max - y_min) * 0.1
+        y_margin = (y_max - y_min) * 0.2
         ax.set_ylim(y_min - y_margin, y_max + y_margin)
 
         plt.savefig(output_path + BINS[bin] + '.png', bbox_inches='tight')

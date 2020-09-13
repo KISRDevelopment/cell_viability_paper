@@ -13,5 +13,7 @@ for file in files:
             model["star_color"] = "grey"
             model["cm_color"] = "grey"
     
-    with open("../fig_cv_performance/%s" % os.path.basename(file), "w") as f:
+    cfg['ylim'] = [0, 1]
+    
+    with open("cfgs/fig_cv_performance/%s" % os.path.basename(file), "w") as f:
         json.dump(cfg, f, indent=4)

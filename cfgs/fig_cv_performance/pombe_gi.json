@@ -39,7 +39,7 @@
     ],
     "ylim": [
         0,
-        0.8
+        1
     ],
     "plot_cfg": {
         "annot_size": 72,

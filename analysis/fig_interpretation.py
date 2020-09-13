@@ -9,7 +9,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import models.cv 
 import scipy.stats as stats
-
+import pandas as pd 
 plot_cfg = {
     "x_tick_label_size" : 32,
     "y_tick_label_size" : 32,
@@ -19,7 +19,7 @@ plot_cfg = {
     "bar_border_size" : 2.5,
     "bar_label_size" : 48,
     "stars_label_size" : 48,
-    "annot_size" : 60,
+    "annot_size" : 70,
     "title_size" : 50
 }
 errorbar_props = {
@@ -42,11 +42,14 @@ def main(cfg):
     plot_cfg.update(cfg['plot_cfg'])
 
     n_subplots = cfg.get('subplots', len(cfg['spec']))
-    f, axes = plt.subplots(n_subplots, 1, figsize=(30, 20), sharey=True, sharex=True)
+    f, axes = plt.subplots(n_subplots, 1, figsize=(55, 20), sharey=True, sharex=True)
 
     ix = None
     all_mus = []
+    
+    output_dfs = []
     for i, s in enumerate(cfg['spec']):
+        
         if cfg['model'] == 'mn':
             muW, stdW, errors, labels = load_weights_mn(s['path'], cfg['ref_class'])
             
@@ -60,16 +63,31 @@ def main(cfg):
         c_errors[:, 0] = c_muW - c_errors[:, 0]
         c_errors[:, 1] = c_errors[:, 1] - c_muW 
 
-
-        for j in range(len(labels)):
-            print("%64s %8.4f" % (labels[j], c_muW[j]))
-        print()
         if ix is None:
             ix = np.argsort(c_muW)
+
 
         c_muW = c_muW[ix]
         c_errors = c_errors[ix, :]
         labels = labels[ix]
+
+        for j in range(len(labels)):
+            print("%64s %8.4f (%8.4f - %8.4f)" % (labels[j], c_muW[j], c_muW[j] - c_errors[j,0], c_muW[j] + c_errors[j,1]))
+        print()
+        n = s['text_name']
+        df_dict = {
+            "%s_Mean Coefficient Value" % n : c_muW,
+            "%s_95%% CI Lower" % n : c_muW - c_errors[:, 0],
+            "%s_95%% CI Upper" % n : c_muW + c_errors[:, 1],
+            "%s_Exp Mean Coefficient Value" % n : np.exp(c_muW)
+        }
+        if i == 0:
+            df_dict['Feature'] = labels 
+        
+        output_df = pd.DataFrame(df_dict)
+        output_dfs.append(output_df)
+
+        #output_df.to_excel(writer, index=False, sheet_name=s['text_name'])
 
         all_mus.append(c_muW)
 
@@ -87,6 +105,10 @@ def main(cfg):
         ax.set_xlim([-0.5, c_errors.shape[0] - 0.5])
         ax.grid()
     
+    output_df = pd.concat(output_dfs, axis=1).set_index('Feature')
+    output_df.columns = pd.MultiIndex.from_tuples([tuple(c.split('_')) for c in output_df.columns])
+    output_df.to_excel(cfg['output_path']+'.xlsx', sheet_name='Sheet1', index=True)
+
     f.subplots_adjust(hspace=0.05)
 
     plt.savefig(cfg['output_path'], bbox_inches='tight', dpi=150)

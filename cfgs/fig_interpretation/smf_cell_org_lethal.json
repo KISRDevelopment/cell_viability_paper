@@ -1,12 +1,14 @@
 {
     "spec" : [
         {
-            "name" : "Human",
+            "text_name" : "H. sapiens",
+            "name" : "$\\it{H. sapiens}$",
             "path" : "../results/smf_org_interpretation/human/",
             "color" : "#00c20d"
         },
         {
-            "name" : "Dmel",
+            "text_name" : "D. melanogaster",
+            "name" : "$\\it{D. melanogaster}$",
             "path" : "../results/smf_org_interpretation/dro/",
             "color" : "#3A90FF"
         }
