@@ -25,7 +25,7 @@ with open('../generated-data/go_ids_to_names.json', 'r') as f:
     gene_ids_to_names = json.load(f)
 
 BINS = ['neg', 'neutral', 'positive', 'supp']
-
+NORMALIZE = True
 def main(task_path, go_path, output_path):
 
     # load GO features
@@ -88,6 +88,7 @@ def main(task_path, go_path, output_path):
         weights = np.array(weights)
         median_weight = np.median(weights)
 
+
         min_weight = np.min(weights[weights >= median_weight])
         max_weight = np.max(weights)
         print("Min weight: %f, Max weight: %f" % (min_weight, max_weight))
@@ -100,7 +101,11 @@ def main(task_path, go_path, output_path):
                     continue
                 node_b = labels[b]
                 
-                G.add_edge(node_a, node_b, weight=R_b[a, b], prop_interactions=(R_b[a, b]-min_weight)/(max_weight-min_weight), color=COLORS[bin])
+                pi = R_b[a, b]
+                if NORMALIZE:
+                    pi =(R_b[a, b]-min_weight)/(max_weight-min_weight)
+
+                G.add_edge(node_a, node_b, weight=R_b[a, b], prop_interactions=pi, color=COLORS[bin])
 
         f, ax = plt.subplots(1, 1, figsize=(30, 30))
     
@@ -109,7 +114,7 @@ def main(task_path, go_path, output_path):
             pos = nx.spring_layout(G, k=12/np.sqrt(G.number_of_nodes()))
             #pos = nx.shell_layout(G)
 
-        nx.draw_networkx_nodes(G, pos=pos, node_color="#f7f7f7")
+        nx.draw_networkx_nodes(G, pos=pos, node_size=500, node_color=COLORS[bin])
         nx.draw_networkx_edges(G, edgelist=edges, pos=pos, 
             width=[G[e[0]][e[1]]['prop_interactions']*10 for e in edges],
             edge_color=[G[e[0]][e[1]]['color'] for e in edges])

@@ -9,8 +9,35 @@ import analysis.fig_cv_performance
 import analysis.fig_gi_smf_matrix 
 import analysis.fig_pairwise_feature_heatmap
 import analysis.fig_spl
+from utils.merge_excels import merge_excels
 
-analysis.tbl_model_comp.main("../results/task_yeast_gi_hybrid", "../figures/yeast_gi_model_comp.xlsx")
+# analysis.tbl_model_comp.main("../results/task_yeast_gi_hybrid", "../figures/yeast_gi_model_comp.xlsx")
+# analysis.tbl_model_comp.main("../results/task_yeast_gi_hybrid_binary", "../figures/yeast_gi_binary_model_comp.xlsx")
+# analysis.tbl_model_comp.main("../results/task_yeast_gi_costanzo", "../figures/yeast_gi_costanzo_model_comp.xlsx")
+# analysis.tbl_model_comp.main("../results/task_pombe_gi", "../figures/pombe_gi_model_comp.xlsx")
+# analysis.tbl_model_comp.main("../results/task_pombe_gi_binary", "../figures/pombe_gi_binary_model_comp.xlsx")
+# analysis.tbl_model_comp.main("../results/task_human_gi", "../figures/human_gi_binary_model_comp.xlsx")
+# analysis.tbl_model_comp.main("../results/task_dro_gi", "../figures/dro_gi_binary_model_comp.xlsx")
+
+# merge_excels([
+#     ("../figures/yeast_gi_model_comp.xlsx", "S. cerevisiae Hybrid"),
+#     ("../figures/yeast_gi_binary_model_comp.xlsx", "S. cerevisiae Hybrid (Binary)"),
+#     ("../figures/yeast_gi_costanzo_model_comp.xlsx", "S. cerevisiae Costanzo"),
+#     ("../figures/pombe_gi_model_comp.xlsx", "S. pombe"),
+#     ("../figures/pombe_gi_binary_model_comp.xlsx", "S. pombe (Binary)"),
+#     ("../figures/human_gi_binary_model_comp.xlsx", "H. sapiens (Binary)"),
+#     ("../figures/dro_gi_binary_model_comp.xlsx", "D. melanogaster (Binary)"),
+# ], '../figures/gi_results.xlsx', writing_kw_args={"index":False})
+
+analysis.tbl_model_comp.main("../results/gi_generalization/pombe*", "../figures/pombe_gi_generalization_model_comp.xlsx", use_glob_spec=True)
+analysis.tbl_model_comp.main("../results/gi_generalization/human*", "../figures/human_gi_generalization_model_comp.xlsx", use_glob_spec=True)
+analysis.tbl_model_comp.main("../results/gi_generalization/dro*", "../figures/dro_gi_generalization_model_comp.xlsx", use_glob_spec=True)
+
+merge_excels([
+    ("../figures/pombe_gi_generalization_model_comp.xlsx", "S. pombe (Binary)"),
+    ("../figures/human_gi_generalization_model_comp.xlsx", "H. sapiens (Binary)"),
+    ("../figures/dro_gi_generalization_model_comp.xlsx", "D. melanogaster (Binary)")
+], '../figures/gi_generalization_results.xlsx', writing_kw_args={"index":False})
 
 # analysis.fig_cv_performance.main("cfgs/fig_cv_performance/yeast_gi_hybrid.json")
 # analysis.fig_cv_performance.main("cfgs/fig_cv_performance/yeast_gi_costanzo.json")

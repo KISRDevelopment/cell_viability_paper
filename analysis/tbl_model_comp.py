@@ -15,9 +15,15 @@ FMAP = {
     "Go" : "sGO"
 }
 
-def main(path, output_path):
+def main(path, output_path, use_glob_spec=False):
     
-    paths = [p for p in glob.glob("%s/*" % path) if os.path.isdir(p)]
+    if use_glob_spec:
+        glob_spec = path 
+        paths = [p for p in glob.glob(glob_spec)]
+    else:
+        glob_spec = "%s/*" % path 
+        paths = [p for p in glob.glob(glob_spec) if os.path.isdir(p)]
+    
     results_summary = []
     
     for results_path in paths:
@@ -26,8 +32,10 @@ def main(path, output_path):
         r = utils.eval_funcs.average_results(results_path)
         model_name = os.path.basename(results_path)
         
-        cfg = np.load(results_path + '/run_0_0.npz', allow_pickle=True)['cfg'].item()
-
+        if os.path.isdir(results_path):
+            cfg = np.load(results_path + '/run_0_0.npz', allow_pickle=True)['cfg'].item()
+        else:
+            cfg = np.load(results_path, allow_pickle=True)['cfg'].item()
         # get feature groups
         included_features = [s['name'] for s in cfg['spec']]
         feature_groups = [c.capitalize() for c in 
