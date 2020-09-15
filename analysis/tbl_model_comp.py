@@ -5,9 +5,9 @@ import os
 import pandas as pd 
 import sys 
 import glob 
-
+from utils.features_to_groups import features_to_groups
 import utils.eval_funcs 
-
+import numpy as np
 SMF_LABELS = ['Lethal', 'Reduced', 'Normal']
 GI_LABELS = ['Negative', 'Neutral', 'Positive', 'Supp']
 
@@ -25,13 +25,39 @@ def main(path, output_path):
         cols = []
         r = utils.eval_funcs.average_results(results_path)
         model_name = os.path.basename(results_path)
+        
+        cfg = np.load(results_path + '/run_0_0.npz', allow_pickle=True)['cfg'].item()
+
+        # get feature groups
+        included_features = [s['name'] for s in cfg['spec']]
+        feature_groups = [c.capitalize() for c in 
+            sorted(set([features_to_groups[f] for f in included_features if f in features_to_groups]))]
+        feature_groups = [FMAP.get(fname, fname) for fname in feature_groups]
+        num_features = len(feature_groups)
+
+        # get specific selections
+        selected_features = []
+        has_full_pairwise = len([s for s in cfg['spec'] if s.get('pairwise', False) and s['name'] == 'pairwise']) > 0
+
+        for s in cfg['spec']:
+            if s.get('pairwise', False) and not has_full_pairwise:
+                if s['name'] not in ('pairwise', 'pairwise_const'):
+                    selected_features.append(s['name'])
+            else:
+                sf = s.get('selected_features', [])
+                if sf is not None:
+                    selected_features.extend(sf)
+                if s.get('feature', None) is not None:
+                    selected_features.append(s['feature'])
         row = {
-            "model" : make_friendly_model_name(model_name),
-            "no. features" : len(model_name.split('~')),
+            "model" : ", ".join(feature_groups),
+            "no. features" : num_features,
+            "selected sub-features" : ", ".join(selected_features),
+            "filename" : model_name,
             "bacc" : r['bacc'],
             "acc" : r['acc']
         }
-        cols = ['model', 'no. features', 'bacc', 'acc']
+        cols = ['model', "filename", 'no. features', 'selected sub-features', 'bacc', 'acc']
 
         num_classes = len(r['per_class_f1'])
         labels = SMF_LABELS if num_classes == 3 else GI_LABELS

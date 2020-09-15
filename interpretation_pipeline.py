@@ -43,6 +43,16 @@ gi_cfg = load_cfg('cfgs/fig_interpretation/gi_binary.json')
 #     "../results/smf_org_interpretation/dro", interpreation=True, num_processes=20, epochs=150)
 #analysis.fig_interpretation.main(smf_org_cfg)
 
+# GI non-binary interpretation
+models.cv.main("models.gi_mn", "cfgs/models/yeast_gi_mn.json", 
+    "../results/gi_interpretation/yeast_mn_nonbinary", interpreation=True, 
+    targets_path="../generated-data/targets/task_yeast_gi_hybrid_bin_simple.npz",
+    num_processes=20, epochs=50)
+
+models.cv.main("models.gi_mn", "cfgs/models/pombe_gi_mn.json", 
+    "../results/gi_interpretation/pombe_mn_nonbinary", interpreation=True, 
+    targets_path="../generated-data/targets/task_pombe_gi_bin_simple.npz",
+    num_processes=20, epochs=50)
 
 # # GI Binary Interpreation
 # models.cv.main("models.gi_mn", "cfgs/models/yeast_gi_mn.json", 
@@ -64,12 +74,12 @@ gi_cfg = load_cfg('cfgs/fig_interpretation/gi_binary.json')
 #analysis.fig_interpretation.main(gi_cfg)
 
 # merge everything into one file
-writer = pd.ExcelWriter('../figures/interpretation_results.xlsx')
-for cfg, name in zip([smf_cfg, smf_org_cfg, gi_cfg], ['SMF', 'SMF Organismal', 'GI']):
+# writer = pd.ExcelWriter('../figures/interpretation_results.xlsx')
+# for cfg, name in zip([smf_cfg, smf_org_cfg, gi_cfg], ['SMF', 'SMF Organismal', 'GI']):
 
-    results_file = cfg['output_path'] + '.xlsx'
-    df = pd.read_excel(results_file, index_col=0, header=[0,1])
-    df = df.rename(columns=lambda x: x if not 'Unnamed' in str(x) else '')
-    print(df.columns)
-    df.to_excel(writer, sheet_name=name, index=True)
-writer.save()
+#     results_file = cfg['output_path'] + '.xlsx'
+#     df = pd.read_excel(results_file, index_col=0, header=[0,1])
+#     df = df.rename(columns=lambda x: x if not 'Unnamed' in str(x) else '')
+#     print(df.columns)
+#     df.to_excel(writer, sheet_name=name, index=True)
+# writer.save()

@@ -51,9 +51,12 @@ def main(cfg):
     for i, s in enumerate(cfg['spec']):
         
         if cfg['model'] == 'mn':
-            muW, stdW, errors, labels = load_weights_mn(s['path'], cfg['ref_class'])
+            muW, stdW, errors, labels = load_weights_mn(s['path'], 
+                s.get('ref_class', cfg['ref_class']))
             
-            c = cfg["target_class"]
+            
+            c = s.get('target_class', cfg["target_class"])
+
             c_muW = muW[:, c]
             c_errors = errors[:, :, c]
 

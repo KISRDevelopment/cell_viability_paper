@@ -1,6 +1,14 @@
 {
     "specs": [
-        ["sGO~Pairwise--Comm--~Smf", [
+        ["sGO~Pairwise--Comm~Smf~Topology", [
+            {
+                "name" : "topology",
+                "hidden_activation" : "tanh",
+                "layer_sizes" : [5],
+                "type" : "ff",
+                "pairwise" : false,
+                "paths" : ["../generated-data/features/ppc_yeast_topology.npz"]
+            },
             {
                 "name" : "go",
                 "hidden_activation" : "tanh",
@@ -22,7 +30,6 @@
                     "../generated-data/features/ppc_yeast_smf_binned.npz"
                 ]
             },
-    
             {
                 "name": "pairwise_comm",
                 "group": "pairwise",
@@ -37,7 +44,15 @@
             }
         ]],
 
-        ["sGO~Pairwise--Shortest Path Length--~Smf", [
+        ["sGO~Pairwise--Shortest Path Length~Smf~Topology", [
+            {
+                "name" : "topology",
+                "hidden_activation" : "tanh",
+                "layer_sizes" : [5],
+                "type" : "ff",
+                "pairwise" : false,
+                "paths" : ["../generated-data/features/ppc_yeast_topology.npz"]
+            },
             {
                 "name" : "go",
                 "hidden_activation" : "tanh",
@@ -61,7 +76,7 @@
             },
     
             {
-                "name": "pairwise",
+                "name": "shortest_path_length",
                 "group": "pairwise",
                 "hidden_activation": "tanh",
                 "layer_sizes": [
@@ -78,7 +93,15 @@
             }
         ]],
 
-        ["sGO~Pairwise--Adhesion--~Smf",[
+        ["sGO~Pairwise--Adhesion~Smf~Topology",[
+            {
+                "name" : "topology",
+                "hidden_activation" : "tanh",
+                "layer_sizes" : [5],
+                "type" : "ff",
+                "pairwise" : false,
+                "paths" : ["../generated-data/features/ppc_yeast_topology.npz"]
+            },
             {
                 "name" : "go",
                 "hidden_activation" : "tanh",
@@ -102,7 +125,7 @@
             },
     
             {
-                "name": "pairwise",
+                "name": "adhesion",
                 "group": "pairwise",
                 "hidden_activation": "tanh",
                 "layer_sizes": [
@@ -119,7 +142,15 @@
             }
         ]],
 
-        ["sGO~Pairwise--Cohesion--~Smf", [
+        ["sGO~Pairwise--Cohesion~Smf~Topology", [
+            {
+                "name" : "topology",
+                "hidden_activation" : "tanh",
+                "layer_sizes" : [5],
+                "type" : "ff",
+                "pairwise" : false,
+                "paths" : ["../generated-data/features/ppc_yeast_topology.npz"]
+            },
             {
                 "name" : "go",
                 "hidden_activation" : "tanh",
@@ -143,7 +174,7 @@
             },
     
             {
-                "name": "pairwise",
+                "name": "cohesion",
                 "group": "pairwise",
                 "hidden_activation": "tanh",
                 "layer_sizes": [
@@ -160,7 +191,15 @@
             }
         ]],
 
-        ["sGO~Pairwise--Mutual Neighbors--~Smf",[
+        ["sGO~Pairwise--Mutual Neighbors~Smf~Topology",[
+            {
+                "name" : "topology",
+                "hidden_activation" : "tanh",
+                "layer_sizes" : [5],
+                "type" : "ff",
+                "pairwise" : false,
+                "paths" : ["../generated-data/features/ppc_yeast_topology.npz"]
+            },
             {
                 "name" : "go",
                 "hidden_activation" : "tanh",
@@ -184,7 +223,7 @@
             },
     
             {
-                "name": "pairwise",
+                "name": "mutual_neighbors",
                 "group": "pairwise",
                 "hidden_activation": "tanh",
                 "layer_sizes": [
@@ -201,7 +240,15 @@
             }
         ]],
 
-        ["sGO~Pairwise--Adjacent--~Smf", [
+        ["sGO~Pairwise--Adjacent~Smf~Topology", [
+            {
+                "name" : "topology",
+                "hidden_activation" : "tanh",
+                "layer_sizes" : [5],
+                "type" : "ff",
+                "pairwise" : false,
+                "paths" : ["../generated-data/features/ppc_yeast_topology.npz"]
+            },
             {
                 "name" : "go",
                 "hidden_activation" : "tanh",
@@ -225,7 +272,7 @@
             },
     
             {
-                "name": "pairwise",
+                "name": "adjacent",
                 "group": "pairwise",
                 "hidden_activation": "tanh",
                 "layer_sizes": [

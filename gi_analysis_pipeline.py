@@ -10,20 +10,20 @@ import analysis.fig_gi_smf_matrix
 import analysis.fig_pairwise_feature_heatmap
 import analysis.fig_spl
 
-# analysis.tbl_model_comp.main("../results/task_yeast_gi_hybrid", "../results/task_yeast_gi_hybrid/model_comp.xlsx")
+analysis.tbl_model_comp.main("../results/task_yeast_gi_hybrid", "../figures/yeast_gi_model_comp.xlsx")
 
-analysis.fig_cv_performance.main("cfgs/fig_cv_performance/yeast_gi_hybrid.json")
-analysis.fig_cv_performance.main("cfgs/fig_cv_performance/yeast_gi_costanzo.json")
-analysis.fig_cv_performance.main("cfgs/fig_cv_performance/pombe_gi.json")
+# analysis.fig_cv_performance.main("cfgs/fig_cv_performance/yeast_gi_hybrid.json")
+# analysis.fig_cv_performance.main("cfgs/fig_cv_performance/yeast_gi_costanzo.json")
+# analysis.fig_cv_performance.main("cfgs/fig_cv_performance/pombe_gi.json")
 
-analysis.fig_cv_performance.main("cfgs/fig_cv_performance/yeast_gi_hybrid_binary.json")
-analysis.fig_cv_performance.main("cfgs/fig_cv_performance/pombe_gi_binary.json")
-analysis.fig_cv_performance.main("cfgs/fig_cv_performance/human_gi.json")
-analysis.fig_cv_performance.main("cfgs/fig_cv_performance/dro_gi.json")
+# analysis.fig_cv_performance.main("cfgs/fig_cv_performance/yeast_gi_hybrid_binary.json")
+# analysis.fig_cv_performance.main("cfgs/fig_cv_performance/pombe_gi_binary.json")
+# analysis.fig_cv_performance.main("cfgs/fig_cv_performance/human_gi.json")
+# analysis.fig_cv_performance.main("cfgs/fig_cv_performance/dro_gi.json")
 
-analysis.fig_cv_performance.main("cfgs/fig_cv_performance/generalization_gi_pombe.json")
-analysis.fig_cv_performance.main("cfgs/fig_cv_performance/generalization_gi_human.json")
-analysis.fig_cv_performance.main("cfgs/fig_cv_performance/generalization_gi_dro.json")
+# analysis.fig_cv_performance.main("cfgs/fig_cv_performance/generalization_gi_pombe.json")
+# analysis.fig_cv_performance.main("cfgs/fig_cv_performance/generalization_gi_human.json")
+# analysis.fig_cv_performance.main("cfgs/fig_cv_performance/generalization_gi_dro.json")
 
 
 # SMF Matrices

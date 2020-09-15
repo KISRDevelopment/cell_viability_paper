@@ -1,0 +1,35 @@
+{
+    "spec" : [
+        {
+            "text_name" : "Negative",
+            "name" : "Negative",
+            "path" : "../results/gi_interpretation/yeast_mn_nonbinary/",
+            "color" : "#FF0000",
+            "ref_class" : 1,
+            "target_class" : 0
+        },
+        {
+            "text_name" : "Positive",
+            "name" : "Positive",
+            "path" : "../results/gi_interpretation/yeast_mn_nonbinary/",
+            "color" : "#00CC00",
+            "ref_class" : 1,
+            "target_class" : 2
+        },
+        {
+            "text_name" : "Suppression",
+            "name" : "Suppression",
+            "path" : "../results/gi_interpretation/yeast_mn_nonbinary/",
+            "color" : "#3d77ff",
+            "ref_class" : 1,
+            "target_class" : 3
+        }
+    ],
+    "model" : "mn",
+    "ref_class" : 1,
+    "target_class" : 0,
+    "output_path" : "../figures/gi_interpretation_yeast_nonbinary",
+    "plot_cfg" : {
+        "x_tick_label_size" : 35
+    }
+}
