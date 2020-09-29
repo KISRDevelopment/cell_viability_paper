@@ -10,10 +10,11 @@ def main(model_module, cfg, model_files, output_path):
     cfg['train_model'] = False 
 
     result_files = []
-    for model_file in model_files:
+    for i, model_file in enumerate(model_files):
         cfg['trained_model_path'] = model_file
         result_files.append("../tmp/%s.npz" % str(uuid.uuid4()))
-        model_module.main(cfg, 0, 0, result_files[-1], print_results=False)
+        print("Model %d" % i)
+        model_module.main(cfg, 0, 0, result_files[-1], print_results=True)
     
     preds = []
     y_target = None 
@@ -23,6 +24,7 @@ def main(model_module, cfg, model_files, output_path):
         y_target = d['y_target']
 
     preds = np.array(preds)
+
     preds = np.mean(preds, axis=0)
 
     r, cm = utils.eval_funcs.eval_classifier(y_target, preds)

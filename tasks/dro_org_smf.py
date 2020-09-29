@@ -24,12 +24,39 @@ def main(gpath, cell_smf_task_path, output_path):
     edf['Gene'] = edf['Gene'].str.lower()
     essential_genes = set(edf['Gene'])
     
+    ix = df_allele['phenotype'].str.startswith('lethal').astype(np.bool) & \
+        ~df_allele['phenotype'].str.contains('with').astype(np.bool) & \
+        ~pd.isnull(df_allele['phenotype'])  & df_allele['gene'].isin(node_ix).astype(np.bool)
+    
+    print("Before filtering: %d " % len(set(df_allele[ix]['gene'])))
+
     df_allele = df_allele[~df_allele['gene'].isin(essential_genes) & df_allele['gene'].isin(node_ix)]
+
     ix = df_allele['phenotype'].str.startswith('lethal').astype(np.bool) & \
         ~df_allele['phenotype'].str.contains('with').astype(np.bool) & \
         ~pd.isnull(df_allele['phenotype']) 
     
+    
+    print("after filtering: %d " % len(set(df_allele[ix]['gene'])))
+
     organism_lethal_genes = set(df_allele[ix]['gene'])
+    
+    print("Organismal lethal: %d" % len(organism_lethal_genes))
+
+    pupal_ix = ix & df_allele['phenotype'].str.lower().str.contains('pupal')
+    nonpupal_ix = ix & ~df_allele['phenotype'].str.lower().str.contains('pupal')
+
+    pupal_genes = set(df_allele[pupal_ix]['gene'])
+    nonpupal_genes = set(df_allele[nonpupal_ix]['gene'])
+
+    # want pure pupal genes
+    
+    print("Of which pupal: %d" % len(pupal_genes))
+    pupal_genes = pupal_genes - nonpupal_genes
+
+    print("Of which pupal: %d" % len(pupal_genes))
+    print("%d" % len(nonpupal_genes - pupal_genes))
+
     normal_genes = node_set - essential_genes - organism_lethal_genes
 
     lethal_rows = [{ "gene" : g, "bin" : 0 } for g in organism_lethal_genes]

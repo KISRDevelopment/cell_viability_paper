@@ -54,23 +54,24 @@ def load_cfg(path, **kwargs):
 
 # multinomial model
 # yeast_cfg = load_cfg("cfgs/models/yeast_gi_mn.json",
-#     targets_path="../generated-data/targets/task_yeast_gi_hybrid_bin_interacting.npz", name="yeast_mn")
+#     targets_path="../generated-data/targets/task_yeast_gi_hybrid_bin_interacting.npz", 
+#     epochs=1000,
+#     name="yeast_mn")
 # pombe_cfg = load_cfg("cfgs/models/pombe_gi_mn.json",
 #     targets_path="../generated-data/targets/task_pombe_gi_bin_interacting.npz", name="pombe_mn")
 # human_cfg = load_cfg("cfgs/models/human_gi_mn.json", name="human_mn")
 # dro_cfg = load_cfg("cfgs/models/dro_gi_mn.json", name="dro_mn")
 # generalize(yeast_cfg, models.gi_mn, [pombe_cfg, human_cfg, dro_cfg],"../results/gi_generalization")
 
-# null scrambled
-# yeast_cfg = load_cfg("cfgs/models/yeast_gi_refined_model.json",
-#     targets_path="../generated-data/targets/task_yeast_gi_hybrid_bin_interacting.npz", 
-#     scramble=True,
-#     name="yeast_null_scrambled")
-# pombe_cfg = load_cfg("cfgs/models/pombe_gi_refined_model.json",
-#     targets_path="../generated-data/targets/task_pombe_gi_bin_interacting.npz", name="pombe_null_scrambled")
-# human_cfg = load_cfg("cfgs/models/human_gi_refined_model.json", name="human_null_scrambled")
-# dro_cfg = load_cfg("cfgs/models/dro_gi_refined_model.json", name="dro_null_scrambled")
-# generalize(yeast_cfg, models.gi_nn, [pombe_cfg, human_cfg, dro_cfg],"../results/gi_generalization")
+yeast_cfg = load_cfg("cfgs/models/yeast_gi_mn.json",
+    targets_path="../generated-data/targets/task_yeast_gi_hybrid_bin_interacting.npz", 
+    epochs=0,
+    name="yeast_mn_0epochs")
+pombe_cfg = load_cfg("cfgs/models/pombe_gi_mn.json",
+    targets_path="../generated-data/targets/task_pombe_gi_bin_interacting.npz", name="pombe_mn_0epochs")
+human_cfg = load_cfg("cfgs/models/human_gi_mn.json", name="human_mn_0epochs")
+dro_cfg = load_cfg("cfgs/models/dro_gi_mn.json", name="dro_mn_0epochs")
+generalize(yeast_cfg, models.gi_mn, [pombe_cfg, human_cfg, dro_cfg],"../results/gi_generalization")
 
 # null
 # yeast_cfg = load_cfg("cfgs/models/yeast_gi_refined_model.json",
@@ -83,6 +84,6 @@ def load_cfg(path, **kwargs):
 # generalize(yeast_cfg, models.null_model_stochastic, [pombe_cfg, human_cfg, dro_cfg],"../results/gi_generalization")
 
 # Analysis
-analysis.fig_cv_performance.main("cfgs/fig_cv_performance/generalization_gi_pombe.json")
-analysis.fig_cv_performance.main("cfgs/fig_cv_performance/generalization_gi_human.json")
-analysis.fig_cv_performance.main("cfgs/fig_cv_performance/generalization_gi_dro.json")
+# analysis.fig_cv_performance.main("cfgs/fig_cv_performance/generalization_gi_pombe.json")
+# analysis.fig_cv_performance.main("cfgs/fig_cv_performance/generalization_gi_human.json")
+# analysis.fig_cv_performance.main("cfgs/fig_cv_performance/generalization_gi_dro.json")

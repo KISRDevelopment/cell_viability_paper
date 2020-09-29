@@ -63,7 +63,10 @@ def main(task_path, go_path, output_path):
         indecies = indecies[ix]
         for ind in indecies:
             selected_terms.add(ind)
-    
+        
+        print("Bin %d" % bin)
+        print("\n".join([labels[i] for i in indecies]))
+
     R_tot = np.sum(R[:, :, [0, 2, 3]], axis=2)
 
     fixed_labels = { n: process_label(n) for n in labels[list(selected_terms)] }

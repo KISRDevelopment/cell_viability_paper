@@ -10,6 +10,9 @@ import matplotlib.pyplot as plt
 import models.cv 
 import scipy.stats as stats
 import pandas as pd 
+import numpy.random as rng 
+import sklearn.metrics 
+
 plot_cfg = {
     "x_tick_label_size" : 32,
     "y_tick_label_size" : 32,
@@ -46,8 +49,11 @@ def main(cfg):
 
     ix = None
     all_mus = []
-    
+    all_stds = []
+    all_errors = []
+
     output_dfs = []
+
     for i, s in enumerate(cfg['spec']):
         
         if cfg['model'] == 'mn':
@@ -59,9 +65,10 @@ def main(cfg):
 
             c_muW = muW[:, c]
             c_errors = errors[:, :, c]
-
+            stdW = stdW[:, c]
+            
         else:
-            c_muW, _, c_errors, labels = load_weights_orm(s['path'])
+            c_muW, stdW, c_errors, labels = load_weights_orm(s['path'])
         
         c_errors[:, 0] = c_muW - c_errors[:, 0]
         c_errors[:, 1] = c_errors[:, 1] - c_muW 
@@ -74,9 +81,9 @@ def main(cfg):
         c_errors = c_errors[ix, :]
         labels = labels[ix]
 
-        for j in range(len(labels)):
-            print("%64s %8.4f (%8.4f - %8.4f)" % (labels[j], c_muW[j], c_muW[j] - c_errors[j,0], c_muW[j] + c_errors[j,1]))
-        print()
+        # for j in range(len(labels)):
+        #     print("%64s %8.4f (%8.4f - %8.4f)" % (labels[j], c_muW[j], c_muW[j] - c_errors[j,0], c_muW[j] + c_errors[j,1]))
+        # print()
         n = s['text_name']
         df_dict = {
             "%s_Mean Coefficient Value" % n : c_muW,
@@ -93,6 +100,8 @@ def main(cfg):
         #output_df.to_excel(writer, index=False, sheet_name=s['text_name'])
 
         all_mus.append(c_muW)
+        all_stds.append(stdW[ix])
+        all_errors.append(c_errors)
 
         ax = axes[n_subplots-i-1]
 
@@ -108,6 +117,31 @@ def main(cfg):
         ax.set_xlim([-0.5, c_errors.shape[0] - 0.5])
         ax.grid()
     
+    n_sim = 100
+    for i in range(len(cfg['spec'])):
+        mu = all_mus[i]
+        lower = mu - all_errors[i][:,0]
+        upper = mu + all_errors[i][:,1]
+
+        if i == 0:
+            unreliable_ix = (lower < 0) & (upper > 0)
+            #unreliable_ix = ((lower >= -0.2)) & ((upper <= 0.2)) 
+            print("Num unreliable: %d" % np.sum(unreliable_ix))
+            eligible_ix = ~unreliable_ix
+            
+        for j in range(i+1, len(cfg['spec'])):
+            dsts = []
+            for s in range(n_sim):
+                
+                a = stats.norm.rvs(loc=all_mus[i], scale=all_stds[i]) > 0.0
+                b = stats.norm.rvs(loc=all_mus[j], scale=all_stds[j]) > 0.0
+                
+                #dst = 1-np.mean((a * b) + (~a * ~b))
+                dst = sklearn.metrics.cohen_kappa_score(a[eligible_ix], b[eligible_ix])
+                
+                dsts.append(dst)
+            print("%s -- %s Mean Metric: %0.2f" % (cfg['spec'][i]['text_name'], cfg['spec'][j]['text_name'], np.mean(dsts)))
+
     output_df = pd.concat(output_dfs, axis=1).set_index('Feature')
     output_df.columns = pd.MultiIndex.from_tuples([tuple(c.split('_')) for c in output_df.columns])
     output_df.to_excel(cfg['output_path']+'.xlsx', sheet_name='Sheet1', index=True)
@@ -255,9 +289,13 @@ def process_label(lbl):
         go_name = goid_names[goid]
         lbl = '%s (both)' % go_name
     elif lbl.startswith('sgo_either_'):
-        goid = lbl.replace('sgo_either_', '')
+        goid = lbl.replace('sgo_either_', '').replace('_xor','')
         go_name = goid_names[goid]
         lbl = '%s (either)' % go_name
+    elif lbl.startswith('sgo_sum_'):
+        goid = lbl.replace('sgo_sum_', '')
+        go_name = goid_names[goid]
+        lbl = '%s (Sum)' % go_name
     elif lbl == 'sum_lid':
         lbl = 'LID (sum)'
     elif lbl.startswith('smf_'):

@@ -8,7 +8,8 @@
         {
             "name" : "sgo",
             "path" : "../generated-data/features/ppc_dro_common_sgo.npz",
-            "processor" : "GoProcessor"
+            "processor" : "GoProcessorSum",
+            "xor" : true
         },
         {
             "name" : "spl",

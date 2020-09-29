@@ -5,11 +5,7 @@
             "path" : "../generated-data/features/ppc_yeast_smf_binned.npz",
             "processor" : "BinnedSmfProcessor"
         },
-        {
-            "name" : "sgo",
-            "path" : "../generated-data/features/ppc_yeast_common_sgo.npz",
-            "processor" : "GoProcessor"
-        },
+        
         {
             "name" : "spl",
             "normalize" : true,

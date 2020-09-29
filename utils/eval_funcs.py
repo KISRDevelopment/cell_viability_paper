@@ -218,7 +218,8 @@ def print_eval_classifier(r):
     print("  " + ', '.join(['%0.3f' % e for e in r['per_class_auc_pr']]))
     print("Per-class BACC:")
     print("  " + ', '.join(['%0.3f' % e for e in r['per_class_baccs']]))
-
+    print("Log-prob: %f" % r['log_prob'])
+    
     if 'cm' in r:
         cm = r['cm']
         cm = cm / np.sum(cm, axis=1, keepdims=True)

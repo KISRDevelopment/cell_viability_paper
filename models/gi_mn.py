@@ -23,6 +23,7 @@ import models.feature_loader
 from termcolor import colored
 
 def main(cfg, rep, fold, output_path, print_results=True):
+    K.clear_session()
 
     dataset_path = cfg['task_path']
     targets_path = cfg['targets_path']
@@ -111,13 +112,14 @@ def main(cfg, rep, fold, output_path, print_results=True):
         else:
             callbacks = []
         
-        model.fit_generator(train_iterator(),
-            steps_per_epoch=np.ceil(train_df.shape[0] / cfg['batch_size']),
-            epochs=cfg['epochs'],
-            verbose=cfg['verbose'],
-            validation_data=valid_iterator(),
-            validation_steps=np.ceil(valid_df.shape[0] / cfg['batch_size']),
-            callbacks=callbacks)
+        if cfg['epochs'] > 0:
+            model.fit_generator(train_iterator(),
+                steps_per_epoch=np.ceil(train_df.shape[0] / cfg['batch_size']),
+                epochs=cfg['epochs'],
+                verbose=cfg['verbose'],
+                validation_data=valid_iterator(),
+                validation_steps=np.ceil(valid_df.shape[0] / cfg['batch_size']),
+                callbacks=callbacks)
 
         if cfg.get("trained_model_path", None) is not None:
             print("Saving model")
@@ -205,6 +207,7 @@ def create_data_iterator(df, y, processors, cfg, shuffle=True):
                     features.append(proc.transform(batch_df))
                 
                 batch_F = np.hstack(features)
+                
                 if np.sum(np.isnan(batch_F)) > 0:
                     print(batch_F)
                     print(batch_F.shape)
@@ -241,11 +244,15 @@ class GoProcessor(object):
 
     def __init__(self, cfg):
         d_go = np.load(cfg['path'])
+
+        self.xor = cfg.get('xor', False)
         self.F = d_go['F']
 
         self.feature_labels = []
 
-        self.feature_labels.extend(['sgo_either_%s' % s for s in d_go['feature_labels']])
+        postfix = '_xor' if self.xor else ''
+
+        self.feature_labels.extend(['sgo_either_%s%s' % (s,postfix) for s in d_go['feature_labels']])
         self.feature_labels.extend(['sgo_both_%s' % s for s in d_go['feature_labels']])
 
     def transform(self, df):
@@ -253,10 +260,33 @@ class GoProcessor(object):
 
         go_a = F[df['a_id'], :]
         go_b = F[df['b_id'], :]
-        go_either = ((go_a + go_b) > 0).astype(int)
+        if self.xor:
+            go_either = np.logical_xor(go_a, go_b).astype(int)
+        else:
+            go_either = ((go_a + go_b) > 0).astype(int)
         go_both = go_a * go_b 
 
         return np.hstack((go_either, go_both))
+
+class GoProcessorSum(object):
+
+    def __init__(self, cfg):
+        d_go = np.load(cfg['path'])
+
+        self.F = d_go['F']
+
+        self.feature_labels = []
+
+        self.feature_labels.extend(['sgo_sum_%s' % (s) for s in d_go['feature_labels']])
+        
+    def transform(self, df):
+        F = self.F 
+
+        go_a = F[df['a_id'], :]
+        go_b = F[df['b_id'], :]
+       
+        return go_a + go_b
+
 
 class PairwiseProcessor(object):
 

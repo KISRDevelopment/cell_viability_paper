@@ -9,6 +9,7 @@ cfg = d['cfg'].item()
 
 print(json.dumps(cfg, indent=4))
 
+print(d['cm'] / np.sum(d['cm'], axis=1, keepdims=True))
 if 'labels' in d:
     print(d['labels'])
     print(len(d['labels']))
