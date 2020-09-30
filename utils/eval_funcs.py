@@ -83,7 +83,7 @@ def average_cm(cv_dir):
 
     return np.mean(cms, axis=0)
 
-def compute_stars(pvalue, alpha):
+def compute_stars(pvalue, alpha, return_level=False):
     """ compute the stars to visualize a p-value """
     PVALUE_STARS = [
         1.,
@@ -95,7 +95,10 @@ def compute_stars(pvalue, alpha):
     for i in range(len(PVALUE_STARS)-1, -1, -1):
         level = PVALUE_STARS[i] * alpha
         if pvalue < level:
-            return i+1
+            if return_level:
+                return i+1, level 
+            else:
+                return i+1
 
     return 0
 

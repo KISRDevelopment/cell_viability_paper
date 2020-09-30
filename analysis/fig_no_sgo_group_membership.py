@@ -9,6 +9,7 @@ import matplotlib.colors
 from collections import defaultdict
 import json
 import utils.yeast_name_resolver as nr
+import utils.eval_funcs as eval_funcs
 res = nr.NameResolver()
 
 plot_cfg = {
@@ -25,6 +26,8 @@ plot_cfg = {
 plt.rcParams["font.family"] = "Liberation Serif"
 plt.rcParams["font.weight"] = "bold"
 plt.rcParams['mathtext.fontset'] = 'stix'
+
+ALPHA=0.05
 def main(gpath, sgo_path):
 
     genes_to_complexes = parse_yeast_complexes()
@@ -51,21 +54,22 @@ def main(gpath, sgo_path):
 
     print("Number of genes without SGO: %d (%0.2f)" % (np.sum(ix_no_sgo), np.mean(ix_no_sgo)))
 
-    f_obs_complex = group_analysis(ix_in_complex, ~ix_no_sgo)
-    f_obs_pathway = group_analysis(ix_in_pathway, ~ix_no_sgo)
+    chi2_complex, p_complex, f_obs_complex, ddof = group_analysis(ix_in_complex, ~ix_no_sgo)
+    chi2_pathway, p_pathway, f_obs_pathway, ddof = group_analysis(ix_in_pathway, ~ix_no_sgo)
     
-    
+    _, p_complex_level = eval_funcs.compute_stars(p_complex, ALPHA, return_level=True)
+    _, p_pathway_level = eval_funcs.compute_stars(p_pathway, ALPHA, return_level=True)
     df = pd.DataFrame([
-        { "type" : "Complex", "has_sgo" : "No sGO", "prop" : f_obs_complex[1, 0] / np.sum(ix_no_sgo) },
-        { "type" : "Complex", "has_sgo" : "Has sGO", "prop" : f_obs_complex[1, 1] / np.sum(~ix_no_sgo) },
-        { "type" : "Pathway", "has_sgo" : "No sGO", "prop" : f_obs_pathway[1, 0] / np.sum(ix_no_sgo) },
-        { "type" : "Pathway", "has_sgo" : "Has sGO", "prop" : f_obs_pathway[1, 1] / np.sum(~ix_no_sgo) },  
+        { "type" : "Complex ($\chi^2_{%d}=%0.1f, \\rho < %0.4f$)" % (ddof, chi2_complex, p_complex_level), "has_sgo" : "No sGO", "prop" : f_obs_complex[1, 0] / np.sum(ix_no_sgo) },
+        { "type" : "Complex ($\chi^2_{%d}=%0.1f, \\rho < %0.4f$)" % (ddof, chi2_complex, p_complex_level), "has_sgo" : "Has sGO", "prop" : f_obs_complex[1, 1] / np.sum(~ix_no_sgo) },
+        { "type" : "Pathway ($\chi^2_{%d}=%0.1f, \\rho < %0.4f$)"  % (ddof, chi2_pathway, p_pathway_level), "has_sgo" : "No sGO", "prop" : f_obs_pathway[1, 0] / np.sum(ix_no_sgo) },
+        { "type" : "Pathway ($\chi^2_{%d}=%0.1f, \\rho < %0.4f$)"  % (ddof, chi2_pathway, p_pathway_level), "has_sgo" : "Has sGO", "prop" : f_obs_pathway[1, 1] / np.sum(~ix_no_sgo) },  
     ])
     df['prop'] *= 100
 
     f, ax = plt.subplots(1, 1, figsize=(10, 10))
     bar = sns.barplot(x="has_sgo", y="prop", hue="type",
-        data=df, ax=ax, saturation=1)    
+        data=df, ax=ax, saturation=1, palette=['magenta', 'orange'])    
     ax.yaxis.set_tick_params(labelsize=plot_cfg['tick_label_size'])
     ax.xaxis.set_tick_params(labelsize=plot_cfg['tick_label_size'])
     ax.set_ylabel('% of Genes in Group', fontsize=plot_cfg['ylabel_size'], fontweight='bold')
@@ -75,7 +79,7 @@ def main(gpath, sgo_path):
     ax.spines['top'].set_visible(False)
     
     ax.set_xlabel('Group', fontsize=plot_cfg['xlabel_size'], fontweight='bold')
-    ax.legend(fontsize=plot_cfg['legend_size'])
+    ax.legend(fontsize=plot_cfg['legend_size'], loc='upper center', bbox_to_anchor=(0.5, 1.3), frameon=False)
 
     plt.savefig('../figures/no_sgo_complex_pathway_membership.png', bbox_inches='tight', dpi=100)
 
@@ -105,7 +109,9 @@ def group_analysis(ix_group, ix_sgo):
     chisq, p = stats.chisquare(f_obs, f_exp, axis=None)
     print("Chi2 Statistic: %f, p: %f" % (chisq, p))
 
-    return f_obs
+    ddof = (f_obs.shape[0]-1) * (f_obs.shape[1]-1)
+
+    return chisq, p, f_obs, ddof
 
 def parse_kegg_pathways():
 
