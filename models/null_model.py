@@ -13,7 +13,7 @@ import uuid
 import utils.eval_funcs
 import keras.utils 
 from termcolor import colored
-def main(cfg, rep, fold, output_path):
+def main(cfg, rep, fold, output_path, print_results=False):
     
 
     
@@ -60,7 +60,7 @@ def main(cfg, rep, fold, output_path):
             print("Saving model")
             np.save(cfg["trained_model_path"], props)
     else:
-        props = np.load(cfg["trained_model_path"])
+        props = np.load(cfg["trained_model_path"] + ".npy")
     
     preds = np.tile(props, (test_Y.shape[0], 1))
     

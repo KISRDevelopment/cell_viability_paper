@@ -45,7 +45,7 @@ def main(cfg):
     plot_cfg.update(cfg['plot_cfg'])
 
     n_subplots = cfg.get('subplots', len(cfg['spec']))
-    f, axes = plt.subplots(n_subplots, 1, figsize=(55, 20), sharey=True, sharex=True)
+    f, axes = plt.subplots(n_subplots, 1, figsize=plot_cfg.get('figsize', (55, 20)), sharey=True, sharex=True)
 
     ix = None
     all_mus = []
@@ -113,35 +113,12 @@ def main(cfg):
         ax.set_xticklabels(labels)
         ax.tick_params(axis='x', labelsize=plot_cfg['x_tick_label_size'], rotation=90)
         ax.tick_params(axis='y', labelsize=plot_cfg['y_tick_label_size'])
-        ax.set_ylabel('Coefficient\nValue', fontsize=plot_cfg['ylabel_size'], fontweight='bold')
+        if cfg.get('ylabel', True):
+            ax.set_ylabel('Coefficient\nValue', fontsize=plot_cfg['ylabel_size'], fontweight='bold')
         ax.set_xlim([-0.5, c_errors.shape[0] - 0.5])
         ax.grid()
     
-    n_sim = 100
-    for i in range(len(cfg['spec'])):
-        mu = all_mus[i]
-        lower = mu - all_errors[i][:,0]
-        upper = mu + all_errors[i][:,1]
-
-        if i == 0:
-            unreliable_ix = (lower < 0) & (upper > 0)
-            #unreliable_ix = ((lower >= -0.2)) & ((upper <= 0.2)) 
-            print("Num unreliable: %d" % np.sum(unreliable_ix))
-            eligible_ix = ~unreliable_ix
-            
-        for j in range(i+1, len(cfg['spec'])):
-            dsts = []
-            for s in range(n_sim):
-                
-                a = stats.norm.rvs(loc=all_mus[i], scale=all_stds[i]) > 0.0
-                b = stats.norm.rvs(loc=all_mus[j], scale=all_stds[j]) > 0.0
-                
-                #dst = 1-np.mean((a * b) + (~a * ~b))
-                dst = sklearn.metrics.cohen_kappa_score(a[eligible_ix], b[eligible_ix])
-                
-                dsts.append(dst)
-            print("%s -- %s Mean Metric: %0.2f" % (cfg['spec'][i]['text_name'], cfg['spec'][j]['text_name'], np.mean(dsts)))
-
+    
     output_df = pd.concat(output_dfs, axis=1).set_index('Feature')
     output_df.columns = pd.MultiIndex.from_tuples([tuple(c.split('_')) for c in output_df.columns])
     output_df.to_excel(cfg['output_path']+'.xlsx', sheet_name='Sheet1', index=True)
@@ -150,26 +127,50 @@ def main(cfg):
 
     plt.savefig(cfg['output_path'], bbox_inches='tight', dpi=150)
 
+    # spearman corr
     n = len(cfg['spec'])
-
     corr_matrix = np.zeros((n, n))
     corr_matrix[:] = np.nan
-    
     for i in range(n):
         for j in range(i+1, n):
             a = all_mus[i]
             b = all_mus[j]
             rho, _ = stats.spearmanr(a, b)
             corr_matrix[i, j] = rho 
-            
-    
-    print(corr_matrix)
+    visualize_corr_matrix(corr_matrix, cfg, cfg['output_path'] + '_spearman_corr.png')
 
+    # kappa
+    corr_matrix = np.zeros((n, n))
+    corr_matrix[:] = np.nan
+    n_sim = 100
+    for i in range(len(cfg['spec'])):
+        mu = all_mus[i]
+        lower = mu - all_errors[i][:,0]
+        upper = mu + all_errors[i][:,1]
+
+        for j in range(i+1, len(cfg['spec'])):
+            dsts = []
+            for s in range(n_sim):
+                
+                a = stats.norm.rvs(loc=all_mus[i], scale=all_stds[i]) > 0.0
+                b = stats.norm.rvs(loc=all_mus[j], scale=all_stds[j]) > 0.0
+                
+                dst = sklearn.metrics.cohen_kappa_score(a, b)
+                
+                dsts.append(dst)
+                
+            corr_matrix[i, j] = np.mean(dsts)
+    visualize_corr_matrix(corr_matrix, cfg, cfg['output_path'] + '_cohen_kappa_corr.png')
+
+
+
+def visualize_corr_matrix(corr_matrix, cfg, output_path):
+    n = corr_matrix.shape[0]
+    
     # drop the first column and last row
     corr_matrix = corr_matrix[:, 1:]
     corr_matrix = corr_matrix[:-1, :]
-    print(corr_matrix)
-
+    
     f, ax = plt.subplots(1, 1, figsize=(10, 10))
 
     ax.imshow(corr_matrix, cmap=plt.get_cmap('Reds'), vmin=0, vmax=1)
@@ -199,7 +200,7 @@ def main(cfg):
     ax.xaxis.set_tick_params(length=0, width=0, which='both', pad=10)
     ax.yaxis.set_tick_params(length=0, width=0, which='both', pad=10)
     
-    plt.savefig(cfg['output_path'] + '_corr_matrix.png', bbox_inches='tight')
+    plt.savefig(output_path, bbox_inches='tight')
 
 def load_weights_orm(path):
     files = glob.glob(path + '/*.npz')

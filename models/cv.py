@@ -8,7 +8,7 @@ import json
 SHOW_OUTPUT = False 
 OVERWRITE_PROMPT = False
 
-def main(script_name, cfg_path, output_dir, num_processes=8, interpreation=False, scramble=False, **kwargs):
+def main(script_name, cfg_path, output_dir, num_processes=8, interpreation=False, scramble=False, remove_specs=[], **kwargs):
     orig_cfg_path = cfg_path
 
     CUDA_VISIBLE_DEVICES = os.getenv('CUDA_VISIBLE_DEVICES')
@@ -31,10 +31,15 @@ def main(script_name, cfg_path, output_dir, num_processes=8, interpreation=False
         cfg_path = "../tmp/override_cfg"
         cfg['scramble'] = True
 
+    if len(remove_specs) > 0:
+        cfg['spec'] = [s for s in cfg['spec'] if s['name'] not in remove_specs]
+        cfg_path = "../tmp/override_cfg"
+
     if kwargs:
         cfg_path = "../tmp/override_cfg"
         cfg.update(kwargs)
-        print(cfg)
+    
+    print(cfg)
         
     if orig_cfg_path != cfg_path:
         with open(cfg_path, 'w') as f:

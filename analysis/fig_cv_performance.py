@@ -15,7 +15,7 @@ import sys
 import json
 import os 
 import utils.eval_funcs as eval_funcs
-
+from seaborn.utils import remove_na
 plot_cfg = {
     "tick_label_size" : 50,
     "xlabel_size" : 60,
@@ -62,6 +62,7 @@ def overall_bacc(cfg):
 
     paths = [m['path'] for m in cfg['models']]
     model_names = [m['name'] for m in cfg['models']]
+    model_name_fsizes = [m.get('fsize', plot_cfg['bar_label_size']) for m in cfg['models']]
     colors = [m['color'] for m in cfg['models']]
     star_colors = [m['star_color'] if 'star_color' in m else m['color'] for m in cfg['models']]
     
@@ -108,7 +109,7 @@ def overall_bacc(cfg):
     for i, m in enumerate(model_names):
         a_ix = df['model'] == m
         bacc = (np.mean(df[a_ix]['bacc']) - np.std(df[a_ix]['bacc'])) / 2
-        ax.text(i, bacc, m, rotation=90, ha="center", va="center", fontsize=plot_cfg['bar_label_size'], weight='bold')
+        ax.text(i, bacc, m, rotation=90, ha="center", va="center", fontsize=model_name_fsizes[i], weight='bold')
 
 
     # plot pvalues
@@ -184,6 +185,7 @@ def cms(cfg):
     paths = [m['path'] for m in cfg['models']]
     model_names = [m['name'] for m in cfg['models']]
     colors = [m['cm_color'] if 'cm_color' in m else m['color'] for m in cfg['models']]
+    
     classes = cfg['classes']
     sclasses = cfg['short_classes']
     
@@ -237,7 +239,7 @@ def per_class_roc(cfg):
     model_names = [m['name'] for m in models]
     classes = cfg['classes']
     colors = [m['cm_color'] if 'cm_color' in m else m['color'] for m in models]
-
+    
 
     n_classes = len(classes)
     for klass in range(n_classes-1, -1, -1):
@@ -270,7 +272,8 @@ def per_class(df, cfg, y, ylabel, output_path):
     colors = [m['color'] for m in cfg['models']]
     classes = cfg['classes']
     star_colors = [m['star_color'] if 'star_color' in m else m['color'] for m in cfg['models']]
-
+    model_name_fsizes = [m.get('pc_fsize', plot_cfg['bar_label_size']) for m in cfg['models']]
+    
     all_vals = []
     for m in model_names:
         vals = [np.mean(df[(df['bin'] == c) & (df['model'] == m)][y]) for c in classes]
@@ -309,7 +312,7 @@ def per_class(df, cfg, y, ylabel, output_path):
         for i, m in enumerate(model_names):
             a_ix = sdf['model'] == m
             val = (np.mean(sdf[a_ix][y]) - np.std(sdf[a_ix][y])) / 2
-            ax.text(i, val, m, rotation=90, ha="center", va="center", fontsize=plot_cfg['bar_label_size'], weight='bold')
+            ax.text(i, val, m, rotation=90, ha="center", va="center", fontsize=model_name_fsizes[i], weight='bold')
 
 
         num_comparisons = cfg['n_models'] * (cfg['n_models']  - 1) / 2
@@ -348,6 +351,116 @@ def per_class(df, cfg, y, ylabel, output_path):
 
 
 
+
+def estimate_statistic(self, estimator, ci, n_boot, seed):
+
+        if self.hue_names is None:
+            statistic = []
+            confint = []
+        else:
+            statistic = [[] for _ in self.plot_data]
+            confint = [[] for _ in self.plot_data]
+
+        for i, group_data in enumerate(self.plot_data):
+
+            # Option 1: we have a single layer of grouping
+            # --------------------------------------------
+
+            if self.plot_hues is None:
+
+                if self.plot_units is None:
+                    stat_data = remove_na(group_data)
+                    unit_data = None
+                else:
+                    unit_data = self.plot_units[i]
+                    have = pd.notnull(np.c_[group_data, unit_data]).all(axis=1)
+                    stat_data = group_data[have]
+                    unit_data = unit_data[have]
+
+                # Estimate a statistic from the vector of data
+                if not stat_data.size:
+                    statistic.append(np.nan)
+                else:
+                    statistic.append(estimator(stat_data))
+
+                # Get a confidence interval for this estimate
+                if ci is not None:
+
+                    if stat_data.size < 2:
+                        confint.append([np.nan, np.nan])
+                        continue
+
+                    if ci == "sd":
+
+                        estimate = estimator(stat_data)
+                        sd = np.std(stat_data) / np.sqrt(len(stat_data))
+                        confint.append((estimate - sd, estimate + sd))
+
+                    else:
+
+                        boots = bootstrap(stat_data, func=estimator,
+                                          n_boot=n_boot,
+                                          units=unit_data,
+                                          seed=seed)
+                        confint.append(utils.ci(boots, ci))
+
+            # Option 2: we are grouping by a hue layer
+            # ----------------------------------------
+
+            else:
+                for j, hue_level in enumerate(self.hue_names):
+
+                    if not self.plot_hues[i].size:
+                        statistic[i].append(np.nan)
+                        if ci is not None:
+                            confint[i].append((np.nan, np.nan))
+                        continue
+
+                    hue_mask = self.plot_hues[i] == hue_level
+                    if self.plot_units is None:
+                        stat_data = remove_na(group_data[hue_mask])
+                        unit_data = None
+                    else:
+                        group_units = self.plot_units[i]
+                        have = pd.notnull(
+                            np.c_[group_data, group_units]
+                        ).all(axis=1)
+                        stat_data = group_data[hue_mask & have]
+                        unit_data = group_units[hue_mask & have]
+
+                    # Estimate a statistic from the vector of data
+                    if not stat_data.size:
+                        statistic[i].append(np.nan)
+                    else:
+                        statistic[i].append(estimator(stat_data))
+
+                    # Get a confidence interval for this estimate
+                    if ci is not None:
+
+                        if stat_data.size < 2:
+                            confint[i].append([np.nan, np.nan])
+                            continue
+
+                        if ci == "sd":
+
+                            estimate = estimator(stat_data)
+                            sd = np.std(stat_data) / np.sqrt(len(stat_data))
+                            confint[i].append((estimate - sd, estimate + sd))
+
+                        else:
+
+                            boots = bootstrap(stat_data, func=estimator,
+                                              n_boot=n_boot,
+                                              units=unit_data,
+                                              seed=seed)
+                            confint[i].append(utils.ci(boots, ci))
+
+        # Save the resulting values for plotting
+        self.statistic = np.array(statistic)
+        self.confint = np.array(confint)
+
+# catplotter = sns.categorical._CategoricalStatPlotter 
+# catplotter.estimate_statistic = estimate_statistic
 
 if __name__ == "__main__":
 

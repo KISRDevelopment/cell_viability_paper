@@ -102,4 +102,4 @@ def main(cfg):
 
 if __name__ == "__main__":
 
-    main(pombe_cfg)
+    main(yeast_cfg)

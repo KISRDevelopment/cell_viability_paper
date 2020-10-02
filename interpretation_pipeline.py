@@ -17,6 +17,7 @@ def load_cfg(path):
 smf_cfg = load_cfg('cfgs/fig_interpretation/smf.json')
 smf_org_cfg = load_cfg('cfgs/fig_interpretation/smf_cell_org_lethal.json')
 gi_cfg = load_cfg('cfgs/fig_interpretation/gi_binary.json')
+gi_cfg_no_sgo = load_cfg('cfgs/fig_interpretation/gi_binary_no_sgo.json')
 
 
 # # SMF Interpretation
@@ -54,7 +55,7 @@ models.cv.main("models.gi_mn", "cfgs/models/pombe_gi_mn.json",
     targets_path="../generated-data/targets/task_pombe_gi_bin_simple.npz",
     num_processes=20, epochs=50)
 
-# GI Binary Interpreation
+# # GI Binary Interpreation
 models.cv.main("models.gi_mn", "cfgs/models/yeast_gi_mn.json", 
     "../results/gi_interpretation/yeast_mn", interpreation=True, 
     targets_path="../generated-data/targets/task_yeast_gi_hybrid_bin_interacting.npz",
@@ -72,6 +73,29 @@ models.cv.main("models.gi_mn", "cfgs/models/dro_gi_mn.json",
     "../results/gi_interpretation/dro_mn", interpreation=True, num_processes=20, epochs=50)
 
 analysis.fig_interpretation.main(gi_cfg)
+
+#
+# no SGO
+#
+models.cv.main("models.gi_mn", "cfgs/models/yeast_gi_mn.json", 
+    "../results/gi_interpretation_no_sgo/yeast_mn", interpreation=True, 
+    remove_specs=["sgo"],
+    targets_path="../generated-data/targets/task_yeast_gi_hybrid_bin_interacting.npz",
+    num_processes=20, epochs=50)
+
+models.cv.main("models.gi_mn", "cfgs/models/pombe_gi_mn.json", 
+    "../results/gi_interpretation_no_sgo/pombe_mn", interpreation=True, 
+    remove_specs=["sgo"],
+    targets_path="../generated-data/targets/task_pombe_gi_bin_interacting.npz",
+    num_processes=20, epochs=50)
+
+models.cv.main("models.gi_mn", "cfgs/models/human_gi_mn.json", 
+    "../results/gi_interpretation_no_sgo/human_mn",     remove_specs=["sgo"], interpreation=True, num_processes=20, epochs=50)
+
+models.cv.main("models.gi_mn", "cfgs/models/dro_gi_mn.json", 
+
+    "../results/gi_interpretation_no_sgo/dro_mn",     remove_specs=["sgo"], interpreation=True, num_processes=20, epochs=50)
+analysis.fig_interpretation.main(gi_cfg_no_sgo)
 
 # merge everything into one file
 # writer = pd.ExcelWriter('../figures/interpretation_results.xlsx')

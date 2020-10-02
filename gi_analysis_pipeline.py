@@ -39,18 +39,7 @@ from utils.merge_excels import merge_excels
 #     ("../figures/dro_gi_generalization_model_comp.xlsx", "D. melanogaster (Binary)")
 # ], '../figures/gi_generalization_results.xlsx', writing_kw_args={"index":False})
 
-#analysis.fig_cv_performance.main("cfgs/fig_cv_performance/yeast_gi_hybrid.json")
-analysis.fig_cv_performance.main("cfgs/fig_cv_performance/yeast_gi_costanzo.json")
-analysis.fig_cv_performance.main("cfgs/fig_cv_performance/pombe_gi.json")
 
-analysis.fig_cv_performance.main("cfgs/fig_cv_performance/yeast_gi_hybrid_binary.json")
-analysis.fig_cv_performance.main("cfgs/fig_cv_performance/pombe_gi_binary.json")
-analysis.fig_cv_performance.main("cfgs/fig_cv_performance/human_gi.json")
-analysis.fig_cv_performance.main("cfgs/fig_cv_performance/dro_gi.json")
-
-# analysis.fig_cv_performance.main("cfgs/fig_cv_performance/generalization_gi_pombe.json")
-# analysis.fig_cv_performance.main("cfgs/fig_cv_performance/generalization_gi_human.json")
-# analysis.fig_cv_performance.main("cfgs/fig_cv_performance/generalization_gi_dro.json")
 
 
 # SMF Matrices
@@ -62,3 +51,18 @@ analysis.fig_cv_performance.main("cfgs/fig_cv_performance/dro_gi.json")
 
 # SPL
 #analysis.fig_spl.main("../generated-data/task_yeast_gi_hybrid", "../generated-data/pairwise_features/ppc_yeast_shortest_path_len.npy", "%", "../figures/yeast_hybrid_gi_spl")
+
+# analysis.fig_cv_performance.main("cfgs/fig_cv_performance/yeast_gi_hybrid.json")
+analysis.fig_cv_performance.main("cfgs/fig_cv_performance/yeast_gi_costanzo.json")
+# analysis.fig_cv_performance.main("cfgs/fig_cv_performance/yeast_gi_hybrid_binary.json")
+# analysis.fig_cv_performance.main("cfgs/fig_cv_performance/pombe_gi.json")
+# analysis.fig_cv_performance.main("cfgs/fig_cv_performance/pombe_gi_binary.json")
+# analysis.fig_cv_performance.main("cfgs/fig_cv_performance/human_gi.json")
+# analysis.fig_cv_performance.main("cfgs/fig_cv_performance/dro_gi.json")
+# analysis.fig_cv_performance.main("cfgs/fig_cv_performance/yeast_gi_hybrid_binary_no_sgo.json")
+# analysis.fig_cv_performance.main("cfgs/fig_cv_performance/pombe_gi_binary_no_sgo.json")
+# analysis.fig_cv_performance.main("cfgs/fig_cv_performance/human_gi_no_sgo.json")
+# analysis.fig_cv_performance.main("cfgs/fig_cv_performance/dro_gi_no_sgo.json")
+# analysis.fig_cv_performance.main("cfgs/fig_cv_performance/generalization_gi_pombe.json")
+# analysis.fig_cv_performance.main("cfgs/fig_cv_performance/generalization_gi_human.json")
+# analysis.fig_cv_performance.main("cfgs/fig_cv_performance/generalization_gi_dro.json")

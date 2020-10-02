@@ -12,6 +12,7 @@
             "name": "Refined model",
             "color": "#FF0000",
             "cm_color": "#FF0000",
+            "fsize" : 38,
             "path": "../results/task_yeast_gi_costanzo/refined",
             "show": true
         },
