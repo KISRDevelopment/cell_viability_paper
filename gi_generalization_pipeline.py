@@ -27,7 +27,7 @@ def generalize(yeast_cfg, mdl, org_cfgs, output_dir):
     for r, f in splits:
         yeast_cfg['trained_model_path'] = os.path.join(model_files_dir, "%d_%d" % (r,f))
         model_files.append(yeast_cfg['trained_model_path'])
-        #mdl.main(yeast_cfg, r, f, '../tmp/dummy')
+        mdl.main(yeast_cfg, r, f, '../tmp/dummy')
 
     # test on target models
     for cfg in org_cfgs:
@@ -36,10 +36,13 @@ def generalize(yeast_cfg, mdl, org_cfgs, output_dir):
         cfg['test_on_full_dataset'] = True
         models.ensemble_model.main(mdl, cfg, model_files, os.path.join(output_dir, cfg_name))
 
-def load_cfg(path, **kwargs):
+def load_cfg(path, remove_specs=[], **kwargs):
     with open(path, 'r') as f:
         cfg = json.load(f)
+
+    cfg['spec'] = [s for s in cfg['spec'] if s['name'] not in remove_specs]
     cfg.update(kwargs)
+    print(cfg)
     return cfg 
 
 # refined model
@@ -60,6 +63,22 @@ def load_cfg(path, **kwargs):
 #     targets_path="../generated-data/targets/task_pombe_gi_bin_interacting.npz", name="pombe_mn")
 # human_cfg = load_cfg("cfgs/models/human_gi_mn.json", name="human_mn")
 # dro_cfg = load_cfg("cfgs/models/dro_gi_mn.json", name="dro_mn")
+# generalize(yeast_cfg, models.gi_mn, [pombe_cfg, human_cfg, dro_cfg],"../results/gi_generalization")
+
+# multinomial model
+# yeast_cfg = load_cfg("cfgs/models/yeast_gi_mn.json",
+#     targets_path="../generated-data/targets/task_yeast_gi_hybrid_bin_interacting.npz", 
+#     remove_specs=["sgo", "smf"],
+#     epochs=1000,
+#     name="yeast_mn_no_sgo_smf")
+# pombe_cfg = load_cfg("cfgs/models/pombe_gi_mn.json",
+    
+#     remove_specs=["sgo", "smf"],
+#     targets_path="../generated-data/targets/task_pombe_gi_bin_interacting.npz", name="pombe_mn_no_sgo_smf")
+# human_cfg = load_cfg("cfgs/models/human_gi_mn.json", name="human_mn_no_sgo_smf", 
+#     remove_specs=["sgo", "smf"])
+# dro_cfg = load_cfg("cfgs/models/dro_gi_mn.json", name="dro_mn_no_sgo_smf", 
+#     remove_specs=["sgo", "smf"])
 # generalize(yeast_cfg, models.gi_mn, [pombe_cfg, human_cfg, dro_cfg],"../results/gi_generalization")
 
 # null

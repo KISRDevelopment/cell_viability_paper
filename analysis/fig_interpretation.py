@@ -12,10 +12,12 @@ import scipy.stats as stats
 import pandas as pd 
 import numpy.random as rng 
 import sklearn.metrics 
+from matplotlib.colors import LinearSegmentedColormap
+import matplotlib.colors as colors 
 
 plot_cfg = {
-    "x_tick_label_size" : 32,
-    "y_tick_label_size" : 32,
+    "x_tick_label_size" : 54,
+    "y_tick_label_size" : 54,
     "xlabel_size" : 40,
     "ylabel_size" : 40,
     "border_size" : 6,
@@ -45,7 +47,7 @@ def main(cfg):
     plot_cfg.update(cfg['plot_cfg'])
 
     n_subplots = cfg.get('subplots', len(cfg['spec']))
-    f, axes = plt.subplots(n_subplots, 1, figsize=plot_cfg.get('figsize', (55, 20)), sharey=True, sharex=True)
+    f, axes = plt.subplots(n_subplots, 1, figsize=plot_cfg.get('figsize', (50, 20)), sharey=True, sharex=True)
 
     ix = None
     all_mus = []
@@ -104,18 +106,27 @@ def main(cfg):
         all_errors.append(c_errors)
 
         ax = axes[n_subplots-i-1]
+        n_entries = cfg.get('n_entries', c_errors.shape[0])
 
-        ax.plot([-0.5, c_errors.shape[0] - 0.5], [0.0, 0.0], linewidth=5, 
+        ax.plot([-0.5, n_entries - 0.5], [0.0, 0.0], linewidth=5, 
             color='grey', linestyle='--')
         ax.errorbar(x = np.arange(c_errors.shape[0]), y = c_muW, yerr=c_errors.T, 
             color=s["color"], **errorbar_props)
-        ax.set_xticks(np.arange(c_errors.shape[0]))
+
+        
+        ax.set_xticks(np.arange(n_entries))
+
+        print("Entries: %d" % c_errors.shape[0])
+        n_to_add = n_entries - len(labels)
+        labels = labels.tolist() + ([""] * n_to_add)
+
         ax.set_xticklabels(labels)
+
         ax.tick_params(axis='x', labelsize=plot_cfg['x_tick_label_size'], rotation=90)
         ax.tick_params(axis='y', labelsize=plot_cfg['y_tick_label_size'])
         if cfg.get('ylabel', True):
             ax.set_ylabel('Coefficient\nValue', fontsize=plot_cfg['ylabel_size'], fontweight='bold')
-        ax.set_xlim([-0.5, c_errors.shape[0] - 0.5])
+        ax.set_xlim([-0.5, n_entries - 0.5])
         ax.grid()
     
     
@@ -173,7 +184,9 @@ def visualize_corr_matrix(corr_matrix, cfg, output_path):
     
     f, ax = plt.subplots(1, 1, figsize=(10, 10))
 
-    ax.imshow(corr_matrix, cmap=plt.get_cmap('Reds'), vmin=0, vmax=1)
+    cmap = LinearSegmentedColormap.from_list('mycmap', ['white', cfg.get('color', 'red')])
+
+    ax.imshow(corr_matrix, cmap=cmap, vmin=0, vmax=1)
     for i in range(corr_matrix.shape[0]):
         for j in range(i, corr_matrix.shape[1]):
             ax.text(j, i, "%0.2f" % corr_matrix[i, j], 

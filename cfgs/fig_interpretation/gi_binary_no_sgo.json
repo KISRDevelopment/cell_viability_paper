@@ -29,7 +29,7 @@
     "ref_class" : 1,
     "target_class" : 0,
     "output_path" : "../figures/gi_interpretation_no_sgo",
-    
+    "color" : "#ffb700",
     "ylabel" : false,
     "plot_cfg" : {
         "figsize" : [15,10],

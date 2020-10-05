@@ -9,6 +9,13 @@
             "show": true
         },
         {
+            "name": "MN model\nNo sGO, SMF",
+            "color": "#38fffc",
+            "cm_color": "#38fffc",
+            "path": "../results/gi_generalization/pombe_mn_no_sgo_smf.npz",
+            "show": true
+        },
+        {
             "name": "Null",
             "color": "white",
             "star_color": "grey",

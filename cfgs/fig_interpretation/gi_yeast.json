@@ -26,6 +26,7 @@
         }
     ],
     "model" : "mn",
+    "color" : ""
     "ref_class" : 1,
     "target_class" : 0,
     "output_path" : "../figures/gi_interpretation_yeast_nonbinary",

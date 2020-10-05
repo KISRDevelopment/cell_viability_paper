@@ -55,6 +55,7 @@ def main(task_path, smf_path, output_path, binary=False):
         labels = BINARY_BIN_LABELS
         colors = BINARY_COLORS
 
+    Ms = []
     for bin in range(len(labels)):
         ix = (df['bin'] == bin) & with_smf_ix
         print("# observation in %d: %d" % (bin, np.sum(ix)))
@@ -70,9 +71,10 @@ def main(task_path, smf_path, output_path, binary=False):
             bbin = b_smf_bin[i]
 
             M[abin, bbin] += 1
+        
+        M = np.triu(M) + np.tril(M, k=-1).T
+        Ms.append(M)
 
-                
-        M = np.triu(M)
         Mnormed = M / np.sum(M)
 
 
@@ -106,6 +108,12 @@ def main(task_path, smf_path, output_path, binary=False):
         plt.close()
         #plt.show()
 
+    M = np.array(Ms)
+    Mtot = np.sum(M, axis=0)
+
+    for i in range(len(Ms)):
+        print(M[i, :, :] / Mtot)
+        
 if __name__ == "__main__":
     task_path = sys.argv[1]
     smf_path = sys.argv[2]

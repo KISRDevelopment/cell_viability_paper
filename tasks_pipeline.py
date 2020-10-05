@@ -100,11 +100,12 @@ if not os.path.exists('../generated-data/targets'):
 # utils.make_biogrid_dataset.main(9606, 1, '../generated-data/biogrid_human')
 # utils.make_fb_dataset.main('../generated-data/fb_dro')
 
-# gpath = "../generated-data/ppc_yeast"
-# gi_task_path = "../generated-data/task_yeast_gi_costanzo"
-# tasks.yeast_gi_costanzo.main(gpath, [26], [(0, 0), (0, 1), (1, 0), (1, 1)], gi_task_path)
-# utils.bin_simple.main(gi_task_path)
-# utils.cv_gi.main(gi_task_path, 10, 4, 0.2)
+gpath = "../generated-data/ppc_yeast"
+gi_task_path = "../generated-data/task_yeast_gi_costanzo"
+#tasks.yeast_gi_costanzo.main(gpath, [26], [(0, 0), (0, 1), (1, 0), (1, 1)], gi_task_path)
+utils.bin_simple.main(gi_task_path)
+utils.bin_interacting.main(gi_task_path)
+#utils.cv_gi.main(gi_task_path, 10, 4, 0.2)
 
 # gpath = "../generated-data/ppc_yeast"
 # gi_task_path = "../generated-data/task_yeast_gi_hybrid"
@@ -121,20 +122,20 @@ if not os.path.exists('../generated-data/targets'):
 # utils.bin_interacting.main(gi_task_path)
 # utils.cv_gi.main(gi_task_path, 10, 4, 0.2)
 
-gpath = "../generated-data/ppc_human"
-gi_task_path = "../generated-data/task_human_gi"
-smf_binned_path = "../generated-data/features/ppc_human_smf_binned.npz"
-#tasks.biogrid_plus_negative_sampling.main(gpath, "../generated-data/biogrid_human", smf_binned_path, gi_task_path)
-tasks.biogrid_plus_negative_sampling.main(gpath, "../generated-data/biogrid_human", smf_binned_path, gi_task_path + "_unfiltered", with_smf_only=False)
-#utils.bin_simple.main(gi_task_path)
-#utils.bin_interacting.main(gi_task_path)
-#utils.cv_gi.main(gi_task_path, 10, 4, 0.2)
+# gpath = "../generated-data/ppc_human"
+# gi_task_path = "../generated-data/task_human_gi"
+# smf_binned_path = "../generated-data/features/ppc_human_smf_binned.npz"
+# #tasks.biogrid_plus_negative_sampling.main(gpath, "../generated-data/biogrid_human", smf_binned_path, gi_task_path)
+# tasks.biogrid_plus_negative_sampling.main(gpath, "../generated-data/biogrid_human", smf_binned_path, gi_task_path + "_unfiltered", with_smf_only=False)
+# #utils.bin_simple.main(gi_task_path)
+# #utils.bin_interacting.main(gi_task_path)
+# #utils.cv_gi.main(gi_task_path, 10, 4, 0.2)
 
-gpath = "../generated-data/ppc_dro"
-gi_task_path = "../generated-data/task_dro_gi"
-smf_binned_path = "../generated-data/features/ppc_dro_smf_binned.npz"
-#tasks.biogrid_plus_negative_sampling.main(gpath, "../generated-data/fb_dro", smf_binned_path, gi_task_path)
-tasks.biogrid_plus_negative_sampling.main(gpath, "../generated-data/fb_dro", smf_binned_path, gi_task_path + "_unfiltered", with_smf_only=False)
-# utils.bin_simple.main(gi_task_path)
-# utils.bin_interacting.main(gi_task_path)
-# utils.cv_gi.main(gi_task_path, 10, 4, 0.2)
+# gpath = "../generated-data/ppc_dro"
+# gi_task_path = "../generated-data/task_dro_gi"
+# smf_binned_path = "../generated-data/features/ppc_dro_smf_binned.npz"
+# #tasks.biogrid_plus_negative_sampling.main(gpath, "../generated-data/fb_dro", smf_binned_path, gi_task_path)
+# tasks.biogrid_plus_negative_sampling.main(gpath, "../generated-data/fb_dro", smf_binned_path, gi_task_path + "_unfiltered", with_smf_only=False)
+# # utils.bin_simple.main(gi_task_path)
+# # utils.bin_interacting.main(gi_task_path)
+# # utils.cv_gi.main(gi_task_path, 10, 4, 0.2)

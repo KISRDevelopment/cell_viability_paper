@@ -25,11 +25,11 @@
             "color" : "#3A90FF"
         }
     ],
+    "n_entries" : 53,
     "model" : "mn",
+    "color" : "#3A90FF",
     "ref_class" : 1,
     "target_class" : 0,
     "output_path" : "../figures/gi_interpretation",
-    "plot_cfg" : {
-        "x_tick_label_size" : 35
-    }
+    "plot_cfg" : {}
 }

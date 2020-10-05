@@ -25,7 +25,9 @@
             "color" : "#3A90FF"
         }
     ],
+    "n_entries" : 53,
     "model" : "orm",
+    "color" : "#00CC00",
     "output_path" : "../figures/smf_interpretation",
     "plot_cfg" : {},
     "errorbar_props" : {}
