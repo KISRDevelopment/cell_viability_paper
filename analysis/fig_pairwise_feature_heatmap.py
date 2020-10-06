@@ -28,6 +28,8 @@ plot_cfg = {
 }
 
 BINS = ["Neutral", "Interacting"]
+TRAIN_SAMPLES = 0.1
+TEST_SAMPLES = 0.01
 
 def main(task_path, feature_path, feature_name, label, output_path):
 
@@ -47,12 +49,22 @@ def main(task_path, feature_path, feature_name, label, output_path):
     fig, axes = plt.subplots(1, len(bins), figsize=(20, 10))
 
     kdes = []
+    test_sdfs = []
     for i, b in enumerate(bins):
         
         sdf = df[df['bin'] == b]
-        if sdf.shape[0] >= 100000:
-            sdf = sdf.sample(100000)
+        
+        # rand_ix = rng.permutation(sdf.shape[0])
 
+        # train_samples = int(sdf.shape[0] * TRAIN_SAMPLES)
+        # test_samples = int(sdf.shape[0] * TEST_SAMPLES)
+        # print("Train: %d, test: %d" % (train_samples, test_samples))
+        # train_ix = rand_ix[:train_samples]
+        # test_ix = rand_ix[train_samples:(train_samples+test_samples)]
+
+        # test_sdfs.append(sdf.iloc[test_ix])
+        # sdf = sdf.iloc[train_ix]
+        
         PFx = f[sdf['a_id'], :]
         PFy = f[sdf['b_id'], :]
 
@@ -62,17 +74,19 @@ def main(task_path, feature_path, feature_name, label, output_path):
         ymin, ymax = xmin, xmax 
 
 
-        X, Y = np.mgrid[xmin:xmax:100j, ymin:ymax:100j]
-        positions = np.vstack([X.ravel(), Y.ravel()])
-        values = np.vstack([PFx.T, PFy.T])
-        kernel = stats.gaussian_kde(values)
-        Z = np.reshape(kernel(positions).T, X.shape)
+        # X, Y = np.mgrid[xmin:xmax:100j, ymin:ymax:100j]
+        # positions = np.vstack([X.ravel(), Y.ravel()])
+        # values = np.vstack([PFx.T, PFy.T])
+        # kernel = stats.gaussian_kde(values)
+        # Z = np.reshape(kernel(positions).T, X.shape)
+
+        Z,xedges,yedges = np.histogram2d(PFx.flatten(), PFy.flatten(), 20)
 
         ax = axes[i]
 
 
         ax.imshow(np.rot90(Z), extent=[xmin, xmax, ymin, ymax])
-        disp_max = 15
+        disp_max = xmax
         ax.set_xlim([xmin, disp_max])
         ax.set_ylim([xmin, disp_max])
 
@@ -83,7 +97,7 @@ def main(task_path, feature_path, feature_name, label, output_path):
         ax.set_xlabel(label + " B", fontsize=plot_cfg['ylabel_size'], weight='bold')
         ax.set_title(BINS[i], fontsize=plot_cfg['title_size'], weight='bold')
 
-        kdes.append(kernel)
+        # kdes.append(kernel)
     
 
     plt.savefig(output_path, bbox_inches='tight', dpi=100)
@@ -94,23 +108,31 @@ def main(task_path, feature_path, feature_name, label, output_path):
     ref_kernel = kdes[0]
     test_kernel = kdes[1]
 
-    sdf = df[df['bin'] == 1]
+    # grab test values
+    for bin in [0, 1]:
+        test_sdf = test_sdfs[bin]
+        print("Test Bin: %d" % bin)
+        PFx = f[test_sdf['a_id'], :]
+        PFy = f[test_sdf['b_id'], :]
+        values = np.vstack([PFx.T, PFy.T])
+        print("computing logpdf")
+        print(values.shape)
 
-    PFx = f[sdf['a_id'], :]
-    PFy = f[sdf['b_id'], :]
-    values = np.vstack([PFx.T, PFy.T])
+        under_ref_kernel = 0.0
+        for i in range(PFx.shape[0]):
+            under_ref_kernel += ref_kernel.logpdf(values[:, [i]])
 
-    under_ref_kernel = np.sum(ref_kernel.logpdf(values))
-    under_test_kernel = np.sum(test_kernel.logpdf(values))
+        under_test_kernel = np.sum(test_kernel.logpdf(values))
 
-    diff = under_test_kernel - under_ref_kernel
-    
-    print("Ref kernel logprob: %f" % under_ref_kernel)
-    print("Test kernel logprob: %f" % under_test_kernel)
-    print("Test/ref diff: %f" % diff)
+        diff = under_test_kernel - under_ref_kernel
+        
+        
+        print("Ref kernel logprob: %f" % under_ref_kernel)
+        print("Test kernel logprob: %f" % under_test_kernel)
+        print("Test/ref diff: %f" % diff)
 
-    print("Ref integral over [0,15]: %f" % ref_kernel.integrate_box([-1, -1], [1, 1]))
-    print("Test integral over [0,15]: %f" % test_kernel.integrate_box([-1, -1], [1, 1]))
+    # print("Ref integral over [0,15]: %f" % ref_kernel.integrate_box([-1, -1], [1, 1]))
+    # print("Test integral over [0,15]: %f" % test_kernel.integrate_box([-1, -1], [1, 1]))
     
 if __name__ == "__main__":
     task_path = sys.argv[1]

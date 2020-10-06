@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import sklearn.metrics
 import json
 import sys 
+from collections import defaultdict
 import scipy.stats 
 with open('../generated-data/go_ids_to_names.json', 'r') as f:
     gene_ids_to_names = json.load(f)
@@ -18,7 +19,7 @@ def main(task_file, go_file, output_path):
     bins = np.array(df['bin'])
     ids = df['id']
 
-    counts_by_term = {}
+    counts_by_term = defaultdict(lambda: [0,0,0])
 
     for i, gene_id in enumerate(ids):
         thebin = bins[i]
@@ -26,10 +27,10 @@ def main(task_file, go_file, output_path):
         gene_terms = [gene_ids_to_names[gt] if gt in gene_ids_to_names else gt for gt in terms[F[gene_id,:]]]
         
         for gt in gene_terms:
-            if gt not in counts_by_term:
-                counts_by_term[gt] = [0, 0, 0]
-            
             counts_by_term[gt][int(thebin)] += 1
+
+        if len(gene_terms) == 0:
+            counts_by_term['No Term'][int(thebin)] += 1
     
     rows = []
     for term in counts_by_term:
@@ -47,6 +48,7 @@ def main(task_file, go_file, output_path):
             "total" : np.sum(cnts),
             "diff" : (np.max(normed_cnts) - np.min(normed_cnts))
         })
+
 
     df = pd.DataFrame(rows)
     df = df.sort_values('healthy_p', ascending=False)

@@ -12,9 +12,11 @@ import analysis.tbl_model_comp
 import analysis.fig_cv_performance
 import analysis.fig_go_vs_smf
 from utils.merge_excels import merge_excels
+import analysis.fig_class_distrib
+if not os.path.exists('../figures/yeast_smf_analysis'):
+    os.makedirs('../figures/yeast_smf_analysis')
 
-# if not os.path.exists('../results/yeast_smf_figures'):
-#     os.makedirs('../results/yeast_smf_figures')
+analysis.fig_class_distrib.main('cfgs/fig_class_distrib/class_distrib_smf.json')
 
 # analysis.fig_cs_vs_std.main("../generated-data/task_yeast_smf_30", "../results/yeast_smf_figures/cs_vs_std.png", show=False)
 # analysis.fig_feature_violin.main("../generated-data/task_yeast_smf_30", "../generated-data/features/ppc_yeast_topology.npz", 11, "LID Score", "../results/yeast_smf_figures/lid_violin.png")
@@ -23,8 +25,8 @@ from utils.merge_excels import merge_excels
 # analysis.fig_feature_corr.main("../generated-data/features/ppc_yeast_topology.npz", "../results/yeast_smf_figures/topology_corr.png", False)
 # analysis.fig_feature_corr.main("../generated-data/features/ppc_yeast_redundancy.npz", "../results/yeast_smf_figures/redundancy_corr.png", False)
 
-# analysis.tbl_go_vs_smf.main("../generated-data/task_yeast_smf_30", "../generated-data/features/ppc_yeast_common_sgo.npz", "../results/yeast_smf_figures/sgo.xlsx")
-# analysis.fig_go_vs_smf.main("../results/yeast_smf_figures/sgo.xlsx", "../results/yeast_smf_figures/sgo_vs_smf.png")
+# analysis.tbl_go_vs_smf.main("../generated-data/task_yeast_smf_30", "../generated-data/features/ppc_yeast_common_sgo.npz", "../figures/yeast_smf_analysis/sgo.xlsx")
+# analysis.fig_go_vs_smf.main("../figures/yeast_smf_analysis/sgo.xlsx", "../figures/yeast_smf_analysis/sgo_vs_smf.png")
 
 # analysis.fig_feature_corr.main("../generated-data/features/ppc_yeast_topology.npz", "../results/yeast_smf_figures/topology_corr.png", False)
 # analysis.fig_feature_corr.main("../generated-data/features/ppc_yeast_redundancy.npz", "../results/yeast_smf_figures/redundancy_corr.png", False)
@@ -61,20 +63,20 @@ from utils.merge_excels import merge_excels
 #     ("../figures/dro_smf_cell_org_lethal_model_comp.xlsx", "D. melanogaster (Cell and Organismal Lethal)"),
 # ], '../figures/smf_results.xlsx', writing_kw_args={"index":False})
 
-analysis.tbl_model_comp.main("../results/smf_generalization/pombe*", "../figures/pombe_smf_generalization_model_comp.xlsx", use_glob_spec=True)
-analysis.tbl_model_comp.main("../results/smf_generalization/human*", "../figures/human_smf_generalization_model_comp.xlsx", use_glob_spec=True)
-analysis.tbl_model_comp.main("../results/smf_generalization/dro*", "../figures/dro_smf_generalization_model_comp.xlsx", use_glob_spec=True)
-analysis.tbl_model_comp.main("../results/smf_generalization_binary/pombe*", "../figures/pombe_smf_generalization_binary_model_comp.xlsx", use_glob_spec=True)
-analysis.tbl_model_comp.main("../results/smf_generalization_binary/human*", "../figures/human_smf_generalization_binary_model_comp.xlsx", use_glob_spec=True)
-analysis.tbl_model_comp.main("../results/smf_generalization_binary/dro*", "../figures/dro_smf_generalization_binary_model_comp.xlsx", use_glob_spec=True)
-merge_excels([
-    ("../figures/pombe_smf_generalization_model_comp.xlsx", "S. pombe"),
-    ("../figures/pombe_smf_generalization_binary_model_comp.xlsx", "S. pombe (Binary)"),
-    ("../figures/human_smf_generalization_model_comp.xlsx", "H. sapiens"),
-    ("../figures/human_smf_generalization_binary_model_comp.xlsx", "H. sapiens (Binary)"),
-    ("../figures/dro_smf_generalization_model_comp.xlsx", "D. melanogaster"),
-    ("../figures/dro_smf_generalization_binary_model_comp.xlsx", "D. melanogaster (Binary)")
-], '../figures/smf_generalization_results.xlsx', writing_kw_args={"index":False})
+# analysis.tbl_model_comp.main("../results/smf_generalization/pombe*", "../figures/pombe_smf_generalization_model_comp.xlsx", use_glob_spec=True)
+# analysis.tbl_model_comp.main("../results/smf_generalization/human*", "../figures/human_smf_generalization_model_comp.xlsx", use_glob_spec=True)
+# analysis.tbl_model_comp.main("../results/smf_generalization/dro*", "../figures/dro_smf_generalization_model_comp.xlsx", use_glob_spec=True)
+# analysis.tbl_model_comp.main("../results/smf_generalization_binary/pombe*", "../figures/pombe_smf_generalization_binary_model_comp.xlsx", use_glob_spec=True)
+# analysis.tbl_model_comp.main("../results/smf_generalization_binary/human*", "../figures/human_smf_generalization_binary_model_comp.xlsx", use_glob_spec=True)
+# analysis.tbl_model_comp.main("../results/smf_generalization_binary/dro*", "../figures/dro_smf_generalization_binary_model_comp.xlsx", use_glob_spec=True)
+# merge_excels([
+#     ("../figures/pombe_smf_generalization_model_comp.xlsx", "S. pombe"),
+#     ("../figures/pombe_smf_generalization_binary_model_comp.xlsx", "S. pombe (Binary)"),
+#     ("../figures/human_smf_generalization_model_comp.xlsx", "H. sapiens"),
+#     ("../figures/human_smf_generalization_binary_model_comp.xlsx", "H. sapiens (Binary)"),
+#     ("../figures/dro_smf_generalization_model_comp.xlsx", "D. melanogaster"),
+#     ("../figures/dro_smf_generalization_binary_model_comp.xlsx", "D. melanogaster (Binary)")
+# ], '../figures/smf_generalization_results.xlsx', writing_kw_args={"index":False})
 
 
 # analysis.fig_cv_performance.main("cfgs/fig_cv_performance/yeast_smf.json")

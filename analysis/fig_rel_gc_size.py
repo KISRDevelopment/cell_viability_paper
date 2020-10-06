@@ -18,7 +18,7 @@ species = [
     {
         "path" : "../generated-data/ppc_human",
         "name" : "$\\it{H. sapiens}$",
-        "color" : "#3AFF46",
+        "color" : "#00c20d",
         "label_outside" : True
     },
     {
@@ -88,7 +88,7 @@ def main():
     ax.set_xlabel("")
     ax.set_xticklabels([])
 
-    plt.savefig("../tmp/relative_gc.png", bbox_inches='tight', dpi=100, quality=100)
+    plt.savefig("../figures/relative_gc.png", bbox_inches='tight', dpi=100, quality=100)
     
     plt.show()
 

@@ -1,23 +1,23 @@
 {
     "species" : [
         {
-            "path" : "../generated-data/targets/task_yeast_smf_30_bin_simple.npz",
+            "path" : "../generated-data/targets/task_yeast_gi_hybrid_bin_interacting.npz",
             "name" : "$\\it{S. cerevisiae}$",
             "color" : "#FF3AF2"
         },
         {
-            "path" : "../generated-data/targets/task_pombe_smf_bin_simple.npz",
+            "path" : "../generated-data/targets/task_pombe_gi_bin_interacting.npz",
             "name" : "$\\it{S. pombe}$",
             "color" : "#FFA93A"
         },
         {
-            "path" : "../generated-data/targets/task_human_smf_bin_simple.npz",
+            "path" : "../generated-data/targets/task_human_gi_bin_interacting.npz",
             "name" : "$\\it{H. sapiens}$",
             "fsize" : 40,
             "color" : "#00c20d"
         },
         {
-            "path" : "../generated-data/targets/task_dro_smf_bin_simple.npz",
+            "path" : "../generated-data/targets/task_dro_gi_bin_interacting.npz",
             "name" : "$\\it{D. melanogaster}$",
             "color" : "#3A90FF",
             "size" : 18053,
@@ -25,9 +25,10 @@
         }
     ],
     "classes" : [
-        "Lethal",
-        "Reduced Growth",
-        "Normal"
+        "Interacting",
+        "Neutral"
     ],
-    "output_name" : "smf_class_distrib"
+    "split" : true,
+    "split_lims" : [[97.5, 100], [0, 2.5]],
+    "output_name" : "class_distrib_gi_binary"
 }

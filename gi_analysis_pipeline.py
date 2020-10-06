@@ -10,6 +10,7 @@ import analysis.fig_gi_smf_matrix
 import analysis.fig_pairwise_feature_heatmap
 import analysis.fig_spl
 from utils.merge_excels import merge_excels
+import analysis.fig_class_distrib
 
 # analysis.tbl_model_comp.main("../results/task_yeast_gi_hybrid", "../figures/yeast_gi_model_comp.xlsx")
 # analysis.tbl_model_comp.main("../results/task_yeast_gi_hybrid_binary", "../figures/yeast_gi_binary_model_comp.xlsx")
@@ -68,3 +69,27 @@ analysis.fig_gi_smf_matrix.main("../generated-data/task_dro_gi", "../generated-d
 # analysis.fig_cv_performance.main("cfgs/fig_cv_performance/generalization_gi_pombe.json")
 # analysis.fig_cv_performance.main("cfgs/fig_cv_performance/generalization_gi_human.json")
 # analysis.fig_cv_performance.main("cfgs/fig_cv_performance/generalization_gi_dro.json")
+
+
+# Analyze pairwise LID
+# Analyze SPL 
+# Analyze SMF
+# Analyze Class Distribution
+
+# if not os.path.exists('../figures/analysis_yeast_hybrid_gi'):
+#     os.makedirs('../figures/analysis_yeast_hybrid_gi')
+
+#analysis.fig_pairwise_feature_heatmap.main("../generated-data/task_yeast_gi_hybrid", "../generated-data/features/ppc_yeast_topology.npz", "lid", "LID", "../figures/analysis_yeast_hybrid_gi/lid.png")
+# analysis.fig_gi_smf_matrix.main("../generated-data/task_yeast_gi_hybrid", "../generated-data/task_yeast_smf_30", "../figures/analysis_yeast_hybrid_gi/smf", False)
+# analysis.fig_spl.main("../generated-data/task_yeast_gi_hybrid", "../generated-data/pairwise_features/ppc_yeast_shortest_path_len.npy", "%", "../figures/analysis_yeast_hybrid_gi/spl")
+
+
+# if not os.path.exists('../figures/analysis_pombe_gi'):
+#     os.makedirs('../figures/analysis_pombe_gi')
+
+#analysis.fig_pairwise_feature_heatmap.main("../generated-data/task_pombe_gi", "../generated-data/features/ppc_pombe_topology.npz", "lid", "LID", "../figures/analysis_pombe_gi/lid.png")
+# analysis.fig_gi_smf_matrix.main("../generated-data/task_pombe_gi", "../generated-data/task_pombe_smf", "../figures/analysis_pombe_gi/smf", False)
+# analysis.fig_spl.main("../generated-data/task_pombe_gi", "../generated-data/pairwise_features/ppc_pombe_shortest_path_len.npy", "%", "../figures/analysis_pombe_gi/spl")
+
+# analysis.fig_class_distrib.main('cfgs/fig_class_distrib/class_distrib_gi.json')
+# analysis.fig_class_distrib.main('cfgs/fig_class_distrib/class_distrib_gi_nonbinary.json')

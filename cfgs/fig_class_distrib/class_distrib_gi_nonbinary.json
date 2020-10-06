@@ -1,0 +1,23 @@
+{
+    "species" : [
+        {
+            "path" : "../generated-data/targets/task_yeast_gi_hybrid_bin_simple.npz",
+            "name" : "$\\it{S. cerevisiae}$",
+            "color" : "#FF3AF2"
+        },
+        {
+            "path" : "../generated-data/targets/task_pombe_gi_bin_simple.npz",
+            "name" : "$\\it{S. pombe}$",
+            "color" : "#FFA93A"
+        }
+    ],
+    "classes" : [
+        "-",
+        "N",
+        "+",
+        "S"
+    ],
+    "split" : true,
+    "split_lims" : [[97.5, 100], [0, 2.5]],
+    "output_name" : "class_distrib_gi"
+}
