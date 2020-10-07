@@ -58,8 +58,7 @@ dro_cfg = {
     "text_name" : "D. melanogaster",
     "name" : "$\\it{D. melanogaster}$",
     "color" : "#3A90FF",
-    "fsize" : 38,
-    "gi_fsize" : 46
+    "label_pos" : "left"
 
 }
 
@@ -87,98 +86,100 @@ np.set_printoptions(precision=2)
 def main(cfgs, output_path):
 
     # prepare data
-    # rows_overall = []
-    # rows_smf_distrib = []
-    # rows_overall_gi = []
-    # rows_gi = []
-    # for sid, cfg in enumerate(cfgs):
-    #     G = nx.read_gpickle(cfg['gpath'])
-    #     print("Number of genes in network: %d" % len(G.nodes()))
+    rows_overall = []
+    rows_smf_distrib = []
+    rows_overall_gi = []
+    rows_gi = []
+    for sid, cfg in enumerate(cfgs):
+        G = nx.read_gpickle(cfg['gpath'])
+        print("Number of genes in network: %d" % len(G.nodes()))
 
-    #     df = pd.read_csv(cfg['smf_path'])
-    #     bins = sorted(set(df['bin'].astype(int)))
-    #     breakdown = np.array([np.sum(df['bin'] == b) for b in bins])
+        df = pd.read_csv(cfg['smf_path'])
+        bins = sorted(set(df['bin'].astype(int)))
+        breakdown = np.array([np.sum(df['bin'] == b) for b in bins])
 
-    #     sgo = np.load(cfg['sgo_path'])
-    #     F = sgo['F']
-    #     ix_no_terms = np.sum(F, axis=1) == 0
+        sgo = np.load(cfg['sgo_path'])
+        F = sgo['F']
+        ix_no_terms = np.sum(F, axis=1) == 0
         
-    #     rows_overall.append({
-    #         "name" : cfg['name'],
-    #         "n_genes" : len(G.nodes()),
-    #         "n_no_sgo" : np.sum(ix_no_terms),
-    #         "p_no_sgo" : np.mean(ix_no_terms) * 100,
-    #         "label_outside" : cfg.get('label_outside', False),
-    #         "fsize" : cfg.get('fsize', plot_cfg['bar_label_size'])
-    #     })
+        rows_overall.append({
+            "name" : cfg['name'],
+            "n_genes" : len(G.nodes()),
+            "n_no_sgo" : np.sum(ix_no_terms),
+            "p_no_sgo" : np.mean(ix_no_terms) * 100,
+            "label_outside" : cfg.get('label_outside', False),
+            "fsize" : cfg.get('fsize', plot_cfg['bar_label_size']),
+            "label_pos" : cfg.get('label_pos', 'center')
+        })
 
-    #     ix_with_smf = np.zeros(F.shape[0]).astype(bool)
-    #     ix_with_smf[df['id']] = True
-    #     ix = ix_no_terms & ix_with_smf
-    #     n_no_sgo_smf = np.sum(ix)
+        ix_with_smf = np.zeros(F.shape[0]).astype(bool)
+        ix_with_smf[df['id']] = True
+        ix = ix_no_terms & ix_with_smf
+        n_no_sgo_smf = np.sum(ix)
 
-    #     for b in bins:
-    #         ix_in_bin = np.zeros(F.shape[0]).astype(bool)
-    #         sdf = df[df['bin'] == b]
-    #         ix_in_bin[sdf['id']] = True
-    #         ix = ix_no_terms & ix_in_bin
+        for b in bins:
+            ix_in_bin = np.zeros(F.shape[0]).astype(bool)
+            sdf = df[df['bin'] == b]
+            ix_in_bin[sdf['id']] = True
+            ix = ix_no_terms & ix_in_bin
 
-    #         rows_smf_distrib.append({
-    #             "name" : cfg['name'],
-    #             "bin" : SMF_BINS[b],
-    #             "p_no_sgo" : np.sum(ix) * 100 / n_no_sgo_smf,
-    #             "n_no_sgo" : np.sum(ix),
-    #             "n_with_sgo" : np.sum(~ix_no_terms & ix_in_bin),
-    #             "p_tot" : np.sum(ix_in_bin) * 100 / np.sum(ix_with_smf),
-    #             "b" : b,
-    #             "sid" : sid
-    #         })
+            rows_smf_distrib.append({
+                "name" : cfg['name'],
+                "bin" : SMF_BINS[b],
+                "p_no_sgo" : np.sum(ix) * 100 / n_no_sgo_smf,
+                "n_no_sgo" : np.sum(ix),
+                "n_with_sgo" : np.sum(~ix_no_terms & ix_in_bin),
+                "p_tot" : np.sum(ix_in_bin) * 100 / np.sum(ix_with_smf),
+                "b" : b,
+                "sid" : sid
+            })
 
-    #     gi_df = pd.read_csv(cfg['gi_path'])
-    #     gi_df['bin'] = (gi_df['bin'] == 1).astype(int)
-    #     gi_bins = sorted(set(gi_df['bin']), reverse=True)
-    #     breakdown = np.array([np.sum(gi_df['bin'] == b) for b in gi_bins])
+        gi_df = pd.read_csv(cfg['gi_path'])
+        gi_df['bin'] = (gi_df['bin'] == 1).astype(int)
+        gi_bins = sorted(set(gi_df['bin']), reverse=True)
+        breakdown = np.array([np.sum(gi_df['bin'] == b) for b in gi_bins])
         
-    #     ix_a_no_sgo = np.sum(F[gi_df['a_id'],:], axis=1) == 0
-    #     ix_b_no_sgo = np.sum(F[gi_df['b_id'],:], axis=1) == 0
+        ix_a_no_sgo = np.sum(F[gi_df['a_id'],:], axis=1) == 0
+        ix_b_no_sgo = np.sum(F[gi_df['b_id'],:], axis=1) == 0
 
-    #     ix_no_sgo_either = ix_a_no_sgo | ix_b_no_sgo
-    #     n_no_sgo_either = np.sum(ix_no_sgo_either)
+        ix_no_sgo_either = ix_a_no_sgo | ix_b_no_sgo
+        n_no_sgo_either = np.sum(ix_no_sgo_either)
 
         
-    #     rows_overall_gi.append({
-    #         "name" : cfg['name'],
-    #         "n_pairs" : gi_df.shape[0],
-    #         "n_no_sgo" : n_no_sgo_either,
-    #         "p_no_sgo" : np.mean(ix_no_sgo_either) * 100,
-    #         "label_outside" : cfg.get('gi_label_outside', False),
-    #         "fsize" : cfg.get('gi_fsize', plot_cfg['bar_label_size'])
-    #     })
+        rows_overall_gi.append({
+            "name" : cfg['name'],
+            "n_pairs" : gi_df.shape[0],
+            "n_no_sgo" : n_no_sgo_either,
+            "p_no_sgo" : np.mean(ix_no_sgo_either) * 100,
+            "label_outside" : cfg.get('gi_label_outside', False),
+            "fsize" : cfg.get('gi_fsize', plot_cfg['bar_label_size']),
+            "label_pos" : cfg.get('label_pos', 'center')
+        })
 
 
-    #     for b in gi_bins:
-    #         ix_b = gi_df['bin'] == b
-    #         ix = ix_b & ix_no_sgo_either
-    #         rows_gi.append({
-    #             "name" : cfg['name'],
-    #             "bin" : GI_BINS[b],
-    #             "p_no_sgo" : np.sum(ix) / n_no_sgo_either,
-    #             "n_no_sgo" : np.sum(ix),
-    #             "n_with_sgo" : np.sum(ix_b & ~ix_no_sgo_either),
-    #             "p_tot" : np.sum(ix_b) / gi_df.shape[0],
-    #             "b" : b,
-    #             "sid" : sid
-    #         })
+        for b in gi_bins:
+            ix_b = gi_df['bin'] == b
+            ix = ix_b & ix_no_sgo_either
+            rows_gi.append({
+                "name" : cfg['name'],
+                "bin" : GI_BINS[b],
+                "p_no_sgo" : np.sum(ix) / n_no_sgo_either,
+                "n_no_sgo" : np.sum(ix),
+                "n_with_sgo" : np.sum(ix_b & ~ix_no_sgo_either),
+                "p_tot" : np.sum(ix_b) / gi_df.shape[0],
+                "b" : b,
+                "sid" : sid
+            })
 
-    # df_overall = pd.DataFrame(rows_overall)
-    # df_smf_distrib = pd.DataFrame(rows_smf_distrib)
-    # df_overall_gi = pd.DataFrame(rows_overall_gi)
-    # df_gi_distrib = pd.DataFrame(rows_gi)
+    df_overall = pd.DataFrame(rows_overall)
+    df_smf_distrib = pd.DataFrame(rows_smf_distrib)
+    df_overall_gi = pd.DataFrame(rows_overall_gi)
+    df_gi_distrib = pd.DataFrame(rows_gi)
 
-    # df_overall.to_csv('../tmp/df_overall', index=False)
-    # df_smf_distrib.to_csv('../tmp/df_smf_distrib', index=False)
-    # df_overall_gi.to_csv('../tmp/df_overall_gi', index=False)
-    # df_gi_distrib.to_csv('../tmp/df_gi_distrib', index=False)
+    df_overall.to_csv('../tmp/df_overall', index=False)
+    df_smf_distrib.to_csv('../tmp/df_smf_distrib', index=False)
+    df_overall_gi.to_csv('../tmp/df_overall_gi', index=False)
+    df_gi_distrib.to_csv('../tmp/df_gi_distrib', index=False)
     
 
     df_overall = pd.read_csv('../tmp/df_overall')
@@ -212,8 +213,12 @@ def visualize_df_overall(df_overall, output_path, ylabel='% of Genes'):
         if r['label_outside']:
             ax.text(i, val * 2 + 2, r['name'], rotation=90, ha="center", va="bottom", fontsize=fsize, weight="bold")
         else:
+            va = "center"
+            if r['label_pos'] == 'left':
+                val = 0
+                va = "bottom"
             ax.text(i, val, r['name'], rotation=90, 
-                ha="center", va="center", fontsize=fsize, weight='bold')
+                ha="center", va=va, fontsize=fsize, weight='bold')
 
     ax.yaxis.set_tick_params(labelsize=plot_cfg['tick_label_size'])
     ax.xaxis.set_tick_params(labelsize=plot_cfg['tick_label_size'])

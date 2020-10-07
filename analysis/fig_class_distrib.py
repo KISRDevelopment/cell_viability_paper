@@ -15,7 +15,8 @@ plot_cfg = {
     "bar_label_size" : 48,
     "stars_label_size" : 48,
     "annot_size" : 82,
-    "legend_size" : 42
+    "legend_size" : 42,
+    "figsize" : (20, 10)
 }
 
 plt.rcParams["font.family"] = "Liberation Serif"
@@ -59,7 +60,7 @@ def visualize(df, cfg, y, output_path, logy, split=False, split_lims=None):
 
     nrows = 2 if split else 1
 
-    f, axes = plt.subplots(nrows, 1, figsize=(20, 10), sharex=True)
+    f, axes = plt.subplots(nrows, 1, figsize=cfg.get('figsize', plot_cfg['figsize']), sharex=True)
     if nrows == 1:
         axes = [axes]
 
@@ -103,11 +104,14 @@ def visualize(df, cfg, y, output_path, logy, split=False, split_lims=None):
         ax.set_xlabel("")
         ax.legend().remove()
 
-        if split and row == 0:
+        if not split or row == 0:
+            yoffset = 1.6 if split else 1.25
             ax.legend(
-                bbox_to_anchor=(0, 1.6, 1, 0.102),
+                bbox_to_anchor=(0, yoffset, 1, 0.102),
                 frameon=False,
-                fontsize=plot_cfg['legend_size'], loc="upper left", ncol=2,  mode="expand")
+                fontsize=plot_cfg['legend_size'], loc="upper left", ncol=cfg.get('legend_ncol', 2),  mode="expand")
+
+        if split and row == 0:
             ax.spines['bottom'].set_visible(False)
             ax.xaxis.set_tick_params(length=0, width=0, which='both')
         if logy:

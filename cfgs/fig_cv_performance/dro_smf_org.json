@@ -25,11 +25,11 @@
         }
     ],
     "classes": [
-        "Lethal",
+        "Multicellular Organismal",
         "Viable"
     ],
     "short_classes": [
-        "L",
+        "MO",
         "V"
     ],
     "ylim": [

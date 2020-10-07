@@ -25,13 +25,13 @@
         }
     ],
     "classes": [
-        "Cell Lethal",
-        "Organism Lethal",
+        "Cell Autonomous",
+        "Multicellular Organismal",
         "Viable"
     ],
     "short_classes": [
-        "CL",
-        "OL",
+        "CA",
+        "MO",
         "V"
     ],
     "ylim": [

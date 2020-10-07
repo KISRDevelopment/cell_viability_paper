@@ -16,7 +16,8 @@ import analysis.fig_class_distrib
 if not os.path.exists('../figures/yeast_smf_analysis'):
     os.makedirs('../figures/yeast_smf_analysis')
 
-analysis.fig_class_distrib.main('cfgs/fig_class_distrib/class_distrib_smf.json')
+#analysis.fig_class_distrib.main('cfgs/fig_class_distrib/class_distrib_smf.json')
+analysis.fig_class_distrib.main('cfgs/fig_class_distrib/class_distrib_org.json')
 
 # analysis.fig_cs_vs_std.main("../generated-data/task_yeast_smf_30", "../results/yeast_smf_figures/cs_vs_std.png", show=False)
 # analysis.fig_feature_violin.main("../generated-data/task_yeast_smf_30", "../generated-data/features/ppc_yeast_topology.npz", 11, "LID Score", "../results/yeast_smf_figures/lid_violin.png")
