@@ -33,7 +33,7 @@ gi_cfg_no_sgo = load_cfg('cfgs/fig_interpretation/gi_binary_no_sgo.json')
 # models.cv.main("models.smf_ordinal", "cfgs/models/dro_smf_orm.json", 
 #     "../results/smf_interpretation/dro_orm", interpreation=True, num_processes=10, epochs=500)
 
-analysis.fig_interpretation.main(smf_cfg)
+#analysis.fig_interpretation.main(smf_cfg)
 
 
 # # SMF Organismal Cell Lethal Interpreation
@@ -42,7 +42,8 @@ analysis.fig_interpretation.main(smf_cfg)
 
 # models.cv.main("models.smf_ordinal", "cfgs/models/dro_smf_cell_org_lethal_orm.json", 
 #     "../results/smf_org_interpretation/dro", interpreation=True, num_processes=20, epochs=150)
-#analysis.fig_interpretation.main(smf_org_cfg)
+analysis.fig_interpretation.main(smf_org_cfg)
+exit(0) 
 
 # GI non-binary interpretation
 models.cv.main("models.gi_mn", "cfgs/models/yeast_gi_mn.json", 

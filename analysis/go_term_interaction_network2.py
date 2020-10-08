@@ -45,8 +45,8 @@ def main(task_path, go_path, output_path):
         R_b = R[:, :, bin]
     
         # compute number of interactions per term
-        interactions_by_term = np.sum(R_b, axis=1)
-
+        interactions_by_term = np.sum(R_b, axis=1) - np.diagonal(R_b)
+        
         # sort in descending order
         indecies = np.argsort(-interactions_by_term)
 
@@ -65,7 +65,7 @@ def main(task_path, go_path, output_path):
             selected_terms.add(ind)
         
         print("Bin %d" % bin)
-        print("\n".join([labels[i] for i in indecies]))
+        print("\n".join(["%64s %d" % (labels[i], interactions_by_term[i]) for i in indecies]))
 
     R_tot = np.sum(R[:, :, [0, 2, 3]], axis=2)
 

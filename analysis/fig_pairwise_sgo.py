@@ -39,25 +39,25 @@ def main(task_path, go_path, output_path):
 
     n_terms = F.shape[1]
 
-    # R = np.zeros((n_terms, n_terms, 4))
+    R = np.zeros((n_terms, n_terms, 4))
 
-    # for i in range(df.shape[0]):
+    for i in range(df.shape[0]):
         
-    #     a_terms = np.where(F[a_id[i], :])[0]
-    #     b_terms = np.where(F[b_id[i], :])[0]
+        a_terms = np.where(F[a_id[i], :])[0]
+        b_terms = np.where(F[b_id[i], :])[0]
         
-    #     pairs = set()
-    #     for aid in a_terms:
-    #         for bid in b_terms:
-    #             pairs.add(tuple(sorted((aid, bid))))
-    #     for aid, bid in pairs:
-    #         R[aid, bid, bin[i]] += 1
-    #         R[bid, aid, bin[i]] += 1
+        pairs = set()
+        for aid in a_terms:
+            for bid in b_terms:
+                pairs.add(tuple(sorted((aid, bid))))
+        for aid, bid in pairs:
+            R[aid, bid, bin[i]] += 1
+            R[bid, aid, bin[i]] += 1
     
-    #     if i % 10000 == 0:
-    #         print(i)
+        if i % 10000 == 0:
+            print(i)
 
-    #np.save("../tmp/go_enrichment_matrix", R)
+    np.save("../tmp/go_enrichment_matrix", R)
     transform = create_transform(0.5, 0.75)
     R = np.load("../tmp/go_enrichment_matrix.npy")
     
