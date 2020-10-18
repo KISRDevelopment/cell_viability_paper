@@ -142,14 +142,17 @@ def main(cfg):
     n = len(cfg['spec'])
     corr_matrix = np.zeros((n, n))
     corr_matrix[:] = np.nan
+    pval_matrix = np.zeros((n, n))
+    pval_matrix[:] = np.nan
     for i in range(n):
         for j in range(i+1, n):
             a = all_mus[i]
             b = all_mus[j]
-            rho, _ = stats.spearmanr(a, b)
+            rho, pval = stats.spearmanr(a, b)
             corr_matrix[i, j] = rho 
+            pval_matrix[i,j] = pval
     visualize_corr_matrix(corr_matrix, cfg, cfg['output_path'] + '_spearman_corr.png')
-
+    print(pval_matrix)
     # kappa
     corr_matrix = np.zeros((n, n))
     corr_matrix[:] = np.nan

@@ -47,6 +47,9 @@ def main(gpath, cell_smf_task_path, output_path, use_haploinsufficient=False):
     lethal_set1 = lethal_set1 - viable_genes - lethal_set2
     lethal_set2 = lethal_set2 - viable_genes
 
+    print("After filtering out viables:")
+    print("Lethal set 1: %d, Lethal set 2: %d, Viables: %d" % (len(lethal_set1), len(lethal_set2), len(viable_genes)))
+
     print("Common in set 1 and 2: %d" % (len(lethal_set1.intersection(lethal_set2))))
     print("Common in set 1 and 3: %d" % (len(lethal_set1.intersection(viable_genes))))
     print("Common in set 2 and 3: %d" % (len(lethal_set2.intersection(viable_genes))))

@@ -8,6 +8,7 @@ import glob
 from utils.features_to_groups import features_to_groups
 import utils.eval_funcs 
 import numpy as np
+
 SMF_LABELS = ['Lethal', 'Reduced', 'Normal']
 GI_LABELS = ['Negative', 'Neutral', 'Positive', 'Supp']
 
@@ -15,7 +16,7 @@ FMAP = {
     "Go" : "sGO"
 }
 
-def main(path, output_path, use_glob_spec=False):
+def main(path, output_path, labels, use_glob_spec=False):
     
     if use_glob_spec:
         glob_spec = path 
@@ -68,7 +69,7 @@ def main(path, output_path, use_glob_spec=False):
         cols = ['model', "filename", 'no. features', 'selected sub-features', 'bacc', 'acc']
 
         num_classes = len(r['per_class_f1'])
-        labels = SMF_LABELS if num_classes == 3 else GI_LABELS
+        #labels = SMF_LABELS if num_classes == 3 else GI_LABELS
 
         for c in range(num_classes):
             row['%s_auc_roc' % labels[c]] = r['per_class_auc_roc'][c]

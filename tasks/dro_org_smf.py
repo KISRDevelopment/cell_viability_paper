@@ -74,5 +74,7 @@ def main(gpath, cell_smf_task_path, output_path):
     
 if __name__ == "__main__":
     gpath = sys.argv[1]
-    main(gpath)
+    cell_smf_task_path = sys.argv[2]
+    output_path = sys.argv[3]
+    main(gpath, cell_smf_task_path, output_path)
     

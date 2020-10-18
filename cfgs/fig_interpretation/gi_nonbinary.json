@@ -1,0 +1,23 @@
+{
+    "spec" : [
+        {
+            "text_name" : "S. cerevisiae",
+            "name" : "$\\it{S. cerevisiae}$",
+            "path" : "../results/gi_interpretation/yeast_mn_nonbinary/",
+            "color" : "#FF3AF2"
+        },
+        {
+            "text_name" : "S. pombe",
+            "name" : "$\\it{S. pombe}$",
+            "path" : "../results/gi_interpretation/pombe_mn_nonbinary/",
+            "color" : "#FFA93A"
+        }
+    ],
+    "n_entries" : 53,
+    "model" : "mn",
+    "color" : "#3A90FF",
+    "ref_class" : 1,
+    "target_class" : 0,
+    "output_path" : "../figures/gi_interpretation_nonbinary",
+    "plot_cfg" : {}
+}

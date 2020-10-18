@@ -102,7 +102,7 @@ def main(task_path, feature_path, ylabel, output_path):
             ix = df['bin'] == j
             b= vals[ix]
 
-            statistic, pvalue,_,_ = stats.median_test(a, b)
+            statistic, pvalue = stats.kruskal(a, b)
             print("%s (%0.2f) vs. %s (%0.2f): %0.6f [%0.6f]" % (bins[i], 
                 np.median(a), bins[j], np.median(b), pvalue, statistic))
             

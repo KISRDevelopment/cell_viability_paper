@@ -12,13 +12,16 @@ import analysis.fig_spl
 from utils.merge_excels import merge_excels
 import analysis.fig_class_distrib
 
-# analysis.tbl_model_comp.main("../results/task_yeast_gi_hybrid", "../figures/yeast_gi_model_comp.xlsx")
-# analysis.tbl_model_comp.main("../results/task_yeast_gi_hybrid_binary", "../figures/yeast_gi_binary_model_comp.xlsx")
-# analysis.tbl_model_comp.main("../results/task_yeast_gi_costanzo", "../figures/yeast_gi_costanzo_model_comp.xlsx")
-# analysis.tbl_model_comp.main("../results/task_pombe_gi", "../figures/pombe_gi_model_comp.xlsx")
-# analysis.tbl_model_comp.main("../results/task_pombe_gi_binary", "../figures/pombe_gi_binary_model_comp.xlsx")
-# analysis.tbl_model_comp.main("../results/task_human_gi", "../figures/human_gi_binary_model_comp.xlsx")
-# analysis.tbl_model_comp.main("../results/task_dro_gi", "../figures/dro_gi_binary_model_comp.xlsx")
+GI_LABELS = ['Negative', 'Neutral', 'Positive', 'Supp']
+GI_LABELS_BINARY = ['Interacting', 'Neutral']
+
+#analysis.tbl_model_comp.main("../results/task_yeast_gi_hybrid", "../figures/yeast_gi_model_comp.xlsx", GI_LABELS)
+#analysis.tbl_model_comp.main("../results/task_yeast_gi_hybrid_binary", "../figures/yeast_gi_binary_model_comp.xlsx", GI_LABELS_BINARY)
+#analysis.tbl_model_comp.main("../results/task_yeast_gi_costanzo", "../figures/yeast_gi_costanzo_model_comp.xlsx", GI_LABELS)
+#analysis.tbl_model_comp.main("../results/task_pombe_gi", "../figures/pombe_gi_model_comp.xlsx", GI_LABELS)
+#analysis.tbl_model_comp.main("../results/task_pombe_gi_binary", "../figures/pombe_gi_binary_model_comp.xlsx", GI_LABELS_BINARY)
+#analysis.tbl_model_comp.main("../results/task_human_gi", "../figures/human_gi_binary_model_comp.xlsx", GI_LABELS_BINARY)
+#analysis.tbl_model_comp.main("../results/task_dro_gi", "../figures/dro_gi_binary_model_comp.xlsx", GI_LABELS_BINARY)
 
 # merge_excels([
 #     ("../figures/yeast_gi_model_comp.xlsx", "S. cerevisiae Hybrid"),
@@ -30,9 +33,9 @@ import analysis.fig_class_distrib
 #     ("../figures/dro_gi_binary_model_comp.xlsx", "D. melanogaster (Binary)"),
 # ], '../figures/gi_results.xlsx', writing_kw_args={"index":False})
 
-# analysis.tbl_model_comp.main("../results/gi_generalization/pombe*", "../figures/pombe_gi_generalization_model_comp.xlsx", use_glob_spec=True)
-# analysis.tbl_model_comp.main("../results/gi_generalization/human*", "../figures/human_gi_generalization_model_comp.xlsx", use_glob_spec=True)
-# analysis.tbl_model_comp.main("../results/gi_generalization/dro*", "../figures/dro_gi_generalization_model_comp.xlsx", use_glob_spec=True)
+# analysis.tbl_model_comp.main("../results/gi_generalization/pombe*", "../figures/pombe_gi_generalization_model_comp.xlsx", GI_LABELS_BINARY, use_glob_spec=True)
+# analysis.tbl_model_comp.main("../results/gi_generalization/human*", "../figures/human_gi_generalization_model_comp.xlsx", GI_LABELS_BINARY, use_glob_spec=True)
+# analysis.tbl_model_comp.main("../results/gi_generalization/dro*", "../figures/dro_gi_generalization_model_comp.xlsx", GI_LABELS_BINARY, use_glob_spec=True)
 
 # merge_excels([
 #     ("../figures/pombe_gi_generalization_model_comp.xlsx", "S. pombe (Binary)"),
@@ -41,17 +44,15 @@ import analysis.fig_class_distrib
 # ], '../figures/gi_generalization_results.xlsx', writing_kw_args={"index":False})
 
 
-
-
 # SMF Matrices
-analysis.fig_gi_smf_matrix.main("../generated-data/task_yeast_gi_hybrid", "../generated-data/task_yeast_smf_30", "../figures/yeast_gi_hybrid", False)
-analysis.fig_gi_smf_matrix.main("../generated-data/task_yeast_gi_hybrid", "../generated-data/task_yeast_smf_30", "../figures/yeast_gi_hybrid", True)
-analysis.fig_gi_smf_matrix.main("../generated-data/task_pombe_gi", "../generated-data/task_pombe_smf", "../figures/pombe_gi", True)
-analysis.fig_gi_smf_matrix.main("../generated-data/task_human_gi", "../generated-data/task_human_smf", "../figures/human_gi", True)
-analysis.fig_gi_smf_matrix.main("../generated-data/task_dro_gi", "../generated-data/task_dro_smf", "../figures/dro_gi", True)
+# analysis.fig_gi_smf_matrix.main("../generated-data/task_yeast_gi_hybrid", "../generated-data/task_yeast_smf_30", "../figures/yeast_gi_hybrid", False)
+# analysis.fig_gi_smf_matrix.main("../generated-data/task_yeast_gi_hybrid", "../generated-data/task_yeast_smf_30", "../figures/yeast_gi_hybrid", True)
+# analysis.fig_gi_smf_matrix.main("../generated-data/task_pombe_gi", "../generated-data/task_pombe_smf", "../figures/pombe_gi", True)
+# analysis.fig_gi_smf_matrix.main("../generated-data/task_human_gi", "../generated-data/task_human_smf", "../figures/human_gi", True)
+# analysis.fig_gi_smf_matrix.main("../generated-data/task_dro_gi", "../generated-data/task_dro_smf", "../figures/dro_gi", True)
 
 # SPL
-#analysis.fig_spl.main("../generated-data/task_yeast_gi_hybrid", "../generated-data/pairwise_features/ppc_yeast_shortest_path_len.npy", "%", "../figures/yeast_hybrid_gi_spl")
+analysis.fig_spl.main("../generated-data/task_yeast_gi_hybrid", "../generated-data/pairwise_features/ppc_yeast_shortest_path_len.npy", "%", "../figures/yeast_hybrid_gi_spl")
 
 # analysis.fig_cv_performance.main("cfgs/fig_cv_performance/yeast_gi_hybrid.json")
 #analysis.fig_cv_performance.main("cfgs/fig_cv_performance/yeast_gi_costanzo.json")

@@ -103,3 +103,6 @@ def main(cfg):
 if __name__ == "__main__":
 
     main(yeast_cfg)
+    main(pombe_cfg)
+    main(human_cfg)
+    main(dro_cfg)
