@@ -25,7 +25,7 @@
         }
     ],
     "optimizer": "nadam",
-    "epochs": 100,
+    "epochs": 1000,
     "verbose": true,
     "patience": 10,
     "balanced_loss": true,
@@ -36,5 +36,7 @@
     "task_path" : "../generated-data/task_yeast_gi_hybrid",
     "targets_path" : "../generated-data/targets/task_yeast_gi_hybrid_bin_simple.npz",
     "splits_path" : "../generated-data/splits/task_yeast_gi_hybrid_10reps_4folds_0.20valid.npz",
-    "type" : "mn"
+    "type" : "mn",
+    "save_tjs" : true,
+    "tjs_path" : "../tmp/yeast_gi_mn"
 }

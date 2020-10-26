@@ -22,6 +22,8 @@ import scipy.sparse
 import models.feature_loader
 from termcolor import colored
 
+import tensorflowjs as tfjs 
+
 def main(cfg, rep, fold, output_path, print_results=True):
     K.clear_session()
 
@@ -125,6 +127,9 @@ def main(cfg, rep, fold, output_path, print_results=True):
             print("Saving model")
             model.save_weights(cfg["trained_model_path"])
 
+        if cfg.get("save_tjs", False):
+            tfjs.converters.save_keras_model(model, cfg["tjs_path"])
+
     else:
         model.load_weights(cfg["trained_model_path"]).expect_partial()
     
@@ -207,7 +212,7 @@ def create_data_iterator(df, y, processors, cfg, shuffle=True):
                     features.append(proc.transform(batch_df))
                 
                 batch_F = np.hstack(features)
-                
+                print(list(batch_F[0,:]))
                 if np.sum(np.isnan(batch_F)) > 0:
                     print(batch_F)
                     print(batch_F.shape)
