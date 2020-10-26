@@ -7,10 +7,12 @@ import models.gi_mn
 
 app = flask.Flask(__name__)
 
-@app.route('/get_input/<int:a_id>/<int:b_id>', methods=['GET'])
-def get_input(a_id, b_id):
+@app.route('/get_input', methods=['POST'])
+def get_input():
 
-    df = pd.DataFrame({ "a_id" : [a_id], "b_id" : [b_id] })
+    id_pairs = np.array(flask.request.get_json()).astype(int)
+
+    df = pd.DataFrame({ "a_id" : id_pairs[:,0], "b_id" : id_pairs[:,1] })
     
     features = []
     for proc in processors:
@@ -22,7 +24,7 @@ def get_input(a_id, b_id):
     
 @app.route('/<path:filename>')
 def static_handler(filename):
-    return flask.send_from_directory('www/', filename)
+    return flask.send_from_directory('website/www/', filename)
 
 if __name__ == '__main__':
     # from waitress import serve
