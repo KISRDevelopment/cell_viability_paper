@@ -24,7 +24,7 @@ from termcolor import colored
 
 import tensorflowjs as tfjs 
 
-def main(cfg, rep, fold, output_path, print_results=True):
+def main(cfg, rep, fold, output_path, print_results=True, return_model=False):
     K.clear_session()
 
     dataset_path = cfg['task_path']
@@ -133,6 +133,10 @@ def main(cfg, rep, fold, output_path, print_results=True):
     else:
         model.load_weights(cfg["trained_model_path"]).expect_partial()
     
+    if return_model:
+        return model, fsets
+    
+
     test_iterator = create_data_iterator(test_df, test_Y, fsets, cfg, False)
         
     preds = model.predict(test_iterator(), steps=np.ceil(test_df.shape[0] / cfg['batch_size']))
@@ -179,6 +183,8 @@ def main(cfg, rep, fold, output_path, print_results=True):
             labels=feature_labels,
             fold=fold)
 
+    return None 
+
 def load_features(cfg):
     feature_labels = []
     processors = []
@@ -212,7 +218,7 @@ def create_data_iterator(df, y, processors, cfg, shuffle=True):
                     features.append(proc.transform(batch_df))
                 
                 batch_F = np.hstack(features)
-                print(list(batch_F[0,:]))
+                
                 if np.sum(np.isnan(batch_F)) > 0:
                     print(batch_F)
                     print(batch_F.shape)
