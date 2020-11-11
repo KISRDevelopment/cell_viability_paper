@@ -12,7 +12,7 @@ if not os.path.isdir("../results/models"):
 if not os.path.isdir("../results/models_tjs"):
     os.mkdir("../results/models_tjs")
 
-def load_cfg(path, model_path, tjs_model_path, **kwargs):
+def load_cfg(path, model_path, tjs_model_path, remove_specs=[], **kwargs):
     with open(path, 'r') as f:
         cfg = json.load(f)
 
@@ -24,7 +24,9 @@ def load_cfg(path, model_path, tjs_model_path, **kwargs):
     cfg['trained_model_path'] = model_path
     cfg['save_tjs'] = True 
     cfg['tjs_path'] = tjs_model_path
+    cfg['balanced_loss'] = True 
 
+    cfg['spec'] = [s for s in cfg['spec'] if s['name'] not in remove_specs]
     cfg.update(kwargs)
 
     return cfg 
@@ -37,7 +39,8 @@ mdl = models.gi_mn
 yeast_cfg = load_cfg("cfgs/models/yeast_gi_mn.json",
     "../results/models/yeast_gi_mn", 
     "../results/models_tjs/yeast_gi_mn",
-    targets_path="../generated-data/targets/task_yeast_gi_hybrid_bin_interacting.npz")
+    targets_path="../generated-data/targets/task_yeast_gi_hybrid_bin_interacting.npz",
+    remove_specs=["sgo"])
 
 pombe_cfg = load_cfg("cfgs/models/pombe_gi_mn.json",
     "../results/models/pombe_gi_mn", 
@@ -50,14 +53,17 @@ human_cfg = load_cfg("cfgs/models/human_gi_mn.json",
 
 dro_cfg = load_cfg("cfgs/models/dro_gi_mn.json",
     "../results/models/dro_gi_mn", 
-    "../results/models_tjs/dro_gi_mn")
+    "../results/models_tjs/dro_gi_mn",
+    remove_specs=["sgo", "smf", "topology"])
 
-# mdl.main(yeast_cfg, 0, 0, '../tmp/dummy')
+
+#mdl.main(yeast_cfg, 0, 0, '../tmp/dummy')
 # mdl.main(pombe_cfg, 0, 0, '../tmp/dummy')
 # mdl.main(human_cfg, 0, 0, '../tmp/dummy')
-# mdl.main(dro_cfg, 0, 0, '../tmp/dummy')
+#print(dro_cfg)
+#mdl.main(dro_cfg, 0, 0, '../tmp/dummy')
 
-def generate_predictions(cfg, gpath, result_path):
+def generate_predictions(cfg, gpath, result_path, thres):
 
     main_df = pd.read_csv(cfg['task_path'])
     interacting_df = main_df[main_df['bin'] != 1]
@@ -77,6 +83,8 @@ def generate_predictions(cfg, gpath, result_path):
     n_total = (len(nodes) * (len(nodes) - 1)) / 2
 
     first_append = True
+    min_prob = 0.
+    max_prob = 0.
     for comb in itertools.combinations(np.arange(len(nodes)), 2):
         rows.append({ 'a_id' : comb[0], 'b_id' : comb[1] })
         i += 1
@@ -94,9 +102,11 @@ def generate_predictions(cfg, gpath, result_path):
             batch_F = np.hstack(features)
 
             preds = model.predict(batch_F, batch_size=BATCH_SIZE)
-            preds_hard = np.argmax(preds, axis=1)
+            min_prob = min(np.min(preds[:,0]), min_prob)
+            max_prob = max(np.max(preds[:,0]), max_prob)
+            preds_gi = preds[:,0] > thres
 
-            ix = (preds_hard == 0) | df['reported_gi']
+            ix = (preds_gi == 1) | df['reported_gi']
             df['prob_gi'] = preds[:,0]
             
             output_df = df[ix][['a_id', 'b_id', 'prob_gi', 'reported_gi']]
@@ -108,9 +118,9 @@ def generate_predictions(cfg, gpath, result_path):
             stored += output_df.shape[0]
             print("Completed %8.4f, num interactions=%d" % (i / n_total, stored))
 
+    print("Min: %0.3f, Max: %0.3f" % (min_prob, max_prob))
 
-
-#generate_predictions(yeast_cfg, '../generated-data/ppc_yeast', '../results/yeast_gi_preds')
+generate_predictions(yeast_cfg, '../generated-data/ppc_yeast', '../results/yeast_gi_preds', 0.7)
 #generate_predictions(pombe_cfg, '../generated-data/ppc_pombe', '../results/pombe_gi_preds')
 #generate_predictions(dro_cfg, '../generated-data/ppc_dro', '../results/dro_gi_preds')
 #generate_predictions(human_cfg, '../generated-data/ppc_human', '../results/human_gi_preds')
@@ -129,7 +139,17 @@ def select_subset(gpath, result_path, gene_names, output_path):
 
     df = df[ix]
     print(df)
-    df.to_csv(output_path, columns=['gene A', 'gene B', 'prob_gi', 'reported_gi'], index=False)
+    df.to_excel(output_path + '.xlsx', columns=['gene A', 'gene B', 'prob_gi', 'reported_gi'], index=False)
 
 #select_subset('../generated-data/ppc_human', '../results/human_gi_preds', ['myc', 'tp53'], '../results/human_gi_preds_subset')
-select_subset('../generated-data/ppc_dro', '../results/dro_gi_preds', ['fbgn0003366', 'fbgn0024248'], '../results/dro_gi_preds_subset')
+#select_subset('../generated-data/ppc_dro', '../results/dro_gi_preds', ['fbgn0003366', 'fbgn0024248'], '../results/dro_gi_preds_subset')
+#select_subset('../generated-data/ppc_dro', '../results/dro_gi_preds', ['fbgn0003366'], '../results/dro_gi_preds_fbgn0003366')
+#select_subset('../generated-data/ppc_yeast', '../results/yeast_gi_preds', ['ydr477w  snf1'], '../results/yeast_gi_preds_snf1')
+#select_subset('../generated-data/ppc_yeast', '../results/yeast_gi_preds', ['yjr066w  tor1'], '../results/yeast_gi_preds_tor1')
+#select_subset('../generated-data/ppc_yeast', '../results/yeast_gi_preds', ['ykl203c  tor2'], '../results/yeast_gi_preds_tor2')
+# select_subset('../generated-data/ppc_yeast', '../results/yeast_gi_preds', ['ypl178w  cbc2'], '../results/yeast_gi_preds_cbc2')
+#select_subset('../generated-data/ppc_yeast', '../results/yeast_gi_preds', ['yil096c  bmt5'], '../results/yeast_gi_preds_cbc2')
+#select_subset('../generated-data/ppc_yeast', '../results/yeast_gi_preds', ['ydr001c  nth1'], '../results/yeast_gi_preds_cbc2')
+#select_subset('../generated-data/ppc_yeast', '../results/yeast_gi_preds', ['ydl037c  bsc1'], '../results/yeast_gi_preds_cbc2')
+#select_subset('../generated-data/ppc_yeast', '../results/yeast_gi_preds', ['ylr099c  ict1'], '../results/yeast_gi_preds_cbc2')
+#select_subset('../generated-data/ppc_yeast', '../results/yeast_gi_preds', ['ydl142c  crd1'], '../results/yeast_gi_preds_cbc2')
