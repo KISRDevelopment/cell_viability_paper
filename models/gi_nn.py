@@ -23,7 +23,7 @@ import models.nn_arch as nn_arch
 import utils.eval_funcs as eval_funcs
 import scipy.sparse
 from termcolor import colored
-def main(cfg, rep, fold, output_path, print_results=True):
+def main(cfg, rep, fold, output_path, print_results=True, return_model=False):
 
     dataset_path = cfg['task_path']
     targets_path = cfg['targets_path']
@@ -131,6 +131,8 @@ def main(cfg, rep, fold, output_path, print_results=True):
     else:
         model.load_weights(cfg["trained_model_path"]).expect_partial()
     
+    if return_model:
+        return model, [FeatureTransform(single_fsets, pairwise_fsets)]
     test_F = feature_transform(test_df, single_fsets, pairwise_fsets)
     preds = model.predict(test_F)
     y_target = np.argmax(test_Y, axis=1)
@@ -192,6 +194,14 @@ def shuffle_cols(A):
     # permute
     return A.flatten()[orix.flatten()].reshape(A.shape)
 
+class FeatureTransform:
+
+    def __init__(self,single_fsets, pairwise_fsets):
+        self.single_fsets = single_fsets 
+        self.pairwise_fsets = pairwise_fsets
+    
+    def transform(self, df):
+        return feature_transform(df, self.single_fsets, self.pairwise_fsets)
 
 def feature_transform(df, single_fsets, pairwise_fsets):
     inputs_A = []

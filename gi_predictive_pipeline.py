@@ -2,6 +2,7 @@ import os
 import sys 
 import json 
 import models.gi_mn
+import models.gi_nn
 import networkx as nx 
 import itertools 
 import numpy as np 
@@ -46,6 +47,10 @@ yeast_cfg_nosmf = load_cfg("cfgs/models/yeast_gi_mn.json",
     "../results/models_tjs/yeast_gi_mn_nosmf",
     remove_specs=['smf'],
     targets_path="../generated-data/targets/task_yeast_gi_hybrid_bin_interacting.npz")
+yeast_cfg_refined= load_cfg("cfgs/models/yeast_gi_refined_model.json",
+    "../results/models/yeast_gi_refined", 
+    "../results/models_tjs/yeast_gi_refined",
+    targets_path="../generated-data/targets/task_yeast_gi_hybrid_bin_interacting.npz")
 
 pombe_cfg = load_cfg("cfgs/models/pombe_gi_mn.json",
     "../results/models/pombe_gi_mn", 
@@ -64,12 +69,14 @@ dro_cfg = load_cfg("cfgs/models/dro_gi_mn.json",
 
 #mdl.main(yeast_cfg, 0, 0, '../tmp/dummy')
 #mdl.main(yeast_cfg_nosmf, 0, 0, '../tmp/dummy')
+#models.gi_nn.main(yeast_cfg_refined, 0, 0, '../tmp/dummy')
+
 # mdl.main(pombe_cfg, 0, 0, '../tmp/dummy')
 # mdl.main(human_cfg, 0, 0, '../tmp/dummy')
 #print(dro_cfg)
 #mdl.main(dro_cfg, 0, 0, '../tmp/dummy')
 
-def generate_predictions(cfg, gpath, result_path, thres):
+def generate_predictions(mdl, cfg, gpath, result_path, thres):
 
     main_df = pd.read_csv(cfg['task_path'])
 
@@ -116,8 +123,11 @@ def generate_predictions(cfg, gpath, result_path, thres):
             for proc in processors:
                 features.append(proc.transform(df))
             
-            batch_F = np.hstack(features)
-
+            if len(processors) > 1:
+                batch_F = np.hstack(features)
+            else:
+                batch_F = features 
+            
             preds = model.predict(batch_F, batch_size=BATCH_SIZE)
             min_prob = min(np.min(preds[:,0]), min_prob)
             max_prob = max(np.max(preds[:,0]), max_prob)
@@ -140,6 +150,8 @@ def generate_predictions(cfg, gpath, result_path, thres):
 
 #generate_predictions(yeast_cfg, '../generated-data/ppc_yeast', '../results/yeast_gi_preds', 0.5)
 #generate_predictions(yeast_cfg_nosmf, '../generated-data/ppc_yeast', '../results/yeast_gi_preds_nosmf', 0.5)
+#generate_predictions(models.gi_nn, yeast_cfg_refined, '../generated-data/ppc_yeast', '../results/yeast_gi_preds_refined', 0.5)
+
 #generate_predictions(pombe_cfg, '../generated-data/ppc_pombe', '../results/pombe_gi_preds')
 #generate_predictions(dro_cfg, '../generated-data/ppc_dro', '../results/dro_gi_preds')
 #generate_predictions(human_cfg, '../generated-data/ppc_human', '../results/human_gi_preds')
@@ -165,8 +177,8 @@ def select_subset(gpath, result_path, gene_names, output_path, thres=0.5):
 # #select_subset('../generated-data/ppc_human', '../results/human_gi_preds', ['myc', 'tp53'], '../results/human_gi_preds_subset')
 # #select_subset('../generated-data/ppc_dro', '../results/dro_gi_preds', ['fbgn0003366', 'fbgn0024248'], '../results/dro_gi_preds_subset')
 # #select_subset('../generated-data/ppc_dro', '../results/dro_gi_preds', ['fbgn0003366'], '../results/dro_gi_preds_fbgn0003366')
-select_subset('../generated-data/ppc_yeast', '../results/yeast_gi_preds_nosmf', ['ydr477w  snf1'], '../results/yeast_gi_preds_snf1', 0.7)
-select_subset('../generated-data/ppc_yeast', '../results/yeast_gi_preds_nosmf', ['yjr066w  tor1'], '../results/yeast_gi_preds_tor1', 0.7)
+select_subset('../generated-data/ppc_yeast', '../results/yeast_gi_preds_nosmf', ['ydr477w  snf1'], '../results/yeast_gi_preds_snf1', 0.5)
+#select_subset('../generated-data/ppc_yeast', '../results/yeast_gi_preds_nosmf', ['yjr066w  tor1'], '../results/yeast_gi_preds_tor1', 0.7)
 # select_subset('../generated-data/ppc_yeast', '../results/yeast_gi_preds', ['ykl203c  tor2'], '../results/yeast_gi_preds_tor2')
 # # select_subset('../generated-data/ppc_yeast', '../results/yeast_gi_preds', ['ypl178w  cbc2'], '../results/yeast_gi_preds_cbc2')
 # #select_subset('../generated-data/ppc_yeast', '../results/yeast_gi_preds', ['yil096c  bmt5'], '../results/yeast_gi_preds_cbc2')
