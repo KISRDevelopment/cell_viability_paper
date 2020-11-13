@@ -47,6 +47,11 @@ yeast_cfg_nosmf = load_cfg("cfgs/models/yeast_gi_mn.json",
     "../results/models_tjs/yeast_gi_mn_nosmf",
     remove_specs=['smf'],
     targets_path="../generated-data/targets/task_yeast_gi_hybrid_bin_interacting.npz")
+yeast_cfg_nosgo = load_cfg("cfgs/models/yeast_gi_mn.json",
+    "../results/models/yeast_gi_mn_nosmf", 
+    "../results/models_tjs/yeast_gi_mn_nosmf",
+    remove_specs=['sgo'],
+    targets_path="../generated-data/targets/task_yeast_gi_hybrid_bin_interacting.npz")
 yeast_cfg_refined= load_cfg("cfgs/models/yeast_gi_refined_model.json",
     "../results/models/yeast_gi_refined", 
     "../results/models_tjs/yeast_gi_refined",
@@ -69,6 +74,7 @@ dro_cfg = load_cfg("cfgs/models/dro_gi_mn.json",
 
 #mdl.main(yeast_cfg, 0, 0, '../tmp/dummy')
 #mdl.main(yeast_cfg_nosmf, 0, 0, '../tmp/dummy')
+#mdl.main(yeast_cfg_nosgo, 0, 0, '../tmp/dummy')
 #models.gi_nn.main(yeast_cfg_refined, 0, 0, '../tmp/dummy')
 
 # mdl.main(pombe_cfg, 0, 0, '../tmp/dummy')
@@ -150,6 +156,8 @@ def generate_predictions(mdl, cfg, gpath, result_path, thres):
 
 #generate_predictions(yeast_cfg, '../generated-data/ppc_yeast', '../results/yeast_gi_preds', 0.5)
 #generate_predictions(yeast_cfg_nosmf, '../generated-data/ppc_yeast', '../results/yeast_gi_preds_nosmf', 0.5)
+#generate_predictions(models.gi_mn, yeast_cfg_nosgo, '../generated-data/ppc_yeast', '../results/yeast_gi_preds_nosgo', 0.5)
+
 #generate_predictions(models.gi_nn, yeast_cfg_refined, '../generated-data/ppc_yeast', '../results/yeast_gi_preds_refined', 0.5)
 
 #generate_predictions(pombe_cfg, '../generated-data/ppc_pombe', '../results/pombe_gi_preds')
@@ -174,10 +182,55 @@ def select_subset(gpath, result_path, gene_names, output_path, thres=0.5):
     df['correct'] = (df['observed'] == 1) & (df['prediction'] == df['interacting'])
     df.to_excel(output_path + '.xlsx', columns=['gene A', 'gene B', 'prob_gi', 'observed', 'interacting', 'prediction', 'correct'], index=False)
 
+def examine_genes(gpath, result_path, gene_names, thresholds):
+
+    ene_names = set(gene_names)
+
+    df = pd.read_csv(result_path)
+    G = nx.read_gpickle(gpath)
+    nodes = sorted(G.nodes())
+    
+    df['gene A'] = [nodes[a] for a in df['a_id']]
+    df['gene B'] = [nodes[b] for b in df['b_id']]
+
+    for gene in gene_names:
+        print("Gene %s" % gene)
+
+
+        ix = (df['gene A'] == gene) | (df['gene B'] == gene)
+
+        print(" %d observations, %d interacting" % (np.sum((df[ix]['observed'] == 1)), np.sum(df[ix]['interacting'])))
+        
+        for t in thresholds:
+            pred_gi = (df[ix]['prob_gi'] > t).astype(int)
+            corr = (df[ix]['observed'] == 1) & (pred_gi == df[ix]['interacting'])
+            mean_corr = np.sum(corr) / np.sum(df[ix]['observed'] == 1)
+            novel_gi = pred_gi & (df[ix]['observed'] == 0)
+            tpr = np.sum((df[ix]['observed'] == 1) & (pred_gi * df[ix]['interacting'] == 1)) / np.sum((df[ix]['observed'] == 1) & (df[ix]['interacting']==1))
+            fpr = np.sum((df[ix]['observed'] == 1) & (df[ix]['interacting'] == 0) & (pred_gi == 1)) / np.sum((df[ix]['observed'] == 1) & (df[ix]['interacting']==0))
+            print("  @ %0.2f, Accuracy: %0.2f, TPR: %0.2f, FPR: %0.2f, Novel GIs: %d" % (t, mean_corr, tpr, fpr, np.sum(novel_gi)))
+        print() 
+
+    print("Overall:")
+    for t in thresholds:
+        pred_gi = (df['prob_gi'] > t).astype(int)
+        corr = (df['observed'] == 1) & (pred_gi == df['interacting'])
+        mean_corr = np.sum(corr) / np.sum(df['observed'] == 1)
+        novel_gi = pred_gi & (df['observed'] == 0)
+        tpr = np.sum((df['observed'] == 1) & (pred_gi * df['interacting'] == 1)) / np.sum((df['observed'] == 1) & (df['interacting']==1))
+        fpr = np.sum((df['observed'] == 1) & (df['interacting'] == 0) & (pred_gi == 1)) / np.sum((df['observed'] == 1) & (df['interacting']==0))
+        print("  @ %0.2f, Accuracy: %0.2f, TPR: %0.2f, FPR: %0.2f, Novel GIs: %d" % (t, mean_corr, tpr, fpr, np.sum(novel_gi)))
+    print() 
+
+
+#examine_genes('../generated-data/ppc_yeast', '../results/yeast_gi_preds_nosgo', 
+#    ['ydr477w  snf1', 'yjr066w  tor1', 'ydl142c  crd1'], 
+#    [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9])
+
 # #select_subset('../generated-data/ppc_human', '../results/human_gi_preds', ['myc', 'tp53'], '../results/human_gi_preds_subset')
 # #select_subset('../generated-data/ppc_dro', '../results/dro_gi_preds', ['fbgn0003366', 'fbgn0024248'], '../results/dro_gi_preds_subset')
 # #select_subset('../generated-data/ppc_dro', '../results/dro_gi_preds', ['fbgn0003366'], '../results/dro_gi_preds_fbgn0003366')
-select_subset('../generated-data/ppc_yeast', '../results/yeast_gi_preds_nosmf', ['ydr477w  snf1'], '../results/yeast_gi_preds_snf1', 0.5)
+#select_subset('../generated-data/ppc_yeast', '../results/yeast_gi_preds', ['ydr477w  snf1'], '../results/yeast_gi_preds_snf1', 0.5)
 #select_subset('../generated-data/ppc_yeast', '../results/yeast_gi_preds_nosmf', ['yjr066w  tor1'], '../results/yeast_gi_preds_tor1', 0.7)
 # select_subset('../generated-data/ppc_yeast', '../results/yeast_gi_preds', ['ykl203c  tor2'], '../results/yeast_gi_preds_tor2')
 # # select_subset('../generated-data/ppc_yeast', '../results/yeast_gi_preds', ['ypl178w  cbc2'], '../results/yeast_gi_preds_cbc2')
@@ -204,14 +257,16 @@ def sanity_check(result_path):
 
     import matplotlib.pyplot as plt 
 
-    fig, axes = plt.subplots(2, 2, figsize=(20,20))
-    axes[0,0].hist(df_obs['prob_gi'], bins=20, density=True)
-    axes[0,1].hist(df[df['observed']==0]['prob_gi'], bins=20, density=True)
-    axes[1,0].hist(df[df['novel']==1]['prob_gi'], bins=20, density=True)
-    axes[1,1].hist(df[(df['novel']==0)&(df['observed']==0)]['prob_gi'], bins=20, density=True)
+    fig, axes = plt.subplots(1, 2, figsize=(20,20))
+    axes[0].hist(df_obs['prob_gi'], bins=20, density=True)
+    axes[0].set_title('On Reported Data')
+    axes[1].hist(df[df['observed']==0]['prob_gi'], bins=20, density=True)
+    axes[1].set_title('On Unreported Data')
+    #axes[1,0].hist(df[df['novel']==1]['prob_gi'], bins=20, density=True)
+    #axes[1,1].hist(df[(df['novel']==0)&(df['observed']==0)]['prob_gi'], bins=20, density=True)
     plt.show()
 
-#sanity_check('../results/yeast_gi_preds_nosmf')
+#sanity_check('../results/yeast_gi_preds_nosgo')
 
 # d = np.load('../results/task_yeast_gi_hybrid_binary/mn/run_6_2.npz', allow_pickle=True)
 # #d = np.load('../tmp/dummy.npz', allow_pickle=True)
@@ -293,12 +348,14 @@ def smf_check(result_path, path):
 
     f, axes = plt.subplots(2, 1, figsize=(20, 10), sharey=True)
 
+    vals = ['LL', 'LR', 'LN', 'RR', 'RN', 'NN']
+    axes[0].bar(vals, obs_counts / np.sum(obs_counts))
+    axes[0].set_title('Reported')
 
-    axes[0].bar(np.arange(smf_features.shape[1]), obs_counts / np.sum(obs_counts))
-
-    axes[1].bar(np.arange(smf_features.shape[1]), nonobs_counts / np.sum(nonobs_counts))
-
+    axes[1].bar(vals, nonobs_counts / np.sum(nonobs_counts))
+    axes[1].set_title('Unreported')
+    
     plt.show()
 
-#smf_check('../results/yeast_gi_preds', '../generated-data/features/ppc_yeast_smf_binned.npz')
+smf_check('../results/yeast_gi_preds', '../generated-data/features/ppc_yeast_smf_binned.npz')
 
