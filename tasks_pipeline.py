@@ -24,6 +24,7 @@ import utils.make_fb_dataset
 import ppc_creation.ppc
 import utils.bin_lethal
 import tasks.cell_org_lethal
+import tasks.yeast_gi_hybrid_comp
 
 if not os.path.exists('../generated-data/splits'):
     os.makedirs('../generated-data/splits')
@@ -100,11 +101,11 @@ if not os.path.exists('../generated-data/targets'):
 # utils.make_biogrid_dataset.main(9606, 1, '../generated-data/biogrid_human')
 # utils.make_fb_dataset.main('../generated-data/fb_dro')
 
-gpath = "../generated-data/ppc_yeast"
-gi_task_path = "../generated-data/task_yeast_gi_costanzo"
+# gpath = "../generated-data/ppc_yeast"
+# gi_task_path = "../generated-data/task_yeast_gi_costanzo"
 #tasks.yeast_gi_costanzo.main(gpath, [26], [(0, 0), (0, 1), (1, 0), (1, 1)], gi_task_path)
-utils.bin_simple.main(gi_task_path)
-utils.bin_interacting.main(gi_task_path)
+# utils.bin_simple.main(gi_task_path)
+# utils.bin_interacting.main(gi_task_path)
 #utils.cv_gi.main(gi_task_path, 10, 4, 0.2)
 
 # gpath = "../generated-data/ppc_yeast"
@@ -113,6 +114,12 @@ utils.bin_interacting.main(gi_task_path)
 # utils.bin_simple.main(gi_task_path)
 # utils.bin_interacting.main(gi_task_path)
 # utils.cv_gi.main(gi_task_path, 10, 4, 0.2)
+
+gpath = "../generated-data/ppc_yeast"
+gi_task_path = "../generated-data/task_yeast_gi"
+tasks.yeast_gi_hybrid_comp.main(gpath, gi_task_path)
+utils.bin_interacting.main(gi_task_path)
+utils.cv_gi.main(gi_task_path, 10, 4, 0.2)
 
 # gpath = "../generated-data/ppc_pombe"
 # gi_task_path = "../generated-data/task_pombe_gi"

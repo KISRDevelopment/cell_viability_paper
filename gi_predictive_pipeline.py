@@ -14,6 +14,10 @@ if not os.path.isdir("../results/models"):
 if not os.path.isdir("../results/models_tjs"):
     os.mkdir("../results/models_tjs")
 
+costanzo_task_path = "../generated-data/task_yeast_gi_costanzo"
+costanzo_targets_path = "../generated-data/targets/task_yeast_gi_costanzo_bin_interacting.npz"
+costanzo_splits_path = "../generated-data/splits/task_yeast_gi_costanzo_10reps_4folds_0.20valid.npz"
+
 def load_cfg(path, model_path, tjs_model_path, remove_specs=[], **kwargs):
     with open(path, 'r') as f:
         cfg = json.load(f)
@@ -56,7 +60,19 @@ yeast_cfg_refined= load_cfg("cfgs/models/yeast_gi_refined_model.json",
     "../results/models/yeast_gi_refined", 
     "../results/models_tjs/yeast_gi_refined",
     targets_path="../generated-data/targets/task_yeast_gi_hybrid_bin_interacting.npz")
-
+yeast_cfg_costanzo = load_cfg("cfgs/models/yeast_gi_mn.json",
+    "../results/models/yeast_gi_mn_costanzo", 
+    "../results/models_tjs/yeast_gi_mn_costanzo",
+    splits_path=costanzo_splits_path,
+    targets_path=costanzo_targets_path,
+    task_path=costanzo_task_path)
+yeast_cfg_costanzo_nosmf = load_cfg("cfgs/models/yeast_gi_mn.json",
+    "../results/models/yeast_gi_mn_costanzo_nosmf", 
+    "../results/models_tjs/yeast_gi_mn_costanzo_nosmf",
+    splits_path=costanzo_splits_path,
+    targets_path=costanzo_targets_path,
+    task_path=costanzo_task_path,
+    remove_specs=['smf'])
 pombe_cfg = load_cfg("cfgs/models/pombe_gi_mn.json",
     "../results/models/pombe_gi_mn", 
     "../results/models_tjs/pombe_gi_mn",
@@ -75,6 +91,7 @@ dro_cfg = load_cfg("cfgs/models/dro_gi_mn.json",
 #mdl.main(yeast_cfg, 0, 0, '../tmp/dummy')
 #mdl.main(yeast_cfg_nosmf, 0, 0, '../tmp/dummy')
 #mdl.main(yeast_cfg_nosgo, 0, 0, '../tmp/dummy')
+#mdl.main(yeast_cfg_costanzo_nosmf, 0, 0, '../tmp/dummy')
 #models.gi_nn.main(yeast_cfg_refined, 0, 0, '../tmp/dummy')
 
 # mdl.main(pombe_cfg, 0, 0, '../tmp/dummy')
@@ -157,6 +174,8 @@ def generate_predictions(mdl, cfg, gpath, result_path, thres):
 #generate_predictions(yeast_cfg, '../generated-data/ppc_yeast', '../results/yeast_gi_preds', 0.5)
 #generate_predictions(yeast_cfg_nosmf, '../generated-data/ppc_yeast', '../results/yeast_gi_preds_nosmf', 0.5)
 #generate_predictions(models.gi_mn, yeast_cfg_nosgo, '../generated-data/ppc_yeast', '../results/yeast_gi_preds_nosgo', 0.5)
+#generate_predictions(models.gi_mn, yeast_cfg_costanzo, '../generated-data/ppc_yeast', '../results/yeast_gi_preds_costanzo', 0.5)
+#generate_predictions(models.gi_mn, yeast_cfg_costanzo_nosmf, '../generated-data/ppc_yeast', '../results/yeast_gi_preds_costanzo_nosmf', 0.5)
 
 #generate_predictions(models.gi_nn, yeast_cfg_refined, '../generated-data/ppc_yeast', '../results/yeast_gi_preds_refined', 0.5)
 
@@ -223,7 +242,7 @@ def examine_genes(gpath, result_path, gene_names, thresholds):
     print() 
 
 
-#examine_genes('../generated-data/ppc_yeast', '../results/yeast_gi_preds_nosgo', 
+# examine_genes('../generated-data/ppc_yeast', '../results/yeast_gi_preds_costanzo_nosmf', 
 #    ['ydr477w  snf1', 'yjr066w  tor1', 'ydl142c  crd1'], 
 #    [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9])
 
@@ -266,7 +285,7 @@ def sanity_check(result_path):
     #axes[1,1].hist(df[(df['novel']==0)&(df['observed']==0)]['prob_gi'], bins=20, density=True)
     plt.show()
 
-#sanity_check('../results/yeast_gi_preds_nosgo')
+sanity_check('../results/yeast_gi_preds_costanzo_nosmf')
 
 # d = np.load('../results/task_yeast_gi_hybrid_binary/mn/run_6_2.npz', allow_pickle=True)
 # #d = np.load('../tmp/dummy.npz', allow_pickle=True)
@@ -354,8 +373,8 @@ def smf_check(result_path, path):
 
     axes[1].bar(vals, nonobs_counts / np.sum(nonobs_counts))
     axes[1].set_title('Unreported')
-    
+
     plt.show()
 
-smf_check('../results/yeast_gi_preds', '../generated-data/features/ppc_yeast_smf_binned.npz')
+#smf_check('../results/yeast_gi_preds_costanzo', '../generated-data/features/ppc_yeast_smf_binned.npz')
 
