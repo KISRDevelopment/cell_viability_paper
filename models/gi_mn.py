@@ -55,20 +55,26 @@ def main(cfg, rep, fold, output_path, print_results=True, return_model=False):
     valid_ix = valid_sets[rep,fold,:]
     test_ix = test_sets[rep,fold,:]
     
+    
+    print("Dataset size: %d, Total: %d" % (df.shape[0], np.sum(train_ix + valid_ix + test_ix)))
+    
     if not cfg.get("early_stopping", True):
         train_ix = train_ix + valid_ix
         
     if cfg.get("train_on_full_dataset", False):
         print(colored("******** TRAINING ON FULL DATASET ***********", "red"))
-        train_ix = train_ix + test_ix
+        train_ix = np.ones_like(train_ix)
+    
     if cfg.get("test_on_full_dataset", False):
         print(colored("******** TESTING ON FULL DATASET ***********", "green"))
-        test_ix = train_ix + test_ix + valid_ix
+        test_ix = np.ones_like(test_ix)
     
+
     train_df = df.iloc[train_ix]
     valid_df = df.iloc[valid_ix]
     test_df = df.iloc[test_ix]
 
+    print("Train size: %d, valid: %d, test: %d" % (train_df.shape[0], valid_df.shape[0], test_df.shape[0]))
     
     train_Y = Y[train_ix,:]
     valid_Y = Y[valid_ix,:]
