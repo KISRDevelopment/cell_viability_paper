@@ -9,7 +9,7 @@ from collections import defaultdict
 
 COSTANZO_PATH = '../generated-data/costanzo_gi'
 
-def main(gpath, temps, allowed_combs, output_path):
+def main(gpath, temps, allowed_combs, output_path, neg_thres=-0.08, pos_thres=0.08):
     
     df = pd.read_csv(COSTANZO_PATH)
 
@@ -41,9 +41,9 @@ def main(gpath, temps, allowed_combs, output_path):
     
 
     # as per costanzo recommendation
-    neg_ix = (df['p_value'] < 0.05) & (df['gi'] < -0.08)
+    neg_ix = (df['p_value'] < 0.05) & (df['gi'] < neg_thres)
     net_ix = (df['p_value'] >= 0.05)
-    pos_ix = (df['p_value'] < 0.05) & (df['gi'] > 0.08)
+    pos_ix = (df['p_value'] < 0.05) & (df['gi'] > pos_thres)
 
     neg_df = df[neg_ix]
     net_df = df[net_ix]

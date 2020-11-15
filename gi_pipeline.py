@@ -74,9 +74,9 @@ import utils.make_cfgs
     Costanzo data
 """
 
-# costanzo_task_path = "../generated-data/task_yeast_gi_costanzo"
-# costanzo_targets_path = "../generated-data/targets/task_yeast_gi_costanzo_bin_simple.npz"
-# costanzo_splits_path = "../generated-data/splits/task_yeast_gi_costanzo_10reps_4folds_0.20valid.npz"
+costanzo_task_path = "../generated-data/task_yeast_gi_costanzo_asym"
+costanzo_targets_path = "../generated-data/targets/task_yeast_gi_costanzo_asym_bin_simple.npz"
+costanzo_splits_path = "../generated-data/splits/task_yeast_gi_costanzo_asym_10reps_4folds_0.20valid.npz"
 
 # models.cv.main("models.gi_nn", "cfgs/models/yeast_gi_full_model.json", 
 #     "../results/task_yeast_gi_costanzo/full", 
@@ -86,13 +86,21 @@ import utils.make_cfgs
 #     splits_path = costanzo_splits_path
 # )
 
-# models.cv.main("models.gi_nn", "cfgs/models/yeast_gi_refined_model.json", 
-#     "../results/task_yeast_gi_costanzo/refined", 
-#     num_processes = 20,
-#     task_path = costanzo_task_path,
-#     targets_path = costanzo_targets_path,
-#     splits_path = costanzo_splits_path
-# )
+models.cv.main("models.gi_nn", "cfgs/models/yeast_gi_refined_model.json", 
+    "../results/task_yeast_gi_costanzo_asym/refined", 
+    num_processes = 20,
+    task_path = costanzo_task_path,
+    targets_path = costanzo_targets_path,
+    splits_path = costanzo_splits_path
+)
+
+models.cv.main("models.gi_nn", "cfgs/models/yeast_gi_refined_model.json", 
+    "../results/task_yeast_gi_costanzo_asym_binary/refined", 
+    num_processes = 20,
+    task_path = costanzo_task_path,
+    targets_path = "../generated-data/targets/task_yeast_gi_costanzo_asym_bin_interacting.npz",
+    splits_path = costanzo_splits_path
+)
 
 # models.cv.main("models.gi_mn", "cfgs/models/yeast_gi_mn.json", 
 #     "../results/task_yeast_gi_costanzo/mn", 
@@ -126,25 +134,25 @@ import utils.make_cfgs
 """
     Definitive GI Dataset
 """
-costanzo_task_path = "../generated-data/task_yeast_gi"
-costanzo_targets_path = "../generated-data/targets/task_yeast_gi_bin_simple.npz"
-costanzo_splits_path = "../generated-data/splits/task_yeast_gi_10reps_4folds_0.20valid.npz"
+costanzo_task_path = "../generated-data/task_yeast_gi_thres15"
+costanzo_targets_path = "../generated-data/targets/task_yeast_gi_thres15_bin_interacting.npz"
+costanzo_splits_path = "../generated-data/splits/task_yeast_gi_thres15_10reps_4folds_0.20valid.npz"
 
-models.cv.main("models.gi_nn", "cfgs/models/yeast_gi_full_model.json", 
-    "../results/task_yeast_gi/full", 
-    num_processes = 10,
-    task_path = costanzo_task_path,
-    targets_path = costanzo_targets_path,
-    splits_path = costanzo_splits_path
-)
+# models.cv.main("models.gi_nn", "cfgs/models/yeast_gi_full_model.json", 
+#     "../results/task_yeast_gi/full", 
+#     num_processes = 10,
+#     task_path = costanzo_task_path,
+#     targets_path = costanzo_targets_path,
+#     splits_path = costanzo_splits_path
+# )
 
-models.cv.main("models.gi_nn", "cfgs/models/yeast_gi_refined_model.json", 
-    "../results/task_yeast_gi/refined", 
-    num_processes = 20,
-    task_path = costanzo_task_path,
-    targets_path = costanzo_targets_path,
-    splits_path = costanzo_splits_path
-)
+# models.cv.main("models.gi_nn", "cfgs/models/yeast_gi_refined_model.json", 
+#     "../results/task_yeast_gi_thres15_binary/refined", 
+#     num_processes = 20,
+#     task_path = costanzo_task_path,
+#     targets_path = costanzo_targets_path,
+#     splits_path = costanzo_splits_path
+# )
 
 # models.cv.main("models.gi_mn", "cfgs/models/yeast_gi_mn.json", 
 #     "../results/task_yeast_gi/mn", 

@@ -10,7 +10,7 @@ from collections import defaultdict
 COSTANZO_PATH = '../generated-data/costanzo_gi'
 BIOGRID_PATH = '../generated-data/biogrid_yeast'
 
-def main(gpath, output_path):
+def main(gpath, output_path, thres=0.08):
     
     
     costanzo_df = pd.read_csv(COSTANZO_PATH)
@@ -21,9 +21,9 @@ def main(gpath, output_path):
     biogrid_supp_pairs = to_pairs(biogrid_df[biogrid_df['bin'] == 3])
     
     # classify
-    neg_ix = (costanzo_df['p_value'] < 0.05) & (costanzo_df['gi'] < -0.08)
+    neg_ix = (costanzo_df['p_value'] < 0.05) & (costanzo_df['gi'] < -thres)
     net_ix = (costanzo_df['p_value'] >= 0.05)
-    pos_ix = (costanzo_df['p_value'] < 0.05) & (costanzo_df['gi'] > 0.08)
+    pos_ix = (costanzo_df['p_value'] < 0.05) & (costanzo_df['gi'] > thres)
     supp_ix = pos_ix & (costanzo_df['cs'] > np.maximum(costanzo_df['a_smf'], costanzo_df['b_smf']))
 
     neg_df = costanzo_df[neg_ix]

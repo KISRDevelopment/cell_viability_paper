@@ -101,19 +101,19 @@ if not os.path.exists('../generated-data/targets'):
 # utils.make_biogrid_dataset.main(9606, 1, '../generated-data/biogrid_human')
 # utils.make_fb_dataset.main('../generated-data/fb_dro')
 
-# gpath = "../generated-data/ppc_yeast"
-# gi_task_path = "../generated-data/task_yeast_gi_costanzo"
-#tasks.yeast_gi_costanzo.main(gpath, [26], [(0, 0), (0, 1), (1, 0), (1, 1)], gi_task_path)
-# utils.bin_simple.main(gi_task_path)
-# utils.bin_interacting.main(gi_task_path)
-#utils.cv_gi.main(gi_task_path, 10, 4, 0.2)
-
 gpath = "../generated-data/ppc_yeast"
-gi_task_path = "../generated-data/task_yeast_gi"
-tasks.yeast_gi_hybrid_comp.main(gpath, gi_task_path)
+gi_task_path = "../generated-data/task_yeast_gi_costanzo_asym"
+tasks.yeast_gi_costanzo.main(gpath, [26], [(0, 0), (0, 1), (1, 0), (1, 1)], gi_task_path, neg_thres=-0.16, pos_thres=0.08)
 utils.bin_simple.main(gi_task_path)
 utils.bin_interacting.main(gi_task_path)
 utils.cv_gi.main(gi_task_path, 10, 4, 0.2)
+
+# gpath = "../generated-data/ppc_yeast"
+# gi_task_path = "../generated-data/task_yeast_gi_thres15"
+# tasks.yeast_gi_hybrid_comp.main(gpath, gi_task_path, 0.15)
+# utils.bin_simple.main(gi_task_path)
+# utils.bin_interacting.main(gi_task_path)
+# utils.cv_gi.main(gi_task_path, 10, 4, 0.2)
 
 # gpath = "../generated-data/ppc_pombe"
 # gi_task_path = "../generated-data/task_pombe_gi"
