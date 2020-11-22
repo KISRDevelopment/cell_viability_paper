@@ -157,28 +157,28 @@ def examine_genes(cfg, gene_names, thresholds):
 
 mdl = models.gi_mn 
 
-# cfg = load_cfg("cfgs/models/yeast_gi_mn.json",
-#     "../results/models/yeast_gi_mn_costanzo", 
-#     "../results/models_tjs/yeast_gi_mn_costanzo",
-#     splits_path=costanzo_splits_path,
-#     targets_path=costanzo_targets_path,
-#     task_path=costanzo_task_path)
-# cfg['gpath'] = '../generated-data/ppc_yeast'
-# cfg['preds_path'] = '../results/yeast_gi_preds_nosmf'
+cfg = load_cfg("cfgs/models/yeast_gi_mn.json",
+    "../results/models/yeast_gi_mn_costanzo", 
+    "../results/models_tjs/yeast_gi_mn_costanzo",
+    splits_path=costanzo_splits_path,
+    targets_path=costanzo_targets_path,
+    task_path=costanzo_task_path)
+cfg['gpath'] = '../generated-data/ppc_yeast'
+cfg['preds_path'] = '../results/yeast_gi_preds'
 # mdl.main(cfg, 0, 0, '../tmp/dummy')
 
-cfg = load_cfg("cfgs/models/dro_gi_mn.json",
-    "../results/models/dro_gi_mn", 
-    "../results/models_tjs/dro_gi_mn")
-cfg['gpath'] = '../generated-data/ppc_dro'
-cfg['preds_path'] = '../results/dro_gi_preds'
+# cfg = load_cfg("cfgs/models/dro_gi_mn.json",
+#     "../results/models/dro_gi_mn", 
+#     "../results/models_tjs/dro_gi_mn")
+# cfg['gpath'] = '../generated-data/ppc_dro'
+# cfg['preds_path'] = '../results/dro_gi_preds'
 #mdl.main(cfg, 0, 0, '../tmp/dummy')
 
-#generate_predictions(mdl, cfg, 0.5)
+generate_predictions(mdl, cfg, 0.5)
 
-#examine_genes(cfg, 
-#   ['ydr477w  snf1', 'yjr066w  tor1', 'ydl142c  crd1'], 
-#   [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.85, 0.9])
+examine_genes(cfg, 
+  ['ydr477w  snf1', 'yjr066w  tor1', 'ydl142c  crd1'], 
+  [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.85, 0.9])
 
 # cfg['gpath'] = '../generated-data/ppc_human'
 # cfg['preds_path'] =  '../results/human_gi_preds'
@@ -186,9 +186,9 @@ cfg['preds_path'] = '../results/dro_gi_preds'
 #    ['myc', 'tp53'], 
 #    [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 0.99])
 
-cfg['gpath'] = '../generated-data/ppc_dro'
-cfg['preds_path'] =  '../results/dro_gi_preds'
-examine_genes(cfg, 
-   ['fbgn0003366'], 
-   [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 0.99])
+# cfg['gpath'] = '../generated-data/ppc_dro'
+# cfg['preds_path'] =  '../results/dro_gi_preds'
+# examine_genes(cfg, 
+#    ['fbgn0003366'], 
+#    [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 0.99])
 
