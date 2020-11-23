@@ -210,6 +210,24 @@ def weighted_categorical_xentropy(y_true, y_pred):
 
     return wxe
 
+def create_ensemble_model(cfg, inputs, outputs):
+
+    input_node = layers.Input(shape=(inputs.shape[1],), name='input_features')
+    hidden_node = layers.Dense(5, activation='tanh')(input_node)
+    output_node = layers.Dense(outputs.shape[1], activation='softmax')(hidden_node)
+    loss = weighted_categorical_xentropy
+    emodel = keras.models.Model(inputs=input_node, outputs=output_node)
+    emodel.compile(cfg['optimizer'], loss)
+
+    emodel.fit(inputs, outputs,
+        shuffle=True,
+        epochs=cfg['epochs'],
+        batch_size=cfg['batch_size'],
+        verbose=cfg['verbose'])
+
+    return emodel
+
+
 mdl = models.gi_mn 
 
 ycfg = load_cfg("cfgs/models/yeast_gi_mn.json",
@@ -244,31 +262,34 @@ dcfg['gpath'] = '../generated-data/ppc_dro'
 dcfg['preds_path'] = '../results/dro_gi_preds'
 #mdl.main(dcfg, 0, 0, '../tmp/dummy')
 
-inputs, outputs, models, processors = create_training_inputs_outputs(mdl, ycfg, [pcfg, hcfg, dcfg])
+#
+# YEAST
+#
+# inputs, outputs, models, processors = create_training_inputs_outputs(mdl, ycfg, [pcfg, hcfg, dcfg])
+# emodel = create_ensemble_model(ycfg, inputs, outputs)
+# generate_predictions(ycfg, emodel, models, processors, 0.5, '../results/yeast_ensemble_preds')
 
-input_node = layers.Input(shape=(inputs.shape[1],), name='input_features')
-hidden_node = layers.Dense(5, activation='tanh')(input_node)
-output_node = layers.Dense(outputs.shape[1], activation='softmax')(hidden_node)
-loss = weighted_categorical_xentropy
-emodel = keras.models.Model(inputs=input_node, outputs=output_node)
-emodel.compile(ycfg['optimizer'], loss)
-
-emodel.fit(inputs, outputs,
-    shuffle=True,
-    epochs=ycfg['epochs'],
-    batch_size=ycfg['batch_size'],
-    verbose=ycfg['verbose'])
-
-preds = emodel.predict(inputs, batch_size=ycfg['batch_size'])
-y_target = np.argmax(outputs, axis=1)
-
-r, cm = utils.eval_funcs.eval_classifier(y_target, preds)
-utils.eval_funcs.print_eval_classifier(r)
-
-generate_predictions(ycfg, emodel, models, processors, 0.5, '../results/yeast_ensemble_preds')
+#
+# D. mel
+#
+# inputs, outputs, models, processors = create_training_inputs_outputs(mdl, dcfg, [pcfg, ycfg, hcfg])
+# emodel = create_ensemble_model(dcfg, inputs, outputs)
+# generate_predictions(dcfg, emodel, models, processors, 0.5, '../results/dro_ensemble_preds')
+# examine_genes(dcfg, 
+#     '../results/dro_ensemble_preds',
+#    ['fbgn0003366'], 
+#    [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 0.99])
 
 
-examine_genes(ycfg, 
-  '../results/yeast_ensemble_preds',
-  ['ydr477w  snf1', 'yjr066w  tor1', 'ydl142c  crd1'], 
-  [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.85, 0.9])
+#
+# Human
+#
+inputs, outputs, models, processors = create_training_inputs_outputs(mdl, hcfg, [pcfg, ycfg, dcfg])
+emodel = create_ensemble_model(hcfg, inputs, outputs)
+generate_predictions(hcfg, emodel, models, processors, 0.5, '../results/human_ensemble_preds', 
+  keep_net_preds=False)
+examine_genes(hcfg, 
+   '../results/human_ensemble_preds',
+   ['myc', 'tp53'], 
+   [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 0.99])
+
