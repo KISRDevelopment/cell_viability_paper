@@ -24,7 +24,7 @@ import feature_preprocessing.common_sgo
 import feature_preprocessing.const 
 #import feature_preprocessing.sgo 
 import feature_preprocessing.binned_smf
-
+import feature_preprocessing.xhomology
 if not os.path.exists('../generated-data/features'):
     os.makedirs('../generated-data/features')
 
@@ -54,13 +54,13 @@ if not os.path.exists('../generated-data/features'):
 # feature_preprocessing.binned_smf.main(gpath, "../generated-data/task_yeast_smf_30")
 
 # # pombe features
-gpath = "../generated-data/ppc_pombe"
+#gpath = "../generated-data/ppc_pombe"
 # subprocess.call(shlex.split("../tools/owltools ../tools/go.obo --gaf ../data-sources/pombe/pombase.gaf --map2slim --subset goslim_generic --write-gaf ../tmp/pombase.sgo.gaf"))
 # feature_preprocessing.sgo.main(gpath, "../tmp/pombase.sgo.gaf", 1)
 # feature_preprocessing.topology.main(gpath, ['lid'])
 # feature_preprocessing.redundancy.main("pombe", gpath)
 # ppc_creation.find_comms.main(gpath + '.gml', 5)
-feature_preprocessing.pairwise_shortest_path_len_sparse.main(gpath + '.gml') 
+#feature_preprocessing.pairwise_shortest_path_len_sparse.main(gpath + '.gml') 
 # feature_preprocessing.pairwise_comms_sparse.main(gpath, '../generated-data/communities/%s_5steps.json' % os.path.basename(gpath))
 # feature_preprocessing.smf.main(gpath, "../generated-data/task_pombe_smf")
 # feature_preprocessing.binned_smf.main(gpath, "../generated-data/task_pombe_smf")
@@ -100,3 +100,36 @@ feature_preprocessing.pairwise_shortest_path_len_sparse.main(gpath + '.gml')
 #     target_files = [sgo_file] + [s for s in sgo_files if s != sgo_files]
 #     feature_preprocessing.common_sgo.main(gpath, target_files)
 
+
+#
+# Xhomology
+#
+blastpaths = {
+    "yeast" : {
+        "seqs" : "../data-sources/yeast/orf_trans_all.fasta",
+        "db" : "../data-sources/yeast/blastdb/sequence"
+    },
+    "pombe" : {
+        "seqs" : "../data-sources/pombe/peptide.fa",
+        "db" : "../data-sources/pombe/blastdb/peptide.fa"
+    },
+    "human" : {
+        "seqs" : "../data-sources/human/gencode.v32.pc_translations.fa",
+        "db" : "../data-sources/human/blastdb/gencode.v32.pc_translations.fa"
+    },
+    "dro" : {
+        "seqs" : "../data-sources/dro/dmel-all-translation-r6.32.fasta",
+        "db" : "../data-sources/dro/blastdb/dmel-all-translation-r6.32.fasta"
+    }
+}
+
+BLAST_COMMAND = "blastp -query %s -db %s -outfmt '6 qseqid sseqid nident positive mismatch gaps gapopen length pident ppos evalue bitscore' -max_hsps 1 -evalue 0.01 -out %s -seg yes"
+orgs = list(blastpaths.keys())
+for org_a in orgs:
+    for org_b in orgs:
+        if org_a == org_b:
+            continue 
+        print("%s %s" % (org_a, org_b))
+        command = BLAST_COMMAND % (blastpaths[org_a]["seqs"], blastpaths[org_b]["db"], "../generated-data/xhomology/%s_%s" % (org_a, org_b))
+        #subprocess.run(shlex.split(command))
+        feature_preprocessing.xhomology.main(org_a, org_b, "../generated-data/xhomology/%s_%s" % (org_a, org_b))

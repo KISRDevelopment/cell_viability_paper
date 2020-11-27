@@ -13,7 +13,7 @@ from utils import yeast_name_resolver
 import re 
 
 BLAST_COMMAND = "blastp -query %s -db %s -outfmt '6 qseqid sseqid nident positive mismatch gaps gapopen length pident ppos evalue bitscore' -max_hsps 1 -evalue 0.01 -out %s -seg yes"
-
+res = yeast_name_resolver.NameResolver()
 
 def main(organism, gpath):
     
@@ -21,8 +21,8 @@ def main(organism, gpath):
         blastp_results_path = "../tmp/blastp_yeast"
         blast_command = BLAST_COMMAND % ("../data-sources/yeast/orf_trans_all.fasta", 
             "../data-sources/yeast/blastdb/sequence", blastp_results_path)
-        res = yeast_name_resolver.NameResolver()
-        get_name_func = lambda s: yeast_get_name(s, res)
+        
+        get_name_func = yeast_get_name
     
     elif organism == "pombe":
         blastp_results_path = "../tmp/blastp_pombe"
@@ -104,7 +104,7 @@ def read_blastp_results(path, get_name_func):
 
     return results
 
-def yeast_get_name(s, res):
+def yeast_get_name(s):
     return res.get_unified_name(s)
 
 def pombe_get_name(s):
@@ -137,6 +137,8 @@ def create_dro_get_name_func():
         return pp_to_gn[col]
     
     return get_name_func
+
+dro_get_name = create_dro_get_name_func()
 
 if __name__ == "__main__":
     organism = sys.argv[1]
