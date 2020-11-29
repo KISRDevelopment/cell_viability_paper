@@ -27,6 +27,12 @@ class XhomologyFeatureLoader(object):
         self.hom = d['F']
         self.labels = d['labels']
 
+        # normalize bitscore
+        ix = self.hom[:, 4] > 0
+        mean_bitscore = np.mean(self.hom[ix, 3])
+        std_bitscore = np.std(self.hom[ix, 3], ddof=1)
+        self.hom[ix, 3] = (self.hom[ix, 3] - mean_bitscore) / std_bitscore
+
     def load(self, df):
         
         # get the homology genes
@@ -34,14 +40,31 @@ class XhomologyFeatureLoader(object):
         hom_bid = self.hom[df['b_id'], 0]
         db_df = pd.DataFrame({ "a_id" : hom_aid, "b_id" : hom_bid }).astype(int)
 
+        # get minimum/maximum pident, ppos, bitscore
+        min_pident = np.minimum(self.hom[df['a_id'], 1], self.hom[df['b_id'], 1])
+        min_ppos = np.minimum(self.hom[df['a_id'], 2], self.hom[df['b_id'], 2])
+        min_bitscore = np.minimum(self.hom[df['a_id'], 3], self.hom[df['b_id'], 3])
+        max_pident = np.maximum(self.hom[df['a_id'], 1], self.hom[df['b_id'], 1])
+        max_ppos = np.maximum(self.hom[df['a_id'], 2], self.hom[df['b_id'], 2])
+        max_bitscore = np.maximum(self.hom[df['a_id'], 3], self.hom[df['b_id'], 3])
+
         # predict
         db_preds = self.db_predictor(db_df)
 
-        # two features: is homology available, are they mapping to same gene, if it is what is the model prediction
-        F = np.zeros((df.shape[0], 3))
+        # is homology available, are they mapping to same gene, if it is what is the model prediction
+        F = np.zeros((df.shape[0], 9))
         F[:, 0] = (self.hom[df['a_id'], 4] > 0) & (self.hom[df['b_id'], 4] > 0)
         F[:, 1] = F[:,0] * ((self.hom[df['a_id'], 0] - self.hom[df['b_id'], 0]) == 0)
-        F[:, 2] = F[:, 0] * (1-F[:,1]) * db_preds[:, 0]
+
+        active_ix =  F[:, 0] * (1-F[:,1])
+
+        F[:, 2] = active_ix * db_preds[:, 0]
+        F[:, 3] = active_ix * min_pident / 100
+        F[:, 4] = active_ix * max_pident / 100
+        F[:, 5] = active_ix * min_bitscore
+        F[:, 6] = active_ix * max_bitscore
+        F[:, 7] = active_ix * min_ppos / 100
+        F[:, 8] = active_ix * max_ppos / 100
 
         return F
 
@@ -83,9 +106,11 @@ if __name__ == "__main__":
 
     import numpy.random as rng 
     import pandas as pd
-    chosen_combs = rng.choice(5083, (100, 2), replace=False)
+    chosen_combs = rng.choice(5083, (500, 2), replace=False)
     df = pd.DataFrame(data=chosen_combs, columns=['a_id', 'b_id']).astype(int)
     print(df)
 
     F = loader.load(df)
+    np.set_printoptions(precision=3, suppress=True)
     print(F)
+    print(np.sum(F, axis=0))
