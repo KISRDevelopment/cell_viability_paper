@@ -176,7 +176,7 @@ class SparsePairwiseMatrix(object):
             # get their index within the distance matrix
             a_idx = self.node_id_to_comp[a,1]
             b_idx = self.node_id_to_comp[b,1]
-            assert a_idx != b_idx, "%s %s" % (a, b)
+            #assert a_idx != b_idx, "%s %s" % (a, b)
 
             # ensure that we haven't processed this already
             assert F[idx] == 0

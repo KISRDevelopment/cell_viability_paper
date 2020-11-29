@@ -5,12 +5,12 @@ import pandas as pd
 import numpy as np 
 import os 
 
-def main(path, reps, folds, valid_prop):
+def main(path, reps, folds, valid_prop, add_output_path_tag=False):
     
-
     train_sets, valid_sets, test_sets = generate_cv_splits(path, reps, folds, valid_prop)
 
-    output_path = '../generated-data/splits/%s_%dreps_%dfolds_%0.2fvalid' % (os.path.basename(path), reps, folds, valid_prop)
+    tag = '_simple' if add_output_path_tag else ''
+    output_path = '../generated-data/splits/%s_%dreps_%dfolds_%0.2fvalid%s' % (os.path.basename(path), reps, folds, valid_prop, tag)
     print("Writing to %s" % output_path)
     np.savez(output_path, 
         train_sets=train_sets,
