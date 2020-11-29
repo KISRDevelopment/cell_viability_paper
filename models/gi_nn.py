@@ -217,7 +217,7 @@ def feature_transform(df, single_fsets, pairwise_fsets):
 
     for fset in pairwise_fsets:
 
-        if type(fset) == feature_loader.SparsePairwiseMatrix:
+        if hasattr(fset, 'transform'):
             inputs_AB.append(fset.transform(df))
         # if type(fset) == scipy.sparse.csr.csr_matrix:
             

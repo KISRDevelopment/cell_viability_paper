@@ -3,6 +3,8 @@ import json
 import numpy.random as rng 
 import scipy.sparse
 import scipy.stats 
+import models.xhomology_feature_loader
+
 def read_paths(paths):
     Fs = []
     feature_labels = []
@@ -46,6 +48,12 @@ def load_feature_sets(spec, scramble=False):
 
             if elm.get('pairwise_sparse', False):
                 F = SparsePairwiseMatrix(elm['path'])
+                feature_sets.append(F)
+                fshapes.append(F.shape())
+                continue 
+            
+            if elm.get('xhomology', False):
+                F = models.xhomology_feature_loader.XhomologyFeatureLoader(**elm)
                 feature_sets.append(F)
                 fshapes.append(F.shape())
                 continue 

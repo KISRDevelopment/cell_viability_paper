@@ -3,7 +3,7 @@ import json
 import numpy.random as rng 
 import models.gi_mn 
 import models.gi_nn 
-
+import pandas as pd 
 model_classes = {
     "mn" : models.gi_mn,
     "nn" : models.gi_nn
@@ -33,7 +33,10 @@ class XhomologyFeatureLoader(object):
         std_bitscore = np.std(self.hom[ix, 3], ddof=1)
         self.hom[ix, 3] = (self.hom[ix, 3] - mean_bitscore) / std_bitscore
 
-    def load(self, df):
+    def shape(self):
+        return (9,)
+    
+    def transform(self, df):
         
         # get the homology genes
         hom_aid = self.hom[df['a_id'], 0]
