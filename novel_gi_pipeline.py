@@ -23,10 +23,10 @@ def load_cfg(path, model_path, tjs_model_path, remove_specs=[], **kwargs):
         cfg = json.load(f)
 
     cfg['bootstrap_training'] = False 
-    cfg['early_stopping'] = False 
+    cfg['early_stopping'] = True 
     cfg['train_on_full_dataset'] = True
     cfg['train_model'] = True 
-    cfg['epochs'] = 20
+    cfg['epochs'] = 100
     cfg['trained_model_path'] = model_path
     cfg['save_tjs'] = True 
     cfg['tjs_path'] = tjs_model_path
@@ -155,40 +155,85 @@ def examine_genes(cfg, gene_names, thresholds):
         print("  @ %0.2f, Accuracy: %0.2f, TPR: %0.2f, FPR: %0.2f, Novel GIs: %d" % (t, mean_corr, tpr, fpr, np.sum(novel_gi)))
     print() 
 
-mdl = models.gi_mn 
-
-cfg = load_cfg("cfgs/models/yeast_gi_mn.json",
-    "../results/models/yeast_gi_mn_costanzo", 
-    "../results/models_tjs/yeast_gi_mn_costanzo",
-    splits_path=costanzo_splits_path,
-    targets_path=costanzo_targets_path,
-    task_path=costanzo_task_path)
+print("Yeast w/o Homology:")
+cfg = load_cfg("cfgs/models/yeast_gi_refined_model.json",
+    "../results/models/yeast_gi_refined", 
+    "../results/models_tjs/yeast_gi_refined",
+    targets_path= "../generated-data/targets/task_yeast_gi_hybrid_bin_interacting.npz")
 cfg['gpath'] = '../generated-data/ppc_yeast'
 cfg['preds_path'] = '../results/yeast_gi_preds'
-# mdl.main(cfg, 0, 0, '../tmp/dummy')
+models.gi_nn.main(cfg, 0, 0, '../tmp/dummy')
+generate_predictions(models.gi_nn, cfg, 0.5)
+examine_genes(cfg, 
+  ['ydr477w  snf1', 'yjr066w  tor1', 'ydl142c  crd1'], 
+  [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.85, 0.9])
 
-# cfg = load_cfg("cfgs/models/dro_gi_mn.json",
-#     "../results/models/dro_gi_mn", 
-#     "../results/models_tjs/dro_gi_mn")
-# cfg['gpath'] = '../generated-data/ppc_dro'
-# cfg['preds_path'] = '../results/dro_gi_preds'
-#mdl.main(cfg, 0, 0, '../tmp/dummy')
+print("Yeast with Homology:")
+cfg = load_cfg("cfgs/models/yeast_gi_refined_model_xhomology.json",
+    "../results/models/yeast_gi_refined_xhomology", 
+    "../results/models_tjs/yeast_gi_refined_xhomology")
+cfg['gpath'] = '../generated-data/ppc_yeast'
+cfg['preds_path'] = '../results/yeast_gi_preds_xhomology'
+models.gi_nn.main(cfg, 0, 0, '../tmp/dummy')
+generate_predictions(models.gi_nn, cfg, 0.5)
+examine_genes(cfg, 
+  ['ydr477w  snf1', 'yjr066w  tor1', 'ydl142c  crd1'], 
+  [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.85, 0.9])
 
-# generate_predictions(mdl, cfg, 0.5)
 
-# examine_genes(cfg, 
-#   ['ydr477w  snf1', 'yjr066w  tor1', 'ydl142c  crd1'], 
-#   [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.85, 0.9])
+# cfg = load_cfg("cfgs/models/pombe_gi_refined_model_xhomology.json",
+#     "../results/models/pombe_gi_refined_xhomology", 
+#     "../results/models_tjs/pombe_gi_refined_xhomology")
+# cfg['gpath'] = '../generated-data/ppc_pombe'
+# cfg['preds_path'] = '../results/pombe_gi_preds'
+# models.gi_nn.main(cfg, 0, 0, '../tmp/dummy')
+# generate_predictions(models.gi_nn, cfg, 0.5)
 
+print("Human w/o Homology:")
+cfg = load_cfg("cfgs/models/human_gi_refined_model.json",
+    "../results/models/human_gi_refined", 
+    "../results/models_tjs/human_gi_refined")
 cfg['gpath'] = '../generated-data/ppc_human'
-cfg['preds_path'] =  '../results/human_gi_preds'
+cfg['preds_path'] = '../results/human_gi_preds'
+#models.gi_nn.main(cfg, 0, 0, '../tmp/dummy')
+#generate_predictions(models.gi_nn, cfg, 0.5, keep_net_preds=False)
 examine_genes(cfg, 
    ['myc', 'tp53'], 
    [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 0.99])
 
-# cfg['gpath'] = '../generated-data/ppc_dro'
-# cfg['preds_path'] =  '../results/dro_gi_preds'
-# examine_genes(cfg, 
-#    ['fbgn0003366'], 
-#    [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 0.99])
+print("Human with Homology:")
+cfg = load_cfg("cfgs/models/human_gi_refined_model_xhomology.json",
+    "../results/models/human_gi_refined_xhomology", 
+    "../results/models_tjs/human_gi_refined_xhomology")
+cfg['gpath'] = '../generated-data/ppc_human'
+cfg['preds_path'] = '../results/human_gi_preds_xhomology'
+#models.gi_nn.main(cfg, 0, 0, '../tmp/dummy')
+#generate_predictions(models.gi_nn, cfg, 0.5, keep_net_preds=False)
+examine_genes(cfg, 
+   ['myc', 'tp53'], 
+   [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 0.99])
+
+print("Dro w/o homology:")
+cfg = load_cfg("cfgs/models/dro_gi_refined_model.json",
+    "../results/models/dro_gi_refined", 
+    "../results/models_tjs/dro_gi_refined")
+cfg['gpath'] = '../generated-data/ppc_dro'
+cfg['preds_path'] = '../results/dro_gi_preds'
+#models.gi_nn.main(cfg, 0, 0, '../tmp/dummy')
+#generate_predictions(models.gi_nn, cfg, 0.5, keep_net_preds=False)
+examine_genes(cfg, 
+   ['fbgn0003366'], 
+   [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 0.99])
+
+print("Dro with homology:")
+cfg = load_cfg("cfgs/models/dro_gi_refined_model_xhomology.json",
+    "../results/models/dro_gi_refined_xhomology", 
+    "../results/models_tjs/dro_gi_refined_xhomology")
+cfg['gpath'] = '../generated-data/ppc_dro'
+cfg['preds_path'] = '../results/dro_gi_preds_xhomology'
+#models.gi_nn.main(cfg, 0, 0, '../tmp/dummy')
+#generate_predictions(models.gi_nn, cfg, 0.5, keep_net_preds=False)
+examine_genes(cfg, 
+   ['fbgn0003366'], 
+   [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 0.99])
 

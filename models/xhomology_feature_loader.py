@@ -1,12 +1,13 @@
 import numpy as np 
 import json
 import numpy.random as rng 
-import models.gi_mn 
-import models.gi_nn 
+import models.gi_mn as gi_mn
+import models.gi_nn as gi_nn
 import pandas as pd 
+
 model_classes = {
-    "mn" : models.gi_mn,
-    "nn" : models.gi_nn
+    "mn" : gi_mn,
+    "nn" : gi_nn
 }
 class XhomologyFeatureLoader(object):
 
