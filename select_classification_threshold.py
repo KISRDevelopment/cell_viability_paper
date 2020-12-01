@@ -4,6 +4,14 @@ import numpy as np
 import matplotlib.pyplot as plt 
 import matplotlib.colors 
 
+plot_cfg = {
+    "tick_label_size" : 50,
+    "xlabel_size" : 42,
+    "ylabel_size" : 42,
+    "annot_size" : 42,
+    "title_size" : 22
+}
+
 def average_results(cv_dir, thresholds):
 
     files = utils.eval_funcs.get_files(cv_dir)
@@ -22,16 +30,79 @@ def average_results(cv_dir, thresholds):
             cm = cm / np.sum(cm, axis=1, keepdims=True)
             cms_by_t[t].append(cm)
 
-      
-    return { t: np.mean(cms_by_t[t], axis=0) for t in thresholds }
+    cms_by_t = np.array([np.mean(cms_by_t[t], axis=0) for t in thresholds])
+    return cms_by_t
 
-r = average_results('../results/task_yeast_gi_hybrid_binary/mn', 1-np.array([0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95]))
-#r = average_results('../results/task_human_gi/mn', 1-np.array([0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95]))
+def sweep_thresholds(cv_dir, thresholds, output_file):
 
-np.set_printoptions(precision=2)
-for t, cm in r.items():
-    print('%0.2f' % (1-t))
-    print(cm)
-    print("bacc: %0.2f" % (np.mean(np.diag(cm))))
-    print("fdr: %0.2f, tpr: %0.2f" % (cm[1, 0], cm[0,0]))
-    print()
+    r = average_results(cv_dir, 1-thresholds)
+    np.savez(output_file, thresholds=thresholds, r=r)
+    
+def visualize_swept_thresholds(file_path, color, output_path):
+
+    d = np.load(file_path + '.npz')
+    r = d['r']
+    thresholds = d['thresholds']
+
+    f, axes = plt.subplots(2, 5, figsize=(20, 10))
+    axes = axes.flatten()
+
+    cmap = matplotlib.colors.LinearSegmentedColormap.from_list("",
+            ["white",color])
+    classes = ['I', 'N']
+    n_classes = len(classes)
+    
+    for k, ax in enumerate(axes):
+
+        cm = r[k, :, :]
+        t = thresholds[k]
+
+        ax.imshow(cm, cmap=cmap)
+        for i in range(n_classes):
+            for j in range(n_classes):
+                ax.text(j, i, "%0.2f" % cm[i, j], ha="center", va="center", 
+                    fontsize=plot_cfg['annot_size'])
+
+        xlabels = ax.get_xticks()
+        ix = np.isin(xlabels, np.arange(n_classes))
+        xlabels = xlabels.astype(str)
+        xlabels[ix] = classes
+        xlabels[~ix] = ''
+
+        ax.set_xticklabels(xlabels, fontsize=plot_cfg['annot_size'])
+
+        xlabels = ax.get_yticks()
+
+        if k % 5 == 0:
+            
+            ix = np.isin(xlabels, np.arange(n_classes))
+            xlabels = xlabels.astype(str)
+            xlabels[ix] = classes
+            xlabels[~ix] = ''
+        else:
+            xlabels = ['' for l in xlabels]
+
+        ax.set_yticklabels(xlabels, fontsize=plot_cfg['annot_size'])
+            
+        ax.xaxis.set_tick_params(length=0, width=0, which='both')
+        ax.yaxis.set_tick_params(length=0, width=0, which='both')
+        ax.xaxis.tick_top()
+        ax.set_title('@ %0.2f' % t, y=-0.15, fontsize=plot_cfg['title_size'])
+        plt.setp(ax.spines.values(), linewidth=0)
+
+    plt.savefig(output_path, bbox_inches='tight', dpi=100)
+    plt.close()
+
+    #plt.show()
+
+thresholds = np.array([0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0])
+# sweep_thresholds('../results/task_yeast_gi_hybrid_binary/mn', thresholds,
+#    '../results/task_yeast_gi_hybrid_binary/swept_thresholds_mn')
+# sweep_thresholds('../results/task_yeast_gi_costanzo_binary/mn', thresholds,
+#    '../results/task_yeast_gi_costanzo_binary/swept_thresholds_mn')
+
+
+visualize_swept_thresholds('../results/task_yeast_gi_hybrid_binary/swept_thresholds_mn', "#3A90FF", "../figures/hybrid_mn_thres.png")
+visualize_swept_thresholds('../results/task_yeast_gi_costanzo_binary/swept_thresholds_mn', "#3A90FF", "../figures/costanzo_mn_thres.png")
+
+
