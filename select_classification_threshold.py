@@ -115,12 +115,12 @@ thresholds = np.array([0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.
 # sweep_thresholds('../results/task_dro_smf_org/orm', thresholds,
 #    '../results/task_dro_smf_org/swept_thresholds_or')
 
-visualize_swept_thresholds('../results/task_yeast_smf_30_binary/swept_thresholds_or', "#00CC00", "../figures/yeast_smf_or.png")
-visualize_swept_thresholds('../results/task_pombe_smf_binary/swept_thresholds_or', "#00CC00", "../figures/pombe_or.png")
-visualize_swept_thresholds('../results/task_human_smf_binary/swept_thresholds_or', "#00CC00", "../figures/human_smf_or.png")
-visualize_swept_thresholds('../results/task_dro_smf_binary/swept_thresholds_or', "#00CC00", "../figures/dro_smf_or.png")
-visualize_swept_thresholds('../results/task_human_smf_org/swept_thresholds_or', "#00CC00", "../figures/human_smf_or_org.png")
-visualize_swept_thresholds('../results/task_dro_smf_org/swept_thresholds_or', "#00CC00", "../figures/dro_smf_or_org.png")
+visualize_swept_thresholds('../results/task_yeast_smf_30_binary/swept_thresholds_or', "#00CC00", "../figures/yeast_smf_or.png", classes=['L', 'V'])
+visualize_swept_thresholds('../results/task_pombe_smf_binary/swept_thresholds_or', "#00CC00", "../figures/pombe_or.png", classes=['L', 'V'])
+visualize_swept_thresholds('../results/task_human_smf_binary/swept_thresholds_or', "#00CC00", "../figures/human_smf_or.png", classes=['L', 'V'])
+visualize_swept_thresholds('../results/task_dro_smf_binary/swept_thresholds_or', "#00CC00", "../figures/dro_smf_or.png", classes=['L', 'V'])
+visualize_swept_thresholds('../results/task_human_smf_org/swept_thresholds_or', "#00CC00", "../figures/human_smf_or_org.png", classes=['L', 'V'])
+visualize_swept_thresholds('../results/task_dro_smf_org/swept_thresholds_or', "#00CC00", "../figures/dro_smf_or_org.png", classes=['L', 'V'])
 
 
 
