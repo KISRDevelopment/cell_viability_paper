@@ -109,6 +109,11 @@ def main(cfg, rep, fold, output_path, print_results=True, return_model=False):
     model = keras.models.Model(inputs=input_node, outputs=output_node)
     model.compile(cfg['optimizer'], loss)
 
+    if cfg.get("trained_model_path", None) is not None:
+        if cfg.get("add_repfold_to_trained_model_path", True):
+            cfg["trained_model_path"] = "%s_%d_%d" % (cfg["trained_model_path"], rep, fold)
+    
+
     # train
     if cfg.get("train_model", True):
         train_iterator = create_data_iterator(train_df, train_Y, fsets, cfg)
@@ -137,6 +142,7 @@ def main(cfg, rep, fold, output_path, print_results=True, return_model=False):
             tfjs.converters.save_keras_model(model, cfg["tjs_path"])
 
     else:
+        
         model.load_weights(cfg["trained_model_path"]).expect_partial()
     
     if return_model:

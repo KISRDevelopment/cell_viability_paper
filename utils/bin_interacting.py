@@ -4,11 +4,12 @@ import sys
 import os 
 import scipy.stats as stats
 
-def main(path):
+def main(path, bin_col='bin'):
     
     df = pd.read_csv(path)
+
     
-    bins = np.array(df['bin'])
+    bins = np.array(df[bin_col])
     
     bins[bins != 1] = 0
 
@@ -16,7 +17,7 @@ def main(path):
     print(bin_counts)
     print(np.array(bin_counts) * 100 / np.sum(bin_counts))
 
-    output_path = "../generated-data/targets/%s_bin_interacting" % (os.path.basename(path))
+    output_path = "../generated-data/targets/%s_%s_interacting" % (os.path.basename(path), bin_col)
     np.savez(output_path, y=bins)
 
 if __name__ == "__main__":

@@ -101,12 +101,12 @@ if not os.path.exists('../generated-data/targets'):
 # utils.make_biogrid_dataset.main(9606, 1, '../generated-data/biogrid_human')
 # utils.make_fb_dataset.main('../generated-data/fb_dro')
 
-gpath = "../generated-data/ppc_yeast"
-gi_task_path = "../generated-data/task_yeast_gi_costanzo_asym"
-tasks.yeast_gi_costanzo.main(gpath, [26], [(0, 0), (0, 1), (1, 0), (1, 1)], gi_task_path, neg_thres=-0.16, pos_thres=0.08)
-utils.bin_simple.main(gi_task_path)
-utils.bin_interacting.main(gi_task_path)
-utils.cv_gi.main(gi_task_path, 10, 4, 0.2)
+# gpath = "../generated-data/ppc_yeast"
+# gi_task_path = "../generated-data/task_yeast_gi_costanzo_asym"
+# tasks.yeast_gi_costanzo.main(gpath, [26], [(0, 0), (0, 1), (1, 0), (1, 1)], gi_task_path, neg_thres=-0.16, pos_thres=0.08)
+# utils.bin_simple.main(gi_task_path)
+# utils.bin_interacting.main(gi_task_path)
+# utils.cv_gi.main(gi_task_path, 10, 4, 0.2)
 
 # gpath = "../generated-data/ppc_yeast"
 # gi_task_path = "../generated-data/task_yeast_gi_thres15"
@@ -140,3 +140,37 @@ utils.cv_gi.main(gi_task_path, 10, 4, 0.2)
 # # utils.bin_simple.main(gi_task_path)
 # # utils.bin_interacting.main(gi_task_path)
 # # utils.cv_gi.main(gi_task_path, 10, 4, 0.2)
+
+
+#
+# COSTANZO Investigation
+#
+
+# 1. Costanzo candidate #1: all
+gpath = "../generated-data/ppc_yeast"
+gi_task_path = "../generated-data/task_yeast_gi_costanzo_all"
+# tasks.yeast_gi_costanzo.main(gpath, [26, 30], [(0, 0), (0, 1), (1, 0), (1, 1)], gi_task_path)
+# utils.bin_simple.main(gi_task_path)
+# utils.bin_interacting.main(gi_task_path)
+# utils.cv_gi.main(gi_task_path, 10, 4, 0.2)
+
+costanzo_targets_path = "../generated-data/targets/task_yeast_gi_costanzo_all_bin_interacting.npz"
+costanzo_splits_path = "../generated-data/splits/task_yeast_gi_costanzo_all_10reps_4folds_0.20valid.npz"
+
+import models.cv 
+
+models.cv.main("models.gi_mn", "cfgs/models/yeast_gi_mn.json", 
+    "../results/task_yeast_gi_costanzo_all/mn_binary", 
+    num_processes = 20,
+    task_path = gi_task_path,
+    targets_path = costanzo_targets_path,
+    splits_path = costanzo_splits_path
+)
+
+models.cv.main("models.gi_mn", "cfgs/models/yeast_gi_mn.json", 
+    "../results/task_yeast_gi_costanzo_all/mn", 
+    num_processes = 20,
+    task_path = gi_task_path,
+    targets_path = "../generated-data/targets/task_yeast_gi_costanzo_all_bin_simple.npz",
+    splits_path = costanzo_splits_path
+)

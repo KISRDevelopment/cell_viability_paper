@@ -122,7 +122,7 @@ def examine_genes(cfg, gene_names, thresholds):
     df = pd.read_csv(result_path)
     G = nx.read_gpickle(gpath)
     nodes = sorted(G.nodes())
-    
+    print("# interactions: %d" % np.sum(df['interacting']))
     df['gene A'] = [nodes[a] for a in df['a_id']]
     df['gene B'] = [nodes[b] for b in df['b_id']]
 
@@ -155,85 +155,98 @@ def examine_genes(cfg, gene_names, thresholds):
         print("  @ %0.2f, Accuracy: %0.2f, TPR: %0.2f, FPR: %0.2f, Novel GIs: %d" % (t, mean_corr, tpr, fpr, np.sum(novel_gi)))
     print() 
 
-print("Yeast w/o Homology:")
+print("Yeast Costanzo MN")
 cfg = load_cfg("cfgs/models/yeast_gi_refined_model.json",
-    "../results/models/yeast_gi_refined", 
-    "../results/models_tjs/yeast_gi_refined",
-    targets_path= "../generated-data/targets/task_yeast_gi_hybrid_bin_interacting.npz")
+    "../results/models/yeast_gi_mn_costanzo", 
+    "../results/models_tjs/yeast_gi_mn_costanzo",
+    targets_path= "../generated-data/targets/task_yeast_gi_costanzo_bin_interacting.npz")
 cfg['gpath'] = '../generated-data/ppc_yeast'
-cfg['preds_path'] = '../results/yeast_gi_preds'
-models.gi_nn.main(cfg, 0, 0, '../tmp/dummy')
-generate_predictions(models.gi_nn, cfg, 0.5)
-examine_genes(cfg, 
-  ['ydr477w  snf1', 'yjr066w  tor1', 'ydl142c  crd1'], 
-  [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.85, 0.9])
-
-print("Yeast with Homology:")
-cfg = load_cfg("cfgs/models/yeast_gi_refined_model_xhomology.json",
-    "../results/models/yeast_gi_refined_xhomology", 
-    "../results/models_tjs/yeast_gi_refined_xhomology")
-cfg['gpath'] = '../generated-data/ppc_yeast'
-cfg['preds_path'] = '../results/yeast_gi_preds_xhomology'
-models.gi_nn.main(cfg, 0, 0, '../tmp/dummy')
-generate_predictions(models.gi_nn, cfg, 0.5)
-examine_genes(cfg, 
-  ['ydr477w  snf1', 'yjr066w  tor1', 'ydl142c  crd1'], 
-  [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.85, 0.9])
-
-
-# cfg = load_cfg("cfgs/models/pombe_gi_refined_model_xhomology.json",
-#     "../results/models/pombe_gi_refined_xhomology", 
-#     "../results/models_tjs/pombe_gi_refined_xhomology")
-# cfg['gpath'] = '../generated-data/ppc_pombe'
-# cfg['preds_path'] = '../results/pombe_gi_preds'
+cfg['preds_path'] = '../results/yeast_gi_preds_costanzo'
 # models.gi_nn.main(cfg, 0, 0, '../tmp/dummy')
 # generate_predictions(models.gi_nn, cfg, 0.5)
-
-print("Human w/o Homology:")
-cfg = load_cfg("cfgs/models/human_gi_refined_model.json",
-    "../results/models/human_gi_refined", 
-    "../results/models_tjs/human_gi_refined")
-cfg['gpath'] = '../generated-data/ppc_human'
-cfg['preds_path'] = '../results/human_gi_preds'
-#models.gi_nn.main(cfg, 0, 0, '../tmp/dummy')
-#generate_predictions(models.gi_nn, cfg, 0.5, keep_net_preds=False)
 examine_genes(cfg, 
-   ['myc', 'tp53'], 
-   [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 0.99])
+  ['ydr477w  snf1', 'yjr066w  tor1', 'ydl142c  crd1'], 
+  [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.85, 0.9])
 
-print("Human with Homology:")
-cfg = load_cfg("cfgs/models/human_gi_refined_model_xhomology.json",
-    "../results/models/human_gi_refined_xhomology", 
-    "../results/models_tjs/human_gi_refined_xhomology")
-cfg['gpath'] = '../generated-data/ppc_human'
-cfg['preds_path'] = '../results/human_gi_preds_xhomology'
-#models.gi_nn.main(cfg, 0, 0, '../tmp/dummy')
-#generate_predictions(models.gi_nn, cfg, 0.5, keep_net_preds=False)
-examine_genes(cfg, 
-   ['myc', 'tp53'], 
-   [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 0.99])
+# print("Yeast w/o Homology:")
+# cfg = load_cfg("cfgs/models/yeast_gi_refined_model.json",
+#     "../results/models/yeast_gi_refined", 
+#     "../results/models_tjs/yeast_gi_refined",
+#     targets_path= "../generated-data/targets/task_yeast_gi_hybrid_bin_interacting.npz")
+# cfg['gpath'] = '../generated-data/ppc_yeast'
+# cfg['preds_path'] = '../results/yeast_gi_preds'
+# models.gi_nn.main(cfg, 0, 0, '../tmp/dummy')
+# generate_predictions(models.gi_nn, cfg, 0.5)
+# examine_genes(cfg, 
+#   ['ydr477w  snf1', 'yjr066w  tor1', 'ydl142c  crd1'], 
+#   [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.85, 0.9])
 
-print("Dro w/o homology:")
-cfg = load_cfg("cfgs/models/dro_gi_refined_model.json",
-    "../results/models/dro_gi_refined", 
-    "../results/models_tjs/dro_gi_refined")
-cfg['gpath'] = '../generated-data/ppc_dro'
-cfg['preds_path'] = '../results/dro_gi_preds'
-#models.gi_nn.main(cfg, 0, 0, '../tmp/dummy')
-#generate_predictions(models.gi_nn, cfg, 0.5, keep_net_preds=False)
-examine_genes(cfg, 
-   ['fbgn0003366'], 
-   [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 0.99])
+# print("Yeast with Homology:")
+# cfg = load_cfg("cfgs/models/yeast_gi_refined_model_xhomology.json",
+#     "../results/models/yeast_gi_refined_xhomology", 
+#     "../results/models_tjs/yeast_gi_refined_xhomology")
+# cfg['gpath'] = '../generated-data/ppc_yeast'
+# cfg['preds_path'] = '../results/yeast_gi_preds_xhomology'
+# models.gi_nn.main(cfg, 0, 0, '../tmp/dummy')
+# generate_predictions(models.gi_nn, cfg, 0.5)
+# examine_genes(cfg, 
+#   ['ydr477w  snf1', 'yjr066w  tor1', 'ydl142c  crd1'], 
+#   [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.85, 0.9])
 
-print("Dro with homology:")
-cfg = load_cfg("cfgs/models/dro_gi_refined_model_xhomology.json",
-    "../results/models/dro_gi_refined_xhomology", 
-    "../results/models_tjs/dro_gi_refined_xhomology")
-cfg['gpath'] = '../generated-data/ppc_dro'
-cfg['preds_path'] = '../results/dro_gi_preds_xhomology'
-#models.gi_nn.main(cfg, 0, 0, '../tmp/dummy')
-#generate_predictions(models.gi_nn, cfg, 0.5, keep_net_preds=False)
-examine_genes(cfg, 
-   ['fbgn0003366'], 
-   [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 0.99])
+
+# # cfg = load_cfg("cfgs/models/pombe_gi_refined_model_xhomology.json",
+# #     "../results/models/pombe_gi_refined_xhomology", 
+# #     "../results/models_tjs/pombe_gi_refined_xhomology")
+# # cfg['gpath'] = '../generated-data/ppc_pombe'
+# # cfg['preds_path'] = '../results/pombe_gi_preds'
+# # models.gi_nn.main(cfg, 0, 0, '../tmp/dummy')
+# # generate_predictions(models.gi_nn, cfg, 0.5)
+
+# print("Human w/o Homology:")
+# cfg = load_cfg("cfgs/models/human_gi_refined_model.json",
+#     "../results/models/human_gi_refined", 
+#     "../results/models_tjs/human_gi_refined")
+# cfg['gpath'] = '../generated-data/ppc_human'
+# cfg['preds_path'] = '../results/human_gi_preds'
+# #models.gi_nn.main(cfg, 0, 0, '../tmp/dummy')
+# #generate_predictions(models.gi_nn, cfg, 0.5, keep_net_preds=False)
+# examine_genes(cfg, 
+#    ['myc', 'tp53'], 
+#    [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 0.99])
+
+# print("Human with Homology:")
+# cfg = load_cfg("cfgs/models/human_gi_refined_model_xhomology.json",
+#     "../results/models/human_gi_refined_xhomology", 
+#     "../results/models_tjs/human_gi_refined_xhomology")
+# cfg['gpath'] = '../generated-data/ppc_human'
+# cfg['preds_path'] = '../results/human_gi_preds_xhomology'
+# #models.gi_nn.main(cfg, 0, 0, '../tmp/dummy')
+# #generate_predictions(models.gi_nn, cfg, 0.5, keep_net_preds=False)
+# examine_genes(cfg, 
+#    ['myc', 'tp53'], 
+#    [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 0.99])
+
+# print("Dro w/o homology:")
+# cfg = load_cfg("cfgs/models/dro_gi_refined_model.json",
+#     "../results/models/dro_gi_refined", 
+#     "../results/models_tjs/dro_gi_refined")
+# cfg['gpath'] = '../generated-data/ppc_dro'
+# cfg['preds_path'] = '../results/dro_gi_preds'
+# #models.gi_nn.main(cfg, 0, 0, '../tmp/dummy')
+# #generate_predictions(models.gi_nn, cfg, 0.5, keep_net_preds=False)
+# examine_genes(cfg, 
+#    ['fbgn0003366'], 
+#    [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 0.99])
+
+# print("Dro with homology:")
+# cfg = load_cfg("cfgs/models/dro_gi_refined_model_xhomology.json",
+#     "../results/models/dro_gi_refined_xhomology", 
+#     "../results/models_tjs/dro_gi_refined_xhomology")
+# cfg['gpath'] = '../generated-data/ppc_dro'
+# cfg['preds_path'] = '../results/dro_gi_preds_xhomology'
+# #models.gi_nn.main(cfg, 0, 0, '../tmp/dummy')
+# #generate_predictions(models.gi_nn, cfg, 0.5, keep_net_preds=False)
+# examine_genes(cfg, 
+#    ['fbgn0003366'], 
+#    [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 0.99])
 
