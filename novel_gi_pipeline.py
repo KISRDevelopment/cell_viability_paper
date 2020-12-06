@@ -9,37 +9,8 @@ import numpy as np
 import pandas as pd 
 import sklearn.metrics 
 
-if not os.path.isdir("../results/models"):
-    os.mkdir("../results/models")
-if not os.path.isdir("../results/models_tjs"):
-    os.mkdir("../results/models_tjs")
-
-costanzo_task_path = "../generated-data/task_yeast_gi_costanzo_thres16"
-costanzo_targets_path = "../generated-data/targets/task_yeast_gi_costanzo_thres16_bin_interacting.npz"
-costanzo_splits_path = "../generated-data/splits/task_yeast_gi_costanzo_thres16_10reps_4folds_0.20valid.npz"
-
-def load_cfg(path, model_path, tjs_model_path, remove_specs=[], **kwargs):
-    with open(path, 'r') as f:
-        cfg = json.load(f)
-
-    cfg['bootstrap_training'] = False 
-    cfg['early_stopping'] = True 
-    cfg['train_on_full_dataset'] = True
-    cfg['train_model'] = True 
-    cfg['epochs'] = 100
-    cfg['trained_model_path'] = model_path
-    cfg['save_tjs'] = True 
-    cfg['tjs_path'] = tjs_model_path
-    cfg['balanced_loss'] = True 
-
-    cfg['spec'] = [s for s in cfg['spec'] if s['name'] not in remove_specs]
-    cfg.update(kwargs)
-
-    return cfg 
-
-def generate_predictions(mdl, cfg, thres, keep_net_preds=True):
+def generate_predictions(mdl, cfg, result_path, thres=0.5, keep_net_preds=False, batch_size=250000):
     gpath = cfg['gpath']
-    result_path = cfg['preds_path']
     main_df = pd.read_csv(cfg['task_path'])
 
     interacting_df = main_df[main_df['bin'] != 1]
@@ -53,24 +24,20 @@ def generate_predictions(mdl, cfg, thres, keep_net_preds=True):
     training_ids = set(main_df['a_id']).union(main_df['b_id'])
 
     cfg['train_model']= False
-    model, processors = mdl.main(cfg, 0, 0, '../tmp/dummy', return_model=True )
+    model, processors = mdl.main(cfg, 0, 0, '../tmp/dummy', return_model=True)
 
     G = nx.read_gpickle(gpath)
     nodes = sorted(G.nodes())
-
+    
     rows = []
-    BATCH_SIZE = 250000
-    stored = 0
     i = 0
     n_total = (len(nodes) * (len(nodes) - 1)) / 2
 
     first_append = True
-    min_prob = 0.
-    max_prob = 0.
     for comb in itertools.combinations(np.arange(len(nodes)), 2):
         rows.append({ 'a_id' : comb[0], 'b_id' : comb[1] })
         i += 1
-        if len(rows) == BATCH_SIZE or i == n_total:
+        if len(rows) == batch_size or i == n_total:
             df = pd.DataFrame(rows)
             df['pair'] = ['%d,%d' % t for t in zip(df['a_id'], df['b_id'])]
             in_interacting = df['pair'].isin(interacting_pairs)
@@ -90,9 +57,7 @@ def generate_predictions(mdl, cfg, thres, keep_net_preds=True):
             else:
                 batch_F = features 
             
-            preds = model.predict(batch_F, batch_size=BATCH_SIZE)
-            min_prob = min(np.min(preds[:,0]), min_prob)
-            max_prob = max(np.max(preds[:,0]), max_prob)
+            preds = model.predict(batch_F, batch_size=batch_size)
             preds_gi = preds[:,0] > thres
 
             if not keep_net_preds:
@@ -101,152 +66,94 @@ def generate_predictions(mdl, cfg, thres, keep_net_preds=True):
                 ix = (preds_gi == 1) | (preds_gi == 0)
             df['prob_gi'] = preds[:,0]
             
-            output_df = df[ix][['a_id', 'b_id', 'prob_gi', 'observed', 'interacting', 'novel']]
-
+            output_df = df[ix][['a_id', 'b_id', 'prob_gi', 'observed', 'interacting']]
+            output_df['a_id'] = [nodes[e] for e in output_df['a_id']]
+            output_df['b_id'] = [nodes[e] for e in output_df['b_id']]
             
             output_df.to_csv(result_path, mode='w' if first_append else 'a', header=first_append, index=False)
             first_append = False 
 
-            stored += output_df.shape[0]
-            print("Completed %8.4f, num interactions=%d" % (i / n_total, stored))
+            print("Completed %8.4f" % (i / n_total))
 
-    print("Min: %0.3f, Max: %0.3f" % (min_prob, max_prob))
+def load_cfg(path, model_path, **kwargs):
+    with open(path, 'r') as f:
+        cfg = json.load(f)
 
-def examine_genes(cfg, gene_names, thresholds):
+    cfg['train_model'] = False 
+    cfg['trained_model_path'] = model_path
 
-    gpath = cfg['gpath']
-    result_path = cfg['preds_path']
+    cfg.update(kwargs)
 
-    ene_names = set(gene_names)
+    return cfg 
 
-    df = pd.read_csv(result_path)
-    G = nx.read_gpickle(gpath)
-    nodes = sorted(G.nodes())
-    print("# interactions: %d" % np.sum(df['interacting']))
-    df['gene A'] = [nodes[a] for a in df['a_id']]
-    df['gene B'] = [nodes[b] for b in df['b_id']]
+def filter(path, thres):
 
-    for gene in gene_names:
-        print("Gene %s" % gene)
+    df = pd.read_csv(path)
+    print("@ 0.5:")
+    print_stats(df, 0.5)
 
+    ix = (df['prob_gi'] >= thres) | (df['observed'] == 1) 
+    df = df[ix]
+    print("@ %0.2f" % thres)
+    print_stats(df, thres)
 
-        ix = (df['gene A'] == gene) | (df['gene B'] == gene)
+    df.to_csv('%s_thres%0.2f' % (path, thres), index=False)
+    
+def print_stats(df, thres):
+    print("Size: %d" % df.shape[0])
 
-        print(" %d observations, %d interacting" % (np.sum((df[ix]['observed'] == 1)), np.sum(df[ix]['interacting'])))
-        
-        for t in thresholds:
-            pred_gi = (df[ix]['prob_gi'] > t).astype(int)
-            corr = (df[ix]['observed'] == 1) & (pred_gi == df[ix]['interacting'])
-            mean_corr = np.sum(corr) / np.sum(df[ix]['observed'] == 1)
-            novel_gi = pred_gi & (df[ix]['observed'] == 0)
-            tpr = np.sum((df[ix]['observed'] == 1) & (pred_gi * df[ix]['interacting'] == 1)) / np.sum((df[ix]['observed'] == 1) & (df[ix]['interacting']==1))
-            fpr = np.sum((df[ix]['observed'] == 1) & (df[ix]['interacting'] == 0) & (pred_gi == 1)) / np.sum((df[ix]['observed'] == 1) & (df[ix]['interacting']==0))
-            print("  @ %0.2f, Accuracy: %0.2f, TPR: %0.2f, FPR: %0.2f, Novel GIs: %d" % (t, mean_corr, tpr, fpr, np.sum(novel_gi)))
-        print() 
+    ix_observed = df['observed'] == 1
+    ix_observed_gis = ix_observed & (df['interacting'] == 1)
+    
+    ix_predicted_gis = df['prob_gi'] >= thres 
+    ix_novel_gis = ~ix_observed & ix_predicted_gis
+    print("Observations: %d, Observed GIs: %d, Predicted GIs: %d, Novel GIs: %d"
+        % (np.sum(ix_observed), np.sum(ix_observed_gis), np.sum(ix_predicted_gis), np.sum(ix_novel_gis)))
+    
+    tpr = np.sum(ix_predicted_gis & ix_observed_gis) / np.sum(ix_observed_gis)
+    fpr = np.sum(ix_predicted_gis & (df['interacting'] == 0) & ix_observed) / np.sum(ix_observed & (df['interacting'] == 0))
 
-    print("Overall:")
-    for t in thresholds:
-        pred_gi = (df['prob_gi'] > t).astype(int)
-        corr = (df['observed'] == 1) & (pred_gi == df['interacting'])
-        mean_corr = np.sum(corr) / np.sum(df['observed'] == 1)
-        novel_gi = pred_gi & (df['observed'] == 0)
-        tpr = np.sum((df['observed'] == 1) & (pred_gi * df['interacting'] == 1)) / np.sum((df['observed'] == 1) & (df['interacting']==1))
-        fpr = np.sum((df['observed'] == 1) & (df['interacting'] == 0) & (pred_gi == 1)) / np.sum((df['observed'] == 1) & (df['interacting']==0))
-        print("  @ %0.2f, Accuracy: %0.2f, TPR: %0.2f, FPR: %0.2f, Novel GIs: %d" % (t, mean_corr, tpr, fpr, np.sum(novel_gi)))
-    print() 
+    print("TPR: %0.2f, FPR: %0.2f" % (tpr, fpr))
+# cfg = load_cfg("cfgs/models/yeast_gi_mn.json", 
+#     "../results/models/yeast_gi_costanzo_mn",
+#     gpath = "../generated-data/ppc_yeast",
+#     task_path = "../generated-data/task_yeast_gi_costanzo",
+#     splits_path = "../generated-data/splits/task_yeast_gi_costanzo_10reps_4folds_0.20valid.npz",
+#     targets_path="../generated-data/targets/task_yeast_gi_costanzo_bin_interacting.npz")
+# generate_predictions(models.gi_mn, cfg, "../results/preds/yeast_gi_costanzo_mn")
 
-print("Yeast Costanzo MN")
-cfg = load_cfg("cfgs/models/yeast_gi_refined_model.json",
-    "../results/models/yeast_gi_mn_costanzo", 
-    "../results/models_tjs/yeast_gi_mn_costanzo",
-    targets_path= "../generated-data/targets/task_yeast_gi_costanzo_bin_interacting.npz")
-cfg['gpath'] = '../generated-data/ppc_yeast'
-cfg['preds_path'] = '../results/yeast_gi_preds_costanzo'
-# models.gi_nn.main(cfg, 0, 0, '../tmp/dummy')
-# generate_predictions(models.gi_nn, cfg, 0.5)
-examine_genes(cfg, 
-  ['ydr477w  snf1', 'yjr066w  tor1', 'ydl142c  crd1'], 
-  [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.85, 0.9])
+# cfg = load_cfg("cfgs/models/yeast_gi_mn.json", 
+#     "../results/models/yeast_gi_hybrid_mn",
+#     gpath = "../generated-data/ppc_yeast",
+#     targets_path="../generated-data/targets/task_yeast_gi_hybrid_bin_interacting.npz")
+# generate_predictions(models.gi_mn, cfg, "../results/preds/yeast_gi_hybrid_mn")
 
-# print("Yeast w/o Homology:")
-# cfg = load_cfg("cfgs/models/yeast_gi_refined_model.json",
-#     "../results/models/yeast_gi_refined", 
-#     "../results/models_tjs/yeast_gi_refined",
-#     targets_path= "../generated-data/targets/task_yeast_gi_hybrid_bin_interacting.npz")
-# cfg['gpath'] = '../generated-data/ppc_yeast'
-# cfg['preds_path'] = '../results/yeast_gi_preds'
-# models.gi_nn.main(cfg, 0, 0, '../tmp/dummy')
-# generate_predictions(models.gi_nn, cfg, 0.5)
-# examine_genes(cfg, 
-#   ['ydr477w  snf1', 'yjr066w  tor1', 'ydl142c  crd1'], 
-#   [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.85, 0.9])
+# cfg = load_cfg("cfgs/models/pombe_gi_mn.json",
+#     "../results/models/pombe_gi_mn", 
+#     gpath = "../generated-data/ppc_pombe",
+#     targets_path="../generated-data/targets/task_pombe_gi_bin_interacting.npz")
+# generate_predictions(models.gi_mn, cfg, "../results/preds/pombe_gi_mn")
 
-# print("Yeast with Homology:")
-# cfg = load_cfg("cfgs/models/yeast_gi_refined_model_xhomology.json",
-#     "../results/models/yeast_gi_refined_xhomology", 
-#     "../results/models_tjs/yeast_gi_refined_xhomology")
-# cfg['gpath'] = '../generated-data/ppc_yeast'
-# cfg['preds_path'] = '../results/yeast_gi_preds_xhomology'
-# models.gi_nn.main(cfg, 0, 0, '../tmp/dummy')
-# generate_predictions(models.gi_nn, cfg, 0.5)
-# examine_genes(cfg, 
-#   ['ydr477w  snf1', 'yjr066w  tor1', 'ydl142c  crd1'], 
-#   [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.85, 0.9])
+# cfg = load_cfg("cfgs/models/human_gi_mn.json",
+#     "../results/models/human_gi_mn", 
+#     gpath = "../generated-data/ppc_human",
+#     targets_path="../generated-data/targets/task_human_gi_bin_interacting.npz")
+# generate_predictions(models.gi_mn, cfg, "../results/preds/human_gi_mn")
 
+# cfg = load_cfg("cfgs/models/dro_gi_mn.json",
+#     "../results/models/dro_gi_mn", 
+#     gpath = "../generated-data/ppc_dro",
+#     targets_path="../generated-data/targets/task_dro_gi_bin_interacting.npz")
+# generate_predictions(models.gi_mn, cfg, "../results/preds/dro_gi_mn")
 
-# # cfg = load_cfg("cfgs/models/pombe_gi_refined_model_xhomology.json",
-# #     "../results/models/pombe_gi_refined_xhomology", 
-# #     "../results/models_tjs/pombe_gi_refined_xhomology")
-# # cfg['gpath'] = '../generated-data/ppc_pombe'
-# # cfg['preds_path'] = '../results/pombe_gi_preds'
-# # models.gi_nn.main(cfg, 0, 0, '../tmp/dummy')
-# # generate_predictions(models.gi_nn, cfg, 0.5)
+#filter("../results/preds/yeast_gi_costanzo_mn", 0.5)
+#filter("../results/preds/yeast_gi_hybrid_mn", 0.65)
+#filter("../results/preds/pombe_gi_mn", 0.55)
+#filter("../results/preds/human_gi_mn", 0.75)
+#filter("../results/preds/dro_gi_mn", 0.75)
 
-# print("Human w/o Homology:")
-# cfg = load_cfg("cfgs/models/human_gi_refined_model.json",
-#     "../results/models/human_gi_refined", 
-#     "../results/models_tjs/human_gi_refined")
-# cfg['gpath'] = '../generated-data/ppc_human'
-# cfg['preds_path'] = '../results/human_gi_preds'
-# #models.gi_nn.main(cfg, 0, 0, '../tmp/dummy')
-# #generate_predictions(models.gi_nn, cfg, 0.5, keep_net_preds=False)
-# examine_genes(cfg, 
-#    ['myc', 'tp53'], 
-#    [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 0.99])
-
-# print("Human with Homology:")
-# cfg = load_cfg("cfgs/models/human_gi_refined_model_xhomology.json",
-#     "../results/models/human_gi_refined_xhomology", 
-#     "../results/models_tjs/human_gi_refined_xhomology")
-# cfg['gpath'] = '../generated-data/ppc_human'
-# cfg['preds_path'] = '../results/human_gi_preds_xhomology'
-# #models.gi_nn.main(cfg, 0, 0, '../tmp/dummy')
-# #generate_predictions(models.gi_nn, cfg, 0.5, keep_net_preds=False)
-# examine_genes(cfg, 
-#    ['myc', 'tp53'], 
-#    [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 0.99])
-
-# print("Dro w/o homology:")
-# cfg = load_cfg("cfgs/models/dro_gi_refined_model.json",
-#     "../results/models/dro_gi_refined", 
-#     "../results/models_tjs/dro_gi_refined")
-# cfg['gpath'] = '../generated-data/ppc_dro'
-# cfg['preds_path'] = '../results/dro_gi_preds'
-# #models.gi_nn.main(cfg, 0, 0, '../tmp/dummy')
-# #generate_predictions(models.gi_nn, cfg, 0.5, keep_net_preds=False)
-# examine_genes(cfg, 
-#    ['fbgn0003366'], 
-#    [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 0.99])
-
-# print("Dro with homology:")
-# cfg = load_cfg("cfgs/models/dro_gi_refined_model_xhomology.json",
-#     "../results/models/dro_gi_refined_xhomology", 
-#     "../results/models_tjs/dro_gi_refined_xhomology")
-# cfg['gpath'] = '../generated-data/ppc_dro'
-# cfg['preds_path'] = '../results/dro_gi_preds_xhomology'
-# #models.gi_nn.main(cfg, 0, 0, '../tmp/dummy')
-# #generate_predictions(models.gi_nn, cfg, 0.5, keep_net_preds=False)
-# examine_genes(cfg, 
-#    ['fbgn0003366'], 
-#    [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 0.99])
-
+filter("../results/preds/yeast_gi_costanzo_mn", 0.95)
+filter("../results/preds/yeast_gi_hybrid_mn", 0.95)
+filter("../results/preds/pombe_gi_mn", 0.95)
+filter("../results/preds/human_gi_mn", 0.95)
+filter("../results/preds/dro_gi_mn", 0.95)
