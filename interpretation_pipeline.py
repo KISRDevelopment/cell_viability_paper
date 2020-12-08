@@ -17,6 +17,7 @@ def load_cfg(path):
 smf_cfg = load_cfg('cfgs/fig_interpretation/smf.json')
 smf_org_cfg = load_cfg('cfgs/fig_interpretation/smf_cell_org_lethal.json')
 gi_cfg = load_cfg('cfgs/fig_interpretation/gi_binary.json')
+gi_cfg_yeast = load_cfg('cfgs/fig_interpretation/gi_binary_yeast_only.json')
 gi_cfg_nonbinary = load_cfg('cfgs/fig_interpretation/gi_nonbinary.json')
 gi_cfg_no_sgo = load_cfg('cfgs/fig_interpretation/gi_binary_no_sgo.json')
 
@@ -34,7 +35,7 @@ gi_cfg_no_sgo = load_cfg('cfgs/fig_interpretation/gi_binary_no_sgo.json')
 # models.cv.main("models.smf_ordinal", "cfgs/models/dro_smf_orm.json", 
 #     "../results/smf_interpretation/dro_orm", interpreation=True, num_processes=10, epochs=500)
 
-analysis.fig_interpretation.main(smf_cfg)
+#analysis.fig_interpretation.main(smf_cfg)
 
 
 # # SMF Organismal Cell Lethal Interpreation
@@ -43,7 +44,7 @@ analysis.fig_interpretation.main(smf_cfg)
 
 # models.cv.main("models.smf_ordinal", "cfgs/models/dro_smf_cell_org_lethal_orm.json", 
 #     "../results/smf_org_interpretation/dro", interpreation=True, num_processes=20, epochs=150)
-analysis.fig_interpretation.main(smf_org_cfg)
+#analysis.fig_interpretation.main(smf_org_cfg)
 
 
 # GI non-binary interpretation
@@ -56,9 +57,22 @@ analysis.fig_interpretation.main(smf_org_cfg)
 #     "../results/gi_interpretation/pombe_mn_nonbinary", interpreation=True, 
 #     targets_path="../generated-data/targets/task_pombe_gi_bin_simple.npz",
 #     num_processes=20, epochs=50)
-analysis.fig_interpretation.main(gi_cfg_nonbinary)
+#analysis.fig_interpretation.main(gi_cfg_nonbinary)
 
 # # # GI Binary Interpreation
+
+# costanzo_task_path = "../generated-data/task_yeast_gi_costanzo"
+# costanzo_targets_path = "../generated-data/targets/task_yeast_gi_costanzo_bin_interacting.npz"
+# costanzo_splits_path = "../generated-data/splits/task_yeast_gi_costanzo_10reps_4folds_0.20valid.npz"
+
+# models.cv.main("models.gi_mn", "cfgs/models/yeast_gi_mn.json", 
+#     "../results/gi_interpretation/yeast_costanzo_mn", 
+#     interpreation=True, 
+#     task_path = costanzo_task_path,
+#     targets_path = costanzo_targets_path,
+#     splits_path = costanzo_splits_path,
+#     num_processes=20, epochs=50)
+
 # models.cv.main("models.gi_mn", "cfgs/models/yeast_gi_mn.json", 
 #     "../results/gi_interpretation/yeast_mn", interpreation=True, 
 #     targets_path="../generated-data/targets/task_yeast_gi_hybrid_bin_interacting.npz",
@@ -74,7 +88,8 @@ analysis.fig_interpretation.main(gi_cfg_nonbinary)
 
 # models.cv.main("models.gi_mn", "cfgs/models/dro_gi_mn.json", 
 #     "../results/gi_interpretation/dro_mn", interpreation=True, num_processes=20, epochs=50)
-analysis.fig_interpretation.main(gi_cfg)
+#analysis.fig_interpretation.main(gi_cfg)
+analysis.fig_interpretation.main(gi_cfg_yeast)
 
 #
 # no SGO
@@ -100,12 +115,12 @@ analysis.fig_interpretation.main(gi_cfg)
 # analysis.fig_interpretation.main(gi_cfg_no_sgo)
 
 # merge everything into one file
-writer = pd.ExcelWriter('../figures/interpretation_results.xlsx')
-for cfg, name in zip([smf_cfg, smf_org_cfg, gi_cfg_nonbinary, gi_cfg], ['SMF', 'SMF Organismal', 'GI', 'GI Binary']):
+# writer = pd.ExcelWriter('../figures/interpretation_results.xlsx')
+# for cfg, name in zip([smf_cfg, smf_org_cfg, gi_cfg_nonbinary, gi_cfg], ['SMF', 'SMF Organismal', 'GI', 'GI Binary']):
 
-    results_file = cfg['output_path'] + '.xlsx'
-    df = pd.read_excel(results_file, index_col=0, header=[0,1])
-    df = df.rename(columns=lambda x: x if not 'Unnamed' in str(x) else '')
-    print(df.columns)
-    df.to_excel(writer, sheet_name=name, index=True)
-writer.save()
+#     results_file = cfg['output_path'] + '.xlsx'
+#     df = pd.read_excel(results_file, index_col=0, header=[0,1])
+#     df = df.rename(columns=lambda x: x if not 'Unnamed' in str(x) else '')
+#     print(df.columns)
+#     df.to_excel(writer, sheet_name=name, index=True)
+# writer.save()
