@@ -1,13 +1,43 @@
 {
     "spec" : [
         {
-            "text_name" : "S. cerevisiae",
+            "text_name" : "S. cerevisiae (Negative)",
+            "target_class" : 0,
             "name" : "$\\it{S. cerevisiae}$",
             "path" : "../results/gi_interpretation/yeast_mn_nonbinary/",
             "color" : "#FF3AF2"
         },
         {
-            "text_name" : "S. pombe",
+            "text_name" : "S. pombe (Negative)",
+            "target_class" : 0,
+            "name" : "$\\it{S. pombe}$",
+            "path" : "../results/gi_interpretation/pombe_mn_nonbinary/",
+            "color" : "#FFA93A"
+        },
+        {
+            "text_name" : "S. cerevisiae (Positive)",
+            "target_class" : 2,
+            "name" : "$\\it{S. cerevisiae}$",
+            "path" : "../results/gi_interpretation/yeast_mn_nonbinary/",
+            "color" : "#FF3AF2"
+        },
+        {
+            "text_name" : "S. pombe (Positive)",
+            "target_class" : 2,
+            "name" : "$\\it{S. pombe}$",
+            "path" : "../results/gi_interpretation/pombe_mn_nonbinary/",
+            "color" : "#FFA93A"
+        },
+        {
+            "text_name" : "S. cerevisiae (Suppression)",
+            "target_class" : 3,
+            "name" : "$\\it{S. cerevisiae}$",
+            "path" : "../results/gi_interpretation/yeast_mn_nonbinary/",
+            "color" : "#FF3AF2"
+        },
+        {
+            "text_name" : "S. pombe (Suppression)",
+            "target_class" : 3,
             "name" : "$\\it{S. pombe}$",
             "path" : "../results/gi_interpretation/pombe_mn_nonbinary/",
             "color" : "#FFA93A"
@@ -17,7 +47,7 @@
     "model" : "mn",
     "color" : "#3A90FF",
     "ref_class" : 1,
-    "target_class" : 0,
     "output_path" : "../figures/gi_interpretation_nonbinary",
-    "plot_cfg" : {}
+    "plot_cfg" : {},
+    "target_class" : 0
 }

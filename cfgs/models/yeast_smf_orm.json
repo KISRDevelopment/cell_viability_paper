@@ -26,5 +26,6 @@
     "task_path" : "../generated-data/task_yeast_smf_30",
     "targets_path" : "../generated-data/targets/task_yeast_smf_30_bin_simple.npz",
     "splits_path" : "../generated-data/splits/task_yeast_smf_30_10reps_5folds_0.20valid.npz",
-    "train_on_full_dataset" : false
+    "train_on_full_dataset" : false,
+    "type" : "orm"
 }
