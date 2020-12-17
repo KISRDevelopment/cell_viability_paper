@@ -115,6 +115,7 @@ def plot_hist(sdf, colors, figsize, output_path):
             within_counts = bin_df[bin_df['prop'] == 'within']['count']
             across_counts = bin_df[bin_df['prop'] == 'across']['count']
             
+            print("[%s] %d %d" % (group, within_counts.shape[0], across_counts.shape[0]))
             statistic, pvalue = scipy.stats.ttest_rel(within_counts, across_counts)
             stars = '*' * utils.eval_funcs.compute_stars(pvalue, ALPHA)
             

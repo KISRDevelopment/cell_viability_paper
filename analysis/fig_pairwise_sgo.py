@@ -32,32 +32,41 @@ def main(task_path, go_path, output_path):
 
     counts_by_term = defaultdict(lambda: [0, 0, 0, 0])
 
-    df = pd.read_csv(task_path)
-    a_id = np.array(df['a_id'])
-    b_id = np.array(df['b_id'])
-    bin = np.array(df['bin'])
+    # df = pd.read_csv(task_path)
+    # a_id = np.array(df['a_id'])
+    # b_id = np.array(df['b_id'])
+    # bin = np.array(df['bin'])
 
-    n_terms = F.shape[1]
+    # n_terms = F.shape[1]
 
-    R = np.zeros((n_terms, n_terms, 4))
+    # R = np.zeros((n_terms, n_terms, 4))
 
-    for i in range(df.shape[0]):
+    # for i in range(df.shape[0]):
         
-        a_terms = np.where(F[a_id[i], :])[0]
-        b_terms = np.where(F[b_id[i], :])[0]
+    #     # get the terms of gene a
+    #     a_terms = np.where(F[a_id[i], :])[0]
         
-        pairs = set()
-        for aid in a_terms:
-            for bid in b_terms:
-                pairs.add(tuple(sorted((aid, bid))))
-        for aid, bid in pairs:
-            R[aid, bid, bin[i]] += 1
-            R[bid, aid, bin[i]] += 1
+    #     # get the terms of gene b
+    #     b_terms = np.where(F[b_id[i], :])[0]
+        
+    #     # create a set of all pairwise combinations
+    #     pairs = set()
+    #     for aid in a_terms:
+    #         for bid in b_terms:
+    #             pairs.add(tuple(sorted((aid, bid))))
+        
+    #     # for each combination, increment the relevant count
+    #     # except if it is on the diagonal, to prevent double-counting
+    #     for aid, bid in pairs:
+
+    #         R[aid, bid, bin[i]] += 1
+    #         if bid != aid:
+    #             R[bid, aid, bin[i]] += 1
     
-        if i % 10000 == 0:
-            print(i)
+    #     if i % 10000 == 0:
+    #         print(i)
 
-    np.save("../tmp/go_enrichment_matrix", R)
+    # np.save("../tmp/go_enrichment_matrix", R)
     transform = create_transform(0.5, 0.75)
     R = np.load("../tmp/go_enrichment_matrix.npy")
     
@@ -77,43 +86,43 @@ def main(task_path, go_path, output_path):
         print("[%s] Mean on-diagonal: %f, mean max off-diagonal: %f" % (BIN_LABELS[bin], np.mean(diag_vals), np.mean(u)))
         
     # for every term, analyze column intensity vs other columns
-    R_GI = np.sum(R[:,:,[0,2,3]], axis=2) / R_tot
+    # R_GI = np.sum(R[:,:,[0,2,3]], axis=2) / R_tot
 
-    corr_alpha = ALPHA / (R_GI.shape[0] - 1)
-    print("Corr alpha=%f" % corr_alpha)
+    # corr_alpha = ALPHA / (R_GI.shape[0] - 1)
+    # print("Corr alpha=%f" % corr_alpha)
 
-    comparisons = []
-    for i in range(R_GI.shape[0]):
-        i_row = R_GI[i, :]
-        mi = np.mean(i_row)
+    # comparisons = []
+    # for i in range(R_GI.shape[0]):
+    #     i_row = R_GI[i, :]
+    #     mi = np.mean(i_row)
 
-        for j in range(i+1, R_GI.shape[1]):
-            j_row = R_GI[j, :]
-            stat, p  = scipy.stats.ttest_rel(i_row, j_row)
-            mj = np.mean(j_row)
+    #     for j in range(i+1, R_GI.shape[1]):
+    #         j_row = R_GI[j, :]
+    #         stat, p  = scipy.stats.ttest_rel(i_row, j_row)
+    #         mj = np.mean(j_row)
             
-            if (p/2 < corr_alpha):
-                dom = i if stat > 0 else j
-            else:
-                dom = -1
+    #         if (p/2 < corr_alpha):
+    #             dom = i if stat > 0 else j
+    #         else:
+    #             dom = -1
             
-            comparisons.append((i, j, stat, p, mi, mj, dom))
+    #         comparisons.append((i, j, stat, p, mi, mj, dom))
     
-    comparisons = np.array(comparisons)
+    # comparisons = np.array(comparisons)
 
-    summary = []
-    for i in range(R_GI.shape[0]):
-        ix = (comparisons[:, 0] == i) | (comparisons[:, 1] == i)
-        term_comps = comparisons[ix, :]
-        ix_reliably_greater = term_comps[:, -1] == i
-        summary.append((labels[i], np.sum(ix_reliably_greater)))
-        #print("%s [%d]: %d" % (labels[i], np.sum(ix), np.sum(ix_reliably_greater)))
+    # summary = []
+    # for i in range(R_GI.shape[0]):
+    #     ix = (comparisons[:, 0] == i) | (comparisons[:, 1] == i)
+    #     term_comps = comparisons[ix, :]
+    #     ix_reliably_greater = term_comps[:, -1] == i
+    #     summary.append((labels[i], np.sum(ix_reliably_greater)))
+    #     #print("%s [%d]: %d" % (labels[i], np.sum(ix), np.sum(ix_reliably_greater)))
     
-    summary = sorted(summary, key=lambda e: e[1], reverse=True)
-    for e in summary:
-        print("%64s %d" % e)
+    # summary = sorted(summary, key=lambda e: e[1], reverse=True)
+    # for e in summary:
+    #     print("%64s %d" % e)
 
-    return 
+    # return 
 
     for i, bin in enumerate([0, 2, 3]):
         R_b = R[:, :, bin]

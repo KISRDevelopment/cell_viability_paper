@@ -52,7 +52,7 @@ GI_LABELS_BINARY = ['Interacting', 'Neutral']
 # analysis.fig_gi_smf_matrix.main("../generated-data/task_dro_gi", "../generated-data/task_dro_smf", "../figures/dro_gi", True)
 
 # SPL
-analysis.fig_spl.main("../generated-data/task_yeast_gi_hybrid", "../generated-data/pairwise_features/ppc_yeast_shortest_path_len.npy", "%", "../figures/yeast_hybrid_gi_spl")
+# analysis.fig_spl.main("../generated-data/task_yeast_gi_hybrid", "../generated-data/pairwise_features/ppc_yeast_shortest_path_len.npy", "%", "../figures/yeast_hybrid_gi_spl")
 
 # analysis.fig_cv_performance.main("cfgs/fig_cv_performance/yeast_gi_hybrid.json")
 #analysis.fig_cv_performance.main("cfgs/fig_cv_performance/yeast_gi_costanzo.json")

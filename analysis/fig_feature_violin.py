@@ -93,8 +93,8 @@ def visualize(df, f, ylabel, ylim=None):
         for j in range(i+1, len(bins)):
             b = df[df['bin'] == bins[j]]['feature']
             statistic, pvalue = scipy.stats.kruskal(a, b)
-            print("%s (%0.2f) vs. %s (%0.2f): %0.6f [%0.6f]" % (bins[i], 
-                np.median(a), bins[j], np.median(b), pvalue, statistic))
+            print("%s (%0.2f) vs. %s (%0.2f): %0.6f [%0.6f] (lens %d vs %d)" % (bins[i], 
+                np.median(a), bins[j], np.median(b), pvalue, statistic, a.shape[0], b.shape[0]))
             
             if pvalue < adjusted_alpha:
                 stars = '*' * eval_funcs.compute_stars(pvalue, adjusted_alpha)
