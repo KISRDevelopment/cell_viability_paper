@@ -5,6 +5,8 @@ import os
 
 DB_PATH = "website/db.sqlite"
 
+os.remove(DB_PATH)
+
 #
 # create database
 #
@@ -45,10 +47,10 @@ def populate_from(conn, path, species_id):
     list_obs = list(df['observed'])
     list_interacting = list(df['interacting'])
 
-    rows = [(n_to_id[a], n_to_id[b], obs == 1, inter == 1, prob) for a,b,obs,inter,prob in 
+    rows = [(species_id, n_to_id[a], n_to_id[b], obs == 1, inter == 1, prob) for a,b,obs,inter,prob in 
         zip(list_a_id, list_b_id, list_obs, list_interacting, list_prob_gi)]
 
-    c.executemany("INSERT INTO genetic_interactions(gene_a_id, gene_b_id, observed, observed_gi, prob_gi) VALUES(?, ?, ?, ?, ?)", rows)
+    c.executemany("INSERT INTO genetic_interactions(species_id, gene_a_id, gene_b_id, observed, observed_gi, prob_gi) VALUES(?, ?, ?, ?, ?, ?)", rows)
     conn.commit()
     
 populate_from(conn, '../results/preds/yeast_gi_hybrid_mn', 1)

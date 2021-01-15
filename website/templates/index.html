@@ -42,6 +42,16 @@
             <input type="submit" value="Apply">
         </form>
 
+        <p>Rows: {{ n_rows }}</p>
+        <div>
+            {% if pagination.prev_page > -1 %}
+            <a href="{{ url_for('index', species_id=species_id, threshold=threshold, page=pagination.prev_page) }}">Previous Page</a>
+            {% endif %}
+            {{ pagination.page }} out of {{ pagination.pages }}
+            {% if pagination.next_page > -1 %}
+            <a href="{{ url_for('index', species_id=species_id, threshold=threshold, page=pagination.next_page) }}">Next Page</a>
+            {% endif %}
+        </div>
         <table>
             <thead>
                 <tr>

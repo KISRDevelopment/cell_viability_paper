@@ -17,10 +17,12 @@ CREATE TABLE genes (
     FOREIGN KEY (species_id) REFERENCES species(species_id),
     UNIQUE(gene_name)
 );
+CREATE INDEX gene_species ON genes(species_id);
 
 DROP TABLE IF EXISTS genetic_interactions;
 CREATE TABLE genetic_interactions (
     gi_id integer primary key autoincrement,
+    species_id integer not null,
     gene_a_id integer not null,
     gene_b_id integer not null,
     observed boolean not null,
@@ -28,8 +30,9 @@ CREATE TABLE genetic_interactions (
     prob_gi float not null,
     FOREIGN KEY(gene_a_id) REFERENCES genes(gene_id),
     FOREIGN KEY(gene_b_id) REFERENCES genes(gene_id),
+    FOREIGN KEY(species_id) REFERENCES species(species_id),
     UNIQUE(gene_a_id, gene_b_id)
 );
-
-CREATE INDEX first_gene ON genetic_interactions (gene_a_id);
-CREATE INDEX second_gene ON genetic_interactions (gene_b_id);
+CREATE INDEX gi_species ON genetic_interactions (species_id);
+CREATE INDEX gi_first_gene ON genetic_interactions (gene_a_id);
+CREATE INDEX gi_second_gene ON genetic_interactions (gene_b_id);
