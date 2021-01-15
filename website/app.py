@@ -1,7 +1,10 @@
-from flask import Flask, request, send_from_directory, render_template
+from flask import Flask, request, send_from_directory, render_template, g, current_app
 import sqlite3
+from flask_caching import Cache
 
+cache = Cache(config={'CACHE_TYPE' : 'simple'})
 app = Flask(__name__)
+
 
 DB_PATH = "db.sqlite"
 
@@ -9,6 +12,10 @@ COUNT_QUERY = "select count(gi_id) as n_rows from genetic_interactions  where sp
 SPECIES_QUERY = "select a.gene_name  gene_a, b.gene_name gene_b, g.observed, g.observed_gi, g.prob_gi from genetic_interactions g join genes a on g.gene_a_id = a.gene_id join genes b on g.gene_b_id = b.gene_id where g.species_id = ? and g.prob_gi > ? limit ? offset ?"
 
 ENTRIES_PER_PAGE = 50
+
+def init():
+    app.teardown_appcontext(close_db)
+    cache.init_app(app)
 
 def dict_factory(cursor, row):
     d = {}
@@ -33,20 +40,25 @@ def index():
         page = 0
     else:
         
-        conn = sqlite3.connect(DB_PATH)
+        conn = get_db()
         conn.row_factory = dict_factory
         c = conn.cursor()
         c.execute(SPECIES_QUERY, (species_id, threshold, ENTRIES_PER_PAGE, page * ENTRIES_PER_PAGE))
         rows = c.fetchall()
 
-        c.execute(COUNT_QUERY, (species_id, threshold))
-        n_rows = c.fetchone()['n_rows']
-
-        conn.close()
+        n_rows = calculate_rows(species_id, threshold)
 
     pagination = paginate(n_rows, ENTRIES_PER_PAGE, page)
 
     return render_template('index.html', rows=rows, species_id=species_id, threshold=threshold, n_rows=n_rows, pagination=pagination)
+
+@cache.memoize(timeout=None)
+def calculate_rows(species_id, threshold):
+    conn = get_db()
+    c = conn.cursor()
+    c.execute(COUNT_QUERY, (species_id, threshold))
+    n_rows = c.fetchone()['n_rows']
+    return n_rows
 
 def paginate(n_rows, page_size, page):
     
@@ -68,3 +80,21 @@ def paginate(n_rows, page_size, page):
         "next_page" : next_page,
         "prev_page" : prev_page
     }
+
+def get_db():
+    if 'db' not in g:
+        g.db = sqlite3.connect(
+            DB_PATH,
+            detect_types=sqlite3.PARSE_DECLTYPES
+        )
+        g.db.row_factory = sqlite3.Row
+
+    return g.db
+
+def close_db(e=None):
+    db = g.pop('db', None)
+
+    if db is not None:
+        db.close()
+
+init()
