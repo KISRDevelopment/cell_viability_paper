@@ -4,6 +4,8 @@
         <meta charset='utf-8'>
         <title>Predicted Genetic Interactions in Four Organisms</title>
         <link rel='stylesheet' href="{{ url_for('static', filename='style.css') }}" type='text/css'>
+        <script src="https://cdn.plot.ly/plotly-latest.min.js" charset="utf-8"></script>
+        <script type="module" src="static/app.js"></script>
     </head>
     <body>
         
@@ -47,7 +49,7 @@
         </div>
         
         <div class='l-columns'>
-            <div class='l-columns__col'>
+            <div class='l-columns__col' style='flex: .65'>
                 <div class='search-pages'>
                     <div class='search-pages__count'>
                         {{ n_rows }} records found
@@ -87,7 +89,7 @@
                 </table>
             </div>
             <div class='l-columns__col'>
-
+                <div id='interpretation'></div>
             </div>
         </div>
         

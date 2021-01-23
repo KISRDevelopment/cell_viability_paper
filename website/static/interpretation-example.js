@@ -1,21 +1,6 @@
 function main()
 {
-    attach_handlers();
-}
-
-function attach_handlers()
-{
-    const trs = document.querySelectorAll('tbody tr');
-    trs.forEach((tr) => {
-        tr.onclick = gi_selected;
-    });
-
-}
-
-function gi_selected()
-{
-    const giId = this.dataset.gi_id;
-    fetch('/interpret/' + giId)
+    fetch('interpretation-example.json')
     .then(response => response.json())
     .then(data => plot_interpretation(data));
 }
@@ -31,7 +16,7 @@ function plot_interpretation(data)
           x: data.components,
           y: labels,
           marker: {
-            color: '#6e0099'
+            color: 'green'
           },
           name: 'expenses'
         }]
@@ -44,7 +29,7 @@ function plot_interpretation(data)
             font: {
               size: 22,
               
-              color: 'black'
+              color: '#7f7f7f'
             },
             yaxis: {
                 showgrid: true,
@@ -53,11 +38,12 @@ function plot_interpretation(data)
             },
             xaxis: {
                 showgrid: true,
-                automargin: true
+                automargin: true,
+                tickangle: 45
             }
           };
 
-    Plotly.newPlot('interpretation', data, layout);
+    Plotly.newPlot('myDiv', data, layout);
 }
 
 window.onload = main;

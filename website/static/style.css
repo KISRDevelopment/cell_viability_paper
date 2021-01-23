@@ -45,6 +45,10 @@ select, input {
     border: 1px solid black;
     padding: 5px;
 }
+.search-results td {
+    cursor: pointer;
+}
+
 .search-pages {
     display: flex;
     flex-direction: row;
