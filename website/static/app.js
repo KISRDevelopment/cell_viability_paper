@@ -14,6 +14,10 @@ function attach_handlers()
 
 function gi_selected()
 {
+    document.querySelectorAll('tbody tr').forEach((tr) => tr.classList.remove('selected'));
+    
+    this.classList.add('selected');
+    
     const giId = this.dataset.gi_id;
     fetch('/interpret/' + giId)
     .then(response => response.json())
@@ -33,14 +37,12 @@ function plot_interpretation(data)
           marker: {
             color: '#6e0099'
           },
-          name: 'expenses'
         }]
         var layout = {
             title: '<b>Logistic Regression Model Components</b>',
 
           height: 1500,
           width: 1000,
-          autosize: true,
             font: {
               size: 22,
               
@@ -53,7 +55,8 @@ function plot_interpretation(data)
             },
             xaxis: {
                 showgrid: true,
-                automargin: true
+                automargin: true,
+                range: [-3, 3]
             }
           };
 

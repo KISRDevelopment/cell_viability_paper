@@ -65,3 +65,7 @@ select, input {
 .l-columns__col {
     flex: 1;
 }
+
+tr.selected {
+    background: #f6e0ff;
+}
