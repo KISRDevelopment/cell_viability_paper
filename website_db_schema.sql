@@ -14,6 +14,9 @@ CREATE TABLE genes (
     gene_id integer primary key autoincrement,
     species_id integer not null, 
     gene_name varchar not null,
+    lid float not null,
+    smf integer not null,
+    sgo_terms blob not null,
     FOREIGN KEY (species_id) REFERENCES species(species_id),
     UNIQUE(gene_name)
 );
@@ -28,6 +31,7 @@ CREATE TABLE genetic_interactions (
     observed boolean not null,
     observed_gi boolean not null,
     prob_gi float not null,
+    spl float not null,
     FOREIGN KEY(gene_a_id) REFERENCES genes(gene_id),
     FOREIGN KEY(gene_b_id) REFERENCES genes(gene_id),
     FOREIGN KEY(species_id) REFERENCES species(species_id),
