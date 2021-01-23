@@ -6,74 +6,90 @@
         <link rel='stylesheet' href="{{ url_for('static', filename='style.css') }}" type='text/css'>
     </head>
     <body>
-        <h1>Predicted Genetic Interactions</h1>
+        
+        <div class='search-panel'>
+            <h1 class='search-panel__title'>Search for Genetic Interactions</h1>
+            <form action="{{ url_for('index', species_id=1, threshold=0.5) }}" method="GET">
+                <div class='input-line'>
+                    <label for="selectSpecies">Species</label>
+                    <select id="selectSpecies" name="species_id">
+                        <option value="1" {% if species_id == 1 %}selected{% endif %}>S. cerevisiae</option>
+                        <option value="2" {% if species_id == 2 %}selected{% endif %}>S. pombe</option>
+                        <option value="3" {% if species_id == 3 %}selected{% endif %}>H. sapiens</option>
+                        <option value="4" {% if species_id == 4 %}selected{% endif %}>D. melanogaster</option>
+                    </select>
 
-        <p>
-            Select the species and the desired threshold on the model's probability of interaction. If the model reports
-            a probability of interaction that is less than the threshold, the two genes will not be predicted as 
-            interacting.
-        </p>
+                    <label for="selectThres">Interaction Threshold</label>
+                    <select id="selectThres" name="threshold">
+                        <option value="0.5" {% if threshold == 0.5 %}selected{% endif %}>0.5</option>
+                        <option value="0.6" {% if threshold == 0.6 %}selected{% endif %}>0.6</option>
+                        <option value="0.7" {% if threshold == 0.7 %}selected{% endif %}>0.7</option>
+                        <option value="0.8" {% if threshold == 0.8 %}selected{% endif %}>0.8</option>
+                        <option value="0.9" {% if threshold == 0.9 %}selected{% endif %}>0.9</option>
+                    </select>
+                    
 
-        <form action="{{ url_for('index', species_id=1, threshold=0.5) }}" method="GET">
-            <label for="selectSpecies">Select Species</label>
-            <select id="selectSpecies" name="species_id">
-                <option value="1" {% if species_id == 1 %}selected{% endif %}>S. cerevisiae</option>
-                <option value="2" {% if species_id == 2 %}selected{% endif %}>S. pombe</option>
-                <option value="3" {% if species_id == 3 %}selected{% endif %}>H. sapiens</option>
-                <option value="4" {% if species_id == 4 %}selected{% endif %}>D. melanogaster</option>
-            </select>
+                    <input type="submit" value="Search">
 
-            <label for="selectThres">Interaction Threshold</label>
-            <select id="selectThres" name="threshold">
-                <option value="0.5" {% if threshold == 0.5 %}selected{% endif %}>0.5</option>
-                <option value="0.6" {% if threshold == 0.6 %}selected{% endif %}>0.6</option>
-                <option value="0.7" {% if threshold == 0.7 %}selected{% endif %}>0.7</option>
-                <option value="0.8" {% if threshold == 0.8 %}selected{% endif %}>0.8</option>
-                <option value="0.9" {% if threshold == 0.9 %}selected{% endif %}>0.9</option>
-            </select>
-
-<!-- 
-            <label for="tbGeneA">First Gene</label>
-            <input type="text" id="tbGeneA" value="">
-
-            <label for="tbGeneB">Second Gene</label>
-            <input type="text" id="tbGeneB" value=""> -->
-
-
-            <input type="submit" value="Apply">
-        </form>
-
-        <p>Rows: {{ n_rows }}</p>
-        <div>
-            {% if pagination.prev_page > -1 %}
-            <a href="{{ url_for('index', species_id=species_id, threshold=threshold, page=pagination.prev_page) }}">Previous Page</a>
-            {% endif %}
-            {{ pagination.page }} out of {{ pagination.pages }}
-            {% if pagination.next_page > -1 %}
-            <a href="{{ url_for('index', species_id=species_id, threshold=threshold, page=pagination.next_page) }}">Next Page</a>
-            {% endif %}
+                </div>
+                
+    
+    
+    <!-- 
+                <label for="tbGeneA">First Gene</label>
+                <input type="text" id="tbGeneA" value="">
+    
+                <label for="tbGeneB">Second Gene</label>
+                <input type="text" id="tbGeneB" value=""> -->
+    
+    
+            </form>
         </div>
-        <table>
-            <thead>
-                <tr>
-                    <th>Gene A</th>
-                    <th>Gene B</th>
-                    <th>Observed</th>
-                    <th>Interacting</th>
-                    <th>Prob. GI</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for row in rows %}
-                <tr>
-                    <td>{{ row.gene_a }}</td>
-                    <td>{{ row.gene_b }}</td>
-                    <td>{{ row.observed }}</td>
-                    <td>{{ row.observed_gi }}</td>
-                    <td>{{ '%0.2f' | format(row.prob_gi) }}</td>
-                </tr>   
-                {% endfor %}
-            </tbody>
-        </table>
+        
+        <div class='l-columns'>
+            <div class='l-columns__col'>
+                <div class='search-pages'>
+                    <div class='search-pages__count'>
+                        {{ n_rows }} records found
+                    </div>
+                    <div>
+                        {% if pagination.prev_page > -1 %}
+                        <a href="{{ url_for('index', species_id=species_id, threshold=threshold, page=pagination.prev_page) }}">Previous Page</a>
+                        {% endif %}
+                        Page {{ pagination.page }} out of {{ pagination.pages }}
+                        {% if pagination.next_page > -1 %}
+                        <a href="{{ url_for('index', species_id=species_id, threshold=threshold, page=pagination.next_page) }}">Next Page</a>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <table class='search-results'>
+                    <thead>
+                        <tr>
+                            <th>Gene A</th>
+                            <th>Gene B</th>
+                            <th>Observed</th>
+                            <th>Interacting</th>
+                            <th>Probability of GI</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in rows %}
+                        <tr>
+                            <td>{{ row.gene_a }}</td>
+                            <td>{{ row.gene_b }}</td>
+                            <td>{% if row.observed == 1 %}<strong>Yes</strong>{% else %}No{% endif %}</td>
+                            <td>{% if row.observed_gi == 1  %}<strong>Yes</strong>{% else %}No{% endif %}</td>
+                            <td>{{ '%0.2f' | format(row.prob_gi) }}</td>
+                        </tr>   
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class='l-columns__col'>
+
+            </div>
+        </div>
+        
     </body>
 </html>

@@ -1,3 +1,63 @@
+html {
+    font-size: 10pt;
+
+}
 body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+}
+
+.search-panel {
+    background: #f6e0ff;
+    color: #6e0099;
+    padding: 10px;
+}
+
+h1, h2, h3 {
+    margin: 0;
+    padding: 0;
+    font-weight: normal;
+}
+
+h1.search-panel__title {
+    font-size: 2.6rem;
+    font-weight: bold;
+}
+
+.input-line {
+    padding: 10px;
+    font-size: 1.6rem;
+}
+
+select, input {
+    font-size: 1.6rem;
+}
+
+.search-results {
+    width: 100%;
+    font-size: 1.2rem;
+    text-align: center;
+    table-layout: fixed;
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+.search-results td, .search-results th {
+    border: 1px solid black;
+    padding: 5px;
+}
+.search-pages {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 10px;
+    font-size: 1.2rem;
+}
+
+.l-columns {
+    display: flex;
+    flex-direction: row;
+}
+
+.l-columns__col {
+    flex: 1;
 }
