@@ -1,8 +1,10 @@
 import sqlite3
-import website.utils 
+import utils 
 import numpy as np 
 
-SPECIES_QUERY = """select a.gene_name gene_a, 
+GI_SELECT_SQL = """select g.gi_id gi_id,
+                          g.species_id species_id,
+                          a.gene_name gene_a, 
                           b.gene_name gene_b, 
                           g.observed, 
                           g.observed_gi, 
@@ -16,7 +18,10 @@ SPECIES_QUERY = """select a.gene_name gene_a,
                           g.spl spl 
                           from genetic_interactions g 
                           join genes a on g.gene_a_id = a.gene_id 
-                          join genes b on g.gene_b_id = b.gene_id 
+                          join genes b on g.gene_b_id = b.gene_id
+"""
+
+SPECIES_QUERY = GI_SELECT_SQL + """ 
                           where 
                           g.species_id = ? and g.prob_gi > ? limit ? offset ?"""
 
@@ -48,6 +53,14 @@ def get_pairs(conn, species_id, threshold, page, entries_per_page):
     rows = c.fetchall()
 
     return rows 
+
+def get_gi(conn, gi_id):
+
+    c = conn.cursor()
+    c.execute(GI_SELECT_SQL + "where g.gi_id = ?", (gi_id,))
+    r = c.fetchone()
+
+    return r 
 
 def dict_factory(cursor, row):
     d = {}
@@ -103,8 +116,8 @@ class LogisticRegressionModel:
 
         spl = row['spl']
 
-        sgo = website.utils.unpack_sgo(row['gene_a_sgo'], self.n_sgo).astype(int) + \
-            website.utils.unpack_sgo(row['gene_b_sgo'], self.n_sgo).astype(int)
+        sgo = utils.unpack_sgo(row['gene_a_sgo'], self.n_sgo).astype(int) + \
+            utils.unpack_sgo(row['gene_b_sgo'], self.n_sgo).astype(int)
 
         vec = np.hstack((smf_bin, sgo, spl, sum_lid))
         
@@ -133,6 +146,8 @@ if __name__ == "__main__":
     import json
     with open('website/static/interpreation-example.json', 'w') as f:
         json.dump(components, f, indent=4)
+
+    print(get_gi(conn, 0))
     # assume a MN model with two classes and one feature
     # b1, w1 = [1, 4]
     # b2, w2 = [0, -3]

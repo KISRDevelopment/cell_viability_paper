@@ -1,6 +1,7 @@
-from flask import Flask, request, send_from_directory, render_template, g, current_app
+from flask import Flask, request, send_from_directory, render_template, g, current_app, jsonify
 import sqlite3
 from flask_caching import Cache
+import queries 
 
 cache = Cache(config={'CACHE_TYPE' : 'simple'})
 app = Flask(__name__)
@@ -9,7 +10,7 @@ app = Flask(__name__)
 DB_PATH = "db.sqlite"
 
 COUNT_QUERY = "select count(gi_id) as n_rows from genetic_interactions  where species_id = ? and prob_gi > ?"
-SPECIES_QUERY = "select a.gene_name  gene_a, b.gene_name gene_b, g.observed, g.observed_gi, g.prob_gi from genetic_interactions g join genes a on g.gene_a_id = a.gene_id join genes b on g.gene_b_id = b.gene_id where g.species_id = ? and g.prob_gi > ? limit ? offset ?"
+SPECIES_QUERY = "select g.gi_id gi_id, a.gene_name  gene_a, b.gene_name gene_b, g.observed, g.observed_gi, g.prob_gi from genetic_interactions g join genes a on g.gene_a_id = a.gene_id join genes b on g.gene_b_id = b.gene_id where g.species_id = ? and g.prob_gi > ? limit ? offset ?"
 
 ENTRIES_PER_PAGE = 50
 
@@ -51,6 +52,27 @@ def index():
     pagination = paginate(n_rows, ENTRIES_PER_PAGE, page)
 
     return render_template('index.html', rows=rows, species_id=species_id, threshold=threshold, n_rows=n_rows, pagination=pagination)
+
+@app.route('/interpret/<int:gi_id>', methods=['GET'])
+def interpret(gi_id):
+    SPECIES_MODELS = {
+        1: "./models/yeast_gi_hybrid_mn.npz",
+        2: './models/pombe_gi_mn.npz',
+        3: './models/human_gi_mn.npz',
+        4: './models/dro_gi_mn.npz'
+    }
+    conn = get_db()
+    conn.row_factory = dict_factory
+
+    row = queries.get_gi(conn, gi_id)
+
+    if row:
+        m = queries.LogisticRegressionModel(SPECIES_MODELS[row['species_id']])
+        components = m.get_z_components(row)
+        return jsonify(components)
+    else:
+        return jsonify({})
+    
 
 @cache.memoize(timeout=None)
 def calculate_rows(species_id, threshold):

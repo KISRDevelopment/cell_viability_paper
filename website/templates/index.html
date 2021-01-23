@@ -75,7 +75,7 @@
                     </thead>
                     <tbody>
                         {% for row in rows %}
-                        <tr>
+                        <tr data-gi_id="{{ row.gi_id }}">
                             <td>{{ row.gene_a }}</td>
                             <td>{{ row.gene_b }}</td>
                             <td>{% if row.observed == 1 %}<strong>Yes</strong>{% else %}No{% endif %}</td>
