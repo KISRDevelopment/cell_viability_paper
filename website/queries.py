@@ -9,12 +9,14 @@ JOIN_PART = """
 """
 
 FILTER_PART = """where 
-    g.species_id = ? and g.prob_gi > ? and (instr(a.gene_name, ?) or instr(b.gene_name, ?))"""
+    g.species_id = ? and g.prob_gi > ? and (a.locus_tag = ? or a.common_name = ? or b.locus_tag = ? or b.common_name = ?)"""
 
 GI_SELECT_SQL = """select g.gi_id gi_id,
                           g.species_id species_id,
-                          a.gene_name gene_a, 
-                          b.gene_name gene_b, 
+                          a.locus_tag gene_a_locus_tag, 
+                          b.locus_tag gene_b_locus_tag,
+                          a.common_name gene_a_common_name,
+                          b.common_name gene_b_common_name, 
                           g.observed, 
                           g.observed_gi, 
                           g.prob_gi,
@@ -55,14 +57,14 @@ def get_pairs(conn, species_id, threshold, gene, page, entries_per_page):
     gene = gene.lower()
 
     c = conn.cursor()
-    c.execute(SPECIES_QUERY, (species_id, threshold, gene, gene, entries_per_page, page * entries_per_page))
+    c.execute(SPECIES_QUERY, (species_id, threshold, gene, gene, gene, gene, entries_per_page, page * entries_per_page))
     rows = c.fetchall()
 
     return rows 
 
 def count_pairs(conn, species_id, threshold, gene):
     c = conn.cursor()
-    c.execute(COUNT_QUERY, (species_id, threshold, gene, gene))
+    c.execute(COUNT_QUERY, (species_id, threshold, gene, gene, gene, gene))
     n_rows = c.fetchone()['n_rows']
     return n_rows
 

@@ -55,7 +55,8 @@ def index():
 
     pagination = paginate(n_rows, ENTRIES_PER_PAGE, page)
 
-    return render_template('index.html', rows=rows, species_id=species_id, threshold=threshold, n_rows=n_rows, pagination=pagination)
+    return render_template('index.html', rows=rows, 
+        species_id=species_id, threshold=threshold, n_rows=n_rows, pagination=pagination, gene=gene)
 
 @app.route('/interpret/<int:gi_id>', methods=['GET'])
 def interpret(gi_id):

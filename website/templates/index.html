@@ -31,7 +31,7 @@
                     </select>
                     
                     <label for="tbGeneA">Gene</label>
-                    <input type="text" id="tbGene" name="gene" value="">
+                    <input type="text" id="tbGene" name="gene" value="{{ gene }}">
 
 
                     <input type="submit" value="Search">
@@ -59,11 +59,11 @@
                     </div>
                     <div>
                         {% if pagination.prev_page > -1 %}
-                        <a href="{{ url_for('index', species_id=species_id, threshold=threshold, page=pagination.prev_page) }}">Previous Page</a>
+                        <a href="{{ url_for('index', species_id=species_id, threshold=threshold, page=pagination.prev_page, gene=gene) }}">Previous Page</a>
                         {% endif %}
                         Page {{ pagination.page + 1 }} out of {{ pagination.pages + 1 }}
                         {% if pagination.next_page > -1 %}
-                        <a href="{{ url_for('index', species_id=species_id, threshold=threshold, page=pagination.next_page) }}">Next Page</a>
+                        <a href="{{ url_for('index', species_id=species_id, threshold=threshold, page=pagination.next_page, gene=gene) }}">Next Page</a>
                         {% endif %}
                     </div>
                 </div>
@@ -80,8 +80,8 @@
                     <tbody>
                         {% for row in rows %}
                         <tr data-gi_id="{{ row.gi_id }}">
-                            <td>{{ row.gene_a }}</td>
-                            <td>{{ row.gene_b }}</td>
+                            <td>{{ row.gene_a_locus_tag }} ({{ row.gene_a_common_name }})</td>
+                            <td>{{ row.gene_b_locus_tag }} ({{ row.gene_b_common_name }})</td>
                             <td>{{ '%0.2f' | format(row.prob_gi) }}</td>
                             <td>{% if row.reported_gi == 1 %}<strong>Yes</strong>{% else %}No{% endif %}</td>
                         </tr>   
@@ -92,7 +92,7 @@
             <div class='l-columns__col' style='width: 64px;'>
                 <canvas id='pointer'></canvas>
             </div>
-            <div class='l-columns__col' style='flex: 1;'>
+            <div class='l-columns__col'>
                 <div id='interpretation'></div>
             </div>
         </div>

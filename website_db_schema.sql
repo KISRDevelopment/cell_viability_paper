@@ -13,14 +13,17 @@ DROP TABLE IF EXISTS genes;
 CREATE TABLE genes (
     gene_id integer primary key autoincrement,
     species_id integer not null, 
-    gene_name varchar not null,
+    locus_tag varchar not null,
+    common_name varchar not null,
     lid float not null,
     smf integer not null,
     sgo_terms blob not null,
     FOREIGN KEY (species_id) REFERENCES species(species_id),
-    UNIQUE(gene_name)
+    UNIQUE(locus_tag)
 );
 CREATE INDEX gene_species ON genes(species_id);
+CREATE INDEX gene_locus_tag ON genes(locus_tag);
+CREATE INDEX gene_common_name ON genes(common_name);
 
 DROP TABLE IF EXISTS genetic_interactions;
 CREATE TABLE genetic_interactions (

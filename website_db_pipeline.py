@@ -9,6 +9,83 @@ import website.utils
 
 DB_PATH = "website/db.sqlite"
 
+def map_common_names_yeast():
+
+    G = nx.read_gpickle('../generated-data/ppc_yeast')
+    
+    full_names = sorted(G.nodes())
+
+    tag_common = [n.split('  ') for n in full_names]
+    tag_common = [(a, '' if a == b else b) for a, b in tag_common]
+
+    return dict(zip(full_names, tag_common))
+
+def map_common_names_pombe():
+    
+    gene_names = '../data-sources/pombe/PomBase2UniProt.csv'
+    gene_names_df = pd.read_csv(gene_names, sep='\t', header=None, names=['locus', 'common'])
+
+    tags = gene_names_df['locus'].str.lower()
+    common = gene_names_df['common'].fillna('').str.lower()
+
+    tag_common = list(zip(tags, common))
+
+    G = nx.read_gpickle('../generated-data/ppc_pombe')
+    nodes = set(G.nodes())
+    assert nodes.intersection(tags) == nodes 
+
+    return dict(zip(tags, tag_common))
+
+def map_common_names_human():
+
+    gene_names = '../data-sources/human/gene_names'
+    gene_names_df = pd.read_csv(gene_names, sep='\t')
+
+    tags = gene_names_df['Approved symbol'].fillna('').str.lower()
+    common = gene_names_df['Approved name'].fillna('').str.lower()
+
+    tag_common = list(zip(tags, common))
+
+    G = nx.read_gpickle('../generated-data/ppc_human')
+    nodes = set(G.nodes())
+
+    # print(len(nodes.intersection(tags)))
+    # print(set(tags) - nodes)
+    # print(nodes - set(tags))
+    # assert nodes.intersection(tags) == nodes 
+
+    r = dict(zip(tags, tag_common))
+    r['nan'] = ['nan','']
+    return r
+def map_common_names_dro():
+
+    MAP_FILE = "../data-sources/dro/fbgn_NAseq_Uniprot_fb_2020_01.tsv"
+
+    df = pd.read_csv(MAP_FILE, sep='\t', header=4, na_filter=True)
+    df = df[df['organism_abbreviation'] == 'Dmel']
+
+    ix = ~pd.isnull(df['primary_FBgn#'])
+    df = df[ix]
+
+    tags = df['primary_FBgn#'].str.lower()
+    common = df['gene_symbol'].fillna('').str.lower()
+
+    tag_common = list(zip(tags, common))
+
+    G = nx.read_gpickle('../generated-data/ppc_dro')
+    nodes = set(G.nodes())
+    assert nodes.intersection(tags) == nodes 
+
+    return dict(zip(tags, tag_common))
+
+SPECIES_GENE_NAMES = {
+    1: map_common_names_yeast(),
+    2: map_common_names_pombe(),
+    3: map_common_names_human(),
+    4: map_common_names_dro()
+}
+
+
 def create_db(path):
 
     os.remove(path)
@@ -72,6 +149,9 @@ def read_node_ix(gpath):
     return node_ix
 
 def populate_gene_features(conn, lid, smf, sgo, node_ix, species_id):
+    
+    tag_common = SPECIES_GENE_NAMES[species_id]
+
     smf = smf.tolist()
     lid = lid.tolist()
 
@@ -80,16 +160,17 @@ def populate_gene_features(conn, lid, smf, sgo, node_ix, species_id):
     for gene, gid in node_ix.items():
         row = (
             species_id,
-            gene,
+            tag_common[gene][0],
+            tag_common[gene][1],
             lid[gid],
             smf[gid],
             website.utils.pack_sgo(sgo[gid,:]),
         )
         rows.append(row)
     
-    c.executemany("INSERT INTO genes(species_id, gene_name, lid, smf, sgo_terms) VALUES(?,?,?,?,?)", rows)
+    c.executemany("INSERT INTO genes(species_id, locus_tag, common_name, lid, smf, sgo_terms) VALUES(?,?,?,?,?,?)", rows)
     conn.commit()
-    c.execute("SELECT gene_name, gene_id FROM genes")
+    c.execute("SELECT locus_tag, gene_id FROM genes")
     results = list(c.fetchall())
     n_to_id = {e[0]:e[1] for e in results}
 
@@ -103,12 +184,19 @@ def populate_interactions(conn, results_path, node_db_ix, node_ix, spl, species_
         print("Warning: found %d entries with no a_id or b_id" % np.sum(ix))
         df = df[~ix]
 
+    list_a_ids = [ node_ix[e] for e in df['a_id'] ]
+    list_b_ids = [ node_ix[e] for e in df['b_id'] ]
+
     list_a_names = list(df['a_id'])
     list_b_names = list(df['b_id'])
-    
-    df['a_id'] = [ node_ix[e] for e in list_a_names ]
-    df['b_id'] = [ node_ix[e] for e in list_b_names ]
 
+    if species_id == 1:
+        list_a_names = [g.split('  ')[0] for g in list_a_names]
+        list_b_names = [g.split('  ')[0] for g in list_b_names]
+    
+    df['a_id'] = list_a_ids
+    df['b_id'] = list_b_ids
+    
     list_prob_gi = list(df['prob_gi'])
     list_obs = list(df['observed'])
     list_interacting = list(df['interacting'])
@@ -122,18 +210,19 @@ def populate_interactions(conn, results_path, node_db_ix, node_ix, spl, species_
     c.executemany("INSERT INTO genetic_interactions(species_id, gene_a_id, gene_b_id, observed, observed_gi, prob_gi, spl) VALUES(?, ?, ?, ?, ?, ?, ?)", rows)
     conn.commit()
 
+
 create_db(DB_PATH)
 
 conn = connect_db(DB_PATH)
 
 populate_species(conn, 'cfgs/models/yeast_gi_mn.json', '../generated-data/ppc_yeast', '../results/preds/yeast_gi_hybrid_mn', 1)
-
+"""
 populate_species(conn, 'cfgs/models/pombe_gi_mn.json', '../generated-data/ppc_pombe', '../results/preds/pombe_gi_mn', 2)
 
 populate_species(conn, 'cfgs/models/human_gi_mn.json', '../generated-data/ppc_human', '../results/preds/human_gi_mn', 3)
 
 populate_species(conn, 'cfgs/models/dro_gi_mn.json', '../generated-data/ppc_dro', '../results/preds/dro_gi_mn', 4)
-
+"""
 
 def interpret(path, ref_class, output_path):
 

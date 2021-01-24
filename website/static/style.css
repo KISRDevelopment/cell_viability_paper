@@ -67,9 +67,7 @@ tr.selected {
 }
 
 #interpretation {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
+    margin-left: 190px;
 }
 
 #interpretation svg {
