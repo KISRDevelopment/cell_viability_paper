@@ -109,10 +109,12 @@ class LogisticRegressionModel:
         
         z = self._weights * vec
 
+        z = np.hstack((self._bias, z))
+        
         return {
             "bias" : float(self._bias),
             "components" : z.tolist(),
-            "labels" : self._labels.tolist()
+            "labels" : ['Bias'] + self._labels.tolist()
         }
 
     def _arrange_features(self, row):

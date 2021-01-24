@@ -42,7 +42,7 @@ def map_common_names_human():
     gene_names_df = pd.read_csv(gene_names, sep='\t')
 
     tags = gene_names_df['Approved symbol'].fillna('').str.lower()
-    common = gene_names_df['Approved name'].fillna('').str.lower()
+    common = gene_names_df['HGNC ID'].fillna('').str.lower()
 
     tag_common = list(zip(tags, common))
 
@@ -196,7 +196,7 @@ def populate_interactions(conn, results_path, node_db_ix, node_ix, spl, species_
     
     df['a_id'] = list_a_ids
     df['b_id'] = list_b_ids
-    
+
     list_prob_gi = list(df['prob_gi'])
     list_obs = list(df['observed'])
     list_interacting = list(df['interacting'])
@@ -216,13 +216,13 @@ create_db(DB_PATH)
 conn = connect_db(DB_PATH)
 
 populate_species(conn, 'cfgs/models/yeast_gi_mn.json', '../generated-data/ppc_yeast', '../results/preds/yeast_gi_hybrid_mn', 1)
-"""
+
 populate_species(conn, 'cfgs/models/pombe_gi_mn.json', '../generated-data/ppc_pombe', '../results/preds/pombe_gi_mn', 2)
 
 populate_species(conn, 'cfgs/models/human_gi_mn.json', '../generated-data/ppc_human', '../results/preds/human_gi_mn', 3)
 
 populate_species(conn, 'cfgs/models/dro_gi_mn.json', '../generated-data/ppc_dro', '../results/preds/dro_gi_mn', 4)
-"""
+
 
 def interpret(path, ref_class, output_path):
 
