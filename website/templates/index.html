@@ -49,7 +49,7 @@
         </div>
         
         <div class='l-columns'>
-            <div class='l-columns__col' style='flex: .65;'>
+            <div class='l-columns__col' style='max-width: 600px;' id='searchResultsCol'>
                 <div class='search-pages'>
                     <div class='search-pages__count'>
                         {{ n_rows }} records found
@@ -58,7 +58,7 @@
                         {% if pagination.prev_page > -1 %}
                         <a href="{{ url_for('index', species_id=species_id, threshold=threshold, page=pagination.prev_page) }}">Previous Page</a>
                         {% endif %}
-                        Page {{ pagination.page }} out of {{ pagination.pages }}
+                        Page {{ pagination.page + 1 }} out of {{ pagination.pages + 1 }}
                         {% if pagination.next_page > -1 %}
                         <a href="{{ url_for('index', species_id=species_id, threshold=threshold, page=pagination.next_page) }}">Next Page</a>
                         {% endif %}
@@ -70,9 +70,8 @@
                         <tr>
                             <th>Gene A</th>
                             <th>Gene B</th>
-                            <th>Observed</th>
-                            <th>Interacting</th>
                             <th>Probability of GI</th>
+                            <th>Reported GI</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -80,15 +79,17 @@
                         <tr data-gi_id="{{ row.gi_id }}">
                             <td>{{ row.gene_a }}</td>
                             <td>{{ row.gene_b }}</td>
-                            <td>{% if row.observed == 1 %}<strong>Yes</strong>{% else %}No{% endif %}</td>
-                            <td>{% if row.observed_gi == 1  %}<strong>Yes</strong>{% else %}No{% endif %}</td>
                             <td>{{ '%0.2f' | format(row.prob_gi) }}</td>
+                            <td>{% if row.reported_gi == 1 %}<strong>Yes</strong>{% else %}No{% endif %}</td>
                         </tr>   
                         {% endfor %}
                     </tbody>
                 </table>
             </div>
-            <div class='l-columns__col'>
+            <div class='l-columns__col' style='width: 64px;'>
+                <canvas id='pointer'></canvas>
+            </div>
+            <div class='l-columns__col' style='flex: 1;'>
                 <div id='interpretation'></div>
             </div>
         </div>

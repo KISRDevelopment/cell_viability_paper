@@ -78,8 +78,7 @@ class LogisticRegressionModel:
         self._labels = d['labels']
         self._bias = d['bias']
 
-        self._orig_weights = d['orig_weights']
-        self._orig_biases = d['orig_biases']
+        
         self.n_sgo = 45
         
     def predict(self, row):

@@ -47,6 +47,8 @@ def index():
         c.execute(SPECIES_QUERY, (species_id, threshold, ENTRIES_PER_PAGE, page * ENTRIES_PER_PAGE))
         rows = c.fetchall()
 
+        for r in rows:
+            r['reported_gi'] = r['observed'] and r['observed_gi']
         n_rows = calculate_rows(species_id, threshold)
 
     pagination = paginate(n_rows, ENTRIES_PER_PAGE, page)
