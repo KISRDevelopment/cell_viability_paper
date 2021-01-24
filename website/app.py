@@ -9,9 +9,6 @@ app = Flask(__name__)
 
 DB_PATH = "db.sqlite"
 
-COUNT_QUERY = "select count(gi_id) as n_rows from genetic_interactions  where species_id = ? and prob_gi > ?"
-SPECIES_QUERY = "select g.gi_id gi_id, a.gene_name  gene_a, b.gene_name gene_b, g.observed, g.observed_gi, g.prob_gi from genetic_interactions g join genes a on g.gene_a_id = a.gene_id join genes b on g.gene_b_id = b.gene_id where g.species_id = ? and g.prob_gi > ? limit ? offset ?"
-
 ENTRIES_PER_PAGE = 50
 
 def init():
@@ -29,27 +26,32 @@ def index():
     species_id = 0
     threshold = 0
     page = 0
+    gene = ''
 
     if request.args:
         species_id = int(request.args.get('species_id', -1))
         threshold = float(request.args.get('threshold', 0))
         page = int(request.args.get('page', 0))
+        gene = request.args.get('gene', '')
     
     if species_id == -1:
         rows = []
         n_rows = 0
         page = 0
+        gene = ''
     else:
         
         conn = get_db()
-        conn.row_factory = dict_factory
-        c = conn.cursor()
-        c.execute(SPECIES_QUERY, (species_id, threshold, ENTRIES_PER_PAGE, page * ENTRIES_PER_PAGE))
-        rows = c.fetchall()
+        
+        # c = conn.cursor()
+        # c.execute(SPECIES_QUERY, (species_id, threshold, ENTRIES_PER_PAGE, page * ENTRIES_PER_PAGE))
+        # rows = c.fetchall()
+
+        rows = queries.get_pairs(conn, species_id, threshold, gene, page, ENTRIES_PER_PAGE)
 
         for r in rows:
             r['reported_gi'] = r['observed'] and r['observed_gi']
-        n_rows = calculate_rows(species_id, threshold)
+        n_rows = calculate_rows(species_id, threshold, gene)
 
     pagination = paginate(n_rows, ENTRIES_PER_PAGE, page)
 
@@ -77,12 +79,10 @@ def interpret(gi_id):
     
 
 @cache.memoize(timeout=None)
-def calculate_rows(species_id, threshold):
+def calculate_rows(species_id, threshold, gene):
     conn = get_db()
-    c = conn.cursor()
-    c.execute(COUNT_QUERY, (species_id, threshold))
-    n_rows = c.fetchone()['n_rows']
-    return n_rows
+
+    return queries.count_pairs(conn, species_id, threshold, gene)
 
 def paginate(n_rows, page_size, page):
     
@@ -111,7 +111,7 @@ def get_db():
             DB_PATH,
             detect_types=sqlite3.PARSE_DECLTYPES
         )
-        g.db.row_factory = sqlite3.Row
+        g.db.row_factory = queries.dict_factory
 
     return g.db
 

@@ -2,6 +2,15 @@ import sqlite3
 import utils 
 import numpy as np 
 
+JOIN_PART = """
+    from genetic_interactions g 
+    join genes a on g.gene_a_id = a.gene_id 
+    join genes b on g.gene_b_id = b.gene_id
+"""
+
+FILTER_PART = """where 
+    g.species_id = ? and g.prob_gi > ? and (instr(a.gene_name, ?) or instr(b.gene_name, ?))"""
+
 GI_SELECT_SQL = """select g.gi_id gi_id,
                           g.species_id species_id,
                           a.gene_name gene_a, 
@@ -16,14 +25,10 @@ GI_SELECT_SQL = """select g.gi_id gi_id,
                           a.sgo_terms gene_a_sgo,
                           b.sgo_terms gene_b_sgo,
                           g.spl spl 
-                          from genetic_interactions g 
-                          join genes a on g.gene_a_id = a.gene_id 
-                          join genes b on g.gene_b_id = b.gene_id
-"""
+""" + JOIN_PART
 
-SPECIES_QUERY = GI_SELECT_SQL + """ 
-                          where 
-                          g.species_id = ? and g.prob_gi > ? limit ? offset ?"""
+SPECIES_QUERY = GI_SELECT_SQL + FILTER_PART + "limit ? offset ?"
+COUNT_QUERY = "select count(g.gi_id) as n_rows" + JOIN_PART + FILTER_PART
 
 SMF_MAP = {
     (1, 1) : 0,
@@ -46,13 +51,20 @@ def get_genes(conn, species_id):
     
     print(rows)
 
-def get_pairs(conn, species_id, threshold, page, entries_per_page):
+def get_pairs(conn, species_id, threshold, gene, page, entries_per_page):
+    gene = gene.lower()
 
     c = conn.cursor()
-    c.execute(SPECIES_QUERY, (species_id, threshold, entries_per_page, page * entries_per_page))
+    c.execute(SPECIES_QUERY, (species_id, threshold, gene, gene, entries_per_page, page * entries_per_page))
     rows = c.fetchall()
 
     return rows 
+
+def count_pairs(conn, species_id, threshold, gene):
+    c = conn.cursor()
+    c.execute(COUNT_QUERY, (species_id, threshold, gene, gene))
+    n_rows = c.fetchone()['n_rows']
+    return n_rows
 
 def get_gi(conn, gi_id):
 
