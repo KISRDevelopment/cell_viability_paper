@@ -1,3 +1,6 @@
+const PLOT_HEIGHT_PIX = 1500;
+const PLOT_WIDTH_PX = 400;
+
 function main()
 {
     init_canvas();
@@ -28,6 +31,7 @@ function gi_selected()
     this.classList.add('selected');
     
     const searchResultsCol = document.getElementById('searchResultsCol');
+
     const refBox = searchResultsCol.getBoundingClientRect();
 
     const canvas = document.getElementById('pointer');
@@ -38,16 +42,35 @@ function gi_selected()
     const rect = this.getBoundingClientRect();
     const middle = (rect.top + rect.bottom) / 2 - refBox.top;
     
-    ctx.strokeStyle = "#949999";
-    ctx.beginPath();
-    ctx.moveTo(0, middle);
-    ctx.lineTo(canvas.width, 0);
-    ctx.stroke();
+    const grd = ctx.createLinearGradient(0, 0, canvas.width, 0);
+    grd.addColorStop(0, "#f6e0ff");
+    grd.addColorStop(1, "white");
+
+    const region = new Path2D();
+    region.moveTo(0, middle);
+    region.lineTo(canvas.width, 0);
+    region.lineTo(canvas.width, PLOT_HEIGHT_PIX);
+    region.closePath();
+
+    ctx.save();
+
+    ctx.clip(region);
+
+    ctx.fillStyle = grd;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.restore();
     
-    ctx.beginPath();
-    ctx.moveTo(0, middle);
-    ctx.lineTo(canvas.width, canvas.height);
-    ctx.stroke();
+    // ctx.strokeStyle = "#949999";
+    // ctx.beginPath();
+    // ctx.moveTo(0, middle);
+    // ctx.lineTo(canvas.width, 0);
+    // ctx.stroke();
+    
+    // ctx.beginPath();
+    // ctx.moveTo(0, middle);
+    // ctx.lineTo(canvas.width, canvas.height);
+    // ctx.stroke();
 
     const giId = this.dataset.gi_id;
     fetch('/interpret/' + giId)
@@ -72,9 +95,11 @@ function plot_interpretation(data)
         }]
         var layout = {
             title: '<b>Model Components</b>',
+            paper_bgcolor: 'rgba(0,0,0,0)',
+            plot_bgcolor: 'rgba(0,0,0,0)',
 
-          height: 1500,
-          width: 400,
+          height: PLOT_HEIGHT_PIX,
+          width: PLOT_WIDTH_PX,
             font: {
               size: 12,
               

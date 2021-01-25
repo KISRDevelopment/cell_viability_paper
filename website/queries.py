@@ -9,7 +9,7 @@ JOIN_PART = """
 """
 
 FILTER_PART = """where 
-    g.species_id = ? and g.prob_gi > ? and (a.locus_tag = ? or a.common_name = ? or b.locus_tag = ? or b.common_name = ?)"""
+    g.species_id = ? and g.prob_gi > ? and (? = '' or (a.locus_tag = ? or a.common_name = ? or b.locus_tag = ? or b.common_name = ?))"""
 
 GI_SELECT_SQL = """select g.gi_id gi_id,
                           g.species_id species_id,
@@ -57,14 +57,14 @@ def get_pairs(conn, species_id, threshold, gene, page, entries_per_page):
     gene = gene.lower()
 
     c = conn.cursor()
-    c.execute(SPECIES_QUERY, (species_id, threshold, gene, gene, gene, gene, entries_per_page, page * entries_per_page))
+    c.execute(SPECIES_QUERY, (species_id, threshold, gene, gene, gene, gene, gene, entries_per_page, page * entries_per_page))
     rows = c.fetchall()
 
     return rows 
 
 def count_pairs(conn, species_id, threshold, gene):
     c = conn.cursor()
-    c.execute(COUNT_QUERY, (species_id, threshold, gene, gene, gene, gene))
+    c.execute(COUNT_QUERY, (species_id, threshold, gene, gene, gene, gene, gene))
     n_rows = c.fetchone()['n_rows']
     return n_rows
 
@@ -110,7 +110,7 @@ class LogisticRegressionModel:
         z = self._weights * vec
 
         z = np.hstack((self._bias, z))
-        
+
         return {
             "bias" : float(self._bias),
             "components" : z.tolist(),
