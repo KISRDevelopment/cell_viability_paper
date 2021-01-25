@@ -30,8 +30,11 @@
                         <option value="0.9" {% if threshold == 0.9 %}selected{% endif %}>0.9</option>
                     </select>
                     
-                    <label for="tbGeneA">Gene</label>
-                    <input type="text" id="tbGene" name="gene" value="{{ gene }}">
+                    <label for="tbGeneA">Gene A</label>
+                    <input type="text" id="tbGeneA" name="gene_a" value="{{ gene }}">
+                    
+                    <label for="tbGeneB">Gene B</label>
+                    <input type="text" id="tbGeneB" name="gene_b" value="{{ gene }}">
 
 
                     <input type="submit" value="Search">
@@ -59,11 +62,11 @@
                     </div>
                     <div>
                         {% if pagination.prev_page > -1 %}
-                        <a href="{{ url_for('index', species_id=species_id, threshold=threshold, page=pagination.prev_page, gene=gene) }}">Previous Page</a>
+                        <a href="{{ url_for('index', species_id=species_id, threshold=threshold, page=pagination.prev_page, gene_a=gene_a, gene_b=gene_b) }}">Previous Page</a>
                         {% endif %}
-                        Page {{ pagination.page + 1 }} out of {{ pagination.pages + 1 }}
+                        Page {{ pagination.page + 1 }} out of {{ pagination.pages }}
                         {% if pagination.next_page > -1 %}
-                        <a href="{{ url_for('index', species_id=species_id, threshold=threshold, page=pagination.next_page, gene=gene) }}">Next Page</a>
+                        <a href="{{ url_for('index', species_id=species_id, threshold=threshold, page=pagination.next_page, gene_a=gene_a, gene_b=gene_b) }}">Next Page</a>
                         {% endif %}
                     </div>
                 </div>

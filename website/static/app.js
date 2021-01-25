@@ -12,7 +12,7 @@ function init_canvas()
     const canvas = document.getElementById('pointer');
     const parent = canvas.parentNode;
     canvas.width = parent.offsetWidth;
-    canvas.height = parent.offsetHeight;
+    canvas.height = PLOT_HEIGHT_PIX;
 }
 
 function attach_handlers()
@@ -60,17 +60,7 @@ function gi_selected()
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     ctx.restore();
-    
-    // ctx.strokeStyle = "#949999";
-    // ctx.beginPath();
-    // ctx.moveTo(0, middle);
-    // ctx.lineTo(canvas.width, 0);
-    // ctx.stroke();
-    
-    // ctx.beginPath();
-    // ctx.moveTo(0, middle);
-    // ctx.lineTo(canvas.width, canvas.height);
-    // ctx.stroke();
+
 
     const giId = this.dataset.gi_id;
     fetch('/interpret/' + giId)
@@ -82,6 +72,8 @@ function plot_interpretation(data)
 {
     const labels = data.labels.map((l) => l.replace('(Sum)', '').replace('(sum)', ''))
     const colors = data.components.map((v) => v < 0 ? 'red' : 'blue');
+
+    const z = data.components.reduce((a, b) => a + b, 0);
 
     var data = [
         {
