@@ -43,3 +43,13 @@ CREATE TABLE genetic_interactions (
 CREATE INDEX gi_species ON genetic_interactions (species_id);
 CREATE INDEX gi_first_gene ON genetic_interactions (gene_a_id);
 CREATE INDEX gi_second_gene ON genetic_interactions (gene_b_id);
+CREATE INDEX gi_prob_gi ON genetic_interactions (prob_gi);
+
+DROP TABLE IF EXISTS gi_pubs;
+CREATE TABLE gi_pubs (
+    pub_id integer primary key autoincrement,
+    gi_id integer not null,
+    identifier varchar not null,
+    FOREIGN KEY(gi_id) REFERENCES genetic_interactions(gi_id)
+);
+CREATE INDEX gi_pubs_index ON gi_pubs (identifier);

@@ -29,7 +29,7 @@ class DbLayer:
             row = c.fetchone()
             return dict(row) 
 
-    def get_pairs(self, species_id, threshold, gene_a, gene_b, page):
+    def get_pairs(self, species_id, threshold, gene_a, gene_b, page, published_only=False):
         print("get_pairs(%d, %0.2f, %s, %s)" % (species_id, threshold, gene_a, gene_b))
         
         both_genes_clause = """
@@ -77,7 +77,8 @@ class DbLayer:
                 JOIN    genes a on g.gene_a_id = a.gene_id 
                 JOIN    genes b on g.gene_b_id = b.gene_id
                 WHERE   (a.species_id = :species_id) AND
-                        (g.prob_gi >= :threshold)
+                        (g.prob_gi >= :threshold) AND
+                        (NOT :published_only OR g.observed = :published_only)
                         %s
                 LIMIT :entries_per_page OFFSET :offset
         """ % genes_clause
@@ -88,7 +89,8 @@ class DbLayer:
                 JOIN    genes a on g.gene_a_id = a.gene_id 
                 JOIN    genes b on g.gene_b_id = b.gene_id
                 WHERE   (a.species_id = :species_id) AND
-                        (g.prob_gi >= :threshold)
+                        (g.prob_gi >= :threshold) AND 
+                        (NOT :published_only OR g.observed = :published_only)
                         %s
         """ % genes_clause
         
@@ -97,8 +99,9 @@ class DbLayer:
             "threshold" : threshold,
             "gene_a_id" : gene_a_id,
             "gene_b_id" : gene_b_id,
+            "published_only" : published_only,
             "entries_per_page" : self._entries_per_page,
-            "offset" : self._entries_per_page * page 
+            "offset" : self._entries_per_page * page, 
         }
         with closing(self._conn.cursor()) as c:
             c.execute(query, params)
@@ -131,13 +134,21 @@ class DbLayer:
                 JOIN    genes b on g.gene_b_id = b.gene_id
                 WHERE   g.gi_id = :gi_id
         """
+
+        pub_query = "SELECT p.identifier identifier FROM gi_pubs p WHERE p.gi_id = ?"
+
         with closing(self._conn.cursor()) as c:
             c.execute(query, { 
                 "gi_id" : gi_id
             })
             row = c.fetchone()
-            return dict(row) if row is not None else None
-
+            gi_row = dict(row) if row is not None else None
+            if gi_row is not None:
+                c.execute(pub_query, (gi_id,))
+                rows = c.fetchall()
+                gi_row['pubs'] = [dict(r) for r in rows]
+            return gi_row
+ 
 if __name__ == "__main__":
 
     layer = DbLayer('db.sqlite', 50)
@@ -169,3 +180,12 @@ if __name__ == "__main__":
     rows, _ = layer.get_pairs(1, 0.5, '', 'snf1', 0)
     assert(len(rows) > 0)
     print(len(rows))
+
+    rows, n_rows = layer.get_pairs(3, 0.5, 'myc', '', 0)
+    assert(n_rows > 0)
+    print(n_rows)
+
+    rows, n_rows = layer.get_pairs(3, 0.5, 'myc', '', 0, True)
+    assert(n_rows > 0)
+    print(n_rows)
+    print(rows)
