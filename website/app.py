@@ -43,6 +43,8 @@ def index():
 
 @app.route('/interpret/<int:gi_id>', methods=['GET'])
 def interpret(gi_id):
+    threshold = float(request.args.get('threshold', 0.5))
+
     SPECIES_MODELS = {
         1: "./models/yeast_gi_hybrid_mn.npz",
         2: './models/pombe_gi_mn.npz',
@@ -51,14 +53,15 @@ def interpret(gi_id):
     }
     db = get_db()
 
-    row = db.get_gi(gi_id)
+    row = db.get_gi(gi_id, threshold)
 
     if row:
         m = lrm.LogisticRegressionModel(SPECIES_MODELS[row['species_id']])
         components = m.interpret(row)
         return jsonify({
             "components" : components,
-            "pubs" : row['pubs']
+            "pubs" : row['pubs'],
+            "common" : row['common']
         })
     else:
         return jsonify({})

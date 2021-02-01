@@ -87,7 +87,7 @@ function gi_selected()
 
 
     const giId = this.dataset.gi_id;
-    fetch('/interpret/' + giId)
+    fetch('/interpret/' + giId + '?threshold=0.9')
     .then(response => response.json())
     .then(data => interpret(data));
 }
@@ -98,8 +98,10 @@ function interpret(data)
   plot_interpretation('gene_b_features', data.components.gene_b);
   plot_interpretation('joint_features', data.components.joint);
   plot_interpretation('z_features', data.components.z);
-  populate_pubs('publications', data.pubs);
+  //populate_pubs('publications', data.pubs);
   //plots[0].style.display = 'block';
+
+  populate_common('commonInteractors', data.common)
 }
 
 function populate_pubs(elmId, d)
@@ -118,6 +120,36 @@ function populate_pubs(elmId, d)
         
         li.innerHTML = p.identifier;
     });
+}
+
+function populate_common(elmId, d)
+{
+    console.log(d);
+    const elm = document.getElementById(elmId);
+
+    elm.innerHTML = "";
+
+    d.forEach((interaction) => {
+
+       const tr = createElement('tr', elm);
+       
+       let td = createElement('td', tr);
+        td.innerHTML = `${interaction[0][0]} (${interaction[0][1]})`;
+
+        td = createElement('td', tr);
+        td.innerHTML = interaction[1].toFixed(2);
+
+        td = createElement('td', tr);
+        td.innerHTML = interaction[2].toFixed(2);
+        
+    });
+}
+
+function createElement(tag, parentElm)
+{
+    const elm = document.createElement(tag);
+    parentElm.appendChild(elm);
+    return elm;
 }
 function plot_interpretation(elm, d)
 {

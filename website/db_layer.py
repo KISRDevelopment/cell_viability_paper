@@ -112,9 +112,11 @@ class DbLayer:
             n_rows = c.fetchone()['n_rows']
             return rows, n_rows
     
-    def get_gi(self, gi_id):
+    def get_gi(self, gi_id, common_interactors_threshold=0.5):
         query = """
                 SELECT  g.gi_id gi_id,
+                            a.gene_id gene_a_id,
+                            b.gene_id gene_b_id,
                             g.species_id species_id,
                             a.locus_tag gene_a_locus_tag, 
                             b.locus_tag gene_b_locus_tag,
@@ -148,8 +150,52 @@ class DbLayer:
                 c.execute(pub_query, (gi_id,))
                 rows = c.fetchall()
                 gi_row['pubs'] = [dict(r) for r in rows]
+
+
+                a_interactors = self.get_interactors(gi_row['species_id'], gi_row['gene_a_id'], common_interactors_threshold)
+                b_interactors = self.get_interactors(gi_row['species_id'], gi_row['gene_b_id'], common_interactors_threshold)
+
+                common_interactors = set(a_interactors.keys()).intersection(set(b_interactors.keys()))
+                
+                common = [(k, a_interactors[k], b_interactors[k]) for k in common_interactors]
+                gi_row['common'] = common
+            
             return gi_row
- 
+    
+    def get_interactors(self, species_id, gene_id, threshold):
+        query = """
+                SELECT  g.gi_id gi_id,
+                            a.gene_id gene_a_id,
+                            b.gene_id gene_b_id,
+                            a.locus_tag gene_a_locus_tag, 
+                            b.locus_tag gene_b_locus_tag,
+                            a.common_name gene_a_common_name,
+                            b.common_name gene_b_common_name, 
+                            g.prob_gi prob_gi
+                FROM    genetic_interactions g 
+                JOIN    genes a on g.gene_a_id = a.gene_id 
+                JOIN    genes b on g.gene_b_id = b.gene_id
+                WHERE   (g.prob_gi >= :threshold) AND (g.species_id = :species_id) AND
+                        ((a.gene_id = :gene_id) OR (b.gene_id = :gene_id))
+        """
+        with closing(self._conn.cursor()) as c:
+            c.execute(query, { 
+                "species_id" : species_id,
+                "gene_id" : gene_id, 
+                "threshold" : threshold
+            })
+            rows = c.fetchall()
+            
+            interactors = {}
+            for r in rows:
+                prob_gi = r['prob_gi']
+                if gene_id == r['gene_b_id']:
+                    target_name = (r['gene_a_locus_tag'], r['gene_a_common_name'])
+                else:
+                    target_name = (r['gene_b_locus_tag'], r['gene_b_common_name'])
+                interactors[target_name] = prob_gi
+            return interactors
+    
 if __name__ == "__main__":
 
     layer = DbLayer('db.sqlite', 50)
@@ -188,8 +234,8 @@ if __name__ == "__main__":
 
     rows, n_rows = layer.get_pairs(3, 0.5, 'myc', '', 0, True)
     assert(n_rows > 0)
-    print(n_rows)
-    print(rows)
+    #print(n_rows)
+    #print(rows)
 
-    row = layer.get_gi(3)
-    print(row)
+    row = layer.get_gi(3, 0.8)
+    print(row['common'])

@@ -107,7 +107,19 @@
                     ><li class='js-tab-link' data-tab='joint_features'>Joint Features</li
                     ><li class='js-tab-link' data-tab='z_features'>MN Model</li>
                 </ul>
-                <div class='js-interp' id='publications'></div>
+                <div class='js-interp' id='publications'>
+                    <table class='search-results'>
+                        <thead>
+                            <tr>
+                                <th>Gene</th>
+                                <th>Probability of GI with Gene A</th>
+                                <th>Probability of GI with Gene B</th>
+                            </tr>
+                        </thead>
+                        <tbody id='commonInteractors'>
+                        </tbody>
+                    </table>
+                </div>
                 <div class='interp-plot js-interp' id='gene_a_features'></div>
                 <div class='interp-plot js-interp' id='gene_b_features'></div>
                 <div class='interp-plot js-interp' id='joint_features'></div>
