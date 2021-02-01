@@ -19,10 +19,12 @@ def index():
     gene_a = request.args.get('gene_a', '')
     gene_b = request.args.get('gene_b', '')
     page = int(request.args.get('page', 0))
-    
+    published_only = 'published_only' in request.args
+    print(published_only)
+
     db = get_db()
 
-    rows, n_rows = db.get_pairs(species_id, threshold, gene_a, gene_b, page)
+    rows, n_rows = db.get_pairs(species_id, threshold, gene_a, gene_b, page, published_only)
 
     for r in rows:
         r['reported_gi'] = r['observed'] and r['observed_gi']
@@ -36,7 +38,8 @@ def index():
         n_rows=n_rows, 
         pagination=pagination,
         gene_a=gene_a, 
-        gene_b=gene_b)
+        gene_b=gene_b,
+        published_only='checked' if published_only else '')
 
 @app.route('/interpret/<int:gi_id>', methods=['GET'])
 def interpret(gi_id):
@@ -52,8 +55,11 @@ def interpret(gi_id):
 
     if row:
         m = lrm.LogisticRegressionModel(SPECIES_MODELS[row['species_id']])
-        components = m.get_z_components(row)
-        return jsonify(components)
+        components = m.interpret(row)
+        return jsonify({
+            "components" : components,
+            "pubs" : row['pubs']
+        })
     else:
         return jsonify({})
 

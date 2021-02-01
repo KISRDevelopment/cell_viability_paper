@@ -78,8 +78,9 @@ class DbLayer:
                 JOIN    genes b on g.gene_b_id = b.gene_id
                 WHERE   (a.species_id = :species_id) AND
                         (g.prob_gi >= :threshold) AND
-                        (NOT :published_only OR g.observed = :published_only)
+                        (NOT :published_only OR (g.observed = :published_only AND g.observed_gi = 1))
                         %s
+                        ORDER BY g.prob_gi DESC
                 LIMIT :entries_per_page OFFSET :offset
         """ % genes_clause
         
@@ -90,7 +91,7 @@ class DbLayer:
                 JOIN    genes b on g.gene_b_id = b.gene_id
                 WHERE   (a.species_id = :species_id) AND
                         (g.prob_gi >= :threshold) AND 
-                        (NOT :published_only OR g.observed = :published_only)
+                        (NOT :published_only OR (g.observed = :published_only AND g.observed_gi = 1))
                         %s
         """ % genes_clause
         
@@ -189,3 +190,6 @@ if __name__ == "__main__":
     assert(n_rows > 0)
     print(n_rows)
     print(rows)
+
+    row = layer.get_gi(3)
+    print(row)

@@ -3,6 +3,11 @@ const PLOT_WIDTH_PX = 400;
 
 function main()
 {
+
+    const plots = document.querySelectorAll('.js-interp');
+  
+    plots.forEach((p) => p.style.display = 'none');
+
     init_canvas();
     attach_handlers();
 }
@@ -22,6 +27,25 @@ function attach_handlers()
         tr.onclick = gi_selected;
     });
 
+    const tabLinks = document.querySelectorAll('.js-tab-link');
+    const plots = document.querySelectorAll('.js-interp');
+    
+    tabLinks.forEach((tl) => {
+
+      const targetId = tl.dataset.tab;
+      console.log(targetId);
+
+      tl.onclick = () => {
+        plots.forEach((p) => p.style.display = 'none');
+        tabLinks.forEach((e) => e.classList.remove('selected'));
+
+        const targetPlot = document.getElementById(targetId);
+        targetPlot.style.display = 'block';
+
+        tl.classList.add('selected');
+      }
+
+    });
 }
 
 function gi_selected()
@@ -65,28 +89,54 @@ function gi_selected()
     const giId = this.dataset.gi_id;
     fetch('/interpret/' + giId)
     .then(response => response.json())
-    .then(data => plot_interpretation(data));
+    .then(data => interpret(data));
 }
 
-function plot_interpretation(data)
+function interpret(data)
 {
-    const labels = data.labels.map((l) => l.replace('(Sum)', '').replace('(sum)', ''))
-    const colors = data.components.map((v) => v < 0 ? 'red' : 'blue');
+  plot_interpretation('gene_a_features', data.components.gene_a);
+  plot_interpretation('gene_b_features', data.components.gene_b);
+  plot_interpretation('joint_features', data.components.joint);
+  plot_interpretation('z_features', data.components.z);
+  populate_pubs('publications', data.pubs);
+  //plots[0].style.display = 'block';
+}
 
-    const z = data.components.reduce((a, b) => a + b, 0);
+function populate_pubs(elmId, d)
+{
+    const elm = document.getElementById(elmId);
+
+    elm.innerHTML = "";
+
+    const ul = document.createElement('ul');
+    elm.appendChild(ul);
+
+    d.forEach((p) => {
+
+        const li = document.createElement('li');
+        ul.appendChild(li);
+        
+        li.innerHTML = p.identifier;
+    });
+}
+function plot_interpretation(elm, d)
+{
+    let labels = d.labels;
+    let features = d.features;
+
+    const colors = features.map((v) => v < 0 ? 'red' : 'blue');
 
     var data = [
         {
           type: 'bar',
           orientation: 'h',
-          x: data.components,
+          x: features,
           y: labels,
           marker: {
             color: colors
           },
         }]
         var layout = {
-            title: '<b>Model Components</b>',
             paper_bgcolor: 'rgba(0,0,0,0)',
             plot_bgcolor: 'rgba(0,0,0,0)',
 
@@ -109,7 +159,7 @@ function plot_interpretation(data)
             }
           };
 
-    Plotly.newPlot('interpretation', data, layout);
+    Plotly.newPlot(elm, data, layout);
 }
 
 window.onload = main;

@@ -66,11 +66,35 @@ tr.selected {
     background: #f6e0ff;
 }
 
-#interpretation {
+.interp-plot {
     margin-left: 190px;
-    
 }
 
-#interpretation svg {
+.plotly {
     overflow: visible;
+}
+
+.interp-plot svg {
+    overflow: visible !important;
+}
+
+.c-tabs {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.c-tabs li {
+    display: inline-block;
+    padding: 10px;
+    font-size: 1.2rem;
+    border-bottom: 2px solid black;
+}
+
+.c-tabs li.selected {
+    font-weight: bold;
+    border-bottom: 0;
+    border-top: 2px solid black;
+    border-left: 2px solid black;
+    border-right: 2px solid black;
 }

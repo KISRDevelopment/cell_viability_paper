@@ -31,12 +31,15 @@
                     </select>
                     
                     <label for="tbGeneA">Gene A</label>
-                    <input type="text" id="tbGeneA" name="gene_a" value="{{ gene }}">
+                    <input type="text" id="tbGeneA" name="gene_a" value="{{ gene_a }}">
                     
                     <label for="tbGeneB">Gene B</label>
-                    <input type="text" id="tbGeneB" name="gene_b" value="{{ gene }}">
+                    <input type="text" id="tbGeneB" name="gene_b" value="{{ gene_b }}">
 
-
+                    <br>
+                    <input type="checkbox" id="cbPublishedOnly" name="published_only" {{ published_only }}>
+                    <label for="cbPublishedOnly">Published Only</label>
+                    
                     <input type="submit" value="Search">
 
                 </div>
@@ -96,7 +99,20 @@
                 <canvas id='pointer'></canvas>
             </div>
             <div class='l-columns__col'>
-                <div id='interpretation'></div>
+                <br>
+                <ul class='c-tabs'>
+                    <li class='js-tab-link' data-tab='publications'>Publications</li
+                    ><li class='js-tab-link' data-tab='gene_a_features'>Gene A Features</li
+                    ><li class='js-tab-link' data-tab='gene_b_features'>Gene B Features</li
+                    ><li class='js-tab-link' data-tab='joint_features'>Joint Features</li
+                    ><li class='js-tab-link' data-tab='z_features'>MN Model</li>
+                </ul>
+                <div class='js-interp' id='publications'></div>
+                <div class='interp-plot js-interp' id='gene_a_features'></div>
+                <div class='interp-plot js-interp' id='gene_b_features'></div>
+                <div class='interp-plot js-interp' id='joint_features'></div>
+                <div class='interp-plot js-interp' id='z_features'></div>
+                
             </div>
         </div>
         

@@ -13,6 +13,11 @@ SMF_MAP = {
     (3, 3) : 5
 }
 
+SMF_LABELS = ['Lethal', 'Reduced Growth', 'Normal']
+LID_LABEL = 'LID'
+N_SMF_BINS = 3
+N_SMF_COMBS = np.max(list(SMF_MAP.values())) + 1
+
 class LogisticRegressionModel:
 
     def __init__(self, path):
@@ -24,53 +29,91 @@ class LogisticRegressionModel:
         self._bias = d['bias']
 
         self.n_sgo = 45
-        
+        self._sgo_labels = [l.replace(' (Sum)', '') for l in self._labels[N_SMF_COMBS:(N_SMF_COMBS+self.n_sgo)]]
+
     def predict(self, row):
+
+        a, avec = self._get_gene_features(row, 'gene_a')
+        b, bvec = self._get_gene_features(row, 'gene_b')
+        joint_vec = self._vectorize_joint_features(row, a, b)
         
-        vec = self._arrange_features(row)
-        
-        z = self._bias + np.sum(self._weights * vec) 
+        z = self._bias + np.sum(self._weights * joint_vec['features']) 
         prob = 1 / (1 + np.exp(-z))
 
         return prob
 
-    def get_z_components(self, row):
-        vec = self._arrange_features(row)
+    def interpret(self, row):
+        a, avec = self._get_gene_features(row, 'gene_a')
+        b, bvec = self._get_gene_features(row, 'gene_b')
+        joint_vec = self._vectorize_joint_features(row, a, b)
+
+        z_components = self._weights * joint_vec['features']
+        z_components = np.hstack((self._bias, z_components))
+        z_labels = ['Bias'] + joint_vec['labels']
+
+        joint_vec['features'] = joint_vec['features'].tolist()
         
-        z = self._weights * vec
-
-        z = np.hstack((self._bias, z))
-
         return {
-            "components" : z.tolist(),
-            "labels" : ['Bias'] + self._labels.tolist()
+            "gene_a" : avec,
+            "gene_b" : bvec,
+            "joint" : joint_vec,
+            "z" : {
+                "labels" : z_labels,
+                "features" : z_components.tolist()
+            }
         }
 
-    def _arrange_features(self, row):
+    def _get_gene_features(self, row, whichone):
 
-        sum_lid = row['gene_a_lid'] + row['gene_b_lid']
+        lid = row['%s_lid' % whichone]
+        smf = int(row['%s_smf' % whichone])
+        sgo = utils.unpack_sgo(row['%s_sgo' % whichone], self.n_sgo).astype(int)
 
-        smf_bin = np.zeros(np.max(list(SMF_MAP.values())) + 1)
+        gf = {
+            "lid" : lid,
+            "smf" : smf, 
+            "sgo" : sgo
+        }
 
-        smf_key = (row['gene_a_smf'], row['gene_b_smf'])
+        return gf, self._vectorize_gene_features(gf)
+    
+    def _vectorize_gene_features(self, gf):
+
+        smf_bin = np.zeros(N_SMF_BINS)
+        if gf['smf'] > 0:
+            smf_bin[gf['smf']-1] = 1
         
+        v = np.hstack((smf_bin, gf['sgo'], [gf['lid']]))
+        labels = SMF_LABELS + self._sgo_labels + [LID_LABEL]
+        return {
+            "features" : v.tolist(),
+            "labels" : labels,
+        }
+    
+    def _vectorize_joint_features(self, row, a, b):
+
+        sum_lid = a['lid'] + b['lid']
+        spl = row['spl']
+        sum_sgo = a['sgo'] + b['sgo']
+        
+        smf_bin = np.zeros(N_SMF_COMBS)
+        smf_key = (a['smf'], b['smf'])
         if smf_key in SMF_MAP:
             smf = SMF_MAP[smf_key]
             smf_bin[smf] = 1
 
-        spl = row['spl']
-
-        sgo = utils.unpack_sgo(row['gene_a_sgo'], self.n_sgo).astype(int) + \
-            utils.unpack_sgo(row['gene_b_sgo'], self.n_sgo).astype(int)
-
-        vec = np.hstack((smf_bin, sgo, spl, sum_lid))
-        
-        return vec 
-
+        v = np.hstack((smf_bin, sum_sgo, spl, sum_lid))
+        labels = self._labels 
+        return {
+            "features" : v,
+            "labels" : labels.tolist(),
+        }
+    
 if __name__ == "__main__":
 
     import db_layer
     import random
+    import json
     db = db_layer.DbLayer('db.sqlite', 100000)
     
     rows, n_rows = db.get_pairs(1, 0.5, '', 'snf1', 0)
@@ -87,8 +130,8 @@ if __name__ == "__main__":
 
         assert diff < 1e-6
 
-    components = m.get_z_components(rows[10])
+    interpretation = m.interpret(rows[10])
     # import json
     # with open('static/interpreation-example.json', 'w') as f:
     #     json.dump(components, f, indent=4)
-    print(components)
+    print(json.dumps(interpretation, indent=4))
