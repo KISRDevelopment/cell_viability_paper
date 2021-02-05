@@ -11,61 +11,6 @@ ENTRIES_PER_PAGE = 50
 def init():
     app.teardown_appcontext(close_db)
 
-@app.route('/')
-def index():
-
-    species_id = int(request.args.get('species_id', -1))
-    threshold = float(request.args.get('threshold', 0))
-    gene_a = request.args.get('gene_a', '')
-    gene_b = request.args.get('gene_b', '')
-    page = int(request.args.get('page', 0))
-    published_only = 'published_only' in request.args
-    print(published_only)
-
-    db = get_db()
-
-    rows, n_rows = db.get_pairs(species_id, threshold, gene_a, gene_b, page, published_only)
-
-    for r in rows:
-        r['reported_gi'] = r['observed'] and r['observed_gi']
-        
-    pagination = paginate(n_rows, ENTRIES_PER_PAGE, page)
-
-    return render_template('index.html', 
-        rows=rows, 
-        species_id=species_id, 
-        threshold=threshold, 
-        n_rows=n_rows, 
-        pagination=pagination,
-        gene_a=gene_a, 
-        gene_b=gene_b,
-        published_only='checked' if published_only else '')
-
-@app.route('/interpret/<int:gi_id>', methods=['GET'])
-def interpret(gi_id):
-    threshold = float(request.args.get('threshold', 0.5))
-
-    SPECIES_MODELS = {
-        1: "./models/yeast_gi_hybrid_mn.npz",
-        2: './models/pombe_gi_mn.npz',
-        3: './models/human_gi_mn.npz',
-        4: './models/dro_gi_mn.npz'
-    }
-    db = get_db()
-
-    row = db.get_gi(gi_id, threshold)
-
-    if row:
-        m = lrm.LogisticRegressionModel(SPECIES_MODELS[row['species_id']])
-        components = m.interpret(row)
-        return jsonify({
-            "components" : components,
-            "pubs" : row['pubs'],
-            "common" : row['common']
-        })
-    else:
-        return jsonify({})
-
 @app.route('/gi', methods=['POST'])
 def gi():
 
@@ -103,22 +48,46 @@ def gi():
 def common_interactors():
     
     rp = request.json 
-
     db = get_db()
 
-    interactors_a = db.get_interactors(rp['species_id'], rp['gene_a_id'], rp['threshold'])
-    interactors_b = db.get_interactors(rp['species_id'], rp['gene_b_id'], rp['threshold'])
+    interactor_dicts = {}
+    common_targets = []
+    full_names = {}
+    for k in ['gene_a', 'gene_b', 'gene_c', 'gene_d']:
+        if rp[k] is None or rp[k] == "":
+            continue 
+        
+        gene_row = db.get_gene(rp['species_id'], rp[k])
+        if not gene_row:
+            continue 
+        
+        gene_id = gene_row['gene_id']
+        full_names[k] = [gene_row['locus_tag'], gene_row['common_name']]
 
-    a_targets = set(interactors_a.keys())
-    b_targets = set(interactors_b.keys())
+        interactors = db.get_interactors(rp['species_id'], gene_id, rp['threshold'], rp['published_only'])
+        interactor_dicts[k] = interactors
 
-    common_targets = a_targets.intersection(b_targets)
+        targets = set(interactors.keys())
+        if common_targets == []:
+            common_targets = targets
+        else:
+            common_targets = targets.intersection(common_targets)
 
-    result = [
-        (t, interactors_a[t], interactors_b[t]) for t in common_targets
-    ]
+    results = []
+    for t in common_targets:
+        row = {
+            "interactor" : t
+        }
 
-    return jsonify(result)
+        for k, interactors in interactor_dicts.items():
+            row[k] = interactors[t]
+        results.append(row)
+
+
+    return jsonify({
+        "rows" : results,
+        "full_names" : full_names
+    })
 
 @app.route('/gi_pairs', methods=['POST'])
 def gi_pairs():
@@ -145,6 +114,7 @@ def gi_pairs():
         "rows" : rows
     })
 
+
 def paginate(n_rows, page_size, page):
     
     pages = int(np.ceil(n_rows / page_size))
@@ -164,7 +134,6 @@ def paginate(n_rows, page_size, page):
         "next_page" : next_page,
         "prev_page" : prev_page
     }
-
 def get_db():
     if 'db' not in g:
         g.db = db_layer.DbLayer(DB_PATH, ENTRIES_PER_PAGE)

@@ -6,8 +6,8 @@ def main():
 
     #test_gi_pairs()
     
-    test_interpret()
-    #test_common_interactors()
+    #test_interpret()
+    test_common_interactors()
 
 def test_gi_pairs():
 
@@ -46,16 +46,19 @@ def test_interpret():
 def test_common_interactors():
 
     rp = {
-        "gene_a_id" : 10,
-        "gene_b_id" : 11,
+        "gene_a" : "snf1",
+        "gene_b" : "snf4",
+        "gene_c" : "",
+        "gene_d" : "",
         "threshold" : 0.9,
-        "species_id" : 1
+        "species_id" : 1,
+        "published_only" : False
     }
 
     res = requests.post('http://localhost:5000/common_interactors', json=rp)
     if res.ok:
         d = res.json()
-        #print(json.dumps(d, indent=4))
+        print(json.dumps(d, indent=4))
         print(len(d))
     else:
         print(res.reason)

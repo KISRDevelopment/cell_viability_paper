@@ -27,10 +27,11 @@ class DbLayer:
         with closing(self._conn.cursor()) as c:
             c.execute(query, { "species_id" : species_id, "gene" : gene })
             row = c.fetchone()
-            return dict(row) 
+            
+            return dict(row) if row is not None else None
 
     def get_pairs(self, species_id, threshold, gene_a, gene_b, page, published_only=False):
-        print("get_pairs(%d, %0.2f, %s, %s)" % (species_id, threshold, gene_a, gene_b))
+        #print("get_pairs(%d, %0.2f, %s, %s)" % (species_id, threshold, gene_a, gene_b))
         
         both_genes_clause = """
             AND ((g.gene_a_id = :gene_a_id AND g.gene_b_id = :gene_b_id) OR
@@ -54,7 +55,8 @@ class DbLayer:
 
         gene_a_id = -1 if not gene_a_row else gene_a_row['gene_id']
         gene_b_id = -1 if not gene_b_row else gene_b_row['gene_id']
-        
+        if gene_a_id == -1 and gene_b_id == -1:
+            return [], 0
 
         query = """
                 SELECT  g.gi_id gi_id,
@@ -147,7 +149,7 @@ class DbLayer:
                 gi_row['pubs'] = [dict(r) for r in rows]
             return gi_row
     
-    def get_interactors(self, species_id, gene_id, threshold):
+    def get_interactors(self, species_id, gene_id, threshold, published_only):
         query = """
                 SELECT  g.gi_id gi_id,
                             a.gene_id gene_a_id,
@@ -161,13 +163,15 @@ class DbLayer:
                 JOIN    genes a on g.gene_a_id = a.gene_id 
                 JOIN    genes b on g.gene_b_id = b.gene_id
                 WHERE   (g.prob_gi >= :threshold) AND (g.species_id = :species_id) AND
-                        ((a.gene_id = :gene_id) OR (b.gene_id = :gene_id))
+                        ((a.gene_id = :gene_id) OR (b.gene_id = :gene_id)) AND
+                        (NOT :published_only OR (g.observed = :published_only AND g.observed_gi = 1))
         """
         with closing(self._conn.cursor()) as c:
             c.execute(query, { 
                 "species_id" : species_id,
                 "gene_id" : gene_id, 
-                "threshold" : threshold
+                "threshold" : threshold,
+                "published_only" : published_only
             })
             rows = c.fetchall()
             

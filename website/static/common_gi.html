@@ -5,14 +5,18 @@
         <title>Predicted Genetic Interactions</title>
         <link rel='stylesheet' href="./search_gi_style.css" type='text/css'>
         <script src="https://cdn.plot.ly/plotly-latest.min.js" charset="utf-8"></script>
-        <script type="module" src="search_gi_app.js"></script>
+        <script type="module" src="common_gi_app.js"></script>
     </head>
     <body>
         
+        <div class='c-loading' id='loadingScreen'>
+            Please wait while we execute your query.
+        </div>
+
         <div class='c-header'>
             <div class='c-header__title'>
-                <h1 class='c-header__maintitle'>Discover Genetic Interactions</h1>
-                <h2 class='c-header__subtitle'>Find predicted genetic interactions of one or two genes in four species at different reliability levels</h2>
+                <h1 class='c-header__maintitle'>Discover Common Genetic Interactors</h1>
+                <h2 class='c-header__subtitle'>Find common predicted interactors with up to four genes in four species at different reliability levels</h2>
             </div>
             <img class='c-header__logo' src='./kisr.png' alt='KISR logo'>
         </div>
@@ -41,9 +45,16 @@
                     <label class='c-input-label' for="tbGeneA">Gene A</label>
                     <input type="text" id="tbGeneA" name='gene_a'  class='js-input'>
                     
-                    &nbsp;<label class='c-input-label' for="tbGeneB">Gene B</label>
+                    <br><br><label class='c-input-label' for="tbGeneB">Gene B</label>
                     <input type="text" id="tbGeneB" name='gene_b'  class='js-input'>
-                    <p>Find the interactions of one gene or search for a specific interaction between two genes.</p>
+
+                    <br><br><label class='c-input-label' for="tbGeneC">Gene C</label>
+                    <input type="text" id="tbGeneC" name='gene_c'  class='js-input'>
+                    
+                    <br><br><label class='c-input-label' for="tbGeneD">Gene D</label>
+                    <input type="text" id="tbGeneD" name='gene_d'  class='js-input'>
+                    
+                    <p>Find genes that interact with all the given genes.</p>
                 </div>
                 
             </div>
@@ -87,59 +98,24 @@
             </div>
         </div>
 
-        <p>Click on a row to view details.</p>
         <table class='c-search-results'>
             <thead>
                 <tr>
-                    <th colspan='2'>Gene A</th>
-                    <th colspan='2'>Gene B</th>
-                    <th rowspan="2">Probability of GI</th>
-                    <th rowspan="2">Reported GI</th>
+                    <th colspan='2'>Common Interactor</th>
+                    <th colspan='4'>Probability of GI with</th>
                 </tr>
                 <tr>
                     <th>Official Name</th>
                     <th>Common Name</th>
-                    <th>Official Name</th>
-                    <th>Common Name</th>
+                    <th id='col_gene_a'>Gene A</th>
+                    <th id='col_gene_b'>Gene B</th>
+                    <th id='col_gene_c'>Gene C</th>
+                    <th id='col_gene_d'>Gene D</th>
                 </tr>
             </thead>
             <tbody id='searchResults'></tbody>
                 
         </table>
-
-        <div class='l-modal' id='gi_details_modal' style='display: none'>
-            <div class='l-modal__content'>
-                <h1 class='c-modal-title'>Genetic Interaction Details</h1>
-                <span class='c-modal-close js-close'>Close</span>
-                <div class='l-cards'>
-                    <div class='c-card'>
-                        <div class='c-card__title'>Gene A</div>
-                        <div class='c-card__content' id='card_gene_a'>XYZ</div>
-                    </div>
-                    <div class='c-card'>
-                        <div class='c-card__title'>Gene B</div>
-                        <div class='c-card__content' id='card_gene_b'>XYZ</div>
-                    </div>
-                    <div class='c-card'>
-                        <div class='c-card__title'>Probability of GI</div>
-                        <div class='c-card__content' id='card_prob_gi'>0.97</div>
-                    </div>
-                    <div class='c-card'>
-                        <div class='c-card__title'>Reported Publication IDs</div>
-                        <div class='c-card__content c-card__content--small' id='card_pubs'>
-                            
-                        </div>
-                    </div>
-                </div>
-                <div class='l-scrollable js-scrollable'>
-                    <!-- need margin bottom to fully show the graph -->
-                    <div id='plot_gene_a' style='margin-bottom: 30px'></div>
-                    <div id="plot_gene_b" style='margin-bottom: 30px'></div>
-
-                    <div id="plot_joint"  style='margin-bottom:30px'></div>
-                    <div id="plot_z" style='margin-bottom: 30px'></div>
-                </div>
-            </div>
-        </div>
+ 
     </body>
 </html>

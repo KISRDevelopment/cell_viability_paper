@@ -1,35 +1,36 @@
+const ENTRIES_PER_PAGE = 50;
 
 function main()
 {
-    const gi_details_modal = document.getElementById('gi_details_modal');
-    gi_details_modal.querySelector('.js-close').onclick = () => {
-        gi_details_modal.style.display = 'none';
+    let current_results = null;
 
-        document.body.classList.remove('modal-open');
-    
-    };
+    const paginator = new Paginator(document.querySelector('.js-search-results-paginator'), showPage);
+    const loading = document.getElementById('loadingScreen');
+    const loadingDisplay = loading.style.display;
+    loading.style.display = 'none';
 
-    let curr_form = null;
-
-    const paginator = new Paginator(document.querySelector('.js-search-results-paginator'), function(page) {
-        curr_form['page'] = page;
-
-        call_api('http://127.0.0.1:5000/gi_pairs', curr_form, function(res) {
-            populate_gi_pairs(res);
-        });
-    });
-
+    function showPage(page)
+    {
+        const paged_results = current_results.rows.slice(page * ENTRIES_PER_PAGE, (page+1) * ENTRIES_PER_PAGE);
+        populate_results(paged_results, current_results.full_names);
+    }
 
     const btnSearch = document.getElementById('btnSearch');
     btnSearch.onclick = function()
     {
         const form = gather_form();
-        form['page'] = 0;
+        loading.style.display = loadingDisplay;
 
-        call_api('http://127.0.0.1:5000/gi_pairs', form, function(res) {
-            populate_gi_pairs(res);
-            paginator.update(res.pagination);
-            curr_form = form;
+        call_api('http://127.0.0.1:5000/common_interactors', form, function(res) {
+            current_results = res;
+            showPage(0);
+            paginator.update({
+                "n_rows" : res.rows.length,
+                "pages" : numPages(res.rows.length, ENTRIES_PER_PAGE),
+                "page" : 0
+            });
+            loading.style.display = 'none';
+        
         });
     }
 
@@ -81,37 +82,52 @@ function gather_form()
 /*
     Populates GI Search Results
 */
-function populate_gi_pairs(res)
+function populate_results(res, full_names)
 {
+    function showProb(v)
+    {
+        if (typeof(v) === 'undefined')
+            return "";
+        return v.toFixed(2);
+    }
     const searchResults = document.getElementById('searchResults');
     searchResults.innerHTML = "";
-
-    res.rows.forEach((row) => {
+    
+    res.forEach((row) => {
 
         const tr = createElement('tr', searchResults);
-        tr.dataset.gi_id = row.gi_id;
-
+    
         const tds = createElements('td', tr, 6);
-        tds[0].innerHTML = row.gene_a_locus_tag;
-        tds[1].innerHTML = row.gene_a_common_name;
-        tds[2].innerHTML = row.gene_b_locus_tag;
-        tds[3].innerHTML = row.gene_b_common_name;
-        tds[4].innerHTML = row.prob_gi.toFixed(2);
-        tds[5].innerHTML = (row.reported_gi === 1) ? '<strong>Yes</strong>' : 'No';
+        tds[0].innerHTML = row.interactor[0];
+        tds[1].innerHTML = row.interactor[1];
+        tds[2].innerHTML = showProb(row.gene_a);
+        tds[3].innerHTML = showProb(row.gene_b);
+        tds[4].innerHTML = showProb(row.gene_c);
+        tds[5].innerHTML = showProb(row.gene_d);
 
-        tr.onclick = search_result_clicked;
+    });
+    
+    const cols = ['gene_a', 'gene_b', 'gene_c', 'gene_d'];
+    cols.forEach((c) => {
+        const col = document.getElementById("col_" + c);
+
+        if (c in full_names)
+        {
+            col.innerHTML = `${full_names[c][0]} (${full_names[c][1]})`;
+        }
+        else 
+        {
+            col.innerHTML = "";
+        }
     });
 }
 
-function search_result_clicked()
+function numPages(n_rows, entries_per_page)
 {
-    const gi_id = this.dataset.gi_id;
-    call_api('http://127.0.0.1:5000/gi', { "gi_id" : gi_id }, 
-    function(res) {
-        populate_gi_details(res);
-        
-    });
-
+    let pages = Math.floor(n_rows / entries_per_page);
+    if (n_rows % entries_per_page > 0)
+        pages += 1;
+    return pages; 
 }
 
 class Paginator
@@ -204,70 +220,6 @@ function populate_gi_details(data)
         data.pubs.map((p) => p.identifier).join(', ') : "None";
     
     modal.querySelector('.js-scrollable').scrollTop = 0;
-}
-
-/*
-    Plots the model's components
-*/
-function plot(elm, d, show_x, title)
-{
-    let labels = d.labels;
-    let features = d.features;
-
-    const colors = features.map((v) => v < 0 ? 'red' : 'blue');
-
-    var data = [
-        {
-          type: 'bar',
-          orientation: 'v',
-          x: labels,
-          y: features,
-          marker: {
-            color: colors
-          },
-        }]
-        var layout = {
-            title: title,
-            margin: {
-                l: 40,
-                r: 40,
-                b: 0,
-                t: 50,
-                pad: 0
-            },
-            paper_bgcolor: 'white',
-            plot_bgcolor: 'white',
-            height: 200,
-            font: {
-              size: 16,
-              
-              color: 'black'
-            },
-            yaxis: {
-                showgrid: true,
-                tickmode: 'linear',
-
-                range: [-3, 3]
-            },
-            xaxis: {
-                showgrid: true,
-                tickmode: 'linear',
-                automargin: false,
-                tickangle: 90,
-                showticklabels: show_x
-            }
-          };
-    
-
-    Plotly.newPlot(elm, data, layout);
-    if (show_x)
-    {
-        const cl = document.getElementById(elm).querySelector('.cartesianlayer');
-        const rect = cl.getBoundingClientRect();
-        document.getElementById(elm).style.height = rect.height + 'px';
-    }
-    
-
 }
 
 window.onload = main;
