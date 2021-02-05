@@ -1,12 +1,12 @@
 
 function main()
 {
+    const nostartups = document.querySelectorAll('.js-nostartup');
+    
     const gi_details_modal = document.getElementById('gi_details_modal');
     gi_details_modal.querySelector('.js-close').onclick = () => {
         gi_details_modal.style.display = 'none';
-
         document.body.classList.remove('modal-open');
-    
     };
 
     let curr_form = null;
@@ -30,6 +30,7 @@ function main()
             populate_gi_pairs(res);
             paginator.update(res.pagination);
             curr_form = form;
+            nostartups.forEach((e) => e.style.visibility = 'visible');
         });
     }
 

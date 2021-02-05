@@ -91,6 +91,7 @@ body {
     margin-top: 20px;
     width: 100%;
     border-collapse: collapse;
+    visibility: hidden;
 }
 
 .c-search-results th, .c-search-results td {
@@ -105,6 +106,7 @@ body {
 
 .c-search-results tbody tr {
     border-bottom: 1px solid #dddddd;
+
 }
 
 .c-search-results tbody tr:nth-of-type(even) {
@@ -118,6 +120,7 @@ body {
 .c-pagination {
     display: flex;
     justify-content: space-between;
+    visibility: hidden;
 }
 
 .c-pagination__page-control {

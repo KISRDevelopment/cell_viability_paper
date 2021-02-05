@@ -3,7 +3,8 @@ const ENTRIES_PER_PAGE = 50;
 function main()
 {
     let current_results = null;
-
+    const nostartups = document.querySelectorAll('.js-nostartup');
+    
     const paginator = new Paginator(document.querySelector('.js-search-results-paginator'), showPage);
     const loading = document.getElementById('loadingScreen');
     const loadingDisplay = loading.style.display;
@@ -30,7 +31,8 @@ function main()
                 "page" : 0
             });
             loading.style.display = 'none';
-        
+            
+            nostartups.forEach((e) => e.style.visibility = 'visible');
         });
     }
 
