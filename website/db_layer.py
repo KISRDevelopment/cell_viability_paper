@@ -58,6 +58,8 @@ class DbLayer:
 
         query = """
                 SELECT  g.gi_id gi_id,
+                            a.gene_id gene_a_id,
+                            b.gene_id gene_b_id,
                             g.species_id species_id,
                             a.locus_tag gene_a_locus_tag, 
                             b.locus_tag gene_b_locus_tag,
@@ -65,14 +67,7 @@ class DbLayer:
                             b.common_name gene_b_common_name, 
                             g.observed, 
                             g.observed_gi, 
-                            g.prob_gi,
-                            a.lid gene_a_lid,
-                            b.lid gene_b_lid,
-                            a.smf gene_a_smf,
-                            b.smf gene_b_smf,
-                            a.sgo_terms gene_a_sgo,
-                            b.sgo_terms gene_b_sgo,
-                            g.spl spl
+                            g.prob_gi
                 FROM    genetic_interactions g 
                 JOIN    genes a on g.gene_a_id = a.gene_id 
                 JOIN    genes b on g.gene_b_id = b.gene_id
@@ -112,7 +107,7 @@ class DbLayer:
             n_rows = c.fetchone()['n_rows']
             return rows, n_rows
     
-    def get_gi(self, gi_id, common_interactors_threshold=0.5):
+    def get_gi(self, gi_id):
         query = """
                 SELECT  g.gi_id gi_id,
                             a.gene_id gene_a_id,
@@ -150,16 +145,6 @@ class DbLayer:
                 c.execute(pub_query, (gi_id,))
                 rows = c.fetchall()
                 gi_row['pubs'] = [dict(r) for r in rows]
-
-
-                a_interactors = self.get_interactors(gi_row['species_id'], gi_row['gene_a_id'], common_interactors_threshold)
-                b_interactors = self.get_interactors(gi_row['species_id'], gi_row['gene_b_id'], common_interactors_threshold)
-
-                common_interactors = set(a_interactors.keys()).intersection(set(b_interactors.keys()))
-                
-                common = [(k, a_interactors[k], b_interactors[k]) for k in common_interactors]
-                gi_row['common'] = common
-            
             return gi_row
     
     def get_interactors(self, species_id, gene_id, threshold):

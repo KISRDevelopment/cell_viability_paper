@@ -66,6 +66,85 @@ def interpret(gi_id):
     else:
         return jsonify({})
 
+@app.route('/gi', methods=['POST'])
+def gi():
+
+    rp = request.json 
+
+    SPECIES_MODELS = {
+        1: "./models/yeast_gi_hybrid_mn.npz",
+        2: './models/pombe_gi_mn.npz',
+        3: './models/human_gi_mn.npz',
+        4: './models/dro_gi_mn.npz'
+    }
+    db = get_db()
+
+    row = db.get_gi(rp['gi_id'])
+
+    if row:
+        m = lrm.LogisticRegressionModel(SPECIES_MODELS[row['species_id']])
+        components = m.interpret(row)
+        return jsonify({
+            "components" : components,
+            "pubs" : row['pubs'],
+            "prob_gi" : row['prob_gi'],
+            "reported_gi" : row['observed'] and row['observed_gi'],
+            "gene_a_locus_tag" : row['gene_a_locus_tag'],
+            "gene_b_locus_tag" : row['gene_b_locus_tag'],
+            "gene_a_common_name" : row['gene_a_common_name'],
+            "gene_b_common_name" : row['gene_b_common_name'],
+            
+        })
+    else:
+        return jsonify({})
+
+
+@app.route('/common_interactors', methods=['POST'])
+def common_interactors():
+    
+    rp = request.json 
+
+    db = get_db()
+
+    interactors_a = db.get_interactors(rp['species_id'], rp['gene_a_id'], rp['threshold'])
+    interactors_b = db.get_interactors(rp['species_id'], rp['gene_b_id'], rp['threshold'])
+
+    a_targets = set(interactors_a.keys())
+    b_targets = set(interactors_b.keys())
+
+    common_targets = a_targets.intersection(b_targets)
+
+    result = [
+        (t, interactors_a[t], interactors_b[t]) for t in common_targets
+    ]
+
+    return jsonify(result)
+
+@app.route('/gi_pairs', methods=['POST'])
+def gi_pairs():
+
+    rp = request.json 
+
+    db = get_db()
+
+    rows, n_rows = db.get_pairs(rp['species_id'], 
+        rp['threshold'], 
+        rp['gene_a'], 
+        rp['gene_b'], 
+        rp['page'], 
+        rp['published_only'])
+
+    for r in rows:
+        r['reported_gi'] = r['observed'] and r['observed_gi']
+        
+    pagination = paginate(n_rows, ENTRIES_PER_PAGE, rp['page'])
+
+    return jsonify({
+        "pagination" : pagination,
+        "request_params" : rp,
+        "rows" : rows
+    })
+
 def paginate(n_rows, page_size, page):
     
     pages = int(np.ceil(n_rows / page_size))
@@ -79,6 +158,7 @@ def paginate(n_rows, page_size, page):
         prev_page = -1 
     
     return {
+        "n_rows" : n_rows,
         "pages" : pages,
         "page" : page,
         "next_page" : next_page,

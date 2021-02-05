@@ -1,0 +1,208 @@
+html {
+    font-size: 12pt;
+}
+
+body {
+    font-family: BlinkMacSystemFont,-apple-system,"Segoe UI",Roboto,Oxygen,Ubuntu,Cantarell,"Fira Sans","Droid Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+
+}
+
+*, *:before, *:after {
+    box-sizing: border-box;
+}
+
+.plotly {
+    overflow: visible;
+}
+
+ svg {
+    overflow: visible !important;
+}
+
+.c-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    align-items: flex-start;
+}
+
+.c-header__title {
+    color: #4a4a4a;
+}
+
+.c-header__maintitle {
+    padding: 0;
+    margin: 0;
+    font-size: 2.4rem;
+}
+
+.c-header__subtitle {
+    padding: 0;
+    margin: 0;
+    font-size: 1.6rem;
+    font-weight: normal;
+}
+
+.c-header__logo {
+    width: 256px;
+}
+
+.c-search-panel {
+    padding: 10px;
+}
+
+.c-search-panel input, .c-search-panel select, .c-search-panel button {
+    font-size: 1.2rem;
+}
+
+#btnSearch {
+    margin: auto;
+    display: block;
+}
+
+.c-search-panel__row {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 20px;
+}
+
+.c-search-panel__label {
+    flex: 0.25;
+}
+
+.c-search-panel__input {
+    flex: 1;
+}
+.c-input-label {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.c-search-panel p {
+    margin: 5px 0 0 0 ;
+    padding: 0;
+}
+
+/*
+    Based on https://dev.to/dcodeyt/creating-beautiful-html-tables-with-css-428l
+*/
+.c-search-results {
+    margin-top: 20px;
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.c-search-results th, .c-search-results td {
+    padding: 10px;
+    text-align: center;
+}
+
+.c-search-results thead {
+    background: #6e61ff;
+    color: white;
+}
+
+.c-search-results tbody tr {
+    border-bottom: 1px solid #dddddd;
+}
+
+.c-search-results tbody tr:nth-of-type(even) {
+    background-color: #f3f3f3;
+}
+
+.c-search-results tbody tr:last-of-type {
+    border-bottom: 2px solid #6e61ff;
+}
+
+.c-pagination {
+    display: flex;
+    justify-content: space-between;
+}
+
+.c-pagination__page-control {
+    cursor: pointer;
+    color: #6e61ff;
+    font-weight: bold;
+}
+
+.l-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.65);
+}
+
+body.modal-open {
+    overflow: hidden;
+}
+
+.l-modal__content {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    right: 20px;
+    bottom: 20px;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+}
+
+.c-modal-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1.6rem;
+}
+.l-scrollable {
+    flex: 1;
+    overflow-y: scroll;
+}
+.c-modal-title {
+    padding: 10px;
+    margin: 0;
+    color: #4a4a4a;
+    font-size: 2.4rem;
+}
+
+.c-modal-subtitle {
+    padding: 10px;
+    margin: 0;
+    font-size: 1.6rem;
+}
+
+.l-cards {
+    display: flex;
+    flex-direction: row;
+}
+
+.c-card {
+    margin: 10px;
+    flex: 1;
+    /*box-shadow: 10px 10px 25px rgba(0,0,0,0.1);*/
+}
+
+.c-card__title {
+    font-size: 1.6rem;
+    font-weight: bold;
+    background: #6e61ff;
+    color: white;
+    text-align: center;
+    padding: 10px;
+}
+
+.c-card__content {
+    font-size: 1.4rem;
+    font-weight: bold;
+    padding: 10px;
+    text-align: center;
+}
+
+.c-card__content--small {
+    font-size: 1.2rem;
+    font-weight: normal;
+}

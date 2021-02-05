@@ -1,0 +1,142 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset='utf-8'>
+        <title>Predicted Genetic Interactions</title>
+        <link rel='stylesheet' href="./search_gi_style.css" type='text/css'>
+        <script src="https://cdn.plot.ly/plotly-latest.min.js" charset="utf-8"></script>
+        <script type="module" src="search_gi_app.js"></script>
+    </head>
+    <body>
+        
+        <div class='c-header'>
+            <div class='c-header__title'>
+                <h1 class='c-header__maintitle'>Discover Genetic Interactions</h1>
+                <h2 class='c-header__subtitle'>Find predicted genetic interactions of one or two genes in four species at different reliability levels</h2>
+            </div>
+            <img class='c-header__logo' src='./kisr.png' alt='KISR logo'>
+        </div>
+
+        <div class='c-search-panel'>
+            <div class='c-search-panel__row'>
+                <div class='c-search-panel__label'>
+                    <label class='c-input-label' for="selectSpecies">Species:</label>
+                </div>
+                <div class='c-search-panel__input'>
+                    <select id="selectSpecies" name='species_id' class='js-input'>
+                        <option value="1">S. cerevisiae</option>
+                        <option value="2">S. pombe</option>
+                        <option value="3">H. sapiens</option>
+                        <option value="4">D. melanogaster</option>
+                    </select>
+                    <p>Select the species in which to discover genetic interactions.</p>
+                </div>
+                
+            </div>
+            <div class='c-search-panel__row'>
+                <div class='c-search-panel__label'>
+                    <div class='c-input-label'>Genes:</div>
+                </div>
+                <div class='c-search-panel__input'>
+                    <label class='c-input-label' for="tbGeneA">Gene A</label>
+                    <input type="text" id="tbGeneA" name='gene_a'  class='js-input'>
+                    
+                    &nbsp;<label class='c-input-label' for="tbGeneB">Gene B</label>
+                    <input type="text" id="tbGeneB" name='gene_b'  class='js-input'>
+                    <p>Find the interactions of one gene or search for a specific interaction between two genes.</p>
+                </div>
+                
+            </div>
+            <div class='c-search-panel__row'>
+                <div class='c-search-panel__label'>
+                    <label class='c-input-label' for="selectThres">Interaction Threshold: </label>
+                </div>
+                <div class='c-search-panel__input'>
+                    <select id="selectThres" name='threshold'  class='js-input'>
+                        <option value="0.5">0.5</option>
+                        <option value="0.6">0.6</option>
+                        <option value="0.7">0.7</option>
+                        <option value="0.8">0.8</option>
+                        <option value="0.9">0.9</option>
+                    </select>
+                    <p>The minimum probability above which a prediction is classified as a genetic interaction.</p>
+                </div>
+            </div>
+            <div class='c-search-panel__row'>
+                <div class='c-search-panel__label'>
+                    <label class='c-input-label' for="cbPublishedOnly">Published Only:</label>
+                </div>
+                <div class='c-search-panel__input'>
+                    <input type="checkbox" id="cbPublishedOnly" name='published_only' class='js-input' checked>
+                    <p>Only search for genetic interactions that were experimentally reported in BioGRID.</p>
+                </div>
+            </div>
+            <div class='c-search-panel__row'>
+                <button id='btnSearch'>Search</button>
+            </div>
+        </div>
+        
+        <div class='c-pagination js-search-results-paginator'>
+            <div class='c-pagination__count'>
+                <span class='js-total-records'>0</span> records found
+            </div>
+            <div class='c-pagination__pages'>
+                <span class='c-pagination__page-control js-last-page'>Last</span>
+                <span>Page <span class='js-curr-page'>1</span> out of <span class='js-total-pages'>1</span></span>
+                <span class='c-pagination__page-control js-next-page'>Next</span>
+            </div>
+        </div>
+
+        <table class='c-search-results'>
+            <thead>
+                <tr>
+                    <th colspan='2'>Gene A</th>
+                    <th colspan='2'>Gene B</th>
+                    <th rowspan="2">Probability of GI</th>
+                    <th rowspan="2">Reported GI</th>
+                </tr>
+                <tr>
+                    <th>Official Name</th>
+                    <th>Common Name</th>
+                    <th>Official Name</th>
+                    <th>Common Name</th>
+                </tr>
+            </thead>
+            <tbody id='searchResults'></tbody>
+                
+        </table>
+
+        <div class='l-modal' id='gi_details_modal' style='display: none'>
+            <div class='l-modal__content'>
+                <h1 class='c-modal-title'>Genetic Interaction Details</h1>
+                <span class='c-modal-close js-close'>Close</span>
+                <div class='l-cards'>
+                    <div class='c-card'>
+                        <div class='c-card__title'>Gene A</div>
+                        <div class='c-card__content' id='card_gene_a'>XYZ</div>
+                    </div>
+                    <div class='c-card'>
+                        <div class='c-card__title'>Gene B</div>
+                        <div class='c-card__content' id='card_gene_b'>XYZ</div>
+                    </div>
+                    <div class='c-card'>
+                        <div class='c-card__title'>Probability of GI</div>
+                        <div class='c-card__content' id='card_prob_gi'>0.97</div>
+                    </div>
+                    <div class='c-card'>
+                        <div class='c-card__title'>Reported Publication IDs</div>
+                        <div class='c-card__content c-card__content--small' id='card_pubs'>
+                            
+                        </div>
+                    </div>
+                </div>
+                <div class='l-scrollable js-scrollable'>
+                    <div id='plot_gene_a'></div>
+                    <div id="plot_gene_b"></div>
+                    <div id="plot_joint"></div>
+                    <div id="plot_z"></div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
