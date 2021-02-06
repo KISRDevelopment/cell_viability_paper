@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset='utf-8'>
-        <title>Predicted Genetic Interactions</title>
+        <title>Common GI Interactors</title>
         <link rel='stylesheet' href="./search_gi_style.css" type='text/css'>
         <script src="https://cdn.plot.ly/plotly-latest.min.js" charset="utf-8"></script>
         <script type="module" src="common_gi_app.js"></script>
@@ -13,13 +13,18 @@
             Please wait while we execute your query.
         </div>
 
+        
         <div class='c-header'>
             <div class='c-header__title'>
-                <h1 class='c-header__maintitle'>Discover Common Genetic Interactors</h1>
-                <h2 class='c-header__subtitle'>Find common predicted interactors with up to four genes in four species at different reliability levels</h2>
+                <ul class='c-nav'>
+                    <li><a href='./search_gi.html'>Discover Genetic Interactions</a></li>
+                    <li class='selected'>Find Common Interactors</li>
+                </ul>
             </div>
             <img class='c-header__logo' src='./kisr.png' alt='KISR logo'>
         </div>
+        <h2 class='c-subtitle'>Find common predicted interactors with up to four genes in four species at different reliability levels</h2>
+
 
         <div class='c-search-panel'>
             <div class='c-search-panel__row'>
@@ -78,7 +83,7 @@
                     <label class='c-input-label' for="cbPublishedOnly">Published Only:</label>
                 </div>
                 <div class='c-search-panel__input'>
-                    <input type="checkbox" id="cbPublishedOnly" name='published_only' class='js-input' checked>
+                    <input type="checkbox" id="cbPublishedOnly" name='published_only' class='js-input'>
                     <p>Only search for genetic interactions that were experimentally reported in BioGRID.</p>
                 </div>
             </div>

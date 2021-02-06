@@ -14,7 +14,7 @@ function main()
     const paginator = new Paginator(document.querySelector('.js-search-results-paginator'), function(page) {
         curr_form['page'] = page;
 
-        call_api('http://127.0.0.1:5000/gi_pairs', curr_form, function(res) {
+        call_api('../gi_pairs', curr_form, function(res) {
             populate_gi_pairs(res);
         });
     });
@@ -26,7 +26,7 @@ function main()
         const form = gather_form();
         form['page'] = 0;
 
-        call_api('http://127.0.0.1:5000/gi_pairs', form, function(res) {
+        call_api('../gi_pairs', form, function(res) {
             populate_gi_pairs(res);
             paginator.update(res.pagination);
             curr_form = form;
@@ -91,6 +91,7 @@ function populate_gi_pairs(res)
 
         const tr = createElement('tr', searchResults);
         tr.dataset.gi_id = row.gi_id;
+        tr.classList.add('clickable');
 
         const tds = createElements('td', tr, 6);
         tds[0].innerHTML = row.gene_a_locus_tag;
@@ -107,7 +108,7 @@ function populate_gi_pairs(res)
 function search_result_clicked()
 {
     const gi_id = this.dataset.gi_id;
-    call_api('http://127.0.0.1:5000/gi', { "gi_id" : gi_id }, 
+    call_api('../gi', { "gi_id" : gi_id }, 
     function(res) {
         populate_gi_details(res);
         

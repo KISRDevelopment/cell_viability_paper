@@ -11,11 +11,15 @@
         
         <div class='c-header'>
             <div class='c-header__title'>
-                <h1 class='c-header__maintitle'>Discover Genetic Interactions</h1>
-                <h2 class='c-header__subtitle'>Find predicted genetic interactions of one or two genes in four species at different reliability levels</h2>
+                <ul class='c-nav'>
+                    <li class='selected'>Discover Genetic Interactions</li>
+                    <li><a href='./common_gi.html'>Find Common Interactors</a></li>
+                </ul>
             </div>
             <img class='c-header__logo' src='./kisr.png' alt='KISR logo'>
         </div>
+
+        <h2 class='c-subtitle'>Find predicted genetic interactions of one or two genes in four species at different reliability levels</h2>
 
         <div class='c-search-panel'>
             <div class='c-search-panel__row'>
@@ -67,7 +71,7 @@
                     <label class='c-input-label' for="cbPublishedOnly">Published Only:</label>
                 </div>
                 <div class='c-search-panel__input'>
-                    <input type="checkbox" id="cbPublishedOnly" name='published_only' class='js-input' checked>
+                    <input type="checkbox" id="cbPublishedOnly" name='published_only' class='js-input'>
                     <p>Only search for genetic interactions that were experimentally reported in BioGRID.</p>
                 </div>
             </div>
@@ -124,7 +128,7 @@
                         <div class='c-card__content' id='card_prob_gi'>0.97</div>
                     </div>
                     <div class='c-card'>
-                        <div class='c-card__title'>Reported Publication IDs</div>
+                        <div class='c-card__title'>Publication IDs</div>
                         <div class='c-card__content c-card__content--small' id='card_pubs'>
                             
                         </div>

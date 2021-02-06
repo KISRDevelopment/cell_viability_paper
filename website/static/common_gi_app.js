@@ -22,7 +22,7 @@ function main()
         const form = gather_form();
         loading.style.display = loadingDisplay;
 
-        call_api('http://127.0.0.1:5000/common_interactors', form, function(res) {
+        call_api('../common_interactors', form, function(res) {
             current_results = res;
             showPage(0);
             paginator.update({

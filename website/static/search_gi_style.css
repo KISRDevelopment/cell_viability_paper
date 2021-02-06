@@ -29,6 +29,7 @@ body {
 
 .c-header__title {
     color: #4a4a4a;
+    flex: 1;
 }
 
 .c-header__maintitle {
@@ -37,9 +38,9 @@ body {
     font-size: 2.4rem;
 }
 
-.c-header__subtitle {
+.c-subtitle {
     padding: 0;
-    margin: 0;
+    margin: 10px;
     font-size: 1.6rem;
     font-weight: normal;
 }
@@ -104,6 +105,9 @@ body {
     color: white;
 }
 
+.c-search-results tr.clickable {
+    cursor: pointer;
+}
 .c-search-results tbody tr {
     border-bottom: 1px solid #dddddd;
 
@@ -224,4 +228,34 @@ body.modal-open {
     justify-content: center;
     align-items: center;
     text-align: center;
+}
+
+.c-nav {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction:  row;
+    flex: 1;
+    align-items: center;
+}
+
+.c-nav li {
+    padding: 10px;
+    margin: 0;
+    font-size: 2rem;
+}
+
+.c-nav li.selected {
+    font-weight: bold;
+    font-size: 2.4rem;
+}
+
+.c-nav a {
+    text-decoration: none;
+    color: #4a4a4a;
+}
+
+.c-nav a:hover {
+    text-decoration: underline;
 }
