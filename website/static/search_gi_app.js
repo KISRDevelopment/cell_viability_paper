@@ -194,9 +194,9 @@ function populate_gi_details(data)
 
     const keys = ["gene_a", "gene_b", "joint", "z"];
     const titles = [geneAName + " features", geneBName + " features", "Joint features", "Model components"];
-
+    const colors = ['#ffb700', '#0095ff', '#b2ff00', '#d000ff'];
     keys.forEach((k, i) => {
-        plot("plot_" + k, data.components[k], i === 1 || i === 3, titles[i]);
+        plot("plot_" + k, data.components[k], i === 1 || i === 3, titles[i], colors[i], colors[i]);
     });
 
     document.getElementById('card_gene_a').innerHTML = geneAName;
@@ -211,12 +211,12 @@ function populate_gi_details(data)
 /*
     Plots the model's components
 */
-function plot(elm, d, show_x, title)
+function plot(elm, d, show_x, title, pos_color, neg_color)
 {
     let labels = d.labels;
     let features = d.features;
 
-    const colors = features.map((v) => v < 0 ? 'red' : 'blue');
+    const colors = features.map((v) => v < 0 ? neg_color : pos_color);
 
     var data = [
         {

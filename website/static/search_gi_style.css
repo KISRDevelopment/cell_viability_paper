@@ -50,11 +50,71 @@ body {
 }
 
 .c-search-panel {
-    padding: 10px;
+    padding: 0;
+    margin: 10px;
 }
 
+.c-search-panel__tabs {
+    display: flex;
+    flex-direction: row;
+    background: #6e61ff;
+    color: white;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.c-search-panel__tab {
+    padding: 10px;
+    font-size: 1.6rem;
+    margin-top: 10px;
+    margin-left: 10px;
+    cursor: pointer;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.c-search-panel__tab a {
+    text-decoration: none;
+    color: white;
+}
+
+.c-search-panel__tab a:hover {
+    text-decoration: underline;
+}
+.c-search-panel__body {
+    border: 1px solid #6e61ff;
+    border-top: 0;
+    padding: 10px;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+.c-search-panel__body > p {
+    font-size: 1.4rem;
+    margin-bottom: 20px;
+    padding: 0;
+}
+
+.c-search-panel__tab--selected {
+
+    font-weight: bold;
+    background: white;
+    color: #4a4a4a;
+}
 .c-search-panel input, .c-search-panel select, .c-search-panel button {
     font-size: 1.2rem;
+}
+
+.button {
+    background-color: #6e61ff;
+    border: none;
+    color: white;
+    font-weight: bold;
+    padding: 10px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 1.6rem;
+    border-radius: 5px;
 }
 
 #btnSearch {
@@ -80,7 +140,7 @@ body {
     font-weight: bold;
 }
 
-.c-search-panel p {
+.c-search-panel__row p {
     margin: 5px 0 0 0 ;
     padding: 0;
 }
@@ -193,13 +253,31 @@ body.modal-open {
     /*box-shadow: 10px 10px 25px rgba(0,0,0,0.1);*/
 }
 
+.c-card--gene_a {
+    --color: #ffb700;
+}
+
+.c-card--gene_b {
+    --color: #0095ff;
+}
+
+.c-card--joint {
+    --color: #d000ff;
+}
+
+.c-card--pubs {
+    --color: #7d8282;
+}
+
 .c-card__title {
     font-size: 1.6rem;
     font-weight: bold;
-    background: #6e61ff;
+    background: var(--color);
     color: white;
     text-align: center;
     padding: 10px;
+    border-top-right-radius: 10px;
+    border-top-left-radius: 10px;
 }
 
 .c-card__content {
@@ -207,6 +285,9 @@ body.modal-open {
     font-weight: bold;
     padding: 10px;
     text-align: center;
+    border: 1px solid var(--color);
+    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 10px;
 }
 
 .c-card__content--small {

@@ -13,83 +13,86 @@
             Please wait while we execute your query.
         </div>
 
-        
         <div class='c-header'>
             <div class='c-header__title'>
-                <ul class='c-nav'>
-                    <li><a href='./search_gi.html'>Discover Genetic Interactions</a></li>
-                    <li class='selected'>Find Common Interactors</li>
-                </ul>
+                <h1 class='c-header__maintitle'>Discover Genetic Interactions</h1>
             </div>
             <img class='c-header__logo' src='./kisr.png' alt='KISR logo'>
         </div>
-        <h2 class='c-subtitle'>Find common predicted interactors with up to four genes in four species at different reliability levels</h2>
-
 
         <div class='c-search-panel'>
-            <div class='c-search-panel__row'>
-                <div class='c-search-panel__label'>
-                    <label class='c-input-label' for="selectSpecies">Species:</label>
-                </div>
-                <div class='c-search-panel__input'>
-                    <select id="selectSpecies" name='species_id' class='js-input'>
-                        <option value="1">S. cerevisiae</option>
-                        <option value="2">S. pombe</option>
-                        <option value="3">H. sapiens</option>
-                        <option value="4">D. melanogaster</option>
-                    </select>
-                    <p>Select the species in which to discover genetic interactions.</p>
-                </div>
+            <div class='c-search-panel__tabs'>
+                <div class='c-search-panel__tab'><a href='./search_gi.html'>Search GIs</a></div>
+                <div class='c-search-panel__tab c-search-panel__tab--selected'>Find Common Interactors</div>
                 
             </div>
-            <div class='c-search-panel__row'>
-                <div class='c-search-panel__label'>
-                    <div class='c-input-label'>Genes:</div>
-                </div>
-                <div class='c-search-panel__input'>
-                    <label class='c-input-label' for="tbGeneA">Gene A</label>
-                    <input type="text" id="tbGeneA" name='gene_a'  class='js-input'>
+            <div class='c-search-panel__body'>
+                <p>Find common interactors with up to four genes in four species at different reliability levels.</p>
+                <div class='c-search-panel__row'>
+                    <div class='c-search-panel__label'>
+                        <label class='c-input-label' for="selectSpecies">Species:</label>
+                    </div>
+                    <div class='c-search-panel__input'>
+                        <select id="selectSpecies" name='species_id' class='js-input'>
+                            <option value="1">S. cerevisiae</option>
+                            <option value="2">S. pombe</option>
+                            <option value="3">H. sapiens</option>
+                            <option value="4">D. melanogaster</option>
+                        </select>
+                        <p>Select the species in which to discover genetic interactions.</p>
+                    </div>
                     
-                    <br><br><label class='c-input-label' for="tbGeneB">Gene B</label>
-                    <input type="text" id="tbGeneB" name='gene_b'  class='js-input'>
-
-                    <br><br><label class='c-input-label' for="tbGeneC">Gene C</label>
-                    <input type="text" id="tbGeneC" name='gene_c'  class='js-input'>
+                </div>
+                <div class='c-search-panel__row'>
+                    <div class='c-search-panel__label'>
+                        <div class='c-input-label'>Genes:</div>
+                    </div>
+                    <div class='c-search-panel__input'>
+                        <label class='c-input-label' for="tbGeneA">Gene A</label>
+                        <input type="text" id="tbGeneA" name='gene_a'  class='js-input'>
+                        
+                        <br><br><label class='c-input-label' for="tbGeneB">Gene B</label>
+                        <input type="text" id="tbGeneB" name='gene_b'  class='js-input'>
+    
+                        <br><br><label class='c-input-label' for="tbGeneC">Gene C</label>
+                        <input type="text" id="tbGeneC" name='gene_c'  class='js-input'>
+                        
+                        <br><br><label class='c-input-label' for="tbGeneD">Gene D</label>
+                        <input type="text" id="tbGeneD" name='gene_d'  class='js-input'>
+                        
+                        <p>Find genes that interact with all the given genes.</p>
+                    </div>
                     
-                    <br><br><label class='c-input-label' for="tbGeneD">Gene D</label>
-                    <input type="text" id="tbGeneD" name='gene_d'  class='js-input'>
-                    
-                    <p>Find genes that interact with all the given genes.</p>
                 </div>
-                
-            </div>
-            <div class='c-search-panel__row'>
-                <div class='c-search-panel__label'>
-                    <label class='c-input-label' for="selectThres">Interaction Threshold: </label>
+                <div class='c-search-panel__row'>
+                    <div class='c-search-panel__label'>
+                        <label class='c-input-label' for="selectThres">Interaction Threshold: </label>
+                    </div>
+                    <div class='c-search-panel__input'>
+                        <select id="selectThres" name='threshold'  class='js-input'>
+                            <option value="0.5">0.5</option>
+                            <option value="0.6">0.6</option>
+                            <option value="0.7">0.7</option>
+                            <option value="0.8">0.8</option>
+                            <option value="0.9">0.9</option>
+                        </select>
+                        <p>The minimum probability above which a prediction is classified as a genetic interaction.</p>
+                    </div>
                 </div>
-                <div class='c-search-panel__input'>
-                    <select id="selectThres" name='threshold'  class='js-input'>
-                        <option value="0.5">0.5</option>
-                        <option value="0.6">0.6</option>
-                        <option value="0.7">0.7</option>
-                        <option value="0.8">0.8</option>
-                        <option value="0.9">0.9</option>
-                    </select>
-                    <p>The minimum probability above which a prediction is classified as a genetic interaction.</p>
+                <div class='c-search-panel__row'>
+                    <div class='c-search-panel__label'>
+                        <label class='c-input-label' for="cbPublishedOnly">Published Only:</label>
+                    </div>
+                    <div class='c-search-panel__input'>
+                        <input type="checkbox" id="cbPublishedOnly" name='published_only' class='js-input'>
+                        <p>Only search for genetic interactions that were experimentally reported in BioGRID.</p>
+                    </div>
                 </div>
-            </div>
-            <div class='c-search-panel__row'>
-                <div class='c-search-panel__label'>
-                    <label class='c-input-label' for="cbPublishedOnly">Published Only:</label>
-                </div>
-                <div class='c-search-panel__input'>
-                    <input type="checkbox" id="cbPublishedOnly" name='published_only' class='js-input'>
-                    <p>Only search for genetic interactions that were experimentally reported in BioGRID.</p>
+                <div class='c-search-panel__row'>
+                    <button id='btnSearch' class='button'>Search</button>
                 </div>
             </div>
-            <div class='c-search-panel__row'>
-                <button id='btnSearch'>Search</button>
-            </div>
+            
         </div>
         
         <div class='c-pagination js-search-results-paginator js-nostartup'>
@@ -107,7 +110,7 @@
             <thead>
                 <tr>
                     <th colspan='2'>Common Interactor</th>
-                    <th colspan='4'>Probability of GI with</th>
+                    <th colspan='4'>Model GI Probability with</th>
                 </tr>
                 <tr>
                     <th>Official Name</th>
