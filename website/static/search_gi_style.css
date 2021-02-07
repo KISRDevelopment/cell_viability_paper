@@ -253,6 +253,9 @@ body.modal-open {
     /*box-shadow: 10px 10px 25px rgba(0,0,0,0.1);*/
 }
 
+.c-expansion {
+    height: 128px;
+}
 .c-card--gene_a {
     --color: #ffb700;
 }

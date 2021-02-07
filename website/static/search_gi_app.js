@@ -33,8 +33,64 @@ function main()
             nostartups.forEach((e) => e.style.visibility = 'visible');
         });
     }
-
+    const colors = ['#ffb700', '#0095ff', '#d000ff', '#7d8282'];
+    create_tabs(document.getElementById('gi_details_modal'), colors);
 }
+
+function create_tabs(selectorElm, colors)
+{
+    const tabs = selectorElm.querySelectorAll('.js-tabs > div');
+    let currentElm = null;
+    tabs.forEach((tab, i) => {
+        const targetId = tab.dataset.for;
+        const targetElm = document.getElementById(targetId);
+
+        targetElm.style.display = 'none';
+        
+        tab.onclick = function() {
+            if (currentElm !== null)
+                currentElm.style.display = 'none';
+            
+            targetElm.style.display = 'block';
+            currentElm = targetElm;
+
+            select_card(selectorElm, tab, colors[i]);
+        }
+    });
+}
+
+
+function select_card(gi_details_modal, card, color)
+{
+
+    const expansion = gi_details_modal.querySelector('.js-expansion');
+    expansion.innerHTML = "";
+    
+    const rect = card.getBoundingClientRect();
+
+    const canvas = document.createElement('canvas');
+    expansion.appendChild(canvas);
+    canvas.width = expansion.offsetWidth;
+    canvas.height = expansion.offsetHeight;
+
+    const ctx = canvas.getContext('2d');
+    const originX = rect.x + rect.width / 2;
+
+    ctx.beginPath();
+    ctx.moveTo(originX, 0);
+    ctx.lineTo(canvas.width, canvas.height);
+    ctx.lineTo(0, canvas.height);
+    ctx.closePath();
+    ctx.clip();
+
+    var grd = ctx.createLinearGradient(0, 0, 0, canvas.height);
+    grd.addColorStop(0, color);
+    grd.addColorStop(1, "white");
+
+    ctx.fillStyle = grd;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+}
+
 
 function call_api(url, data, callback)
 {
@@ -187,6 +243,11 @@ function populate_gi_details(data)
 {
     const modal = document.getElementById('gi_details_modal');
     modal.style.display = 'block';
+
+    const tabContents = document.querySelectorAll('.js-scrollable > div');
+    tabContents.forEach((tc) => tc.style.display = 'block');
+
+
     document.body.classList.add('modal-open');
     
     const geneAName = `${data.gene_a_locus_tag} (${data.gene_a_common_name})`;
@@ -196,16 +257,26 @@ function populate_gi_details(data)
     const titles = [geneAName + " features", geneBName + " features", "Joint features", "Model components"];
     const colors = ['#ffb700', '#0095ff', '#b2ff00', '#d000ff'];
     keys.forEach((k, i) => {
-        plot("plot_" + k, data.components[k], i === 1 || i === 3, titles[i], colors[i], colors[i]);
+        plot("plot_" + k, data.components[k], i != 2, titles[i], colors[i], colors[i]);
     });
 
     document.getElementById('card_gene_a').innerHTML = geneAName;
     document.getElementById('card_gene_b').innerHTML = geneBName;
     document.getElementById('card_prob_gi').innerHTML = data.prob_gi.toFixed(2);
-    document.getElementById('card_pubs').innerHTML = (data.pubs.length > 0) ? 
-        data.pubs.map((p) => p.identifier).join(', ') : "None";
+    document.getElementById('card_pubs').innerHTML = (data.pubs.length > 0) ? 'Yes' : 'No';
     
     modal.querySelector('.js-scrollable').scrollTop = 0;
+    tabContents.forEach((tc) => tc.style.display = 'none');
+    const tabs = modal.querySelectorAll('.js-tabs > div');
+    tabs[0].click();
+
+    const pubsContent = document.getElementById("content_pubs");
+    pubsContent.innerHTML = "";
+    const ul = createElement('ul', pubsContent);
+    data.pubs.forEach((p) => {
+        const li = createElement('li', ul);
+        li.innerHTML = p.identifier;
+    });
 }
 
 /*
@@ -267,6 +338,7 @@ function plot(elm, d, show_x, title, pos_color, neg_color)
         const cl = document.getElementById(elm).querySelector('.cartesianlayer');
         const rect = cl.getBoundingClientRect();
         document.getElementById(elm).style.height = rect.height + 'px';
+    
     }
     
 

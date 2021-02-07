@@ -119,33 +119,36 @@
             <div class='l-modal__content'>
                 <h1 class='c-modal-title'>Genetic Interaction Details</h1>
                 <span class='c-modal-close js-close'>Close</span>
-                <div class='l-cards'>
-                    <div class='c-card c-card--gene_a'>
+                <div class='l-cards js-tabs'>
+                    <div class='c-card c-card--gene_a' data-for='plot_gene_a'>
                         <div class='c-card__title'>Gene A</div>
                         <div class='c-card__content' id='card_gene_a'>XYZ</div>
                     </div>
-                    <div class='c-card c-card--gene_b'>
+                    <div class='c-card c-card--gene_b' data-for='plot_gene_b'>
                         <div class='c-card__title'>Gene B</div>
                         <div class='c-card__content' id='card_gene_b'>XYZ</div>
                     </div>
-                    <div class='c-card c-card--joint'>
+                    <div class='c-card c-card--joint' data-for='plot_gi_prob'>
                         <div class='c-card__title'>Model GI Probability</div>
                         <div class='c-card__content' id='card_prob_gi'>0.97</div>
                     </div>
-                    <div class='c-card c-card--pubs'>
-                        <div class='c-card__title'>Publication IDs</div>
-                        <div class='c-card__content c-card__content--small' id='card_pubs'>
-                            
+                    <div class='c-card c-card--pubs' data-for='content_pubs'>
+                        <div class='c-card__title'>Reported?</div>
+                        <div class='c-card__content' id='card_pubs'>
                         </div>
                     </div>
                 </div>
+
+                <div class='c-expansion js-expansion'></div>
                 <div class='l-scrollable js-scrollable'>
                     <!-- need margin bottom to fully show the graph -->
-                    <div id='plot_gene_a' style='margin-bottom: 30px'></div>
-                    <div id="plot_gene_b" style='margin-bottom: 30px'></div>
-
-                    <div id="plot_joint"  style='margin-bottom:30px'></div>
-                    <div id="plot_z" style='margin-bottom: 30px'></div>
+                    <div id='plot_gene_a' class='c-tab-content' style='margin-bottom: 50px'></div>
+                    <div id="plot_gene_b" class='c-tab-content' style='margin-bottom: 50px'></div>
+                    <div id='plot_gi_prob' class='c-tab-content'>
+                        <div id="plot_joint"   style='margin-bottom: 50px'></div>
+                        <div id="plot_z"  style='margin-bottom: 50px'></div>
+                    </div>
+                    <div id="content_pubs" class='c-tab-content' style='margin-bottom: 50px'></div>
                 </div>
             </div>
         </div>
