@@ -103,7 +103,9 @@ body {
 .c-search-panel input, .c-search-panel select, .c-search-panel button {
     font-size: 1.2rem;
 }
-
+.c-search-panel select {
+    font-style: italic;;
+}
 .button {
     background-color: #6e61ff;
     border: none;
@@ -245,58 +247,64 @@ body.modal-open {
 .l-cards {
     display: flex;
     flex-direction: row;
+    align-items: stretch;
 }
 
 .c-card {
-    margin: 10px;
+    margin: 0;
     flex: 1;
-    /*box-shadow: 10px 10px 25px rgba(0,0,0,0.1);*/
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-size: 1.6rem;
+    padding: 10px;
+    cursor: pointer;
 }
 
+.c-card:hover {
+    background-color: var(--font-color);
+    color: var(--color);
+}
 .c-expansion {
     height: 128px;
 }
+
 .c-card--gene_a {
     --color: #ffb700;
+    --font-color: #805b00;
+    background-color: var(--color);
+    color: var(--font-color);
 }
 
 .c-card--gene_b {
     --color: #0095ff;
+    --font-color: #004a80;
+    background-color: var(--color);
+    color: var(--font-color);
 }
 
 .c-card--joint {
+    --color: #b2ff00;
+    --font-color: #476600;
+    background-color: var(--color);
+    color: var(--font-color);
+}
+.c-card--gi_prob {
     --color: #d000ff;
+    --font-color: #530066;
+    background-color: var(--color);
+    color: var(--font-color);
 }
 
 .c-card--pubs {
     --color: #7d8282;
+    --font-color: #323434;
+    background-color: var(--color);
+    color: var(--font-color);
 }
 
-.c-card__title {
-    font-size: 1.6rem;
-    font-weight: bold;
-    background: var(--color);
-    color: white;
-    text-align: center;
-    padding: 10px;
-    border-top-right-radius: 10px;
-    border-top-left-radius: 10px;
-}
-
-.c-card__content {
-    font-size: 1.4rem;
-    font-weight: bold;
-    padding: 10px;
-    text-align: center;
-    border: 1px solid var(--color);
-    border-bottom-right-radius: 10px;
-    border-bottom-left-radius: 10px;
-}
-
-.c-card__content--small {
-    font-size: 1.2rem;
-    font-weight: normal;
-}
 
 .c-loading {
     position: absolute;

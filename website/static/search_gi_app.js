@@ -33,7 +33,7 @@ function main()
             nostartups.forEach((e) => e.style.visibility = 'visible');
         });
     }
-    const colors = ['#ffb700', '#0095ff', '#d000ff', '#7d8282'];
+    const colors = ['#ffb700', '#0095ff', '#b2ff00', '#d000ff', '#7d8282'];
     create_tabs(document.getElementById('gi_details_modal'), colors);
 }
 
@@ -67,6 +67,7 @@ function select_card(gi_details_modal, card, color)
     expansion.innerHTML = "";
     
     const rect = card.getBoundingClientRect();
+    const parentElmRect = card.parentElement.getBoundingClientRect();
 
     const canvas = document.createElement('canvas');
     expansion.appendChild(canvas);
@@ -74,7 +75,7 @@ function select_card(gi_details_modal, card, color)
     canvas.height = expansion.offsetHeight;
 
     const ctx = canvas.getContext('2d');
-    const originX = rect.x + rect.width / 2;
+    const originX = rect.x + rect.width / 2 - parentElmRect.x;
 
     ctx.beginPath();
     ctx.moveTo(originX, 0);
@@ -257,7 +258,7 @@ function populate_gi_details(data)
     const titles = [geneAName + " features", geneBName + " features", "Joint features", "Model components"];
     const colors = ['#ffb700', '#0095ff', '#b2ff00', '#d000ff'];
     keys.forEach((k, i) => {
-        plot("plot_" + k, data.components[k], i != 2, titles[i], colors[i], colors[i]);
+        plot("plot_" + k, data.components[k], true, titles[i], colors[i], colors[i]);
     });
 
     document.getElementById('card_gene_a').innerHTML = geneAName;
