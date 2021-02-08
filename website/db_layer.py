@@ -158,7 +158,8 @@ class DbLayer:
                             b.locus_tag gene_b_locus_tag,
                             a.common_name gene_a_common_name,
                             b.common_name gene_b_common_name, 
-                            g.prob_gi prob_gi
+                            g.prob_gi prob_gi,
+                            g.spl_unnormed spl
                 FROM    genetic_interactions g 
                 JOIN    genes a on g.gene_a_id = a.gene_id 
                 JOIN    genes b on g.gene_b_id = b.gene_id
@@ -182,7 +183,7 @@ class DbLayer:
                     target_name = (r['gene_a_locus_tag'], r['gene_a_common_name'])
                 else:
                     target_name = (r['gene_b_locus_tag'], r['gene_b_common_name'])
-                interactors[target_name] = prob_gi
+                interactors[target_name] = [prob_gi, r['spl']]
             return interactors
     
 if __name__ == "__main__":

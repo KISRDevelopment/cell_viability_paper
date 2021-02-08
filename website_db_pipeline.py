@@ -236,13 +236,14 @@ def populate_interactions(conn, results_path, node_db_ix, node_ix, spl, species_
 
     pairwise_spl = spl.transform(df).squeeze().tolist()
     print("SPL: %d" % len(pairwise_spl))
-    
-    rows = [(species_id, node_db_ix[a], node_db_ix[b], obs == 1, inter == 1, prob, pspl) for a,b,obs,inter,prob, pspl in 
-        zip(list_a_names, list_b_names, list_obs, list_interacting, list_prob_gi, pairwise_spl)]
+    pairwise_spl_unnormed = (np.array(pairwise_spl) * spl.std) + spl.mu
+
+    rows = [(species_id, node_db_ix[a], node_db_ix[b], obs == 1, inter == 1, prob, pspl, pspl_un) for a,b,obs,inter,prob, pspl, pspl_un in 
+        zip(list_a_names, list_b_names, list_obs, list_interacting, list_prob_gi, pairwise_spl, pairwise_spl_unnormed)]
     c = conn.cursor()
 
     for i, r in enumerate(rows):
-        c.execute("INSERT INTO genetic_interactions(species_id, gene_a_id, gene_b_id, observed, observed_gi, prob_gi, spl) VALUES(?, ?, ?, ?, ?, ?, ?)", r)
+        c.execute("INSERT INTO genetic_interactions(species_id, gene_a_id, gene_b_id, observed, observed_gi, prob_gi, spl, spl_unnormed) VALUES(?, ?, ?, ?, ?, ?, ?, ?)", r)
         key = tuple(sorted((list_a_names[i], list_b_names[i])))
         gi_id = c.lastrowid
 
@@ -253,7 +254,41 @@ def populate_interactions(conn, results_path, node_db_ix, node_ix, spl, species_
         
     conn.commit()
 
+def pop(conn, lid, smf, sgo, node_ix, species_id):
+    
+    tag_common = SPECIES_GENE_NAMES[species_id]
 
+    smf = smf.tolist()
+    lid = lid.tolist()
+
+    c = conn.cursor()
+    rows = []
+    for gene, gid in node_ix.items():
+        row = (
+            species_id,
+            tag_common[gene][0],
+            tag_common[gene][1],
+            lid[gid],
+            smf[gid],
+            website.utils.pack_sgo(sgo[gid,:]),
+        )
+        rows.append(row)
+    
+    c.executemany("INSERT INTO genes(species_id, locus_tag, common_name, lid, smf, sgo_terms) VALUES(?,?,?,?,?,?)", rows)
+    conn.commit()
+    c.execute("SELECT locus_tag, gene_id FROM genes")
+    results = list(c.fetchall())
+    n_to_id = {e[0]:e[1] for e in results}
+
+    return n_to_id
+
+unique_pubs = set()
+for key, refs in SPECIES_PUBS.items():
+
+    for p, pubs_list in refs.items():
+        for pub in pubs_list:
+            unique_pubs.add(pub)
+    
 create_db(DB_PATH)
 
 conn = connect_db(DB_PATH)

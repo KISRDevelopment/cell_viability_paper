@@ -35,6 +35,7 @@ CREATE TABLE genetic_interactions (
     observed_gi boolean not null,
     prob_gi float not null,
     spl float not null,
+    spl_unnormed float not null,
     FOREIGN KEY(gene_a_id) REFERENCES genes(gene_id),
     FOREIGN KEY(gene_b_id) REFERENCES genes(gene_id),
     FOREIGN KEY(species_id) REFERENCES species(species_id),

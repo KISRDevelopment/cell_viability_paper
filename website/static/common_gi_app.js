@@ -90,7 +90,14 @@ function populate_results(res, full_names)
     {
         if (typeof(v) === 'undefined')
             return "";
-        return v.toFixed(2);
+        
+        let spl = v[1];
+        if (spl === 1e5)
+            spl = '∞';
+        else
+            spl = Math.round(spl);
+        
+        return `${v[0].toFixed(2)} (${spl})`;
     }
     const searchResults = document.getElementById('searchResults');
     searchResults.innerHTML = "";

@@ -324,6 +324,8 @@ class PairwiseProcessor(object):
             F = (F - mu) / std 
 
         self.F = F 
+        self.mu = mu 
+        self.std = std
         self.feature_labels = [cfg['name']]
     
     def transform(self, df):
@@ -335,7 +337,10 @@ class SparsePairwiseProcessor(object):
        
         self.F = models.feature_loader.SparsePairwiseMatrix(cfg['path'])
         self.feature_labels = [cfg['name']]
-    
+
+        self.std = self.F.std 
+        self.mu = self.F.mu
+
     def transform(self, df):
         return self.F.transform(df)
         
