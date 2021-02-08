@@ -351,3 +351,19 @@ body.modal-open {
 .c-nav a:hover {
     text-decoration: underline;
 }
+
+.btn-details {
+    border-radius: 5px;
+    background: #6e61ff;
+    color: white;
+    padding: 10px;
+    margin: 5px;
+    display: block;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.btn-details:hover {
+    background-color: #080066;
+    color: #6e61ff;
+}

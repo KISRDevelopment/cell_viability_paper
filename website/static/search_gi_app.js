@@ -147,18 +147,21 @@ function populate_gi_pairs(res)
     res.rows.forEach((row) => {
 
         const tr = createElement('tr', searchResults);
-        tr.dataset.gi_id = row.gi_id;
-        tr.classList.add('clickable');
+        
 
-        const tds = createElements('td', tr, 6);
+        const tds = createElements('td', tr, 7);
         tds[0].innerHTML = row.gene_a_locus_tag;
         tds[1].innerHTML = row.gene_a_common_name;
         tds[2].innerHTML = row.gene_b_locus_tag;
         tds[3].innerHTML = row.gene_b_common_name;
         tds[4].innerHTML = row.prob_gi.toFixed(2);
         tds[5].innerHTML = (row.reported_gi === 1) ? '<strong>Yes</strong>' : 'No';
+        tds[6].innerHTML = "<span class='btn-details'>Details</span>";
 
-        tr.onclick = search_result_clicked;
+        tds[6].onclick = search_result_clicked;
+        tds[6].dataset.gi_id = row.gi_id;
+        tds[6].classList.add('clickable');
+
     });
 }
 
