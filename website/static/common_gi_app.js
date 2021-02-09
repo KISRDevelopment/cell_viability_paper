@@ -91,14 +91,23 @@ function populate_results(res, full_names)
         if (typeof(v) === 'undefined')
             return "";
         
+        return `${v[0].toFixed(2)}`;
+    }
+
+    function showSpl(v)
+    {
+        if (typeof(v) === 'undefined')
+            return "";
+        
         let spl = v[1];
         if (spl === 1e5)
             spl = '∞';
         else
             spl = Math.round(spl);
         
-        return `${v[0].toFixed(2)} (${spl})`;
+        return spl;
     }
+
     const searchResults = document.getElementById('searchResults');
     searchResults.innerHTML = "";
     
@@ -106,19 +115,39 @@ function populate_results(res, full_names)
 
         const tr = createElement('tr', searchResults);
     
-        const tds = createElements('td', tr, 6);
+        const tds = createElements('td', tr, 10);
         tds[0].innerHTML = row.interactor[0];
         tds[1].innerHTML = row.interactor[1];
-        tds[2].innerHTML = showProb(row.gene_a);
-        tds[3].innerHTML = showProb(row.gene_b);
-        tds[4].innerHTML = showProb(row.gene_c);
-        tds[5].innerHTML = showProb(row.gene_d);
+
+
+        tds[2].innerHTML = showSpl(row.gene_a);
+        tds[3].innerHTML = showSpl(row.gene_b);
+        tds[4].innerHTML = showSpl(row.gene_c);
+        tds[5].innerHTML = showSpl(row.gene_d);
+
+        tds[6].innerHTML = showProb(row.gene_a);
+        tds[7].innerHTML = showProb(row.gene_b);
+        tds[8].innerHTML = showProb(row.gene_c);
+        tds[9].innerHTML = showProb(row.gene_d);
 
     });
     
     const cols = ['gene_a', 'gene_b', 'gene_c', 'gene_d'];
     cols.forEach((c) => {
         const col = document.getElementById("col_" + c);
+
+        if (c in full_names)
+        {
+            col.innerHTML = `${full_names[c][0]} (${full_names[c][1]})`;
+        }
+        else 
+        {
+            col.innerHTML = "";
+        }
+    });
+
+    cols.forEach((c) => {
+        const col = document.getElementById("col_" + c + "_spl");
 
         if (c in full_names)
         {

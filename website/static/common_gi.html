@@ -81,6 +81,26 @@
                 </div>
                 <div class='c-search-panel__row'>
                     <div class='c-search-panel__label'>
+                        <label class='c-input-label' for="selectMaxSpl">Maximum Co-PPI Distance:</label>
+                    </div>
+                    <div class='c-search-panel__input'>
+                        <select id="selectMaxSpl" name='max_spl'  class='js-input'>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="inf" selected>Infinity</option>
+                        </select>
+                        <p>The maximum Coprecipitation Protein-Protein Interaction (PPI) network distance between the pair of genes. Choose <strong>Infinity</strong> if you do not care about this filter.</p>
+                    </div>
+                </div>
+                <div class='c-search-panel__row'>
+                    <div class='c-search-panel__label'>
                         <label class='c-input-label' for="cbPublishedOnly">Published Only:</label>
                     </div>
                     <div class='c-search-panel__input'>
@@ -110,11 +130,16 @@
             <thead>
                 <tr>
                     <th colspan='2'>Common Interactor</th>
+                    <th colspan='4'>Shortest Coprecipitation PPI Distance To</th>
                     <th colspan='4'>Model GI Probability with</th>
                 </tr>
                 <tr>
                     <th>Official Name</th>
                     <th>Common Name</th>
+                    <th id='col_gene_a_spl'>Gene A</th>
+                    <th id='col_gene_b_spl'>Gene B</th>
+                    <th id='col_gene_c_spl'>Gene C</th>
+                    <th id='col_gene_d_spl'>Gene D</th>
                     <th id='col_gene_a'>Gene A</th>
                     <th id='col_gene_b'>Gene B</th>
                     <th id='col_gene_c'>Gene C</th>

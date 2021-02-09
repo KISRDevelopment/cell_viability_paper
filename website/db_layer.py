@@ -30,7 +30,7 @@ class DbLayer:
             
             return dict(row) if row is not None else None
 
-    def get_pairs(self, species_id, threshold, gene_a, gene_b, page, published_only=False):
+    def get_pairs(self, species_id, threshold, gene_a, gene_b, page, published_only=False, max_spl = "inf"):
         #print("get_pairs(%d, %0.2f, %s, %s)" % (species_id, threshold, gene_a, gene_b))
         
         both_genes_clause = """
@@ -42,6 +42,10 @@ class DbLayer:
                  (g.gene_a_id = :gene_b_id OR g.gene_b_id = :gene_a_id))
         """
         
+        if max_spl == "inf":
+            max_spl = 1e5
+        max_spl = int(max_spl)
+        print(max_spl)
         genes_clause = ""
         if gene_a and gene_b:
             genes_clause = both_genes_clause
@@ -69,15 +73,18 @@ class DbLayer:
                             b.common_name gene_b_common_name, 
                             g.observed, 
                             g.observed_gi, 
-                            g.prob_gi
+                            g.prob_gi,
+                            g.spl_unnormed spl_unnormed
                 FROM    genetic_interactions g 
                 JOIN    genes a on g.gene_a_id = a.gene_id 
                 JOIN    genes b on g.gene_b_id = b.gene_id
                 WHERE   (a.species_id = :species_id) AND
                         (g.prob_gi >= :threshold) AND
-                        (NOT :published_only OR (g.observed = :published_only AND g.observed_gi = 1))
+                        (NOT :published_only OR (g.observed = :published_only AND g.observed_gi = 1)) AND 
+                        spl_unnormed <= :max_spl
                         %s
                         ORDER BY g.prob_gi DESC
+                        
                 LIMIT :entries_per_page OFFSET :offset
         """ % genes_clause
         
@@ -88,7 +95,8 @@ class DbLayer:
                 JOIN    genes b on g.gene_b_id = b.gene_id
                 WHERE   (a.species_id = :species_id) AND
                         (g.prob_gi >= :threshold) AND 
-                        (NOT :published_only OR (g.observed = :published_only AND g.observed_gi = 1))
+                        (NOT :published_only OR (g.observed = :published_only AND g.observed_gi = 1)) AND
+                        spl_unnormed <= :max_spl
                         %s
         """ % genes_clause
         
@@ -97,6 +105,7 @@ class DbLayer:
             "threshold" : threshold,
             "gene_a_id" : gene_a_id,
             "gene_b_id" : gene_b_id,
+            "max_spl" : max_spl,
             "published_only" : published_only,
             "entries_per_page" : self._entries_per_page,
             "offset" : self._entries_per_page * page, 
@@ -149,7 +158,11 @@ class DbLayer:
                 gi_row['pubs'] = [dict(r) for r in rows]
             return gi_row
     
-    def get_interactors(self, species_id, gene_id, threshold, published_only):
+    def get_interactors(self, species_id, gene_id, threshold, published_only, max_spl="inf"):
+        if max_spl == "inf":
+            max_spl = 1e5
+        max_spl = int(max_spl)
+
         query = """
                 SELECT  g.gi_id gi_id,
                             a.gene_id gene_a_id,
@@ -165,6 +178,7 @@ class DbLayer:
                 JOIN    genes b on g.gene_b_id = b.gene_id
                 WHERE   (g.prob_gi >= :threshold) AND (g.species_id = :species_id) AND
                         ((a.gene_id = :gene_id) OR (b.gene_id = :gene_id)) AND
+                        (g.spl_unnormed <= :max_spl) AND
                         (NOT :published_only OR (g.observed = :published_only AND g.observed_gi = 1))
         """
         with closing(self._conn.cursor()) as c:
@@ -172,6 +186,7 @@ class DbLayer:
                 "species_id" : species_id,
                 "gene_id" : gene_id, 
                 "threshold" : threshold,
+                "max_spl" : max_spl,
                 "published_only" : published_only
             })
             rows = c.fetchall()

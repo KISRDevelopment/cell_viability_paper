@@ -64,7 +64,7 @@ def common_interactors():
         gene_id = gene_row['gene_id']
         full_names[k] = [gene_row['locus_tag'], gene_row['common_name']]
 
-        interactors = db.get_interactors(rp['species_id'], gene_id, rp['threshold'], rp['published_only'])
+        interactors = db.get_interactors(rp['species_id'], gene_id, rp['threshold'], rp['published_only'], rp['max_spl'])
         interactor_dicts[k] = interactors
 
         targets = set(interactors.keys())
@@ -101,7 +101,8 @@ def gi_pairs():
         rp['gene_a'], 
         rp['gene_b'], 
         rp['page'], 
-        rp['published_only'])
+        rp['published_only'],
+        rp['max_spl'])
 
     for r in rows:
         r['reported_gi'] = r['observed'] and r['observed_gi']

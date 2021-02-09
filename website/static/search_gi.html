@@ -71,6 +71,26 @@
                 </div>
                 <div class='c-search-panel__row'>
                     <div class='c-search-panel__label'>
+                        <label class='c-input-label' for="selectMaxSpl">Maximum Co-PPI Distance:</label>
+                    </div>
+                    <div class='c-search-panel__input'>
+                        <select id="selectMaxSpl" name='max_spl'  class='js-input'>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="inf" selected>Infinity</option>
+                        </select>
+                        <p>The maximum Coprecipitation Protein-Protein Interaction (PPI) network distance between the pair of genes. Choose <strong>Infinity</strong> if you do not care about this filter.</p>
+                    </div>
+                </div>
+                <div class='c-search-panel__row'>
+                    <div class='c-search-panel__label'>
                         <label class='c-input-label' for="cbPublishedOnly">Published Only:</label>
                     </div>
                     <div class='c-search-panel__input'>
@@ -101,6 +121,7 @@
                 <tr>
                     <th colspan='2'>Gene A</th>
                     <th colspan='2'>Gene B</th>
+                    <th rowspan="2">Co-PPI Distance</th>
                     <th rowspan="2">Model GI Probability</th>
                     <th rowspan="2">Reported GI</th>
                     <th></th>

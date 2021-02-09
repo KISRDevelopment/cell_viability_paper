@@ -24,6 +24,7 @@ function main()
     btnSearch.onclick = function()
     {
         const form = gather_form();
+        console.log(form)
         form['page'] = 0;
 
         call_api('../gi_pairs', form, function(res) {
@@ -149,18 +150,19 @@ function populate_gi_pairs(res)
         const tr = createElement('tr', searchResults);
         
 
-        const tds = createElements('td', tr, 7);
+        const tds = createElements('td', tr, 8);
         tds[0].innerHTML = row.gene_a_locus_tag;
         tds[1].innerHTML = row.gene_a_common_name;
         tds[2].innerHTML = row.gene_b_locus_tag;
         tds[3].innerHTML = row.gene_b_common_name;
-        tds[4].innerHTML = row.prob_gi.toFixed(2);
-        tds[5].innerHTML = (row.reported_gi === 1) ? '<strong>Yes</strong>' : 'No';
-        tds[6].innerHTML = "<span class='btn-details'>Details</span>";
+        tds[4].innerHTML = row.spl_unnormed;
+        tds[5].innerHTML = row.prob_gi.toFixed(2);
+        tds[6].innerHTML = (row.reported_gi === 1) ? '<strong>Yes</strong>' : 'No';
+        tds[7].innerHTML = "<span class='btn-details'>Details</span>";
 
-        tds[6].onclick = search_result_clicked;
-        tds[6].dataset.gi_id = row.gi_id;
-        tds[6].classList.add('clickable');
+        tds[7].onclick = search_result_clicked;
+        tds[7].dataset.gi_id = row.gi_id;
+        tds[7].classList.add('clickable');
 
     });
 }
