@@ -14,6 +14,7 @@ import tasks.pombe_gi
 import tasks.yeast_gi_costanzo
 import tasks.yeast_gi_hybrid
 import tasks.biogrid_plus_negative_sampling
+import tasks.yeast_tgi
 import utils.make_biogrid_dataset
 import utils.make_costanzo_dataset
 import utils.bin_simple
@@ -141,36 +142,11 @@ if not os.path.exists('../generated-data/targets'):
 # # utils.bin_interacting.main(gi_task_path)
 # # utils.cv_gi.main(gi_task_path, 10, 4, 0.2)
 
-
 #
-# COSTANZO Investigation
-#
+# Yeast Triple Mutant Task
 
-# 1. Costanzo candidate #1: all
 gpath = "../generated-data/ppc_yeast"
-gi_task_path = "../generated-data/task_yeast_gi_costanzo_all"
-# tasks.yeast_gi_costanzo.main(gpath, [26, 30], [(0, 0), (0, 1), (1, 0), (1, 1)], gi_task_path)
-# utils.bin_simple.main(gi_task_path)
-# utils.bin_interacting.main(gi_task_path)
-# utils.cv_gi.main(gi_task_path, 10, 4, 0.2)
-
-costanzo_targets_path = "../generated-data/targets/task_yeast_gi_costanzo_all_bin_interacting.npz"
-costanzo_splits_path = "../generated-data/splits/task_yeast_gi_costanzo_all_10reps_4folds_0.20valid.npz"
-
-import models.cv 
-
-models.cv.main("models.gi_mn", "cfgs/models/yeast_gi_mn.json", 
-    "../results/task_yeast_gi_costanzo_all/mn_binary", 
-    num_processes = 20,
-    task_path = gi_task_path,
-    targets_path = costanzo_targets_path,
-    splits_path = costanzo_splits_path
-)
-
-models.cv.main("models.gi_mn", "cfgs/models/yeast_gi_mn.json", 
-    "../results/task_yeast_gi_costanzo_all/mn", 
-    num_processes = 20,
-    task_path = gi_task_path,
-    targets_path = "../generated-data/targets/task_yeast_gi_costanzo_all_bin_simple.npz",
-    splits_path = costanzo_splits_path
-)
+tgi_task_path = "../generated-data/task_yeast_tgi"
+tasks.yeast_tgi.main(gpath, tgi_task_path)
+utils.bin_simple.main(tgi_task_path)
+utils.cv_simple.main(tgi_task_path, 10, 4, 0.2, True)
