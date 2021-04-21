@@ -162,7 +162,7 @@
         
     ],
     "optimizer": "nadam",
-    "epochs": 200,
+    "epochs": 1000,
     "verbose": true,
     "patience": 10,
     "balanced_loss": true,

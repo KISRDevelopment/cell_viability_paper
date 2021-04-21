@@ -146,6 +146,19 @@
                     "path": "../generated-data/pairwise_features/ppc_yeast_adjacent.npy"
                 }
             ]
+        },
+        
+        {
+            "name": "pairwise_comm",
+            "group": "pairwise",
+            "sparse" : true,
+            "hidden_activation": "tanh",
+            "layer_sizes": [
+                5
+            ],
+            "type": "ff",
+            "pairwise": true,
+            "path": "../generated-data/pairwise_features/ppc_yeast_5steps_comms.npz"
         }
         
     ],

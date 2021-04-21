@@ -208,7 +208,9 @@ def feature_transform(df, single_fsets, pairwise_fsets):
         inputs_B.append(fset[df['b_id'], :])
         inputs_C.append(fset[df['c_id'], :])
     
-    
+    a_id = np.array(df['a_id'])
+    b_id = np.array(df['b_id'])
+    c_id = np.array(df['c_id'])
     inputs_AB = []
     inputs_AC = []
     inputs_BC = []
@@ -228,10 +230,30 @@ def feature_transform(df, single_fsets, pairwise_fsets):
         #     PF = np.array(PF)
         #     inputs_AB.append(PF)
             
+        if type(fset) == dict:
+            first_val = next(iter(fset.values()))
+            fset_shape = len(first_val)
 
-        inputs_AB.append(fset[df['a_id'], df['b_id'], :])
-        inputs_AC.append(fset[df['a_id'], df['c_id'], :])
-        inputs_BC.append(fset[df['b_id'], df['c_id'], :])
+            PF_AB = []
+            PF_AC = []
+            PF_BC = []
+            for i in range(df.shape[0]):
+                key_ab = tuple(sorted((a_id[i], b_id[i])))
+                key_ac = tuple(sorted((a_id[i], c_id[i])))
+                key_bc = tuple(sorted((b_id[i], c_id[i])))
+
+                PF_AB.append( fset.get(key_ab, np.zeros(fset_shape)) )
+                PF_AC.append( fset.get(key_ac, np.zeros(fset_shape)) )
+                PF_BC.append( fset.get(key_bc, np.zeros(fset_shape)) )
+                
+            inputs_AB.append(np.array(PF_AB))
+            inputs_AC.append(np.array(PF_AC))
+            inputs_BC.append(np.array(PF_BC))
+
+        else:
+            inputs_AB.append(fset[df['a_id'], df['b_id'], :])
+            inputs_AC.append(fset[df['a_id'], df['c_id'], :])
+            inputs_BC.append(fset[df['b_id'], df['c_id'], :])
 
     return inputs_A + inputs_B + inputs_C + inputs_AB + inputs_AC + inputs_BC 
 
