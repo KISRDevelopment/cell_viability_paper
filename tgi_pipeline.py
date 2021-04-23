@@ -34,7 +34,7 @@ analysis.fig_pairwise_feature_violin.main("../generated-data/task_yeast_tgi",
     "Sum LID", "../figures/yeast_tgi_sum_lid.png", 
     np.array(['-', 'N']),
     colors=['magenta', 'cyan'],
-    star_colors=['magenta', 'cyan'])
+    star_colors=['magenta', '#007bff'])
 analysis.fig_tgi_smf_matrix.main(
     "../generated-data/task_yeast_tgi",
     "../generated-data/task_yeast_smf_30",
