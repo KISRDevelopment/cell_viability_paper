@@ -15,7 +15,6 @@ import seaborn as sns
 import utils.eval_funcs as eval_funcs
 plt.rcParams["font.family"] = "Liberation Serif"
 plt.rcParams["font.weight"] = "bold"
-BINS = np.array(['-', 'N', '+', 'S'])
 
 plot_cfg = {
     "tick_label_size" : 50,
@@ -30,12 +29,14 @@ plot_cfg = {
     "iqr_color" : "#303030",
 }
 
-def main(task_path, feature_path, ylabel, output_path):
+def main(task_path, feature_path, ylabel, output_path, BINS=np.array(['-', 'N', '+', 'S']),
+    colors = ['#FF0000', '#FFFF00', '#00CC00', '#3d77ff'],
+    star_colors = ['#FF0000', 'orange', '#00CC00', '#3d77ff'] 
+):
 
     df = pd.read_csv(task_path)
     
-    colors = ['#FF0000', '#FFFF00', '#00CC00', '#3d77ff']
-    star_colors = ['#FF0000', 'orange', '#00CC00', '#3d77ff'] 
+    
 
     #loader = TruePairwiseFeatureLoader(feature_path)
     loader = SumPairwiseLoader(feature_path)
@@ -123,7 +124,12 @@ class SumPairwiseLoader(object):
 
         self.f = f
     def get_values(self, df):
+        
         r = self.f[df['a_id'], :] + self.f[df['b_id'], :]
+
+        if 'c_id' in df.columns:
+            r = r + self.f[df['c_id'], :]
+        
         return r 
 
 if __name__ == "__main__":
