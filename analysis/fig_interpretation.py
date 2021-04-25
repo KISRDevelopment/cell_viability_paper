@@ -62,6 +62,7 @@ def main(cfg):
             muW, stdW, errors, labels = load_weights_mn(s['path'], 
                 s.get('ref_class', cfg['ref_class']))
             
+            print(labels)
             
             c = s.get('target_class', cfg["target_class"])
 
@@ -291,6 +292,25 @@ smf_lookup = {
     'smf_11' : 'Reduced Growth/Reduced Growth',
     'smf_12' : 'Reduced Growth/Normal',
     'smf_22' : 'Normal/Normal',
+
+    'smf_00' : 'Lethal/Lethal',
+    'smf_01' : 'Lethal/Reduced Growth',
+    'smf_02' : 'Lethal/Normal',
+    'smf_11' : 'Reduced Growth/Reduced Growth',
+    'smf_12' : 'Reduced Growth/Normal',
+    'smf_22' : 'Normal/Normal',
+
+    'smf_0.00.00.0' : 'LLL',
+    'smf_0.00.01.0' : 'LLR',
+    'smf_0.00.02.0' : 'LLN',
+    'smf_0.01.01.0' : 'LRR',
+    'smf_0.01.02.0' : 'LRN',
+    'smf_0.02.02.0' : 'LNN',
+    'smf_1.01.01.0' : 'RRR',
+    'smf_1.01.02.0' : 'RRN',
+    'smf_1.02.02.0' : 'RNN',
+    'smf_2.02.02.0' : 'NNN'
+    
 }
 def process_label(lbl):
 
@@ -316,7 +336,9 @@ def process_label(lbl):
     elif lbl == 'sum_lid':
         lbl = 'LID (sum)'
     elif lbl.startswith('smf_'):
-        lbl = smf_lookup[lbl]
+        lbl = smf_lookup.get(lbl,lbl)
+        if lbl not in smf_lookup:
+            print("'%s' : ''" % lbl)
     elif lbl == 'spl':
         lbl = 'Shortest Path Length'
 

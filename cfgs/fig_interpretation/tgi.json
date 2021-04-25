@@ -1,0 +1,34 @@
+{
+    "spec" : [
+        {
+            "text_name" : "S. cerevisiae",
+            "name" : "$\\it{S. cerevisiae}$",
+            "path" : "../results/tgi_interpretation/yeast_tgi_mn/",
+            "color" : "#FF3AF2"
+        },
+        {
+            "text_name" : "S. cerevisiae",
+            "name" : "$\\it{S. cerevisiae}$",
+            "path" : "../results/tgi_interpretation/yeast_tgi_mn/",
+            "color" : "#FF3AF2"
+        },
+        {
+            "text_name" : "S. cerevisiae",
+            "name" : "$\\it{S. cerevisiae}$",
+            "path" : "../results/tgi_interpretation/yeast_tgi_mn/",
+            "color" : "#FF3AF2"
+        },
+        {
+            "text_name" : "S. cerevisiae",
+            "name" : "$\\it{S. cerevisiae}$",
+            "path" : "../results/tgi_interpretation/yeast_tgi_mn/",
+            "color" : "#FF3AF2"
+        }
+    ],
+    "model" : "mn",
+    "color" : "#3A90FF",
+    "ref_class" : 1,
+    "target_class" : 0,
+    "output_path" : "../figures/tgi_interpretation",
+    "plot_cfg" : {}
+}

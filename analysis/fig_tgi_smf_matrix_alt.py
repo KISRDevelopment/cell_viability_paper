@@ -99,9 +99,9 @@ def main(task_path, smf_path, output_path):
         Ms.append(M)
     
     df, testr = prepare_detailed_data(Ms)
-    visualize(df, testr, output_path + '_detailed.png', 0.01)
+    visualize(df, testr, output_path + '_detailed.png', stars_offset=(0.2, 0.99), legend_pos=(0.53,0.91))
     df, testr = prepare_summary_data(Ms)
-    visualize(df, testr, output_path + '_summary.png', 0.4)
+    visualize(df, testr, output_path + '_summary.png', stars_offset=(0.5, 0.99), legend_pos=(0.8, 0.91))
 
 def prepare_detailed_data(Ms):
     rows = []
@@ -164,7 +164,7 @@ def prepare_summary_data(Ms):
             })
     
     return pd.DataFrame(rows), testr
-def visualize(df, testr, output_path, stars_offset):
+def visualize(df, testr, output_path, stars_offset=(0.5, 0.87), legend_pos=(0.5,0.95)):
     f, ax = plt.subplots(1, 1, figsize=(15, 10))
 
     g = sns.barplot(x="label", 
@@ -180,12 +180,12 @@ def visualize(df, testr, output_path, stars_offset):
     ax.set_xlabel("", fontsize=plot_cfg['ylabel_size'], fontweight='bold')
     ax.spines['right'].set_visible(False)
     ax.spines['top'].set_visible(False)
-    ax.legend(frameon=False, fontsize=plot_cfg['legend_size'], bbox_to_anchor=(0.5,0.95))
+    ax.legend(frameon=False, fontsize=plot_cfg['legend_size'], loc='center', bbox_to_anchor=legend_pos)
     plt.setp(ax.spines.values(),linewidth=plot_cfg["border_size"], color='black')
     chisq, p, ddof = testr
     stars = '*' * eval_funcs.compute_stars(p, 0.05)
     
-    ax.text(stars_offset, 0.87, stars, 
+    ax.text(stars_offset[0], stars_offset[1], stars, 
             transform=ax.transAxes,
             color=STAR_COLORS[1], ha="left", va="top", weight='bold', 
             fontsize=plot_cfg['stars_label_size'])
