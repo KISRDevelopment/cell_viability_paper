@@ -32,7 +32,7 @@
         },
         
         {
-            "name": "pairwise",
+            "name": "triplet",
             "group": "pairwise",
             "hidden_activation": "tanh",
             "layer_sizes": [
@@ -45,7 +45,8 @@
                     "normalize": true,
                     "path": "../generated-data/pairwise_features/ppc_yeast_shortest_path_len.npy"
                 }
-            ]
+            ],
+            "sum" : true
         }
     ],
     "optimizer": "nadam",

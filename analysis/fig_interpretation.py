@@ -300,16 +300,16 @@ smf_lookup = {
     'smf_12' : 'Reduced Growth/Normal',
     'smf_22' : 'Normal/Normal',
 
-    'smf_0.00.00.0' : 'LLL',
-    'smf_0.00.01.0' : 'LLR',
-    'smf_0.00.02.0' : 'LLN',
-    'smf_0.01.01.0' : 'LRR',
-    'smf_0.01.02.0' : 'LRN',
-    'smf_0.02.02.0' : 'LNN',
-    'smf_1.01.01.0' : 'RRR',
-    'smf_1.01.02.0' : 'RRN',
-    'smf_1.02.02.0' : 'RNN',
-    'smf_2.02.02.0' : 'NNN'
+    'smf_0.00.00.0' : 'Lethal/Lethal/Lethal',
+    'smf_0.00.01.0' : 'Lethal/Lethal/Reduced Growth',
+    'smf_0.00.02.0' : 'Lethal/Lethal/Normal',
+    'smf_0.01.01.0' : 'Lethal/Reduced Growth/Reduced Growth',
+    'smf_0.01.02.0' : 'Lethal/Reduced Growth/Normal',
+    'smf_0.02.02.0' : 'Lethal/Normal/Normal',
+    'smf_1.01.01.0' : 'Reduced Growth/Reduced Growth/Reduced Growth',
+    'smf_1.01.02.0' : 'Reduced Growth/Reduced Growth/Normal',
+    'smf_1.02.02.0' : 'Reduced Growth/Normal/Normal',
+    'smf_2.02.02.0' : 'Normal/Normal/Normal'
     
 }
 def process_label(lbl):

@@ -46,8 +46,8 @@ def main(organism, gpath):
     nodes = list(sorted(G.nodes()))
     
     print("Executing blastp ...")
-    #subprocess.run(shlex.split(blast_command))
-
+    subprocess.run(shlex.split(blast_command))
+    exit(0)
     blastp_results = read_blastp_results(blastp_results_path, get_name_func)
 
     F = []

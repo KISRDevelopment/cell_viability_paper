@@ -175,7 +175,7 @@ def visualize(df, testr, output_path, stars_offset=(0.5, 0.87), legend_pos=(0.5,
             palette=['magenta', 'cyan'])
 
     ax.yaxis.set_tick_params(labelsize=plot_cfg['tick_label_size'])
-    ax.xaxis.set_tick_params(labelsize=plot_cfg['tick_label_size'])
+    ax.xaxis.set_tick_params(labelsize=plot_cfg['tick_label_size'], pad=15)
     ax.set_ylabel("% Triplets", fontsize=plot_cfg['ylabel_size'], fontweight='bold')
     ax.set_xlabel("", fontsize=plot_cfg['ylabel_size'], fontweight='bold')
     ax.spines['right'].set_visible(False)

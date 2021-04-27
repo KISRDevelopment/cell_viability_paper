@@ -36,8 +36,12 @@ def main(cfg, rep, fold, output_path, print_results=True, return_model=False):
     single_gene_spec = [s for s in cfg['spec'] if not s['pairwise']]
     single_fsets, single_fsets_shapes = feature_loader.load_feature_sets(single_gene_spec, False)
     
-    pairwise_gene_spec = [s for s in cfg['spec'] if s['pairwise']]
+    pairwise_gene_spec = [s for s in cfg['spec'] if s['pairwise'] and not s.get('triplet', False)]
     pairwise_fsets, pairwise_fsets_shapes = feature_loader.load_feature_sets(pairwise_gene_spec, False)
+
+    triplet_gene_spec = [s for s in cfg['spec'] if s['pairwise'] and s.get('triplet', False)]
+    triplet_fsets, triplet_fsets_shapes = feature_loader.load_feature_sets(triplet_gene_spec, False)
+
 
     # create output
     Y = keras.utils.to_categorical(np.load(targets_path)['y'])
@@ -98,7 +102,14 @@ def main(cfg, rep, fold, output_path, print_results=True, return_model=False):
     output_ac = pairwise_gene_arch(inputs_ac, name="input_ac")
     output_bc = pairwise_gene_arch(inputs_bc, name="input_bc")
 
-    merged = nn_arch.concatenate([output_a, output_b, output_c, output_ab, output_ac, output_bc], name="preoutput")
+    # triplet features
+    inputs_abc = nn_arch.create_input_nodes(triplet_gene_spec, triplet_fsets_shapes, base_name="abc")
+    triplet_gene_arch = nn_arch.create_input_architecture(output_size=cfg['embedding_size'], 
+        output_activation=cfg['embedding_activation'], 
+        name='triplet_input', spec=triplet_gene_spec)
+    output_abc = triplet_gene_arch(inputs_abc, name="input_abc")
+
+    merged = nn_arch.concatenate([output_a, output_b, output_c, output_ab, output_ac, output_bc, output_abc], name="preoutput")
     output_node = layers.Dense(Y.shape[1], activation='softmax')(merged)
 
     if cfg['balanced_loss']:
@@ -106,16 +117,17 @@ def main(cfg, rep, fold, output_path, print_results=True, return_model=False):
     else:
         loss = 'categorical_crossentropy'
     
-    model = keras.models.Model(inputs=inputs_a + inputs_b + inputs_c + inputs_ab + inputs_ac + inputs_bc, outputs=output_node)
+    model = keras.models.Model(inputs=inputs_a + inputs_b + inputs_c + inputs_ab + inputs_ac + inputs_bc + inputs_abc, outputs=output_node)
     model.compile(cfg['optimizer'], loss)
     model.outputs[0]._uses_learning_phase = True
-    
+    #print(model.summary())
+
     # train
     if cfg.get("train_model", True):
         
         # create data iterators (necessary because some feature sets are too large to put in ram)
-        train_iterator = create_data_iterator(train_df, train_Y, single_fsets, pairwise_fsets, cfg, cfg['scramble'])
-        valid_iterator = create_data_iterator(valid_df, valid_Y, single_fsets, pairwise_fsets, cfg, False)
+        train_iterator = create_data_iterator(train_df, train_Y, single_fsets, pairwise_fsets, triplet_fsets, cfg, cfg['scramble'])
+        valid_iterator = create_data_iterator(valid_df, valid_Y, single_fsets, pairwise_fsets, triplet_fsets, cfg, False)
 
         callbacks = [keras.callbacks.EarlyStopping(monitor='val_loss', patience=cfg['patience'], restore_best_weights=True)]
 
@@ -136,7 +148,7 @@ def main(cfg, rep, fold, output_path, print_results=True, return_model=False):
     
     if return_model:
         return model, [FeatureTransform(single_fsets, pairwise_fsets)]
-    test_F = feature_transform(test_df, single_fsets, pairwise_fsets)
+    test_F = feature_transform(test_df, single_fsets, pairwise_fsets, triplet_fsets)
     preds = model.predict(test_F)
     y_target = np.argmax(test_Y, axis=1)
 
@@ -154,7 +166,7 @@ def main(cfg, rep, fold, output_path, print_results=True, return_model=False):
         rep=rep,
         fold=fold)
     
-def create_data_iterator(df, y, single_fsets, pairwise_fsets, cfg, scramble=False):
+def create_data_iterator(df, y, single_fsets, pairwise_fsets, triplet_fsets, cfg, scramble=False):
     idx = np.arange(df.shape[0])
     batch_size = cfg['batch_size']
 
@@ -166,7 +178,7 @@ def create_data_iterator(df, y, single_fsets, pairwise_fsets, cfg, scramble=Fals
                 
                 batch_df = df.iloc[indecies]
                 batch_y = y[indecies,:]
-                batch_F = feature_transform(batch_df, single_fsets, pairwise_fsets)
+                batch_F = feature_transform(batch_df, single_fsets, pairwise_fsets, triplet_fsets)
                 
                 if scramble:
                     
@@ -199,7 +211,7 @@ class FeatureTransform:
     def transform(self, df):
         return feature_transform(df, self.single_fsets, self.pairwise_fsets)
 
-def feature_transform(df, single_fsets, pairwise_fsets):
+def feature_transform(df, single_fsets, pairwise_fsets, triplet_fsets):
     inputs_A = []
     inputs_B = []
     inputs_C = []
@@ -214,6 +226,7 @@ def feature_transform(df, single_fsets, pairwise_fsets):
     inputs_AB = []
     inputs_AC = []
     inputs_BC = []
+    inputs_ABC = []
     for fset in pairwise_fsets:
         
         # if type(fset) == dict:
@@ -254,8 +267,11 @@ def feature_transform(df, single_fsets, pairwise_fsets):
             inputs_AB.append(fset[df['a_id'], df['b_id'], :])
             inputs_AC.append(fset[df['a_id'], df['c_id'], :])
             inputs_BC.append(fset[df['b_id'], df['c_id'], :])
-
-    return inputs_A + inputs_B + inputs_C + inputs_AB + inputs_AC + inputs_BC 
+    
+    for fset in triplet_fsets:
+        inputs_ABC.append(fset[df['a_id'], df['b_id'], :] + fset[df['a_id'], df['c_id'], :] + fset[df['b_id'], df['c_id'], :])
+    
+    return inputs_A + inputs_B + inputs_C + inputs_AB + inputs_AC + inputs_BC + inputs_ABC
 
 
 def weighted_categorical_xentropy(y_true, y_pred):

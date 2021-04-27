@@ -275,12 +275,13 @@ class PairwiseProcessor(object):
         self.F = F 
         self.mu = mu 
         self.std = std
-        self.feature_labels = ["%s_%s" % (cfg['name'], comb) for comb in ('ab', 'ac', 'bc')]
+        self.feature_labels = ["Shortest Circuit Length"]
     
     def transform(self, df):
-        return np.hstack((self.F[df['a_id'], df['b_id'], np.newaxis],
-                          self.F[df['a_id'], df['c_id'], np.newaxis],
-                          self.F[df['b_id'], df['c_id'], np.newaxis]))
+        return self.F[df['a_id'], df['b_id'], np.newaxis] + \
+                    self.F[df['a_id'], df['c_id'], np.newaxis] + \
+                    self.F[df['b_id'], df['c_id'], np.newaxis]
+
 
 class StandardProcessor(object):
 

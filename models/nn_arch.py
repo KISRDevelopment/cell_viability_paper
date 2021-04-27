@@ -112,6 +112,7 @@ def create_input_architecture(output_size, output_activation, name, spec):
         applicator = func(**compartment_spec)
         compartments.append(applicator)
     
+    
     output_nn = layers.Dense(output_size, activation=output_activation, name='arch_output_%s' % name)
 
     def apply(input_nodes, name):
@@ -121,7 +122,8 @@ def create_input_architecture(output_size, output_activation, name, spec):
             output_nodes.append(output_node)
 
         merged = concatenate(output_nodes, name='arch_preoutput_%s' % name)
-        merged = output_nn(merged)
+        if len(input_nodes) > 1:
+            merged = output_nn(merged)
 
         return merged
 
