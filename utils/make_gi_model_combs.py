@@ -58,12 +58,12 @@ def main(base_cfg, output_dir):
     
     names_to_comps = dict([(e['name'], e) for e in base_cfg['spec']])
 
-    if not os.path.exists('../tmp/model_cfgs/yeast_gi'):
-        os.makedirs('../tmp/model_cfgs/yeast_gi')
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
     
     for group_comb, comb in combinations:
         sub_spec = [ names_to_comps[comp_name] for comp_name in comb ]
-        has_pairwise = any([ names_to_comps[comp_name]['pairwise'] for comp_name in comb ])
+        has_pairwise = any([ names_to_comps[comp_name]['pairwise'] and not names_to_comps[comp_name].get('triplet',False) for comp_name in comb ])
         has_single = any([(not names_to_comps[comp_name]['pairwise']) for comp_name in comb])
 
         if not has_pairwise:
@@ -74,7 +74,7 @@ def main(base_cfg, output_dir):
         base_cfg['spec'] = sub_spec
 
         cfg_name = '~'.join(group_comb)
-        with open('../tmp/model_cfgs/yeast_gi/%s.json' % cfg_name, 'w') as f:
+        with open('%s/%s.json' % (output_dir,cfg_name), 'w') as f:
             json.dump(base_cfg, f, indent=4)
 
 if __name__ == "__main__":

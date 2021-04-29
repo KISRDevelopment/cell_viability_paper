@@ -6,7 +6,7 @@
             "layer_sizes" : [5],
             "type" : "ff",
             "pairwise" : false,
-            "selected_features" : ["lid"],
+            "selected_features" : ["lac"],
             "paths" : ["../generated-data/features/ppc_yeast_topology.npz"]
         },
         {
@@ -32,7 +32,7 @@
         },
         
         {
-            "name": "triplet",
+            "name": "spl",
             "group": "pairwise",
             "hidden_activation": "tanh",
             "layer_sizes": [
@@ -44,6 +44,35 @@
                 {
                     "normalize": true,
                     "path": "../generated-data/pairwise_features/ppc_yeast_shortest_path_len.npy"
+                }
+            ]
+        },
+        {
+            "name": "pairwise_comm",
+            "group": "pairwise",
+            "sparse" : true,
+            "hidden_activation": "tanh",
+            "layer_sizes": [
+                5
+            ],
+            "type": "ff",
+            "pairwise": true,
+            "path": "../generated-data/pairwise_features/ppc_yeast_5steps_comms.npz"
+        },
+        {
+            "name": "triplet_const",
+            "group": "triplet_const",
+            "hidden_activation": "tanh",
+            "layer_sizes": [
+                1
+            ],
+            "type": "ff",
+            "pairwise": true,
+            "triplet" : true,
+            "paths": [
+                {
+                    "normalize": false,
+                    "path": "../generated-data/pairwise_features/ppc_yeast_const.npy"
                 }
             ]
         }

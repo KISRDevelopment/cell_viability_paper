@@ -5,10 +5,11 @@ import glob
 import sys 
 import time 
 import sys, select 
+import shutil 
 
 CONTINUE_PROMPT_TIMEOUT_SECS = 5
 
-def main(script_name, cfgs_dir, output_dir, n_processors=6, exclude=lambda s: False, dynamic_dispatch=False, n_runs=40):
+def main(script_name, cfgs_dir, output_dir, n_processors=6, exclude=lambda s: False, dynamic_dispatch=False, n_runs=40, skip_existing=True):
     
     files = glob.glob(cfgs_dir + "/*.json")
 
@@ -21,12 +22,15 @@ def main(script_name, cfgs_dir, output_dir, n_processors=6, exclude=lambda s: Fa
             continue
         
         config_output_dir = os.path.join(output_dir, config_name)
-        if os.path.exists(config_output_dir):
-            dir_files = glob.glob(os.path.join(config_output_dir, '*.npz'))
-            if len(dir_files) == n_runs:
-                print("Ignoring %s" % config_name)
-                continue 
-        print(config_name)
+        if not skip_existing:
+            shutil.rmtree(config_output_dir, ignore_errors=True)
+        else:
+            if os.path.exists(config_output_dir):
+                dir_files = glob.glob(os.path.join(config_output_dir, '*.npz'))
+                if len(dir_files) == n_runs:
+                    print("Ignoring %s" % config_name)
+                    continue 
+            print(config_name)
 
         module = "models.cv_dynamic_dispatch" if dynamic_dispatch else "models.cv"
         subprocess.call(['python', "-m", module,

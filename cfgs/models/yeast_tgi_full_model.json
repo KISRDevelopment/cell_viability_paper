@@ -161,19 +161,19 @@
             "path": "../generated-data/pairwise_features/ppc_yeast_5steps_comms.npz"
         },
         {
-            "name": "triplet",
-            "group": "triplet",
+            "name": "triplet_const",
+            "group": "triplet_const",
             "hidden_activation": "tanh",
             "layer_sizes": [
-                5
+                1
             ],
             "type": "ff",
             "pairwise": true,
             "triplet" : true,
             "paths": [
                 {
-                    "normalize": true,
-                    "path": "../generated-data/pairwise_features/ppc_yeast_shortest_path_len.npy"
+                    "normalize": false,
+                    "path": "../generated-data/pairwise_features/ppc_yeast_const.npy"
                 }
             ]
         }
