@@ -41,14 +41,15 @@ def load_cfg(path):
 
 # move all feature selection results to task_yeast_tgi
 # then do this
-analysis.tbl_model_comp.main("../results/task_yeast_tgi", 
-    "../figures/task_yeast_tgi_feature_selection.xlsx", ['Interacting', 'Neutral'])
+# analysis.tbl_model_comp.main("../results/task_yeast_tgi", 
+#     "../figures/task_yeast_tgi_feature_selection.xlsx", ['Interacting', 'Neutral'])
 
 
 #
 # Cross validation performance
 #
 
+"""
 models.cv.main("models.tgi_nn", "cfgs/models/yeast_tgi_full_model.json", 
     "../results/task_yeast_tgi/full", 
     num_processes=5)
@@ -81,6 +82,8 @@ analysis.fig_interpretation.main(load_cfg("cfgs/fig_interpretation/tgi.json"))
 #
 
 analysis.fig_cv_performance.main("cfgs/fig_cv_performance/yeast_tgi.json")
+"""
+
 analysis.fig_pairwise_feature_violin.main("../generated-data/task_yeast_tgi", 
     "../generated-data/features/ppc_yeast_topology.npz", 
     "Sum LID", "../figures/yeast_tgi_sum_lid.png", 

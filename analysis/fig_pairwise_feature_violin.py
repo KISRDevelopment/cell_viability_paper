@@ -54,7 +54,7 @@ def main(task_path, feature_path, ylabel, output_path, BINS=np.array(['-', 'N', 
 
     
     ax.yaxis.set_tick_params(labelsize=plot_cfg['tick_label_size'])
-    ax.xaxis.set_tick_params(labelsize=plot_cfg['tick_label_size'])
+    ax.xaxis.set_tick_params(labelsize=plot_cfg['tick_label_size'], pad=15)
     ax.set_ylabel(ylabel, fontsize=plot_cfg['ylabel_size'], weight='bold')
     ax.set_xlabel('')
     ax.yaxis.set_tick_params(length=10, width=1, which='both')
