@@ -13,6 +13,7 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 import sys 
 import seaborn as sns
 import utils.eval_funcs as eval_funcs
+
 BINARY_BIN_LABELS = ['Negative', 'Neutral']
 BINARY_COLORS = ['magenta', 'cyan']
 STAR_COLORS = ['magenta', '#007bff']
@@ -101,7 +102,7 @@ def main(task_path, smf_path, output_path):
     df, testr = prepare_detailed_data(Ms)
     visualize(df, testr, output_path + '_detailed.png', stars_offset=(0.2, 0.99), legend_pos=(0.53,0.91))
     df, testr = prepare_summary_data(Ms)
-    visualize(df, testr, output_path + '_summary.png', stars_offset=(0.5, 0.99), legend_pos=(0.8, 0.91))
+    visualize(df, testr, output_path + '_summary.png', stars_offset=(0.55, 0.99), legend_pos=(0.83, 0.91))
 
 def prepare_detailed_data(Ms):
     rows = []

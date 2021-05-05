@@ -84,14 +84,28 @@ analysis.fig_interpretation.main(load_cfg("cfgs/fig_interpretation/tgi.json"))
 analysis.fig_cv_performance.main("cfgs/fig_cv_performance/yeast_tgi.json")
 """
 
-analysis.fig_pairwise_feature_violin.main("../generated-data/task_yeast_tgi", 
+# analysis.fig_pairwise_feature_violin.main("../generated-data/task_yeast_tgi", 
+#     "../generated-data/features/ppc_yeast_topology.npz", 
+#     "Sum LID", "../figures/yeast_tgi_sum_lid.png", 
+#     np.array(['Negative', 'Neutral']),
+#     colors=['magenta', 'cyan'],
+#     star_colors=['magenta', '#007bff'])
+# analysis.fig_tgi_smf_matrix_alt.main(
+#     "../generated-data/task_yeast_tgi",
+#     "../generated-data/task_yeast_smf_30",
+#     "../figures/yeast_tgi_smf"
+# )
+
+analysis.fig_pairwise_feature_violin.main("../generated-data/task_ppc_yeast_pseudo_triplets", 
     "../generated-data/features/ppc_yeast_topology.npz", 
-    "Sum LID", "../figures/yeast_tgi_sum_lid.png", 
-    np.array(['Negative', 'Neutral']),
+    "Sum LID", "../figures/yeast_pseudo_triplets_sum_lid.png", 
+    np.array(['Same', 'Different']),
     colors=['magenta', 'cyan'],
     star_colors=['magenta', '#007bff'])
+
+analysis.fig_tgi_smf_matrix_alt.BINARY_BIN_LABELS = ['Within', 'Across']
 analysis.fig_tgi_smf_matrix_alt.main(
-    "../generated-data/task_yeast_tgi",
+    "../generated-data/task_ppc_yeast_pseudo_triplets",
     "../generated-data/task_yeast_smf_30",
-    "../figures/yeast_tgi_smf"
+    "../figures/yeast_pseudo_triplets_smf"
 )
