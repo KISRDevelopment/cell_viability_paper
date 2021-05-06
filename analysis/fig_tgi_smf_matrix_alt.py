@@ -168,6 +168,7 @@ def prepare_summary_data(Ms):
 def visualize(df, testr, output_path, stars_offset=(0.5, 0.87), legend_pos=(0.5,0.95)):
     f, ax = plt.subplots(1, 1, figsize=(15, 10))
 
+    df['val'] = 100 * df['val']
     g = sns.barplot(x="label", 
             y="val", 
             hue="bin",
