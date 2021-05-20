@@ -13,52 +13,15 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 import sys 
 import seaborn as sns
 import utils.eval_funcs as eval_funcs
+import analysis.fig_distrib_comparison_plot 
 
 BINARY_BIN_LABELS = ['Negative', 'Neutral']
-BINARY_COLORS = ['magenta', 'cyan']
-STAR_COLORS = ['magenta', '#007bff']
-plt.rcParams["font.family"] = "Liberation Serif"
-plt.rcParams["font.weight"] = "bold"
+BINARY_COLORS = { 'Negative' : 'magenta', 'Neutral' : 'cyan' }
+STARS_COLOR = '#007bff'
 
 SMF_CLASSES = ['L', 'R', 'N']
 
-plot_cfg = {
-    "tick_label_size" : 40,
-    "xlabel_size" : 60,
-    "ylabel_size" : 60,
-    "border_size" : 6,
-    "bar_border_size" : 2.5,
-    "bar_label_size" : 48,
-    "stars_label_size" : 48,
-    "annot_size" : 82,
-
-    "legend_size" : 42,
-    "max_bars" : 4
-}
-
-MAPPING = {
-
-    (0, 0) : 0, 
-    (0, 1) : 1,
-    (0, 2) : 2,
-    (1, 0) : 1,
-    (1, 1) : 3,
-    (1, 2) : 4,
-    (2, 0) : 2,
-    (2, 1) : 4,
-    (2, 2) : 5
-}
-ROW_LABELS = [
-    "LL", 
-    "LR",
-    "LN",
-    "RR",
-    "RN",
-    "NN"
-]
-ROW_ORDER = [0, 1, 2, 5, 4, 3]
-
-def main(task_path, smf_path, output_path):
+def main(task_path, smf_path, output_path, ylim=[0, 70]):
 
     df = pd.read_csv(task_path)
     
@@ -99,14 +62,24 @@ def main(task_path, smf_path, output_path):
             M[n_l[i], n_r[i], n_n[i]] += 1
         Ms.append(M)
     
-    df, testr = prepare_detailed_data(Ms)
-    visualize(df, testr, output_path + '_detailed.png', stars_offset=(0.2, 0.99), legend_pos=(0.53,0.91))
-    df, testr = prepare_summary_data(Ms)
-    visualize(df, testr, output_path + '_summary.png', stars_offset=(0.55, 0.99), legend_pos=(0.83, 0.91))
+    df = prepare_detailed_data(Ms)
+    
+    old_tick_label_size = analysis.fig_distrib_comparison_plot.plot_cfg['tick_label_size'] 
+    analysis.fig_distrib_comparison_plot.plot_cfg['tick_label_size'] = 40
+    analysis.fig_distrib_comparison_plot.plot_distrib(df, BINARY_COLORS, 
+            '', '% Triplets', 0,
+            [0, 30], STARS_COLOR, "%s_detailed.png" % output_path,
+            legend_pos=(0.6, 1.05),
+            stars_pos=(0.13, 0.98))
+
+    df = prepare_summary_data(Ms)
+    analysis.fig_distrib_comparison_plot.plot_cfg['tick_label_size'] = old_tick_label_size
+    analysis.fig_distrib_comparison_plot.plot_distrib(df, BINARY_COLORS, 
+            'Number of Normal Growth Genes', '% Triplets', 5,
+            ylim, STARS_COLOR, "%s_summary" % output_path)
 
 def prepare_detailed_data(Ms):
     rows = []
-    vals_by_bin = []
     for bin in [0, 1]:
         M = Ms[bin]
         
@@ -117,101 +90,38 @@ def prepare_detailed_data(Ms):
                 n_l = 3 - n_n - n_r
                 vals.append(M[n_l, n_r, n_n])
                 rows.append({
-                    "label" : "L=%d\nR=%d\nN=%d" % (n_l, n_r, n_n),
-                    "bin" : BINARY_BIN_LABELS[bin], 
-                    "val" : M[n_l, n_r, n_n] / np.sum(M)
+                    "x" : "L=%d\nR=%d\nN=%d" % (n_l, n_r, n_n),
+                    "hue" : BINARY_BIN_LABELS[bin], 
+                    "y" : M[n_l, n_r, n_n] * 100 / np.sum(M),
+                    "raw_y" : M[n_l, n_r, n_n]
                 })
-        vals_by_bin.append(vals)
-    
-    vals_by_bin = np.array(vals_by_bin)
-    testr = chi2(vals_by_bin)
-
-    return pd.DataFrame(rows), testr
+        
+    return pd.DataFrame(rows)
     
 def prepare_summary_data(Ms):
     rows = []
-    vals_by_bin = []
     for bin in [0, 1]:
         M = Ms[bin]
         
-        vals = []
-        labels = []
-
         rows.append({
-            "label" : "N < 2",
-            "bin" : BINARY_BIN_LABELS[bin],
-            "val" : np.sum(M[:, :, :2]) / np.sum(M)
+            "x" : "N < 2",
+            "hue" : BINARY_BIN_LABELS[bin],
+            "y" : np.sum(M[:, :, :2]) * 100 / np.sum(M),
+            "raw_y" : np.sum(M[:, :, :2])
         })
-        vals.append(np.sum(M[:, :, :2]))
-
-        rows.append({
-            "label" : "N ≥ 2",
-            "bin" : BINARY_BIN_LABELS[bin],
-            "val" : np.sum(M[:, :, 2:]) / np.sum(M)
-        })
-        vals.append(np.sum(M[:, :, 2:]))
         
-        vals_by_bin.append(vals)
+        rows.append({
+            "x" : "N ≥ 2",
+            "hue" : BINARY_BIN_LABELS[bin],
+            "y" : np.sum(M[:, :, 2:]) * 100 / np.sum(M),
+            "raw_y" : np.sum(M[:,:,2:])
+        })
+        
+    return pd.DataFrame(rows)
     
-    vals_by_bin = np.array(vals_by_bin)
-    testr = chi2(vals_by_bin)
-
-    for bin in [0, 1]:
-        for lbl in [' ', '  ', '   ']:
-            rows.append({
-                "label" : lbl, 
-                "bin" : BINARY_BIN_LABELS[bin],
-                "val" : 0
-            })
-    
-    return pd.DataFrame(rows), testr
-def visualize(df, testr, output_path, stars_offset=(0.5, 0.87), legend_pos=(0.5,0.95)):
-    f, ax = plt.subplots(1, 1, figsize=(15, 10))
-
-    df['val'] = 100 * df['val']
-    g = sns.barplot(x="label", 
-            y="val", 
-            hue="bin",
-            ax=ax,
-            data=df, 
-            palette=['magenta', 'cyan'])
-
-    ax.yaxis.set_tick_params(labelsize=plot_cfg['tick_label_size'])
-    ax.xaxis.set_tick_params(labelsize=plot_cfg['tick_label_size'], pad=15)
-    ax.set_ylabel("% Triplets", fontsize=plot_cfg['ylabel_size'], fontweight='bold')
-    ax.set_xlabel("", fontsize=plot_cfg['ylabel_size'], fontweight='bold')
-    ax.spines['right'].set_visible(False)
-    ax.spines['top'].set_visible(False)
-    ax.legend(frameon=False, fontsize=plot_cfg['legend_size'], loc='center', bbox_to_anchor=legend_pos)
-    plt.setp(ax.spines.values(),linewidth=plot_cfg["border_size"], color='black')
-    chisq, p, ddof = testr
-    stars = '*' * eval_funcs.compute_stars(p, 0.05)
-    
-    ax.text(stars_offset[0], stars_offset[1], stars, 
-            transform=ax.transAxes,
-            color=STAR_COLORS[1], ha="left", va="top", weight='bold', 
-            fontsize=plot_cfg['stars_label_size'])
-    
-
-    plt.savefig(output_path, bbox_inches='tight', dpi=100)
-
-def chi2(f_obs):
-
-    # compute expected frequencies
-    col_marginal = np.sum(f_obs, axis=1, keepdims=True)
-    row_marginal = np.sum(f_obs, axis=0, keepdims=True)
-    total = np.sum(row_marginal)
-    f_exp = np.dot(col_marginal / total, row_marginal)
-    
-    chisq, p = stats.chisquare(f_obs, f_exp, axis=None)
-    
-    ddof = (f_obs.shape[0]-1) * (f_obs.shape[1]-1)
-
-    return chisq, p, ddof
-
 if __name__ == "__main__":
     task_path = sys.argv[1]
     smf_path = sys.argv[2]
     output_path = sys.argv[3]
 
-    main(task_path, smf_path, output_path, True)
+    main(task_path, smf_path, output_path)

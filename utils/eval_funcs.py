@@ -4,7 +4,7 @@ import glob
 from collections import defaultdict
 from scipy import interp
 import sklearn.metrics
-
+import scipy.stats as stats
 def average_results(cv_dir):
 
     
@@ -82,6 +82,27 @@ def average_cm(cv_dir):
     cms = np.array(cms)
 
     return np.mean(cms, axis=0)
+
+def chi2(f_obs):
+
+    # compute expected frequencies
+    col_marginal = np.sum(f_obs, axis=1, keepdims=True)
+    row_marginal = np.sum(f_obs, axis=0, keepdims=True)
+    total = np.sum(row_marginal)
+    f_exp = np.dot(col_marginal / total, row_marginal)
+    
+    
+    print(f_obs)
+    print(col_marginal)
+    print(row_marginal)
+    print(f_exp)
+    
+    chisq, p = stats.chisquare(f_obs, f_exp, axis=None)
+    
+    ddof = (f_obs.shape[0]-1) * (f_obs.shape[1]-1)
+
+    return chisq, p, ddof
+
 
 def compute_stars(pvalue, alpha, return_level=False):
     """ compute the stars to visualize a p-value """
