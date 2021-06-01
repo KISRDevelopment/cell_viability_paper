@@ -1,0 +1,72 @@
+{
+    "spec": [
+        {
+            "name" : "topology",
+            "hidden_activation" : "tanh",
+            "layer_sizes" : [5],
+            "type" : "ff",
+            "pairwise" : false,
+            "paths" : ["../generated-data/features/ppc_yeast_topology.npz"]
+        },
+        {
+            "name": "pairwise",
+            "group": "pairwise",
+            "hidden_activation": "tanh",
+            "layer_sizes": [
+                5
+            ],
+            "type": "ff",
+            "pairwise": true,
+            "paths": [
+                {
+                    "normalize": true,
+                    "path": "../generated-data/pairwise_features/ppc_yeast_shortest_path_len.npy"
+                },
+                {
+                    "normalize": true,
+                    "path": "../generated-data/pairwise_features/ppc_yeast_adhesion.npy"
+                },
+                {
+                    "normalize": true,
+                    "path": "../generated-data/pairwise_features/ppc_yeast_cohesion.npy"
+                },
+                {
+                    "normalize": true,
+                    "path": "../generated-data/pairwise_features/ppc_yeast_mutual_neighbors.npy"
+                },
+                {
+                    "normalize": false,
+                    "path": "../generated-data/pairwise_features/ppc_yeast_adjacent.npy"
+                },
+                {
+                    "normalize": true,
+                    "path": "../generated-data/pairwise_features/ppc_yeast_shared_sgo.npy"
+                }
+            ]
+        },
+        {
+            "name": "pairwise_comm",
+            "group": "pairwise",
+            "sparse" : true,
+            "hidden_activation": "tanh",
+            "layer_sizes": [
+                5
+            ],
+            "type": "ff",
+            "pairwise": true,
+            "path": "../generated-data/pairwise_features/ppc_yeast_5steps_comms.npz"
+        }
+    ],
+    "optimizer": "nadam",
+    "epochs": 200,
+    "verbose": true,
+    "patience": 10,
+    "balanced_loss": true,
+    "batch_size": 10000,
+    "embedding_size": 5,
+    "embedding_activation": "tanh",
+    "scramble" : false,
+    "task_path" : "../generated-data/task_yeast_gi_hybrid",
+    "targets_path" : "../generated-data/targets/task_yeast_gi_hybrid_bin_interacting.npz",
+    "splits_path" : "../generated-data/splits/task_yeast_gi_hybrid_10reps_4folds_0.20valid.npz"
+}

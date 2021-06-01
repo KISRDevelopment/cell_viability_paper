@@ -70,13 +70,7 @@ GI_RESULTS = [
         "color" : "#3A90FF",
         "auc-roc" : [0.79, 0.86, 0.88, 0.86],
     },
-    {
-        "name" : "Al-Aamri et al. (2019)",
-        "color" : "#b49fdc",
-        "auc-roc" : [0.78, 0.78, np.nan, np.nan],
-        "hatch" : ".",
-        "bar_labels" : ["", "Not Well Defined", "", ""]
-    },
+   
     {
         "name" : "Benstead-Hume et al. (2019)",
         "color" : "#c5ebfe",
