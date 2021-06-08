@@ -86,21 +86,21 @@ costanzo_splits_path = "../generated-data/splits/task_yeast_gi_costanzo_asym_10r
 #     splits_path = costanzo_splits_path
 # )
 
-models.cv.main("models.gi_nn", "cfgs/models/yeast_gi_refined_model.json", 
-    "../results/task_yeast_gi_costanzo_asym/refined", 
-    num_processes = 20,
-    task_path = costanzo_task_path,
-    targets_path = costanzo_targets_path,
-    splits_path = costanzo_splits_path
-)
+# models.cv.main("models.gi_nn", "cfgs/models/yeast_gi_refined_model.json", 
+#     "../results/task_yeast_gi_costanzo_asym/refined", 
+#     num_processes = 20,
+#     task_path = costanzo_task_path,
+#     targets_path = costanzo_targets_path,
+#     splits_path = costanzo_splits_path
+# )
 
-models.cv.main("models.gi_nn", "cfgs/models/yeast_gi_refined_model.json", 
-    "../results/task_yeast_gi_costanzo_asym_binary/refined", 
-    num_processes = 20,
-    task_path = costanzo_task_path,
-    targets_path = "../generated-data/targets/task_yeast_gi_costanzo_asym_bin_interacting.npz",
-    splits_path = costanzo_splits_path
-)
+# models.cv.main("models.gi_nn", "cfgs/models/yeast_gi_refined_model.json", 
+#     "../results/task_yeast_gi_costanzo_asym_binary/refined", 
+#     num_processes = 20,
+#     task_path = costanzo_task_path,
+#     targets_path = "../generated-data/targets/task_yeast_gi_costanzo_asym_bin_interacting.npz",
+#     splits_path = costanzo_splits_path
+# )
 
 # models.cv.main("models.gi_mn", "cfgs/models/yeast_gi_mn.json", 
 #     "../results/task_yeast_gi_costanzo/mn", 
@@ -161,8 +161,6 @@ costanzo_splits_path = "../generated-data/splits/task_yeast_gi_thres15_10reps_4f
 #     targets_path = costanzo_targets_path,
 #     splits_path = costanzo_splits_path)
 
-exit(0)
-
 """
     Yeast Binary
 """
@@ -204,6 +202,33 @@ exit(0)
 #     remove_specs=["sgo"],
 #     targets_path = targets_path)
 
+"""
+    Yeast Negative vs. All
+"""
+targets_path = "../generated-data/targets/task_yeast_gi_hybrid_bin_negative.npz"
+
+# models.cv.main("models.gi_nn", "cfgs/models/yeast_gi_refined_model.json", 
+#     "../results/task_yeast_gi_hybrid_binary_negative/refined", 
+#     num_processes = 20,
+#     targets_path = targets_path
+# )
+
+# models.cv.main("models.gi_mn", "cfgs/models/yeast_gi_mn.json", 
+#     "../results/task_yeast_gi_hybrid_binary_negative/mn", 
+#     num_processes=20,
+#     targets_path = targets_path)
+
+# models.cv.main("models.null_model", "cfgs/models/yeast_gi_mn.json", 
+#     "../results/task_yeast_gi_hybrid_binary_negative/null", 
+#     num_processes=20,
+#     targets_path = targets_path)
+
+
+models.cv.main("models.gi_nn", "cfgs/models/yeast_gi_slant.json", 
+    "../results/task_yeast_gi_hybrid_binary_negative/slant", 
+    num_processes=20,
+    targets_path = targets_path)
+exit(0)
 
 # """
 #     Yeast Costanzo Binary

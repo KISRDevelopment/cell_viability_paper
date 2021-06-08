@@ -73,7 +73,7 @@ GI_RESULTS = [
    
     {
         "name" : "Benstead-Hume et al. (2019)",
-        "color" : "#c5ebfe",
+        "color" : "#57c7ff",
         "auc-roc" : [0.88, 0.88, np.nan, np.nan],
         "hatch" : "x",
         "bar_labels" : ["", "Not Well Defined", "", ""]
@@ -141,14 +141,8 @@ BINARY_GI_RESULTS = [
         "auc-roc" : [0.86, np.nan, np.nan, np.nan],
     },
     {
-        "name" : "Al-Aamri et al. (2019)",
-        "color" : "#b49fdc",
-        "auc-roc" : [0.78, np.nan, np.nan, np.nan],
-        "hatch" : ".",
-    },
-    {
         "name" : "Benstead-Hume et al. (2019)",
-        "color" : "#c5ebfe",
+        "color" : "#57c7ff",
         "auc-roc" : [0.88, np.nan, np.nan, np.nan],
         "hatch" :  "x",
     },

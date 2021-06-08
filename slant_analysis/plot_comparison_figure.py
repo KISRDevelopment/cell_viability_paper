@@ -31,38 +31,46 @@ def main():
     slant_results, slant_cm = evaluate_slant("/home/mmkhajah/Downloads/slant_data_dir/data_dir/training/yeast_testing_sl_all.csv", "/home/mmkhajah/Downloads/slant_data_dir/data_dir/results/recent/yeast_predictions_sl_all.csv")
     gnn_results, gnn_cm = evaluate_slant("/home/mmkhajah/Downloads/slant_data_dir/data_dir/training/yeast_testing_sl_all.csv", "../results/slant_generic_nn.csv")
     
-    cv_slant_results = evaluate_ours("../results/task_yeast_gi_hybrid_binary/slant_final")
-    cv_refined_results = evaluate_ours("../results/task_yeast_gi_hybrid_binary/refined")
-    cv_mn_results = evaluate_ours("../results/task_yeast_gi_hybrid_binary/mn")
+    cv_slant_results = evaluate_ours("../results/task_yeast_gi_hybrid_binary_negative/slant")
+    cv_refined_results = evaluate_ours("../results/task_yeast_gi_hybrid_binary_negative/refined")
+    cv_mn_results = evaluate_ours("../results/task_yeast_gi_hybrid_binary_negative/mn")
+    cv_null_results = evaluate_ours("../results/task_yeast_gi_hybrid_binary_negative/null")
 
     slant_results['name'] = 'SLant Data \n SLant Model'
-    slant_results['color'] = '#c5ebfe'
-    slant_results['classes'] = ['N', '-']
-    slant_results['pos_class'] = 1
-
+    slant_results['color'] = '#57c7ff'
+    slant_results['classes'] = ['-','Rest']
+    slant_results['pos_class'] = 0
+    
     gnn_results['name'] = 'SLant Data \n Neural Network'
     gnn_results['color'] = 'cyan'
-    gnn_results['classes'] = ['N', '-']
-    gnn_results['pos_class'] = 1
+    gnn_results['classes'] = ['-','Rest']
+    gnn_results['pos_class'] = 0
     
     cv_slant_results['name'] = 'Our Data \n SLant Features'
     cv_slant_results['color'] = 'orange'
-    cv_slant_results['classes'] = ['I', 'N']
+    cv_slant_results['classes'] = ['-','Rest']
     cv_slant_results['pos_class'] = 0
     
     cv_refined_results['name'] = 'Refined Model'
     cv_refined_results['color'] = '#FF0000'
     cv_refined_results['as_line'] = True 
-    cv_refined_results['classes'] = ['I', 'N']
+    cv_refined_results['classes'] =  ['-','Rest']
 
     cv_mn_results['name'] = 'MN'
     cv_mn_results['color'] = '#3A90FF'
     cv_mn_results['as_line'] = True 
-    cv_mn_results['classes'] = ['I', 'N']
+    cv_mn_results['classes'] =  ['-','Rest']
 
-    #plot_overall_bacc([slant_results, gnn_results, cv_slant_results, cv_refined_results, cv_mn_results], '../tmp/slant_overall_bacc.png')
-    #plot_cms([slant_results, gnn_results, cv_slant_results], '../tmp/slant_cm_')
+    cv_null_results['name'] = 'Null'
+    cv_null_results['color'] = 'white'
+    cv_null_results['cm_color'] = 'grey'
+    cv_null_results['as_line'] = False 
+    cv_null_results['classes'] =  ['-','Rest']
+
+    plot_overall_bacc([slant_results, gnn_results, cv_slant_results, cv_null_results, cv_refined_results, cv_mn_results], '../tmp/slant_overall_bacc.png')
+    plot_cms([slant_results, gnn_results, cv_slant_results, cv_null_results], '../tmp/slant_cm_')
     plot_roc([slant_results, gnn_results, cv_slant_results], '../tmp/slant_roc.png')
+
 def plot_overall_bacc(results, output_path):
 
     colors = [r['color'] for r in results]
@@ -133,8 +141,9 @@ def plot_cms(results, output_path):
         cm = cm / np.sum(cm, axis=1, keepdims=True)
         classes = r['classes']
 
+        color = r.get('cm_color', r['color'])
         cmap = matplotlib.colors.LinearSegmentedColormap.from_list("",
-            ["white",r['color']])
+            ["white", color])
 
         f, ax = plt.subplots(figsize=(10, 10))
 
@@ -156,8 +165,8 @@ def plot_cms(results, output_path):
         ax.set_xticklabels(xlabels, fontsize=plot_cfg['annot_size'])
         ax.set_yticklabels(xlabels, fontsize=plot_cfg['annot_size'])
         
-        ax.xaxis.set_tick_params(length=0, width=0, which='both', colors=r['color'])
-        ax.yaxis.set_tick_params(length=0, width=0, which='both', colors=r['color'])
+        ax.xaxis.set_tick_params(length=0, width=0, which='both', colors=color)
+        ax.yaxis.set_tick_params(length=0, width=0, which='both', colors=color)
         ax.xaxis.tick_top()
         plt.setp(ax.spines.values(), linewidth=0)
 
@@ -210,7 +219,10 @@ def evaluate_slant(dataset_path, preds_path):
     assert test_set_df.shape[0] == result_df.shape[0]
 
     sl_preds = np.array(result_df[['X0', 'X1']]).astype(float)
+    sl_preds = 1 - sl_preds
+
     y_true = np.array(test_set_df['sl'] == 'X1').astype(int)
+    y_true = 1 - y_true
 
     hardpreds = np.argmax(sl_preds, axis=1)
 
