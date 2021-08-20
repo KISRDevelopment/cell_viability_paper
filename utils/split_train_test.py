@@ -3,9 +3,11 @@ import pandas as pd
 import sklearn.model_selection
 import keras.utils 
 
-def main(task_path, bins_path, test_prop, train_output_path, test_output_path):
+def main(task_path, test_prop, train_output_path, test_output_path):
 
-    bins = np.load(bins_path)['y']
+    df = pd.read_csv(task_path)
+    
+    bins = np.array(df['bin'])
     bins = keras.utils.to_categorical(bins)
 
     sss = sklearn.model_selection.StratifiedShuffleSplit(n_splits=1, test_size=test_prop)
@@ -23,7 +25,6 @@ def main(task_path, bins_path, test_prop, train_output_path, test_output_path):
         print("Test props:")
         print(np.sum(bins[test_ix, :], axis=0) / np.sum(bins[test_ix]))
 
-    df = pd.read_csv(task_path)
     
     ix = np.zeros(df.shape[0])
     ix[train_ix] = 1
@@ -31,7 +32,7 @@ def main(task_path, bins_path, test_prop, train_output_path, test_output_path):
     df['is_train'] = ix 
     print(np.sum(df['is_train']))
     print(df)
-
+    
     print("Train props:")
     train_df = df[df['is_train'] == 1]
     print(np.array([np.sum(train_df['bin'] == b) for b in [0,1,2]]) / train_df.shape[0])
