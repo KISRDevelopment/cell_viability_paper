@@ -4,6 +4,7 @@ import sys
 import pandas as pd 
 import numpy as np 
 import os 
+import keras.utils 
 
 def main(path, reps, folds, valid_prop, add_output_path_tag=False):
     
@@ -23,10 +24,13 @@ def main(path, reps, folds, valid_prop, add_output_path_tag=False):
 def generate_cv_splits(path, reps, folds, valid_prop):
     
     df = pd.read_csv(path)
+    bins = keras.utils.to_categorical(df['bin'])
 
     n = df.shape[0]
     
     print("dataset size: %d" % n)
+    print("Overall props:")
+    print(np.sum(bins, axis=0) / np.sum(bins))
     
     # create splitter instance
     splitter = StandardCvSplitter()
@@ -37,7 +41,7 @@ def generate_cv_splits(path, reps, folds, valid_prop):
     test_sets = np.zeros((reps, folds, n), dtype=bool)
     
     for r in range(reps):
-        for fid, tup in enumerate(splitter(n, folds)):
+        for fid, tup in enumerate(splitter(bins, folds)):
             train_ix, test_ix = tup
             test_sets[r, fid, :] = test_ix
 
@@ -66,7 +70,9 @@ def generate_cv_splits(path, reps, folds, valid_prop):
 
             # print test class distribution
             test_df = df[test_ix]
-            print([np.sum(test_df['bin'] == b) for b in sorted(set(test_df['bin']))])
+            print("Set sizes: Train=%d, Valid=%d, Test=%d" % (len(train_indecies), len(valid_indecies), np.sum(test_ix)))
+            print([np.sum(test_df['bin'] == b) / test_df.shape[0] for b in sorted(set(test_df['bin']))])
+            
         # ensure each instance is tested exactly once
         curr_ix = np.zeros(n)
         for fid in range(folds):
@@ -93,15 +99,29 @@ class StandardCvSplitter(object):
     def __init__(self, df=None):
         pass
     
-    def __call__(self, n, folds):
+    def __call__(self, bins, folds):
         
-        chunk_size = -(-n // folds)
-    
-        indecies = list(range(n))
-        rng.shuffle(indecies)
-        
-        for i in range(0, n, chunk_size):
-            test_indecies = indecies[i:i+chunk_size]
+        n = bins.shape[0]
+
+        per_class_indecies = []
+        per_class_chunk_sizes = []
+        for c in range(bins.shape[1]):
+            class_indecies = np.where(bins[:,c] == 1)[0]
+            rng.shuffle(class_indecies)
+            per_class_indecies.append(class_indecies)
+            
+            chunk_size = -(-len(class_indecies) // folds)
+            per_class_chunk_sizes.append(chunk_size)
+
+        for i in range(folds):
+
+            test_indecies = []
+            for c in range(bins.shape[1]):
+                chunk_size = per_class_chunk_sizes[c]
+                start = i * chunk_size
+                end = start + chunk_size
+                class_test_indecies = per_class_indecies[c][start:end]
+                test_indecies.extend(class_test_indecies)
             
             test_ix = np.zeros(n, dtype=bool)
             test_ix[test_indecies] = 1
