@@ -16,6 +16,8 @@ def main(path, bin_col='bin'):
 
     output_path = "../generated-data/targets/%s_%s_simple" % (os.path.basename(path), bin_col)
     np.savez(output_path, y=bins)
+    
+    return output_path+'.npz' 
 
 if __name__ == "__main__":
     main(sys.argv[1])

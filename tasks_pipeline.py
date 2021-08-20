@@ -27,26 +27,35 @@ import utils.bin_lethal
 import tasks.cell_org_lethal
 import tasks.yeast_gi_hybrid_comp
 import utils.bin_negative
+import utils.split_train_test
 
 if not os.path.exists('../generated-data/splits'):
     os.makedirs('../generated-data/splits')
 if not os.path.exists('../generated-data/targets'):
     os.makedirs('../generated-data/targets')
+if not os.path.exists('../generated-data/test_sets'):
+    os.makedirs('../generated-data/test_sets')
+if not os.path.exists('../generated-data/train_sets'):
+    os.makedirs('../generated-data/train_sets')
 
-# # PPC
+# PPC
 # ppc_creation.ppc.main("yeast", "../generated-data/ppc_yeast")
 # ppc_creation.ppc.main("pombe", "../generated-data/ppc_pombe")
 # ppc_creation.ppc.main("human", "../generated-data/ppc_human")
 # ppc_creation.ppc.main("dro", "../generated-data/ppc_dro")
 
-# # smf tasks
+# smf tasks
 
-# gpath = "../generated-data/ppc_yeast"
-# smf_task_path = "../generated-data/task_yeast_smf_30"
+gpath = "../generated-data/ppc_yeast"
+smf_task_path = "../generated-data/task_yeast_smf_30"
 # tasks.yeast_smf.main(gpath, 30, smf_task_path)
-# utils.bin_simple.main(smf_task_path)
-# utils.cv_simple.main(smf_task_path, 10, 5, 0.2)
+# bins_path = utils.bin_simple.main(smf_task_path)
 # utils.bin_lethal.main(smf_task_path)
+# utils.split_train_test.main(smf_task_path, bins_path, 0.2, 
+#     "../generated-data/train_sets/task_yeast_smf_30",
+#     "../generated-data/test_sets/task_yeast_smf_30")
+utils.cv_simple.main("../generated-data/train_sets/task_yeast_smf_30", 10, 5, 0.2)
+
 
 # gpath = "../generated-data/ppc_pombe"
 # smf_task_path = "../generated-data/task_pombe_smf"
@@ -110,12 +119,12 @@ if not os.path.exists('../generated-data/targets'):
 # utils.bin_interacting.main(gi_task_path)
 # utils.cv_gi.main(gi_task_path, 10, 4, 0.2)
 
-gpath = "../generated-data/ppc_yeast"
-gi_task_path = "../generated-data/task_yeast_gi_hybrid"
+#gpath = "../generated-data/ppc_yeast"
+#gi_task_path = "../generated-data/task_yeast_gi_hybrid"
 #tasks.yeast_gi_hybrid_comp.main(gpath, gi_task_path, 0.15)
 #utils.bin_simple.main(gi_task_path)
 #utils.bin_interacting.main(gi_task_path)
-utils.bin_negative.main(gi_task_path)
+#utils.bin_negative.main(gi_task_path)
 #utils.cv_gi.main(gi_task_path, 10, 4, 0.2)
 
 # gpath = "../generated-data/ppc_pombe"
