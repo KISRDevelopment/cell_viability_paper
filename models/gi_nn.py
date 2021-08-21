@@ -26,24 +26,16 @@ from termcolor import colored
 def main(cfg, rep, fold, output_path, print_results=True, return_model=False):
 
     dataset_path = cfg['task_path']
-    targets_path = cfg['targets_path']
     train_test_path = cfg['splits_path']
 
     # load dataset
     df = pd.read_csv(dataset_path)
     
-    # shuffle the order of the pairs to eliminate pathological cases
-    A = np.array(df[['a_id', 'b_id']]).T
-    np.random.shuffle(A)
-    df[['a_id', 'b_id']] = A.T 
-
     # load input features
     single_gene_spec = [s for s in cfg['spec'] if not s['pairwise']]
     pairwise_gene_spec = [s for s in cfg['spec'] if s['pairwise']]
     single_fsets, single_fsets_shapes = feature_loader.load_feature_sets(single_gene_spec, False)
     pairwise_fsets, pairwise_fsets_shapes = feature_loader.load_feature_sets(pairwise_gene_spec, False)
-    #single_fsets_shapes = [F.shape[1:] for F in single_fsets]
-    #pairwise_fsets_shapes = [[F.shape[2],] for F in pairwise_fsets]
     
     # create output
     Y = keras.utils.to_categorical(np.load(targets_path)['y'])
@@ -95,7 +87,8 @@ def main(cfg, rep, fold, output_path, print_results=True, return_model=False):
         name='pairwise_input', spec=pairwise_gene_spec)
     output_ab = pairwise_gene_arch(inputs_ab, name="input_ab")
 
-    merged = nn_arch.concatenate([output_a, output_b, output_ab], name="preoutput")
+
+    merged = nn_arch.concatenate([output_a + output_b, output_ab], name="preoutput")
     output_node = layers.Dense(Y.shape[1], activation='softmax')(merged)
 
     if cfg['balanced_loss']:

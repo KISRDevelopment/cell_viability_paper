@@ -33,7 +33,7 @@
     "verbose": true,
     "patience": 50,
     "balanced_loss" : true,
-    "batch_size_p" : 0.1,
+    "batch_size_p" : 1,
     "embedding_size" : 5,
     "embedding_activation" : "tanh",
     "target_col" : "bin",

@@ -22,7 +22,7 @@
     "verbose": true,
     "patience": 50,
     "balanced_loss" : true,
-    "batch_size_p" : 0.1,
+    "batch_size_p" : 1,
     "target_col" : "bin",
     "task_path" : "../generated-data/train_sets/task_yeast_smf_30",
     "splits_path" : "../generated-data/splits/task_yeast_smf_30_10reps_5folds_0.20valid.npz",

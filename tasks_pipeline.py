@@ -49,13 +49,13 @@ if not os.path.exists('../generated-data/train_sets'):
 
 gpath = "../generated-data/ppc_yeast"
 smf_task_path = "../generated-data/task_yeast_smf_30"
-# tasks.yeast_smf.main(gpath, 30, smf_task_path)
-# utils.bin_outcomes.main(smf_task_path, {
-#     "is_lethal" : lambda bins: bins == 0,
-# }, smf_task_path)
-utils.split_train_test.main(smf_task_path, 0.2, 
-    "../generated-data/train_sets/task_yeast_smf_30",
-    "../generated-data/test_sets/task_yeast_smf_30")
+tasks.yeast_smf.main(gpath, 30, smf_task_path)
+utils.bin_outcomes.main(smf_task_path, {
+    "is_lethal" : lambda bins: bins == 0,
+}, smf_task_path)
+# utils.split_train_test.main(smf_task_path, 0.2, 
+#     "../generated-data/train_sets/task_yeast_smf_30",
+#     "../generated-data/test_sets/task_yeast_smf_30")
 
 utils.cv_simple.main("../generated-data/train_sets/task_yeast_smf_30", 10, 5, 0.2)
 
