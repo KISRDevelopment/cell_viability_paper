@@ -5,11 +5,14 @@ import numpy as np
 import networkx as nx 
 
 def main(gpath, cell_smf_task_path, output_path, use_haploinsufficient=False):
+
     task_df = pd.read_csv(cell_smf_task_path)
     ix = task_df['bin'] == 0
     lethal_genes = set(task_df[ix]['gene'])
     ix = task_df['bin'] == 1
     sick_genes = set(task_df[ix]['gene'])
+    ix = task_df['bin'] == 2
+    viable_cell_genes = set(task_df[ix]['gene'])
 
     G = nx.read_gpickle(gpath)
     nodes = sorted(G.nodes())
@@ -82,7 +85,7 @@ def main(gpath, cell_smf_task_path, output_path, use_haploinsufficient=False):
 
     # print([np.sum(org_task_df['bin'] == b) for b in [0,1, 2]])
 
-    org_task_df.to_csv(output_path, index=False)
+    #org_task_df.to_csv(output_path, index=False)
 
 if __name__ == "__main__":
     gpath = sys.argv[1]

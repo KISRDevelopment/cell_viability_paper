@@ -7,7 +7,7 @@ import shlex
 import tasks.yeast_smf
 import tasks.pombe_smf 
 import tasks.human_smf
-import tasks.human_org
+import tasks.human_ca_ma_v
 import tasks.dro_smf
 import tasks.dro_org_smf
 import tasks.pombe_gi
@@ -30,6 +30,8 @@ import utils.bin_negative
 import utils.split_train_test
 import utils.bin_outcomes 
 
+import pandas as pd 
+
 if not os.path.exists('../generated-data/splits'):
     os.makedirs('../generated-data/splits')
 if not os.path.exists('../generated-data/targets'):
@@ -45,20 +47,22 @@ if not os.path.exists('../generated-data/train_sets'):
 # ppc_creation.ppc.main("human", "../generated-data/ppc_human")
 # ppc_creation.ppc.main("dro", "../generated-data/ppc_dro")
 
-# smf tasks
-
+#
+#  YEAST smf tasks
+#
+"""
 gpath = "../generated-data/ppc_yeast"
 smf_task_path = "../generated-data/task_yeast_smf_30"
 tasks.yeast_smf.main(gpath, 30, smf_task_path)
 utils.bin_outcomes.main(smf_task_path, {
     "is_lethal" : lambda bins: bins == 0,
 }, smf_task_path)
-# utils.split_train_test.main(smf_task_path, 0.2, 
-#     "../generated-data/train_sets/task_yeast_smf_30",
-#     "../generated-data/test_sets/task_yeast_smf_30")
+utils.split_train_test.main(smf_task_path, 0.2, 
+    "../generated-data/train_sets/task_yeast_smf_30",
+    "../generated-data/test_sets/task_yeast_smf_30")
 
 utils.cv_simple.main("../generated-data/train_sets/task_yeast_smf_30", 10, 5, 0.2)
-
+"""
 
 # gpath = "../generated-data/ppc_pombe"
 # smf_task_path = "../generated-data/task_pombe_smf"
@@ -67,6 +71,10 @@ utils.cv_simple.main("../generated-data/train_sets/task_yeast_smf_30", 10, 5, 0.
 # utils.cv_simple.main(smf_task_path, 10, 5, 0.2)
 # utils.bin_lethal.main(smf_task_path)
 
+#
+# HUMAN smf tasks
+#
+
 # gpath = "../generated-data/ppc_human"
 # smf_task_path = "../generated-data/task_human_smf"
 # tasks.human_smf.main(gpath, smf_task_path)
@@ -74,12 +82,17 @@ utils.cv_simple.main("../generated-data/train_sets/task_yeast_smf_30", 10, 5, 0.
 # utils.cv_simple.main(smf_task_path, 10, 5, 0.2)
 # utils.bin_lethal.main(smf_task_path)
 
-# gpath = "../generated-data/ppc_human"
-# cell_smf_task_path = "../generated-data/task_human_smf"
-# smf_task_path = "../tmp/task_human_smf_org"
-# tasks.human_org.main(gpath, cell_smf_task_path, smf_task_path)
-#utils.bin_simple.main(smf_task_path)
-#utils.cv_simple.main(smf_task_path, 10, 5, 0.2)
+
+gpath = "../generated-data/ppc_human"
+cell_smf_task_path = "../generated-data/task_human_smf"
+smf_task_path = "../generated-data/task_human_smf_ca_ma_v"
+tasks.human_ca_ma_v.main(gpath, cell_smf_task_path, smf_task_path)
+utils.cv_simple.main("../generated-data/task_human_smf_ca_ma_v", 10, 5, 0.2)
+
+df = pd.read_csv(smf_task_path)
+df = df[df['bin'] < 2]
+df.to_csv("../generated-data/task_human_smf_ca_ma", index=False)
+utils.cv_simple.main("../generated-data/task_human_smf_ca_ma", 10, 5, 0.2)
 
 # gpath = "../generated-data/ppc_dro"
 # smf_task_path = "../generated-data/task_dro_smf"
