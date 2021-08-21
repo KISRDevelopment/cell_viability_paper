@@ -84,7 +84,7 @@ def main(path, output_path, labels, use_glob_spec=False):
     
     results_df = results_df.sort_values(['bacc'], ascending=False)
 
-    results_df.to_excel(output_path, index=False, columns=cols, float_format='%0.2f')
+    results_df.to_excel(output_path, index=False, columns=cols)
 
 def make_friendly_model_name(s):
     

@@ -17,19 +17,6 @@
             "paths" : ["../generated-data/features/ppc_yeast_common_sgo.npz"]
         },
         {
-            "name": "smf",
-            "group": "smf",
-            "hidden_activation": "tanh",
-            "layer_sizes": [
-                5
-            ],
-            "type": "ff",
-            "pairwise": false,
-            "paths": [
-                "../generated-data/features/ppc_yeast_smf_binned.npz"
-            ]
-        },
-        {
             "name" : "redundancy",
             "hidden_activation" : "tanh",
             "layer_sizes" : [5],
@@ -122,10 +109,10 @@
     "verbose": true,
     "patience": 50,
     "balanced_loss" : true,
-    "batch_size" : 10000,
+    "batch_size_p" : 0.1,
     "embedding_size" : 5,
     "embedding_activation" : "tanh",
-    "task_path" : "../generated-data/task_yeast_smf_30",
-    "targets_path" : "../generated-data/targets/task_yeast_smf_30_bin_simple.npz",
+    "target_col" : "bin",
+    "task_path" : "../generated-data/train_sets/task_yeast_smf_30",
     "splits_path" : "../generated-data/splits/task_yeast_smf_30_10reps_5folds_0.20valid.npz"
 }

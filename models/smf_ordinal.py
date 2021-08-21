@@ -26,15 +26,14 @@ from termcolor import colored
 def main(cfg, rep, fold, output_path, print_results=True):
     
     dataset_path = cfg['task_path']
-    targets_path = cfg['targets_path']
     train_test_path = cfg['splits_path']
     
     # load dataset
     df = pd.read_csv(dataset_path)
     
     # create output
-    Y = keras.utils.to_categorical(np.load(targets_path)['y'])
-
+    Y = keras.utils.to_categorical(df[cfg['target_col']])
+    
     # read features
     all_features, labels = read_features(cfg)
     
@@ -114,7 +113,7 @@ def main(cfg, rep, fold, output_path, print_results=True):
         model.fit(
             x=train_F,
             y=train_Y,
-            batch_size=cfg['batch_size'],
+            batch_size=int(cfg['batch_size_p'] * train_Y.shape[0]),
             epochs=cfg['epochs'],
             verbose=cfg['verbose'],
             validation_data=(valid_F, valid_Y),

@@ -8,24 +8,45 @@ import utils.make_smf_single_feature_sweeps
 import utils.make_smf_model_combs
 import models.multiple_cv
 import models.cv 
+import analysis.tbl_model_comp
 
-# # create Model Combinations
-# utils.make_smf_model_combs.main()
-# utils.make_smf_single_feature_sweeps.main("../tmp/model_cfgs/yeast_smf/topology~go~redundancy.json", "redundancy", "../tmp/model_cfgs/yeast_smf")
-# utils.make_smf_single_feature_sweeps.main("../tmp/model_cfgs/yeast_smf/topology~go~redundancy.json", "topology", "../tmp/model_cfgs/yeast_smf")
+#
+# Yeast SMF Model Selection
+#
 
-# # # execute CV on all model combinations
-# models.multiple_cv.main("models.smf_nn", "../tmp/model_cfgs/yeast_smf", "../results/task_yeast_smf_30", 6, exclude=lambda s: 'redundancy' not in s)
+# create all possible model combinations
+utils.make_smf_model_combs.main("cfgs/models/yeast_smf_full_model.json", 
+    comb_output_path="../results/yeast_smf_30_fs",
+    cfg_output_path="../tmp/model_cfgs/yeast_smf"
+)
 
-# # execute CV on refined model
-# models.cv.main("models.smf_nn", "cfgs/models/yeast_smf_refined_model.json", "../results/task_yeast_smf_30/refined")
+# evaluate on training set via cross validation
+models.multiple_cv.main("models.smf_nn", 
+    "../tmp/model_cfgs/yeast_smf", 
+    "../results/yeast_smf_30_fs", n_processors=20, n_runs=50)
 
-# # execute CV on null models
-# models.cv.main("models.null_model", "cfgs/models/yeast_smf_full_model.json", "../results/task_yeast_smf_30/null")
-# models.cv.main("models.smf_nn", "cfgs/models/yeast_smf_full_model.json", "../results/task_yeast_smf_30/null_scrambled", scramble=True)
+# we identify SGO+Redundancy+Topology as the model with the fewest features that achieves >= 95%
+# of max performace. So we sweep Redundancy and topology features to identify which one is responsible
+# for model performance
+utils.make_smf_single_feature_sweeps.main("../tmp/model_cfgs/yeast_smf/topology~go~redundancy.json", "redundancy", "../tmp/model_cfgs/yeast_smf")
+utils.make_smf_single_feature_sweeps.main("../tmp/model_cfgs/yeast_smf/topology~go~redundancy.json", "topology", "../tmp/model_cfgs/yeast_smf")
+models.multiple_cv.main("models.smf_nn", 
+    "../tmp/model_cfgs/yeast_smf", 
+    "../results/yeast_smf_30_fs", n_processors=20, n_runs=50)
+models.cv.main("models.smf_nn", 
+    "cfgs/models/yeast_smf_refined_model.json", 
+    "../results/yeast_smf_30_fs/refined",
+    num_processes=20)
 
-# # execute CV on OR model
-# models.cv.main("models.smf_ordinal", "cfgs/models/yeast_smf_orm.json", "../results/task_yeast_smf_30/orm")
+# we further constrain the refined model to be a simple OR model
+models.cv.main("models.smf_ordinal", "cfgs/models/yeast_smf_orm.json", "../results/yeast_smf_30_fs/orm", num_processes=20)
+
+# run the null model
+models.cv.main("models.null_model", "cfgs/models/yeast_smf_full_model.json", "../results/yeast_smf_30_fs/null", num_processes=20)
+
+# analyze all models on training set
+analysis.tbl_model_comp.main("../results/yeast_smf_30_fs", 
+    "../tmp/yeast_smf_model_comp.xlsx", analysis.tbl_model_comp.SMF_LABELS)
 
 # # pombe
 # models.cv.main("models.null_model", "cfgs/models/pombe_smf_refined_model.json", "../results/task_pombe_smf/null")
@@ -118,8 +139,8 @@ import models.cv
 #     "../results/task_human_smf_cell_org_lethal/null_scrambled", num_processes=20, scramble=True)
 # models.cv.main("models.null_model", "cfgs/models/human_smf_cell_org_lethal_refined_model.json", 
 #     "../results/task_human_smf_cell_org_lethal/null", num_processes=20)
-models.cv.main("models.smf_ordinal", "cfgs/models/human_smf_cell_org_lethal_orm.json", 
-    "../results/task_human_smf_cell_org_lethal/mn", type="mn", num_processes=20)
+# models.cv.main("models.smf_ordinal", "cfgs/models/human_smf_cell_org_lethal_orm.json", 
+#     "../results/task_human_smf_cell_org_lethal/mn", type="mn", num_processes=20)
 
 # models.cv.main("models.smf_nn", "cfgs/models/dro_smf_cell_org_lethal_refined_model.json", 
 #     "../results/task_dro_smf_cell_org_lethal/refined", num_processes=20)
@@ -129,5 +150,5 @@ models.cv.main("models.smf_ordinal", "cfgs/models/human_smf_cell_org_lethal_orm.
 #     "../results/task_dro_smf_cell_org_lethal/null_scrambled", num_processes=20, scramble=True)
 # models.cv.main("models.null_model", "cfgs/models/dro_smf_cell_org_lethal_refined_model.json", 
 #     "../results/task_dro_smf_cell_org_lethal/null", num_processes=20)
-models.cv.main("models.smf_ordinal", "cfgs/models/dro_smf_cell_org_lethal_orm.json", 
-    "../results/task_dro_smf_cell_org_lethal/mn", type="mn", num_processes=20)
+# models.cv.main("models.smf_ordinal", "cfgs/models/dro_smf_cell_org_lethal_orm.json", 
+#     "../results/task_dro_smf_cell_org_lethal/mn", type="mn", num_processes=20)
