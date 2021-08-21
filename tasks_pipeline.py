@@ -87,12 +87,12 @@ gpath = "../generated-data/ppc_human"
 cell_smf_task_path = "../generated-data/task_human_smf"
 smf_task_path = "../generated-data/task_human_smf_ca_ma_v"
 tasks.human_ca_ma_v.main(gpath, cell_smf_task_path, smf_task_path)
-utils.cv_simple.main("../generated-data/task_human_smf_ca_ma_v", 10, 5, 0.2)
+# utils.cv_simple.main("../generated-data/task_human_smf_ca_ma_v", 10, 5, 0.2)
 
-df = pd.read_csv(smf_task_path)
-df = df[df['bin'] < 2]
-df.to_csv("../generated-data/task_human_smf_ca_ma", index=False)
-utils.cv_simple.main("../generated-data/task_human_smf_ca_ma", 10, 5, 0.2)
+# df = pd.read_csv(smf_task_path)
+# df = df[df['bin'] < 2]
+# df.to_csv("../generated-data/task_human_smf_ca_ma", index=False)
+# utils.cv_simple.main("../generated-data/task_human_smf_ca_ma", 10, 5, 0.2)
 
 # gpath = "../generated-data/ppc_dro"
 # smf_task_path = "../generated-data/task_dro_smf"
