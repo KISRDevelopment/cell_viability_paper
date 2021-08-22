@@ -37,30 +37,30 @@ def main(gpath, cell_smf_task_path, output_path, use_haploinsufficient=False):
     final_ma_genes = candidate_ma_genes - cell_lethal_genes - cell_sick_genes - viable_genes
     print("Final MA Genes after subtracting CA and RG and  multi-cellular Viables: %d" % (len(final_ma_genes)))
 
-    #viable_genes = (cell_viable_genes  viable_genes) - final_ma_genes - cell_lethal_genes
-    #print("Final viables: %d" % len(viable_genes))
+    viable_genes =  viable_genes - final_ma_genes - cell_lethal_genes
+    print("Final viables: %d" % len(viable_genes))
 
-    #cell_viable_genes = cell_viable_genes - final_ma_genes - cell_lethal_genes
-    #mc_viable_genes = viable_genes - final_ma_genes - cell_lethal_genes
+    cell_viable_genes = cell_viable_genes - final_ma_genes - cell_lethal_genes
+    mc_viable_genes = viable_genes - final_ma_genes - cell_lethal_genes
 
-    # assert len(cell_lethal_genes.intersection(final_ma_genes)) == 0
-    # assert len(cell_lethal_genes.intersection(cell_viable_genes)) == 0
-    # assert len(cell_lethal_genes.intersection(mc_viable_genes)) == 0
+    assert len(cell_lethal_genes.intersection(final_ma_genes)) == 0
+    assert len(cell_lethal_genes.intersection(cell_viable_genes)) == 0
+    assert len(cell_lethal_genes.intersection(mc_viable_genes)) == 0
 
-    # print("Cell Viable: %d" % len(cell_viable_genes - final_ma_genes - cell_lethal_genes))
-    # gene_sets = [cell_lethal_genes, final_ma_genes, mc_viable_genes]
-    # rows = []
-    # for i, s in enumerate(gene_sets):
-    #     rows.extend([
-    #         { "gene" : g, "bin" : i } for g in s
-    #     ])
+    print("Cell Viable: %d" % len(cell_viable_genes - final_ma_genes - cell_lethal_genes))
+    gene_sets = [cell_lethal_genes, final_ma_genes, mc_viable_genes]
+    rows = []
+    for i, s in enumerate(gene_sets):
+        rows.extend([
+            { "gene" : g, "bin" : i } for g in s
+        ])
     
-    # org_task_df = pd.DataFrame(rows)
-    # org_task_df['id'] = [node_ix[r['gene']] for r in rows]
+    org_task_df = pd.DataFrame(rows)
+    org_task_df['id'] = [node_ix[r['gene']] for r in rows]
 
-    # print([np.sum(org_task_df['bin'] == b) for b in [0,1, 2, 3]])
+    print([np.sum(org_task_df['bin'] == b) for b in [0,1, 2, 3]])
 
-    # org_task_df.to_csv(output_path, index=False)
+    org_task_df.to_csv(output_path, index=False)
 
     # l_l = cell_lethal_genes.intersection(candidate_ma_genes)
     # l_v = cell_lethal_genes.intersection(viable_genes)

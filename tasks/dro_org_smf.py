@@ -21,8 +21,7 @@ def main(gpath, cell_smf_task_path, output_path):
     df_allele['gene'] = [fbal_to_fbgn[r] for r in df_allele['allele_FBal#']]
     
     edf = pd.read_csv(cell_smf_task_path)
-    edf['Gene'] = edf['Gene'].str.lower()
-    essential_genes = set(edf['Gene'])
+    essential_genes = set(edf[edf['is_lethal'] == 1]['gene'])
     
     ix = df_allele['phenotype'].str.startswith('lethal').astype(np.bool) & \
         ~df_allele['phenotype'].str.contains('with').astype(np.bool) & \
@@ -43,30 +42,33 @@ def main(gpath, cell_smf_task_path, output_path):
     
     print("Organismal lethal: %d" % len(organism_lethal_genes))
 
-    pupal_ix = ix & df_allele['phenotype'].str.lower().str.contains('pupal')
-    nonpupal_ix = ix & ~df_allele['phenotype'].str.lower().str.contains('pupal')
+    # pupal_ix = ix & df_allele['phenotype'].str.lower().str.contains('pupal')
+    # nonpupal_ix = ix & ~df_allele['phenotype'].str.lower().str.contains('pupal')
 
-    pupal_genes = set(df_allele[pupal_ix]['gene'])
-    nonpupal_genes = set(df_allele[nonpupal_ix]['gene'])
+    # pupal_genes = set(df_allele[pupal_ix]['gene'])
+    # nonpupal_genes = set(df_allele[nonpupal_ix]['gene'])
 
-    # want pure pupal genes
+    # # want pure pupal genes
     
-    print("Of which pupal: %d" % len(pupal_genes))
-    pupal_genes = pupal_genes - nonpupal_genes
+    # print("Of which pupal: %d" % len(pupal_genes))
+    # pupal_genes = pupal_genes - nonpupal_genes
 
-    print("Of which pupal: %d" % len(pupal_genes))
-    print("%d" % len(nonpupal_genes - pupal_genes))
+    # print("Of which pupal: %d" % len(pupal_genes))
+    # print("%d" % len(nonpupal_genes - pupal_genes))
 
-    normal_genes = node_set - essential_genes - organism_lethal_genes
+    coding_set = set(edf['gene'])
 
-    lethal_rows = [{ "gene" : g, "bin" : 0 } for g in organism_lethal_genes]
-    normal_rows = [{ "gene" : g, "bin" : 1 } for g in normal_genes]
-    rows = lethal_rows + normal_rows
+    normal_genes = coding_set - essential_genes - organism_lethal_genes
+
+    ca_rows = [{ "gene" : g, "bin" : 0 } for g in essential_genes ]
+    ma_rows = [{ "gene" : g, "bin" : 1 } for g in organism_lethal_genes]
+    normal_rows = [{ "gene" : g, "bin" : 2 } for g in normal_genes]
+    rows = ca_rows + ma_rows + normal_rows 
 
     smf_df = pd.DataFrame(rows)
     smf_df['id'] = [node_ix[e] for e in smf_df['gene']]
     
-    print([np.sum(smf_df['bin'] == b) for b in [0, 1]])
+    print([np.sum(smf_df['bin'] == b) for b in [0, 1, 2]])
 
     smf_df.to_csv(output_path, index=False)
     

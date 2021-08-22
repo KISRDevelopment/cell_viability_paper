@@ -83,12 +83,11 @@ utils.cv_simple.main("../generated-data/train_sets/task_yeast_smf_30", 10, 5, 0.
 # utils.bin_lethal.main(smf_task_path)
 
 
-gpath = "../generated-data/ppc_human"
-cell_smf_task_path = "../generated-data/task_human_smf"
-smf_task_path = "../generated-data/task_human_smf_ca_ma_v"
-tasks.human_ca_ma_v.main(gpath, cell_smf_task_path, smf_task_path)
+# gpath = "../generated-data/ppc_human"
+# cell_smf_task_path = "../generated-data/task_human_smf"
+# smf_task_path = "../generated-data/task_human_smf_ca_ma_v"
+# tasks.human_ca_ma_v.main(gpath, cell_smf_task_path, smf_task_path)
 # utils.cv_simple.main("../generated-data/task_human_smf_ca_ma_v", 10, 5, 0.2)
-
 # df = pd.read_csv(smf_task_path)
 # df = df[df['bin'] < 2]
 # df.to_csv("../generated-data/task_human_smf_ca_ma", index=False)
@@ -101,11 +100,10 @@ tasks.human_ca_ma_v.main(gpath, cell_smf_task_path, smf_task_path)
 # utils.cv_simple.main(smf_task_path, 10, 5, 0.2)
 # utils.bin_lethal.main(smf_task_path)
 
-# gpath = "../generated-data/ppc_dro"
-# smf_task_path = "../tmp/task_dro_smf_org"
-# tasks.dro_org_smf.main(gpath, "../data-sources/dro/Essential genes.csv", smf_task_path)
-# utils.bin_simple.main(smf_task_path)
-# utils.cv_simple.main(smf_task_path, 10, 5, 0.2)
+gpath = "../generated-data/ppc_dro"
+smf_task_path = "../generated-data/task_dro_smf_ca_ma_v"
+tasks.dro_org_smf.main(gpath, "../generated-data/task_dro_smf", smf_task_path)
+utils.cv_simple.main(smf_task_path, 10, 5, 0.2)
 
 # smf_task_path = "../generated-data/task_human_cell_org_lethal"
 # tasks.cell_org_lethal.main("../generated-data/ppc_human", "../generated-data/task_human_smf", 
