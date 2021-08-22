@@ -38,7 +38,7 @@ def main(cfg, rep, fold, output_path, print_results=True, return_model=False):
     pairwise_fsets, pairwise_fsets_shapes = feature_loader.load_feature_sets(pairwise_gene_spec, False)
     
     # create output
-    Y = keras.utils.to_categorical(np.load(targets_path)['y'])
+    Y = keras.utils.to_categorical(df[cfg['target_col']])
     
     # load train/test split 
     data = np.load(train_test_path)

@@ -6,12 +6,13 @@ import numpy as np
 import os 
 import keras.utils 
 
-def main(path, reps, folds, valid_prop, add_output_path_tag=False):
+def main(path, reps, folds, valid_prop, output_path=None):
     
     train_sets, valid_sets, test_sets = generate_cv_splits(path, reps, folds, valid_prop)
 
-    tag = '_simple' if add_output_path_tag else ''
-    output_path = '../generated-data/splits/%s_%dreps_%dfolds_%0.2fvalid%s' % (os.path.basename(path), reps, folds, valid_prop, tag)
+    if output_path is None:
+
+        output_path = '../generated-data/splits/%s_%dreps_%dfolds_%0.2fvalid%s' % (os.path.basename(path), reps, folds, valid_prop, tag)
     print("Writing to %s" % output_path)
     np.savez(output_path, 
         train_sets=train_sets,
