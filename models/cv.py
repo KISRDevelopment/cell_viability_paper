@@ -5,7 +5,7 @@ import subprocess
 import shutil 
 import json 
 
-SHOW_OUTPUT = False 
+SHOW_OUTPUT = True 
 OVERWRITE_PROMPT = False
 
 def main(script_name, cfg_path, output_dir, num_processes=8, interpreation=False, scramble=False, remove_specs=[], **kwargs):
@@ -49,7 +49,7 @@ def main(script_name, cfg_path, output_dir, num_processes=8, interpreation=False
 
     d = np.load(train_test_path)
     reps, folds,_ = d['train_sets'].shape
-    
+    print("REPS: %d, FOLDS: %d" % (reps, folds))
     if OVERWRITE_PROMPT and os.path.exists(output_dir):
         print("Ok to overwrite %s? " % output_dir)
         r = input().strip().lower()

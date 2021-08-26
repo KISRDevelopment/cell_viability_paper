@@ -16,6 +16,8 @@ def main(input_path, extra_cols, output_path, bin_col='bin'):
     for col, colfunc in extra_cols.items():
         df[col] = colfunc(bins).astype(int)
 
+    print(np.sum(df[extra_cols.keys()]))
+    
     df.to_csv(output_path, index=False)
     print(df)
     # output_path = "../generated-data/targets/%s_%s_simple" % (os.path.basename(path), bin_col)

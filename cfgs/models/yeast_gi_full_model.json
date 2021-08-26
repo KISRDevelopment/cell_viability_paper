@@ -170,7 +170,7 @@
     "embedding_size": 5,
     "embedding_activation": "tanh",
     "scramble" : false,
-    "task_path" : "../generated-data/task_yeast_gi_hybrid",
-    "targets_path" : "../generated-data/targets/task_yeast_gi_hybrid_bin_simple.npz",
+    "task_path" : "../generated-data/train_sets/task_yeast_gi_hybrid",
+    "target_col" : "bin",
     "splits_path" : "../generated-data/splits/task_yeast_gi_hybrid_10reps_4folds_0.20valid.npz"
 }

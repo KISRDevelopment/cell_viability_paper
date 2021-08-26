@@ -8,8 +8,7 @@
         {
             "name" : "sgo",
             "path" : "../generated-data/features/ppc_yeast_common_sgo.npz",
-            "processor" : "GoProcessorSum",
-            "xor" : true
+            "processor" : "GoProcessorSum"
         },
         {
             "name" : "spl",
@@ -33,10 +32,10 @@
     "scramble" : false,
     "train_model" : true,
     "trained_model_path" : "../tmp/mnmodel",
-    "task_path" : "../generated-data/task_yeast_gi_hybrid",
-    "targets_path" : "../generated-data/targets/task_yeast_gi_hybrid_bin_simple.npz",
+    "task_path" : "../generated-data/train_sets/task_yeast_gi_hybrid",
+    "target_col" : "bin",
     "splits_path" : "../generated-data/splits/task_yeast_gi_hybrid_10reps_4folds_0.20valid.npz",
     "type" : "mn",
-    "save_tjs" : true,
+    "save_tjs" : false,
     "tjs_path" : "../tmp/yeast_gi_mn"
 }

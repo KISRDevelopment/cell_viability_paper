@@ -29,7 +29,7 @@ import tasks.yeast_gi_hybrid_comp
 import utils.bin_negative
 import utils.split_train_test
 import utils.bin_outcomes 
-
+import utils.create_split_indecies
 import pandas as pd 
 
 if not os.path.exists('../generated-data/splits'):
@@ -100,10 +100,10 @@ utils.cv_simple.main("../generated-data/train_sets/task_yeast_smf_30", 10, 5, 0.
 # utils.cv_simple.main(smf_task_path, 10, 5, 0.2)
 # utils.bin_lethal.main(smf_task_path)
 
-gpath = "../generated-data/ppc_dro"
-smf_task_path = "../generated-data/task_dro_smf_ca_ma_v"
-tasks.dro_org_smf.main(gpath, "../generated-data/task_dro_smf", smf_task_path)
-utils.cv_simple.main(smf_task_path, 10, 5, 0.2)
+# gpath = "../generated-data/ppc_dro"
+# smf_task_path = "../generated-data/task_dro_smf_ca_ma_v"
+# tasks.dro_org_smf.main(gpath, "../generated-data/task_dro_smf", smf_task_path)
+# utils.cv_simple.main(smf_task_path, 10, 5, 0.2)
 
 # smf_task_path = "../generated-data/task_human_cell_org_lethal"
 # tasks.cell_org_lethal.main("../generated-data/ppc_human", "../generated-data/task_human_smf", 
@@ -133,13 +133,23 @@ utils.cv_simple.main(smf_task_path, 10, 5, 0.2)
 # utils.bin_interacting.main(gi_task_path)
 # utils.cv_gi.main(gi_task_path, 10, 4, 0.2)
 
-#gpath = "../generated-data/ppc_yeast"
-#gi_task_path = "../generated-data/task_yeast_gi_hybrid"
-#tasks.yeast_gi_hybrid_comp.main(gpath, gi_task_path, 0.15)
-#utils.bin_simple.main(gi_task_path)
-#utils.bin_interacting.main(gi_task_path)
-#utils.bin_negative.main(gi_task_path)
-#utils.cv_gi.main(gi_task_path, 10, 4, 0.2)
+gpath = "../generated-data/ppc_yeast"
+gi_task_path = "../generated-data/task_yeast_gi_hybrid"
+#tasks.yeast_gi_hybrid.main(gpath, '../generated-data/biogrid_yeast', '../generated-data/costanzo_gi', gi_task_path)
+# utils.bin_outcomes.main(gi_task_path, {
+#     "is_negative" : lambda bins: bins == 0,
+#     "is_interacting" : lambda bins: bins != 1,
+# }, gi_task_path)
+# utils.split_train_test.gi(gi_task_path, 0.25, 
+#     "../generated-data/train_sets/task_yeast_gi_hybrid",
+#     "../generated-data/test_sets/task_yeast_gi_hybrid")
+# utils.cv_gi.main("../generated-data/train_sets/task_yeast_gi_hybrid", 10, 4, 0.2)
+utils.create_split_indecies.main("../generated-data/train_sets/task_yeast_gi_hybrid", 
+    "../generated-data/test_sets/task_yeast_gi_hybrid", 
+    0.2, 
+    "../generated-data/task_yeast_gi_hybrid_train_test",
+    "../generated-data/splits/task_yeast_gi_hybrid_train_test")
+
 
 # gpath = "../generated-data/ppc_pombe"
 # gi_task_path = "../generated-data/task_pombe_gi"

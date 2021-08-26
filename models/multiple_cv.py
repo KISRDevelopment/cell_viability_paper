@@ -7,7 +7,7 @@ import time
 import sys, select 
 import shutil 
 
-CONTINUE_PROMPT_TIMEOUT_SECS = 5
+CONTINUE_PROMPT_TIMEOUT_SECS = 2
 
 def main(script_name, cfgs_dir, output_dir, n_processors=6, exclude=lambda s: False, dynamic_dispatch=False, n_runs=40, skip_existing=True):
     

@@ -65,8 +65,6 @@ def gi(task_path, test_prop, train_output_path, test_output_path):
     train_ix = df['a'].isin(train_genes) & df['b'].isin(train_genes)
     test_ix = df['a'].isin(test_genes) & df['b'].isin(test_genes)
 
-    
-
     print("Train props:")
     train_df = df[train_ix]
     print(np.array([np.sum(train_df['bin'] == b) for b in [0,1,2,3]]) / train_df.shape[0])

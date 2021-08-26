@@ -56,6 +56,7 @@ def main(base_cfg, output_dir):
         compartments = [comp for group in group_comb for comp in feature_groups[group]]
         combinations.append((group_comb, compartments))
     
+    print("Combinations: %d" % len(combinations))
     names_to_comps = dict([(e['name'], e) for e in base_cfg['spec']])
 
     if not os.path.exists(output_dir):
