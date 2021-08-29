@@ -67,45 +67,129 @@ def load_cfg(path, **kwargs):
 
 
 # test!
-models.cv.main("models.gi_nn", "cfgs/models/yeast_gi_full_model.json", 
-    "../results/task_yeast_gi_hybrid_train_test/full", 
-    num_processes=1,
+# models.cv.main("models.gi_nn", "cfgs/models/yeast_gi_full_model.json", 
+#     "../results/task_yeast_gi_hybrid_train_test/full", 
+#     num_processes=1,
+#     n_runs=1,
+#     verbose=True,
+#     task_path="../generated-data/task_yeast_gi_hybrid_train_test",
+#     splits_path="../generated-data/splits/task_yeast_gi_hybrid_train_test.npz")
+
+
+# models.cv.main("models.gi_nn", "cfgs/models/yeast_gi_refined_model.json", 
+#     "../results/task_yeast_gi_hybrid_train_test/refined", 
+#     num_processes=1,
+#     n_runs=1,
+#     verbose=True,
+#     task_path="../generated-data/task_yeast_gi_hybrid_train_test",
+#     splits_path="../generated-data/splits/task_yeast_gi_hybrid_train_test.npz")
+
+# models.cv.main("models.gi_mn", "cfgs/models/yeast_gi_mn.json", 
+#     "../results/task_yeast_gi_hybrid_train_test/mn", 
+#     num_processes=1,
+#     n_runs=1,
+#     verbose=True,
+#     task_path="../generated-data/task_yeast_gi_hybrid_train_test",
+#     splits_path="../generated-data/splits/task_yeast_gi_hybrid_train_test.npz")
+
+# models.cv.main("models.gi_mn", "cfgs/models/yeast_gi_mn.json", 
+#     "../results/task_yeast_gi_hybrid_train_test/orm", 
+#     num_processes=1,
+#     n_runs=1,
+#     verbose=True,
+#     type="orm",
+#     task_path="../generated-data/task_yeast_gi_hybrid_train_test",
+#     splits_path="../generated-data/splits/task_yeast_gi_hybrid_train_test.npz")
+
+# models.cv.main("models.null_model", "cfgs/models/yeast_gi_full_model.json", 
+#     "../results/task_yeast_gi_hybrid_train_test/null", 
+#     num_processes=1,
+#     n_runs=1,
+#     verbose=True,
+#     task_path="../generated-data/task_yeast_gi_hybrid_train_test",
+#     splits_path="../generated-data/splits/task_yeast_gi_hybrid_train_test.npz")
+
+
+"""
+    Yeast Binary
+"""
+
+# models.cv.main("models.gi_nn", "cfgs/models/yeast_gi_refined_model.json", 
+#     "../results/task_yeast_gi_hybrid_binary/refined", 
+#     num_processes = 1,
+#     target_col = "is_neutral"
+# )
+
+# models.cv.main("models.gi_mn", "cfgs/models/yeast_gi_mn.json", 
+#     "../results/task_yeast_gi_hybrid_binary/mn", 
+#     num_processes=20,
+#     target_col = "is_neutral")
+
+# models.cv.main("models.null_model", "cfgs/models/yeast_gi_mn.json", 
+#     "../results/task_yeast_gi_hybrid_binary/null", 
+#     num_processes=20,
+#     target_col = "is_neutral")
+
+# models.cv.main("models.gi_nn", "cfgs/models/yeast_gi_refined_model.json", 
+#     "../results/task_yeast_gi_hybrid_binary/null_scrambled", 
+#     num_processes=20,
+#     scramble=True,
+#     target_col = "is_neutral")
+
+# models.cv.main("models.gi_nn", "cfgs/models/yeast_gi_refined_model.json", 
+#     "../results/task_yeast_gi_hybrid_binary/refined_no_sgo", 
+#     num_processes = 20,
+#     remove_specs=["go"],
+#     target_col = "is_neutral"
+# )
+
+# models.cv.main("models.gi_mn", "cfgs/models/yeast_gi_mn.json", 
+#     "../results/task_yeast_gi_hybrid_binary/mn_no_sgo", 
+#     num_processes=20,
+#     remove_specs=["sgo"],
+#     target_col = "is_neutral")
+
+# test
+models.cv.main("models.gi_nn", "cfgs/models/yeast_gi_refined_model.json", 
+    "../results/task_yeast_gi_hybrid_binary_test/refined", 
+    num_processes = 1,
+    target_col = "is_neutral",
     n_runs=1,
-    verbose=True,
     task_path="../generated-data/task_yeast_gi_hybrid_train_test",
     splits_path="../generated-data/splits/task_yeast_gi_hybrid_train_test.npz")
 
+models.cv.main("models.gi_mn", "cfgs/models/yeast_gi_mn.json", 
+    "../results/task_yeast_gi_hybrid_binary_test/mn", 
+    num_processes=1,
+    target_col = "is_neutral",
+    n_runs=1,
+    task_path="../generated-data/task_yeast_gi_hybrid_train_test",
+    splits_path="../generated-data/splits/task_yeast_gi_hybrid_train_test.npz")
+
+models.cv.main("models.null_model", "cfgs/models/yeast_gi_mn.json", 
+    "../results/task_yeast_gi_hybrid_binary_test/null", 
+    num_processes=1,
+    target_col = "is_neutral",
+    n_runs=1,
+    task_path="../generated-data/task_yeast_gi_hybrid_train_test",
+    splits_path="../generated-data/splits/task_yeast_gi_hybrid_train_test.npz")
 
 models.cv.main("models.gi_nn", "cfgs/models/yeast_gi_refined_model.json", 
-    "../results/task_yeast_gi_hybrid_train_test/refined", 
-    num_processes=1,
+    "../results/task_yeast_gi_hybrid_binary_test/refined_no_sgo", 
+    num_processes = 1,
+    remove_specs=["go"],
+    target_col = "is_neutral",
     n_runs=1,
-    verbose=True,
     task_path="../generated-data/task_yeast_gi_hybrid_train_test",
-    splits_path="../generated-data/splits/task_yeast_gi_hybrid_train_test.npz")
+    splits_path="../generated-data/splits/task_yeast_gi_hybrid_train_test.npz"
+)
 
 models.cv.main("models.gi_mn", "cfgs/models/yeast_gi_mn.json", 
-    "../results/task_yeast_gi_hybrid_train_test/mn", 
+    "../results/task_yeast_gi_hybrid_binary_test/mn_no_sgo", 
     num_processes=1,
+    remove_specs=["sgo"],
+    target_col = "is_neutral",
     n_runs=1,
-    verbose=True,
-    task_path="../generated-data/task_yeast_gi_hybrid_train_test",
-    splits_path="../generated-data/splits/task_yeast_gi_hybrid_train_test.npz")
-
-models.cv.main("models.gi_mn", "cfgs/models/yeast_gi_mn.json", 
-    "../results/task_yeast_gi_hybrid_train_test/orm", 
-    num_processes=1,
-    n_runs=1,
-    verbose=True,
-    type="orm",
-    task_path="../generated-data/task_yeast_gi_hybrid_train_test",
-    splits_path="../generated-data/splits/task_yeast_gi_hybrid_train_test.npz")
-
-models.cv.main("models.null_model", "cfgs/models/yeast_gi_full_model.json", 
-    "../results/task_yeast_gi_hybrid_train_test/null", 
-    num_processes=1,
-    n_runs=1,
-    verbose=True,
     task_path="../generated-data/task_yeast_gi_hybrid_train_test",
     splits_path="../generated-data/splits/task_yeast_gi_hybrid_train_test.npz")
 
@@ -114,9 +198,9 @@ models.cv.main("models.null_model", "cfgs/models/yeast_gi_full_model.json",
     Costanzo data
 """
 
-costanzo_task_path = "../generated-data/task_yeast_gi_costanzo_asym"
-costanzo_targets_path = "../generated-data/targets/task_yeast_gi_costanzo_asym_bin_simple.npz"
-costanzo_splits_path = "../generated-data/splits/task_yeast_gi_costanzo_asym_10reps_4folds_0.20valid.npz"
+# costanzo_task_path = "../generated-data/task_yeast_gi_costanzo"
+# costanzo_targets_path = "../generated-data/targets/task_yeast_gi_costanzo_bin_simple.npz"
+# costanzo_splits_path = "../generated-data/splits/task_yeast_gi_costanzo_10reps_4folds_0.20valid.npz"
 
 # models.cv.main("models.gi_nn", "cfgs/models/yeast_gi_full_model.json", 
 #     "../results/task_yeast_gi_costanzo/full", 
@@ -170,105 +254,6 @@ costanzo_splits_path = "../generated-data/splits/task_yeast_gi_costanzo_asym_10r
 #     task_path = costanzo_task_path,
 #     targets_path = costanzo_targets_path,
 #     splits_path = costanzo_splits_path)
-
-"""
-    Definitive GI Dataset
-"""
-costanzo_task_path = "../generated-data/task_yeast_gi_thres15"
-costanzo_targets_path = "../generated-data/targets/task_yeast_gi_thres15_bin_interacting.npz"
-costanzo_splits_path = "../generated-data/splits/task_yeast_gi_thres15_10reps_4folds_0.20valid.npz"
-
-# models.cv.main("models.gi_nn", "cfgs/models/yeast_gi_full_model.json", 
-#     "../results/task_yeast_gi/full", 
-#     num_processes = 10,
-#     task_path = costanzo_task_path,
-#     targets_path = costanzo_targets_path,
-#     splits_path = costanzo_splits_path
-# )
-
-# models.cv.main("models.gi_nn", "cfgs/models/yeast_gi_refined_model.json", 
-#     "../results/task_yeast_gi_thres15_binary/refined", 
-#     num_processes = 20,
-#     task_path = costanzo_task_path,
-#     targets_path = costanzo_targets_path,
-#     splits_path = costanzo_splits_path
-# )
-
-# models.cv.main("models.gi_mn", "cfgs/models/yeast_gi_mn.json", 
-#     "../results/task_yeast_gi/mn", 
-#     num_processes=20,
-#     task_path = costanzo_task_path,
-#     targets_path = costanzo_targets_path,
-#     splits_path = costanzo_splits_path)
-
-"""
-    Yeast Binary
-"""
-
-# targets_path = "../generated-data/targets/task_yeast_gi_hybrid_bin_interacting.npz"
-
-# models.cv.main("models.gi_nn", "cfgs/models/yeast_gi_refined_model.json", 
-#     "../results/task_yeast_gi_hybrid_binary/refined", 
-#     num_processes = 20,
-#     targets_path = targets_path
-# )
-
-# models.cv.main("models.gi_mn", "cfgs/models/yeast_gi_mn.json", 
-#     "../results/task_yeast_gi_hybrid_binary/mn", 
-#     num_processes=20,
-#     targets_path = targets_path)
-
-# models.cv.main("models.null_model", "cfgs/models/yeast_gi_mn.json", 
-#     "../results/task_yeast_gi_hybrid_binary/null", 
-#     num_processes=20,
-#     targets_path = targets_path)
-
-# models.cv.main("models.gi_nn", "cfgs/models/yeast_gi_refined_model.json", 
-#     "../results/task_yeast_gi_hybrid_binary/null_scrambled", 
-#     num_processes=20,
-#     scramble=True,
-#     targets_path = targets_path)
-
-# models.cv.main("models.gi_nn", "cfgs/models/yeast_gi_refined_model.json", 
-#     "../results/task_yeast_gi_hybrid_binary/refined_no_sgo", 
-#     num_processes = 20,
-#     remove_specs=["go"],
-#     targets_path = targets_path
-# )
-
-# models.cv.main("models.gi_mn", "cfgs/models/yeast_gi_mn.json", 
-#     "../results/task_yeast_gi_hybrid_binary/mn_no_sgo", 
-#     num_processes=20,
-#     remove_specs=["sgo"],
-#     targets_path = targets_path)
-
-"""
-    Yeast Negative vs. All
-"""
-targets_path = "../generated-data/targets/task_yeast_gi_hybrid_bin_negative.npz"
-
-# models.cv.main("models.gi_nn", "cfgs/models/yeast_gi_refined_model.json", 
-#     "../results/task_yeast_gi_hybrid_binary_negative/refined", 
-#     num_processes = 20,
-#     targets_path = targets_path
-# )
-
-# models.cv.main("models.gi_mn", "cfgs/models/yeast_gi_mn.json", 
-#     "../results/task_yeast_gi_hybrid_binary_negative/mn", 
-#     num_processes=20,
-#     targets_path = targets_path)
-
-# models.cv.main("models.null_model", "cfgs/models/yeast_gi_mn.json", 
-#     "../results/task_yeast_gi_hybrid_binary_negative/null", 
-#     num_processes=20,
-#     targets_path = targets_path)
-
-
-# models.cv.main("models.gi_nn", "cfgs/models/yeast_gi_slant.json", 
-#     "../results/task_yeast_gi_hybrid_binary_negative/slant", 
-#     num_processes=20,
-#     targets_path = targets_path)
-
 
 # """
 #     Yeast Costanzo Binary

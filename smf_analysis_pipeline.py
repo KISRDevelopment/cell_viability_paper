@@ -20,8 +20,8 @@ if not os.path.exists('../figures/yeast_smf_analysis'):
 #analysis.fig_class_distrib.main('cfgs/fig_class_distrib/class_distrib_org.json')
 
 # analysis.fig_cs_vs_std.main("../generated-data/task_yeast_smf_30", "../results/yeast_smf_figures/cs_vs_std.png", show=False)
-analysis.fig_feature_violin.main("../generated-data/task_yeast_smf_30", "../generated-data/features/ppc_yeast_topology.npz", 11, "LID Score", "../results/yeast_smf_figures/lid_violin.png")
-analysis.fig_feature_violin.main("../generated-data/task_yeast_smf_30", "../generated-data/features/ppc_yeast_redundancy.npz", 0, "Percent Identity Score", "../results/yeast_smf_figures/pident_violin.png")
+# analysis.fig_feature_violin.main("../generated-data/task_yeast_smf_30", "../generated-data/features/ppc_yeast_topology.npz", 11, "LID Score", "../results/yeast_smf_figures/lid_violin.png")
+# analysis.fig_feature_violin.main("../generated-data/task_yeast_smf_30", "../generated-data/features/ppc_yeast_redundancy.npz", 0, "Percent Identity Score", "../results/yeast_smf_figures/pident_violin.png")
 
 # analysis.fig_feature_corr.main("../generated-data/features/ppc_yeast_topology.npz", "../results/yeast_smf_figures/topology_corr.png", False)
 # analysis.fig_feature_corr.main("../generated-data/features/ppc_yeast_redundancy.npz", "../results/yeast_smf_figures/redundancy_corr.png", False)
@@ -80,7 +80,8 @@ analysis.fig_feature_violin.main("../generated-data/task_yeast_smf_30", "../gene
 # ], '../figures/smf_generalization_results.xlsx', writing_kw_args={"index":False})
 
 
-# analysis.fig_cv_performance.main("cfgs/fig_cv_performance/yeast_smf.json")
+#analysis.fig_cv_performance.main("cfgs/fig_cv_performance/yeast_smf.json")
+analysis.fig_cv_performance.main("cfgs/fig_cv_performance/yeast_smf_test.json")
 # analysis.fig_cv_performance.main("cfgs/fig_cv_performance/pombe_smf.json")
 # analysis.fig_cv_performance.main("cfgs/fig_cv_performance/human_smf.json")
 # analysis.fig_cv_performance.main("cfgs/fig_cv_performance/dro_smf.json")

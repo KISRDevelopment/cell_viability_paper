@@ -1,0 +1,48 @@
+{
+    "output_path": "../figures/cv_figs_task_yeast_smf_30_test/",
+    "models": [
+        {
+            "name": "Full model",
+            "color": "#b300ff",
+            "cm_color": "#b300ff",
+            "path": "../results/task_yeast_smf_30_test/full",
+            "show": true
+        },
+        {
+            "name": "Refined model",
+            "color": "#FF0000",
+            "cm_color": "#FF0000",
+            "path": "../results/task_yeast_smf_30_test/refined",
+            "show": true
+        },
+        {
+            "name": "OR model",
+            "color": "#00CC00",
+            "path": "../results/task_yeast_smf_30_test/orm",
+            "show": true
+        },
+        {
+            "name": "Null",
+            "color": "white",
+            "star_color": "grey",
+            "cm_color": "grey",
+            "path": "../results/task_yeast_smf_30_test/null",
+            "show": true,
+            "show_roc": false
+        }
+    ],
+    "classes": [
+        "Lethal",
+        "Reduced growth",
+        "Normal"
+    ],
+    "short_classes": [
+        "L",
+        "R",
+        "N"
+    ],
+    "ylim": [
+        0,
+        1
+    ]
+}

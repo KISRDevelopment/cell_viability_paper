@@ -58,12 +58,13 @@ GI_LABELS_BINARY = ['Interacting', 'Neutral']
 #analysis.fig_cv_performance.main("cfgs/fig_cv_performance/yeast_gi_costanzo.json")
 #analysis.fig_cv_performance.main("cfgs/fig_cv_performance/yeast_gi_costanzo_binary.json")
 
-# analysis.fig_cv_performance.main("cfgs/fig_cv_performance/yeast_gi_hybrid_binary.json")
+#analysis.fig_cv_performance.main("cfgs/fig_cv_performance/yeast_gi_hybrid_binary_no_sgo.json")
+analysis.fig_cv_performance.main("cfgs/fig_cv_performance/yeast_gi_hybrid_binary_no_sgo_test.json")
 # analysis.fig_cv_performance.main("cfgs/fig_cv_performance/pombe_gi.json")
 # analysis.fig_cv_performance.main("cfgs/fig_cv_performance/pombe_gi_binary.json")
 # analysis.fig_cv_performance.main("cfgs/fig_cv_performance/human_gi.json")
 # analysis.fig_cv_performance.main("cfgs/fig_cv_performance/dro_gi.json")
-# analysis.fig_cv_performance.main("cfgs/fig_cv_performance/yeast_gi_hybrid_binary_no_sgo.json")
+
 # analysis.fig_cv_performance.main("cfgs/fig_cv_performance/pombe_gi_binary_no_sgo.json")
 # analysis.fig_cv_performance.main("cfgs/fig_cv_performance/human_gi_no_sgo.json")
 # analysis.fig_cv_performance.main("cfgs/fig_cv_performance/dro_gi_no_sgo.json")
