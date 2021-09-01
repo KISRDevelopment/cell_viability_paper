@@ -61,11 +61,11 @@ smf_task_path = "../generated-data/task_yeast_smf_30"
 #     "../generated-data/train_sets/task_yeast_smf_30",
 #     "../generated-data/test_sets/task_yeast_smf_30")
 #utils.cv_simple.main("../generated-data/train_sets/task_yeast_smf_30", 10, 5, 0.2)
-utils.create_split_indecies.smf("../generated-data/train_sets/task_yeast_smf_30", 
-    "../generated-data/test_sets/task_yeast_smf_30", 
-    0.2, 
-    "../generated-data/task_yeast_smf_30_train_test",
-    "../generated-data/splits/task_yeast_smf_30_train_test")
+# utils.create_split_indecies.smf("../generated-data/train_sets/task_yeast_smf_30", 
+#     "../generated-data/test_sets/task_yeast_smf_30", 
+#     0.2, 
+#     "../generated-data/task_yeast_smf_30_train_test",
+#     "../generated-data/splits/task_yeast_smf_30_train_test")
 
 
 # gpath = "../generated-data/ppc_pombe"
@@ -87,15 +87,16 @@ utils.create_split_indecies.smf("../generated-data/train_sets/task_yeast_smf_30"
 # utils.bin_lethal.main(smf_task_path)
 
 
-# gpath = "../generated-data/ppc_human"
-# cell_smf_task_path = "../generated-data/task_human_smf"
-# smf_task_path = "../generated-data/task_human_smf_ca_ma_v"
-# tasks.human_ca_ma_v.main(gpath, cell_smf_task_path, smf_task_path)
-# utils.cv_simple.main("../generated-data/task_human_smf_ca_ma_v", 10, 5, 0.2)
-# df = pd.read_csv(smf_task_path)
-# df = df[df['bin'] < 2]
-# df.to_csv("../generated-data/task_human_smf_ca_ma", index=False)
-# utils.cv_simple.main("../generated-data/task_human_smf_ca_ma", 10, 5, 0.2)
+gpath = "../generated-data/ppc_human"
+cell_smf_task_path = "../generated-data/task_human_smf"
+smf_task_path = "../generated-data/task_human_smf_ca_ma_v"
+tasks.human_ca_ma_v.main(gpath, cell_smf_task_path, smf_task_path)
+utils.cv_simple.main("../generated-data/task_human_smf_ca_ma_v", 10, 5, 0.2)
+df = pd.read_csv(smf_task_path)
+df = df[df['bin'] > 0]
+df.to_csv("../generated-data/task_human_smf_ma_v", index=False)
+utils.cv_simple.main("../generated-data/task_human_smf_ma_v", 10, 5, 0.2)
+
 
 # gpath = "../generated-data/ppc_dro"
 # smf_task_path = "../generated-data/task_dro_smf"
@@ -106,21 +107,12 @@ utils.create_split_indecies.smf("../generated-data/train_sets/task_yeast_smf_30"
 
 # gpath = "../generated-data/ppc_dro"
 # smf_task_path = "../generated-data/task_dro_smf_ca_ma_v"
-# tasks.dro_org_smf.main(gpath, "../generated-data/task_dro_smf", smf_task_path)
-# utils.cv_simple.main(smf_task_path, 10, 5, 0.2)
-
-# smf_task_path = "../generated-data/task_human_cell_org_lethal"
-# tasks.cell_org_lethal.main("../generated-data/ppc_human", "../generated-data/task_human_smf", 
-#     "../generated-data/task_human_smf_org", smf_task_path)
-# utils.bin_simple.main(smf_task_path)
-# utils.cv_simple.main(smf_task_path, 10, 5, 0.2)
-
-
-# smf_task_path = "../generated-data/task_dro_cell_org_lethal"
-# tasks.cell_org_lethal.main("../generated-data/ppc_dro", "../generated-data/task_dro_smf", 
-#     "../generated-data/task_dro_smf_org", smf_task_path)
-# utils.bin_simple.main(smf_task_path)
-# utils.cv_simple.main(smf_task_path, 10, 5, 0.2)
+# # tasks.dro_org_smf.main(gpath, "../generated-data/task_dro_smf", smf_task_path)
+# # utils.cv_simple.main(smf_task_path, 10, 5, 0.2)
+# df = pd.read_csv(smf_task_path)
+# df = df[df['bin'] > 0]
+# df.to_csv("../generated-data/task_dro_smf_ma_v", index=False)
+# utils.cv_simple.main("../generated-data/task_dro_smf_ma_v", 10, 5, 0.2)
 
 # # GI tasks
 
@@ -188,6 +180,12 @@ gi_task_path = "../generated-data/task_yeast_gi_hybrid"
 # gpath = "../generated-data/ppc_yeast"
 # tgi_task_path = "../generated-data/task_yeast_tgi"
 # tasks.yeast_tgi.main(gpath, tgi_task_path)
-# utils.bin_simple.main(tgi_task_path)
-# utils.cv_simple.main(tgi_task_path, 10, 4, 0.2, True)
-
+# utils.split_train_test.main(tgi_task_path, 0.2, 
+#     "../generated-data/train_sets/task_yeast_tgi",
+#     "../generated-data/test_sets/task_yeast_tgi")
+# utils.cv_simple.main("../generated-data/train_sets/task_yeast_tgi", 10, 4, 0.2)
+# utils.create_split_indecies.smf("../generated-data/train_sets/task_yeast_tgi", 
+#     "../generated-data/test_sets/task_yeast_tgi", 
+#     0.2, 
+#     "../generated-data/task_yeast_tgi_train_test",
+#     "../generated-data/splits/task_yeast_tgi_train_test")

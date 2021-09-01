@@ -5,7 +5,7 @@ import subprocess
 import shutil 
 import json 
 
-SHOW_OUTPUT = True 
+SHOW_OUTPUT = False 
 OVERWRITE_PROMPT = False
 
 def main(script_name, cfg_path, output_dir, num_processes=8, interpreation=False, scramble=False, remove_specs=[], **kwargs):

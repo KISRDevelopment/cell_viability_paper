@@ -22,10 +22,10 @@
     "verbose": true,
     "patience": 50,
     "balanced_loss" : true,
-    "batch_size" : 100,
-    "task_path" : "../generated-data/task_human_cell_org_lethal",
-    "targets_path" : "../generated-data/targets/task_human_cell_org_lethal_bin_simple.npz",
-    "splits_path" : "../generated-data/splits/task_human_cell_org_lethal_10reps_5folds_0.20valid.npz",
+    "batch_size_p" : 0.1,
+    "target_col" : "bin",
+    "task_path" : "../generated-data/task_human_smf_ca_ma_v",
+    "splits_path" : "../generated-data/splits/task_human_smf_ca_ma_v_10reps_5folds_0.20valid.npz",
     "train_on_full_dataset" : false,
     "type" : "mn"
 }

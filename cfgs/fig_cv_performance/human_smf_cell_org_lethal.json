@@ -1,17 +1,17 @@
 {
-    "output_path": "../figures/cv_figs_task_human_smf_cell_org_lethal/",
+    "output_path": "../figures/cv_figs_task_human_ca_ma_v/",
     "models": [
         {
             "name": "Refined model",
             "color": "#FF0000",
             "cm_color": "#FF0000",
-            "path": "../results/task_human_smf_cell_org_lethal/refined",
+            "path": "../results/task_human_ca_ma_v/refined",
             "show": true
         },
         {
-            "name": "OR model",
-            "color": "#00CC00",
-            "path": "../results/task_human_smf_cell_org_lethal/orm",
+            "name": "MN model",
+            "color": "#3A90FF",
+            "path": "../results/task_human_ca_ma_v/mn",
             "show": true
         },
         {
@@ -19,7 +19,7 @@
             "color": "white",
             "star_color": "grey",
             "cm_color": "grey",
-            "path": "../results/task_human_smf_cell_org_lethal/null",
+            "path": "../results/task_human_ca_ma_v/null",
             "show": true,
             "show_roc": false
         }

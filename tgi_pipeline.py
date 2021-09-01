@@ -27,17 +27,21 @@ def load_cfg(path):
 # base_cfg = load_cfg("cfgs/models/yeast_tgi_full_model.json")
 # utils.make_gi_model_combs.main(base_cfg, "../tmp/model_cfgs/yeast_tgi")
 # models.multiple_cv.main("models.tgi_nn", "../tmp/model_cfgs/yeast_tgi", 
-#    "../results/task_yeast_tgi_feature_selection", 5, 
+#    "../results/task_yeast_tgi_fs", 10, 
 #    n_runs=40, exclude=lambda s: 'triplet' not in s)
 
+# analysis.tbl_model_comp.main("../results/task_yeast_tgi_fs", 
+#     "../tmp/task_yeast_tgi_feature_selection.xlsx", ['Interacting', 'Neutral'])
+
+
+#we will use sGO pairwise smf and topology and sweep the topology and pairwise features
 # utils.make_cfgs.main("cfgs/models/sweep_yeast_tgi_pairwise_cfgs.json", "../tmp/model_cfgs/yeast_tgi_pairwisesweep")
 # models.multiple_cv.main("models.tgi_nn", "../tmp/model_cfgs/yeast_tgi_pairwisesweep", 
-#     "../results/task_yeast_tgi_feature_selection", 10, n_runs=40)
+#     "../results/task_yeast_tgi_fs", 10, n_runs=40)
 
-
-# utils.make_smf_single_feature_sweeps.main("../tmp/model_cfgs/yeast_tgi/topology~go~pairwise~smf~triplet.json", "topology", "../tmp/model_cfgs/tgi_topology_sweep")
-# models.multiple_cv.main("models.tgi_nn", "../tmp/model_cfgs/tgi_topology_sweep", 
-#     "../results/task_yeast_tgi_feature_selection", 10, n_runs=40)
+utils.make_smf_single_feature_sweeps.main("../tmp/model_cfgs/yeast_tgi/topology~go~pairwise~smf~triplet.json", "topology", "../tmp/model_cfgs/tgi_topology_sweep")
+models.multiple_cv.main("models.tgi_nn", "../tmp/model_cfgs/tgi_topology_sweep", 
+    "../results/task_yeast_tgi_fs", 10, n_runs=40)
 
 # move all feature selection results to task_yeast_tgi
 # then do this
@@ -103,12 +107,12 @@ analysis.fig_cv_performance.main("cfgs/fig_cv_performance/yeast_tgi.json")
 #     colors=['magenta', 'cyan'],
 #     star_colors=['magenta', '#007bff'])
 
-analysis.fig_tgi_smf_matrix_alt.BINARY_BIN_LABELS = ['Within', 'Across']
+# analysis.fig_tgi_smf_matrix_alt.BINARY_BIN_LABELS = ['Within', 'Across']
 
-analysis.fig_tgi_smf_matrix_alt.BINARY_COLORS = { 'Within' : 'magenta', 'Across' : 'cyan' }
-analysis.fig_tgi_smf_matrix_alt.main(
-    "../generated-data/task_ppc_yeast_pseudo_triplets",
-    "../generated-data/task_yeast_smf_30",
-    "../figures/yeast_pseudo_triplets_smf",
-    ylim=[0,100]
-)
+# analysis.fig_tgi_smf_matrix_alt.BINARY_COLORS = { 'Within' : 'magenta', 'Across' : 'cyan' }
+# analysis.fig_tgi_smf_matrix_alt.main(
+#     "../generated-data/task_ppc_yeast_pseudo_triplets",
+#     "../generated-data/task_yeast_smf_30",
+#     "../figures/yeast_pseudo_triplets_smf",
+#     ylim=[0,100]
+# )

@@ -81,7 +81,7 @@ if not os.path.exists('../figures/yeast_smf_analysis'):
 
 
 #analysis.fig_cv_performance.main("cfgs/fig_cv_performance/yeast_smf.json")
-analysis.fig_cv_performance.main("cfgs/fig_cv_performance/yeast_smf_test.json")
+#analysis.fig_cv_performance.main("cfgs/fig_cv_performance/yeast_smf_test.json")
 # analysis.fig_cv_performance.main("cfgs/fig_cv_performance/pombe_smf.json")
 # analysis.fig_cv_performance.main("cfgs/fig_cv_performance/human_smf.json")
 # analysis.fig_cv_performance.main("cfgs/fig_cv_performance/dro_smf.json")

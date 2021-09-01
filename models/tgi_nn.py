@@ -26,7 +26,6 @@ from termcolor import colored
 def main(cfg, rep, fold, output_path, print_results=True, return_model=False):
 
     dataset_path = cfg['task_path']
-    targets_path = cfg['targets_path']
     train_test_path = cfg['splits_path']
 
     # load dataset
@@ -44,7 +43,7 @@ def main(cfg, rep, fold, output_path, print_results=True, return_model=False):
 
 
     # create output
-    Y = keras.utils.to_categorical(np.load(targets_path)['y'])
+    Y = keras.utils.to_categorical(df[cfg['target_col']])
     
     # load train/test split 
     data = np.load(train_test_path)
@@ -109,7 +108,7 @@ def main(cfg, rep, fold, output_path, print_results=True, return_model=False):
         name='triplet_input', spec=triplet_gene_spec)
     output_abc = triplet_gene_arch(inputs_abc, name="input_abc")
 
-    merged = nn_arch.concatenate([output_a, output_b, output_c, output_ab, output_ac, output_bc, output_abc], name="preoutput")
+    merged = nn_arch.concatenate([output_a + output_b + output_c, output_ab + output_ac + output_bc, output_abc], name="preoutput")
     output_node = layers.Dense(Y.shape[1], activation='softmax')(merged)
 
     if cfg['balanced_loss']:

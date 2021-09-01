@@ -12,7 +12,7 @@ def main(path, reps, folds, valid_prop, output_path=None):
 
     if output_path is None:
 
-        output_path = '../generated-data/splits/%s_%dreps_%dfolds_%0.2fvalid%s' % (os.path.basename(path), reps, folds, valid_prop, tag)
+        output_path = '../generated-data/splits/%s_%dreps_%dfolds_%0.2fvalid' % (os.path.basename(path), reps, folds, valid_prop)
     print("Writing to %s" % output_path)
     np.savez(output_path, 
         train_sets=train_sets,

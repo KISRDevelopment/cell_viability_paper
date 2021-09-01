@@ -48,7 +48,7 @@ def main(gpath, cell_smf_task_path, output_path, use_haploinsufficient=False):
     assert len(cell_lethal_genes.intersection(mc_viable_genes)) == 0
 
     print("Cell Viable: %d" % len(cell_viable_genes - final_ma_genes - cell_lethal_genes))
-    gene_sets = [cell_lethal_genes, final_ma_genes, mc_viable_genes]
+    gene_sets = [cell_lethal_genes, final_ma_genes, mc_viable_genes & cell_viable_genes]
     rows = []
     for i, s in enumerate(gene_sets):
         rows.extend([
