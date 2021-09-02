@@ -39,14 +39,12 @@ def load_cfg(path):
 # models.multiple_cv.main("models.tgi_nn", "../tmp/model_cfgs/yeast_tgi_pairwisesweep", 
 #     "../results/task_yeast_tgi_fs", 10, n_runs=40)
 
-utils.make_smf_single_feature_sweeps.main("../tmp/model_cfgs/yeast_tgi/topology~go~pairwise~smf~triplet.json", "topology", "../tmp/model_cfgs/tgi_topology_sweep")
-models.multiple_cv.main("models.tgi_nn", "../tmp/model_cfgs/tgi_topology_sweep", 
-    "../results/task_yeast_tgi_fs", 10, n_runs=40)
+# utils.make_smf_single_feature_sweeps.main("../tmp/model_cfgs/yeast_tgi/topology~go~pairwise~smf~triplet.json", "topology", "../tmp/model_cfgs/tgi_topology_sweep")
+# models.multiple_cv.main("models.tgi_nn", "../tmp/model_cfgs/tgi_topology_sweep", 
+#     "../results/task_yeast_tgi_fs", 10, n_runs=40)
 
-# move all feature selection results to task_yeast_tgi
-# then do this
-# analysis.tbl_model_comp.main("../results/task_yeast_tgi", 
-#     "../figures/task_yeast_tgi_feature_selection.xlsx", ['Interacting', 'Neutral'])
+analysis.tbl_model_comp.main("../results/task_yeast_tgi_fs", 
+    "../tmp/task_yeast_tgi_feature_selection.xlsx", ['Interacting', 'Neutral'])
 
 
 #
