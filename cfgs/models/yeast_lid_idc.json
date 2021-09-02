@@ -1,0 +1,26 @@
+{
+    "spec" : [
+        {
+            "name" : "idc",
+            "path" : "../generated-data/features/ppc_yeast_idc.npz",
+            "selected_features" : null
+        },
+        {
+            "name" : "lid",
+            "path" : "../generated-data/features/ppc_yeast_topology.npz",
+            "selected_features" : ["lid"]
+        }
+    ],
+    "scramble" : false,
+    "optimizer": "nadam",
+    "epochs": 10000,
+    "verbose": true,
+    "patience": 50,
+    "balanced_loss" : true,
+    "batch_size_p" : 1,
+    "target_col" : "is_viable",
+    "task_path" : "../generated-data/train_sets/task_yeast_smf_30",
+    "splits_path" : "../generated-data/splits/task_yeast_smf_30_10reps_5folds_0.20valid.npz",
+    "train_on_full_dataset" : false,
+    "type" : "mn"
+}
