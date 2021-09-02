@@ -25,6 +25,11 @@ PATHS = [
     ("BIOGRID-SYSTEM-Positive_Genetic-3.4.156.mitab", 2)
 ]
 
+# OLD Biogrid (to replicate wu 2014)
+BIOGRID_PATH = "../data-sources/biogrid-old/"
+PATHS = [
+    ("BIOGRID-SYSTEM-Synthetic_Lethality-3.0.64.mitab", 0)
+]
 
 def main(taxid, pub_threshold, output_path):
     taxid_str = "taxid:%d" % taxid
@@ -100,6 +105,7 @@ def extract_names_taxid559292(df):
         return res.get_unified_name(e.split('|')[-1].replace('entrez gene/locuslink:', '').lower())
 
     return [extract_locus(e) for e in a_names], [extract_locus(e) for e in b_names]
+extract_names_taxid4932 = extract_names_taxid559292
 
 def extract_names_taxid284812(df):
 
