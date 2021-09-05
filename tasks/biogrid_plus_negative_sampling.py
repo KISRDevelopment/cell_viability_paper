@@ -31,24 +31,17 @@ def main(gpath, biogrid_path, smf_binned_path, output_path, n_samples=1000000, w
     print("# possible combs: %d" % combs)
     # add neutrals
     # anything that biogrid does not classify as interaction
-    rng.shuffle(nodes)
-    rows = []
-    i = 0
-    for a, b in itertools.combinations(nodes, r=2):
-        if len(rows) == n_samples:
-            break 
 
-        pair = tuple(sorted((a, b)))
-        if pair not in biogrid_pairs:
-            rows.append({
-                "a" : a, 
-                "b" : b, 
-                "bin" : 1 
-            })
+    a_genes = rng.permutation(n_samples + 10000) % len(nodes)
+    b_genes = rng.permutation(n_samples + 10000) % len(nodes)
+    ix = a_genes != b_genes
+    a_genes = a_genes[ix]
+    b_genes = b_genes[ix]
 
-        i += 1
-        if i % 100000 == 0:
-            print("Finished %d (out of %d) Dataset size so far: %d" % (i, combs, len(rows)))
+    rand_pairs = set([tuple(sorted((nodes[a], nodes[b]))) for a, b in zip(a_genes, b_genes)])
+    rand_pairs -= biogrid_pairs
+    rows = [{ "a" : a, "b" : b, "bin" : 1 } for a, b in rand_pairs][:n_samples]
+
     df = biogrid_df.append(pd.DataFrame(rows))
 
     ix = df['a'].isin(node_ix) & df['b'].isin(node_ix)

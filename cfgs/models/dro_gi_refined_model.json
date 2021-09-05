@@ -53,6 +53,6 @@
     "embedding_activation": "tanh",
     "scramble" : false,
     "task_path" : "../generated-data/task_dro_gi",
-    "targets_path" : "../generated-data/targets/task_dro_gi_bin_interacting.npz",
+    "target_col" : "is_interacting",
     "splits_path" : "../generated-data/splits/task_dro_gi_10reps_4folds_0.20valid.npz"
 }
