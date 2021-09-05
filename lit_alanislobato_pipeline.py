@@ -12,10 +12,7 @@ import feature_preprocessing.pairwise_acdd
 models.cv.main("models.gi_mn", "cfgs/models/yeast_gi_acdd.json", 
     "../results/lit_alanislobato2013/acdd", 
     num_processes=20,
-    target_col = "is_neutral")
+    task_path="../generated-data/task_yeast_gi_hybrid",
+    splits_path="../generated-data/splits/task_yeast_gi_hybrid_full.npz",
+    target_col = "is_not_negative")
 
-
-models.cv.main("models.gi_mn", "cfgs/models/yeast_gi_mn.json", 
-    "../results/lit_alanislobato2013/mn", 
-    num_processes=20,
-    target_col = "is_neutral")

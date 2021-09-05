@@ -115,21 +115,29 @@ import analysis.tbl_model_comp
 
 # # binary classification
 
-# # Yeast
-# models.cv.main("models.smf_nn", "cfgs/models/yeast_smf_refined_model.json", "../results/task_yeast_smf_30_binary/refined", 
-#     targets_path = "../generated-data/targets/task_yeast_smf_30_bin_lethal.npz"
-# )
-# models.cv.main("models.smf_nn", "cfgs/models/yeast_smf_full_model.json", "../results/task_yeast_smf_30_binary/full", 
-#     targets_path = "../generated-data/targets/task_yeast_smf_30_bin_lethal.npz"
-# )
-# models.cv.main("models.smf_ordinal", "cfgs/models/yeast_smf_orm.json", "../results/task_yeast_smf_30_binary/orm",
-#     targets_path = "../generated-data/targets/task_yeast_smf_30_bin_lethal.npz")
-# models.cv.main("models.null_model", "cfgs/models/yeast_smf_full_model.json", "../results/task_yeast_smf_30_binary/null",
-#     targets_path = "../generated-data/targets/task_yeast_smf_30_bin_lethal.npz"
-# )
-# models.cv.main("models.smf_nn", "cfgs/models/yeast_smf_full_model.json", "../results/task_yeast_smf_30_binary/null_scrambled", scramble=True, 
-#     targets_path = "../generated-data/targets/task_yeast_smf_30_bin_lethal.npz"
-# )
+# Yeast
+models.cv.main("models.smf_nn", "cfgs/models/yeast_smf_refined_model.json", "../results/task_yeast_smf_30_binary/refined", 
+    task_path="../generated-data/task_yeast_smf_30",
+    splits_path="../generated-data/splits/task_yeast_smf_30_full.npz",
+    target_col="is_viable",
+    num_processes=20
+)
+models.cv.main("models.smf_nn", "cfgs/models/yeast_smf_full_model.json", "../results/task_yeast_smf_30_binary/full", 
+    task_path="../generated-data/task_yeast_smf_30",
+    splits_path="../generated-data/splits/task_yeast_smf_30_full.npz",
+    target_col="is_viable",
+    num_processes=20
+)
+models.cv.main("models.smf_ordinal", "cfgs/models/yeast_smf_orm.json", "../results/task_yeast_smf_30_binary/orm",
+    task_path="../generated-data/task_yeast_smf_30",
+    splits_path="../generated-data/splits/task_yeast_smf_30_full.npz",
+    target_col="is_viable",
+    num_processes=20)
+models.cv.main("models.null_model", "cfgs/models/yeast_smf_full_model.json", "../results/task_yeast_smf_30_binary/null",
+    task_path="../generated-data/task_yeast_smf_30",
+    splits_path="../generated-data/splits/task_yeast_smf_30_full.npz",
+    target_col="is_viable",
+    num_processes=20)
 
 # # Pombe
 # models.cv.main("models.null_model", "cfgs/models/pombe_smf_refined_model.json", "../results/task_pombe_smf_binary/null", 
@@ -169,8 +177,8 @@ import analysis.tbl_model_comp
 #
 
 # cell vs org lethal vs viable
-models.cv.main("models.smf_nn", "cfgs/models/human_smf_cell_org_lethal_refined_model.json", 
-    "../results/task_human_ca_ma_v/refined", num_processes=20)
+# models.cv.main("models.smf_nn", "cfgs/models/human_smf_cell_org_lethal_refined_model.json", 
+#     "../results/task_human_ca_ma_v/refined", num_processes=20)
 # models.cv.main("models.smf_ordinal", "cfgs/models/human_smf_cell_org_lethal_orm.json", 
 #     "../results/task_human_ca_ma_v/orm", num_processes=20, type="orm")
 # models.cv.main("models.smf_ordinal", "cfgs/models/human_smf_cell_org_lethal_orm.json", 
@@ -179,10 +187,10 @@ models.cv.main("models.smf_nn", "cfgs/models/human_smf_cell_org_lethal_refined_m
 #     "../results/task_human_ca_ma_v/null", num_processes=20)
 
 # org lethal vs viable
-models.cv.main("models.smf_nn", "cfgs/models/human_smf_cell_org_lethal_refined_model.json", 
-    "../results/task_human_ma_v/refined", num_processes=20,
-    task_path="../generated-data/task_human_smf_ma_v",
-    splits_path="../generated-data/splits/task_human_smf_ma_v_10reps_5folds_0.20valid.npz")
+# models.cv.main("models.smf_nn", "cfgs/models/human_smf_cell_org_lethal_refined_model.json", 
+#     "../results/task_human_ma_v/refined", num_processes=20,
+#     task_path="../generated-data/task_human_smf_ma_v",
+#     splits_path="../generated-data/splits/task_human_smf_ma_v_10reps_5folds_0.20valid.npz")
 # models.cv.main("models.smf_ordinal", "cfgs/models/human_smf_cell_org_lethal_orm.json", 
 #     "../results/task_human_ma_v/mn", num_processes=20,
 #     task_path="../generated-data/task_human_smf_ma_v",

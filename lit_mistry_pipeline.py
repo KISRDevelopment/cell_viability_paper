@@ -22,6 +22,11 @@ if not os.path.exists('../generated-data/lit_splits'):
 #feature_preprocessing.diffslc_ppc.main("../generated-data/ppc_yeast", " ../generated-data/pairwise_features/ppc_yeast_rma_dcor.npy")
 
 # execute CV
-models.cv.main("models.smf_ordinal", "cfgs/models/yeast_diffslc.json", "../results/lit_mistry2017/diffslc", num_processes=20)
-models.cv.main("models.smf_ordinal", "cfgs/models/yeast_smf_orm.json", "../results/lit_mistry2017/orm", target_col="is_viable", num_processes=20)
+models.cv.main("models.smf_ordinal", 
+    "cfgs/models/yeast_diffslc.json", 
+    "../results/lit_mistry2017/diffslc", 
+    task_path="../generated-data/task_yeast_smf_30",
+    splits_path="../generated-data/splits/task_yeast_smf_30_full.npz",
+    target_col="is_viable",
+    num_processes=20)
 

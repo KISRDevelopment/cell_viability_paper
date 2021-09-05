@@ -11,5 +11,15 @@ import feature_preprocessing.shared_sgo_count
 models.cv.main("models.gi_nn", "cfgs/models/yeast_gi_slant.json", 
     "../results/lit_graeme2019/slant", 
     num_processes=20,
-    target_col = "is_neutral")
+    task_path="../generated-data/task_yeast_gi_hybrid",
+    splits_path="../generated-data/splits/task_yeast_gi_hybrid_full.npz",
+    target_col = "is_not_negative")
+
+models.cv.main("models.gi_mn", "cfgs/models/yeast_gi_mn.json", 
+    "../results/lit_graeme2019/mn", 
+    num_processes=20,
+    task_path="../generated-data/task_yeast_gi_hybrid",
+    splits_path="../generated-data/splits/task_yeast_gi_hybrid_full.npz",
+    target_col = "is_not_negative")
+
 

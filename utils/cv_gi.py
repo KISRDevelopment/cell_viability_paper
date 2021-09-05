@@ -4,7 +4,7 @@ import numpy.random as rng
 import pandas as pd
 import os
 
-def main(path, reps, folds, valid_prop):
+def main(path, reps, folds, valid_prop, output_path=None):
 
     df = pd.read_csv(path)
     all_genes = list(set(df['a']).union(set(df['b'])))
@@ -72,7 +72,8 @@ def main(path, reps, folds, valid_prop):
     # unique_rows = np.unique(test_sets, axis=0)
     # assert(unique_rows.shape[0] == test_sets.shape[0])
     
-    output_path = '../generated-data/splits/%s_%dreps_%dfolds_%0.2fvalid' % (os.path.basename(path), reps, folds, valid_prop)
+    if not output_path:
+        output_path = '../generated-data/splits/%s_%dreps_%dfolds_%0.2fvalid' % (os.path.basename(path), reps, folds, valid_prop)
 
     print("Writing to %s" % output_path)
     np.savez(output_path, 

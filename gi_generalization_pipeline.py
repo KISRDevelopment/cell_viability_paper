@@ -45,53 +45,53 @@ def load_cfg(path, remove_specs=[], **kwargs):
     print(cfg)
     return cfg 
 
-# refined model
-# yeast_cfg = load_cfg("cfgs/models/yeast_gi_refined_model.json",
-#     targets_path="../generated-data/targets/task_yeast_gi_hybrid_bin_interacting.npz", name="yeast_refined")
-# pombe_cfg = load_cfg("cfgs/models/pombe_gi_refined_model.json",
-#     targets_path="../generated-data/targets/task_pombe_gi_bin_interacting.npz", name="pombe_refined")
-# human_cfg = load_cfg("cfgs/models/human_gi_refined_model.json", name="human_refined")
-# dro_cfg = load_cfg("cfgs/models/dro_gi_refined_model.json", name="dro_refined")
-# generalize(yeast_cfg, models.gi_nn, [pombe_cfg, human_cfg, dro_cfg],"../results/gi_generalization")
-
-# # multinomial model
-# yeast_cfg = load_cfg("cfgs/models/yeast_gi_mn.json",
-#     targets_path="../generated-data/targets/task_yeast_gi_hybrid_bin_interacting.npz", 
-#     epochs=1000,
-#     name="yeast_mn")
-# pombe_cfg = load_cfg("cfgs/models/pombe_gi_mn.json",
-#     targets_path="../generated-data/targets/task_pombe_gi_bin_interacting.npz", name="pombe_mn")
-# human_cfg = load_cfg("cfgs/models/human_gi_mn.json", name="human_mn")
-# dro_cfg = load_cfg("cfgs/models/dro_gi_mn.json", name="dro_mn")
-# generalize(yeast_cfg, models.gi_mn, [pombe_cfg, human_cfg, dro_cfg],"../results/gi_generalization")
+#refined model
+yeast_cfg = load_cfg("cfgs/models/yeast_gi_refined_model.json",
+    targets_path="../generated-data/targets/task_yeast_gi_hybrid_bin_interacting.npz", name="yeast_refined")
+pombe_cfg = load_cfg("cfgs/models/pombe_gi_refined_model.json",
+    targets_path="../generated-data/targets/task_pombe_gi_bin_interacting.npz", name="pombe_refined")
+human_cfg = load_cfg("cfgs/models/human_gi_refined_model.json", name="human_refined")
+dro_cfg = load_cfg("cfgs/models/dro_gi_refined_model.json", name="dro_refined")
+generalize(yeast_cfg, models.gi_nn, [pombe_cfg, human_cfg, dro_cfg],"../results/gi_generalization")
 
 # multinomial model
-# yeast_cfg = load_cfg("cfgs/models/yeast_gi_mn.json",
-#     targets_path="../generated-data/targets/task_yeast_gi_hybrid_bin_interacting.npz", 
-#     remove_specs=["sgo", "smf"],
-#     epochs=1000,
-#     name="yeast_mn_no_sgo_smf")
-# pombe_cfg = load_cfg("cfgs/models/pombe_gi_mn.json",
-    
-#     remove_specs=["sgo", "smf"],
-#     targets_path="../generated-data/targets/task_pombe_gi_bin_interacting.npz", name="pombe_mn_no_sgo_smf")
-# human_cfg = load_cfg("cfgs/models/human_gi_mn.json", name="human_mn_no_sgo_smf", 
-#     remove_specs=["sgo", "smf"])
-# dro_cfg = load_cfg("cfgs/models/dro_gi_mn.json", name="dro_mn_no_sgo_smf", 
-#     remove_specs=["sgo", "smf"])
-# generalize(yeast_cfg, models.gi_mn, [pombe_cfg, human_cfg, dro_cfg],"../results/gi_generalization")
+yeast_cfg = load_cfg("cfgs/models/yeast_gi_mn.json",
+    targets_path="../generated-data/targets/task_yeast_gi_hybrid_bin_interacting.npz", 
+    epochs=1000,
+    name="yeast_mn")
+pombe_cfg = load_cfg("cfgs/models/pombe_gi_mn.json",
+    targets_path="../generated-data/targets/task_pombe_gi_bin_interacting.npz", name="pombe_mn")
+human_cfg = load_cfg("cfgs/models/human_gi_mn.json", name="human_mn")
+dro_cfg = load_cfg("cfgs/models/dro_gi_mn.json", name="dro_mn")
+generalize(yeast_cfg, models.gi_mn, [pombe_cfg, human_cfg, dro_cfg],"../results/gi_generalization")
 
-# null
-# yeast_cfg = load_cfg("cfgs/models/yeast_gi_refined_model.json",
-#     targets_path="../generated-data/targets/task_yeast_gi_hybrid_bin_interacting.npz", 
-#     name="yeast_null")
-# pombe_cfg = load_cfg("cfgs/models/pombe_gi_refined_model.json",
-#     targets_path="../generated-data/targets/task_pombe_gi_bin_interacting.npz", name="pombe_null")
-# human_cfg = load_cfg("cfgs/models/human_gi_refined_model.json", name="human_null")
-# dro_cfg = load_cfg("cfgs/models/dro_gi_refined_model.json", name="dro_null")
-# generalize(yeast_cfg, models.null_model, [pombe_cfg, human_cfg, dro_cfg],"../results/gi_generalization")
+#multinomial model
+yeast_cfg = load_cfg("cfgs/models/yeast_gi_mn.json",
+    targets_path="../generated-data/targets/task_yeast_gi_hybrid_bin_interacting.npz", 
+    remove_specs=["sgo", "smf"],
+    epochs=1000,
+    name="yeast_mn_no_sgo_smf")
+pombe_cfg = load_cfg("cfgs/models/pombe_gi_mn.json",
+    
+    remove_specs=["sgo", "smf"],
+    targets_path="../generated-data/targets/task_pombe_gi_bin_interacting.npz", name="pombe_mn_no_sgo_smf")
+human_cfg = load_cfg("cfgs/models/human_gi_mn.json", name="human_mn_no_sgo_smf", 
+    remove_specs=["sgo", "smf"])
+dro_cfg = load_cfg("cfgs/models/dro_gi_mn.json", name="dro_mn_no_sgo_smf", 
+    remove_specs=["sgo", "smf"])
+generalize(yeast_cfg, models.gi_mn, [pombe_cfg, human_cfg, dro_cfg],"../results/gi_generalization")
+
+#null
+yeast_cfg = load_cfg("cfgs/models/yeast_gi_refined_model.json",
+    targets_path="../generated-data/targets/task_yeast_gi_hybrid_bin_interacting.npz", 
+    name="yeast_null")
+pombe_cfg = load_cfg("cfgs/models/pombe_gi_refined_model.json",
+    targets_path="../generated-data/targets/task_pombe_gi_bin_interacting.npz", name="pombe_null")
+human_cfg = load_cfg("cfgs/models/human_gi_refined_model.json", name="human_null")
+dro_cfg = load_cfg("cfgs/models/dro_gi_refined_model.json", name="dro_null")
+generalize(yeast_cfg, models.null_model, [pombe_cfg, human_cfg, dro_cfg],"../results/gi_generalization")
 
 # Analysis
-analysis.fig_cv_performance.main("cfgs/fig_cv_performance/generalization_gi_pombe.json")
-analysis.fig_cv_performance.main("cfgs/fig_cv_performance/generalization_gi_human.json")
-analysis.fig_cv_performance.main("cfgs/fig_cv_performance/generalization_gi_dro.json")
+# analysis.fig_cv_performance.main("cfgs/fig_cv_performance/generalization_gi_pombe.json")
+# analysis.fig_cv_performance.main("cfgs/fig_cv_performance/generalization_gi_human.json")
+# analysis.fig_cv_performance.main("cfgs/fig_cv_performance/generalization_gi_dro.json")
