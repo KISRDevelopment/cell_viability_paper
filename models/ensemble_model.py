@@ -13,7 +13,7 @@ def main(model_module, cfg, model_files, output_path):
     for i, model_file in enumerate(model_files):
         cfg['trained_model_path'] = model_file
         result_files.append("../tmp/%s.npz" % str(uuid.uuid4()))
-        print("Model %d" % i)
+        print("Model %d: %s" % (i, cfg['trained_model_path']))
         model_module.main(cfg, 0, 0, result_files[-1], print_results=True)
     
     preds = []

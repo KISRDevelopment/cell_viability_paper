@@ -135,12 +135,12 @@ smf_task_path = "../generated-data/task_yeast_smf_30"
 gpath = "../generated-data/ppc_yeast"
 gi_task_path = "../generated-data/task_yeast_gi_hybrid"
 # tasks.yeast_gi_hybrid.main(gpath, '../generated-data/biogrid_yeast', '../generated-data/costanzo_gi', gi_task_path)
-utils.bin_outcomes.main(gi_task_path, {
-    "is_negative" : lambda bins: bins == 0,
-    "is_interacting" : lambda bins: bins != 1,
-    "is_neutral" : lambda bins: bins == 1,
-    "is_not_negative" : lambda bins: bins > 0
-}, gi_task_path)
+# utils.bin_outcomes.main(gi_task_path, {
+#     "is_negative" : lambda bins: bins == 0,
+#     "is_interacting" : lambda bins: bins != 1,
+#     "is_neutral" : lambda bins: bins == 1,
+#     "is_not_negative" : lambda bins: bins > 0
+# }, gi_task_path)
 # utils.split_train_test.gi(gi_task_path, 0.25, 
 #     "../generated-data/train_sets/task_yeast_gi_hybrid",
 #     "../generated-data/test_sets/task_yeast_gi_hybrid")
@@ -153,11 +153,14 @@ utils.bin_outcomes.main(gi_task_path, {
 #utils.cv_gi.main("../generated-data/task_yeast_gi_hybrid", 10, 4, 0.2, "../generated-data/splits/task_yeast_gi_hybrid_full")
 
 # gpath = "../generated-data/ppc_pombe"
-# gi_task_path = "../generated-data/task_pombe_gi"
+gi_task_path = "../generated-data/task_pombe_gi"
 # smf_binned_path = "../generated-data/features/ppc_pombe_smf_binned.npz"
 # tasks.pombe_gi.main(gpath, "../generated-data/biogrid_pombe", smf_binned_path, gi_task_path)
-# utils.bin_simple.main(gi_task_path)
-# utils.bin_interacting.main(gi_task_path)
+utils.bin_outcomes.main(gi_task_path, {
+    "is_negative" : lambda bins: bins == 0,
+    "is_interacting" : lambda bins: bins != 1,
+    "is_neutral" : lambda bins: bins == 1
+}, gi_task_path)
 # utils.cv_gi.main(gi_task_path, 10, 4, 0.2)
 
 # gpath = "../generated-data/ppc_human"

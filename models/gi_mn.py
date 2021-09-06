@@ -127,14 +127,14 @@ def main(cfg, rep, fold, output_path, print_results=True, return_model=False):
                 callbacks=callbacks)
 
         if cfg.get("trained_model_path", None) is not None:
-            print("Saving model")
+            print("Saving model to %s" % cfg['trained_model_path'])
             model.save_weights(cfg["trained_model_path"])
 
         if cfg.get("save_tjs", False):
             tfjs.converters.save_keras_model(model, cfg["tjs_path"])
 
     else:
-        
+        print("Loading from %s" % cfg['trained_model_path'])
         model.load_weights(cfg["trained_model_path"]).expect_partial()
     
     if return_model:
