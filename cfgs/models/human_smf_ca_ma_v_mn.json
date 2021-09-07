@@ -3,15 +3,20 @@
         {
             "name" : "topology",
             "path" : "../generated-data/features/ppc_human_topology.npz",
-            "selected_features" : ["lid"]
+            "selected_features" : ["lid"],
+
+            "pairwise" : false
         },
         {
             "name" : "redundancy",
             "selected_features" : ["pident"],
+            "pairwise" : false,
             "path" : "../generated-data/features/ppc_human_redundancy.npz"
         },
         {
             "name" : "go",
+
+            "pairwise" : false,
             "path" : "../generated-data/features/ppc_human_common_sgo.npz",
             "selected_features" : null
         }
@@ -24,8 +29,8 @@
     "balanced_loss" : true,
     "batch_size_p" : 0.1,
     "target_col" : "bin",
-    "task_path" : "../generated-data/task_human_smf_ca_ma_v",
-    "splits_path" : "../generated-data/splits/task_human_smf_ca_ma_v_10reps_5folds_0.20valid.npz",
+    "task_path" : "../generated-data/task_human_smf_ca_ma_v2",
+    "splits_path" : "../generated-data/splits/task_human_smf_ca_ma_v2_10reps_5folds_0.20valid.npz",
     "train_on_full_dataset" : false,
     "type" : "mn"
 }

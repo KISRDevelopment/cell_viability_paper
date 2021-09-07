@@ -37,6 +37,6 @@
     "embedding_size" : 5,
     "embedding_activation" : "tanh",
     "target_col" : "bin",
-    "task_path" : "../generated-data/task_human_smf_ca_ma_v",
-    "splits_path" : "../generated-data/splits/task_human_smf_ca_ma_v_10reps_5folds_0.20valid.npz"
+    "task_path" : "../generated-data/task_human_smf_ca_ma_v2",
+    "splits_path" : "../generated-data/splits/task_human_smf_ca_ma_v2_10reps_5folds_0.20valid.npz"
 }
