@@ -62,12 +62,12 @@ gi_cfg_no_sgo = load_cfg('cfgs/fig_interpretation/gi_binary_no_sgo.json')
 
 
 # # SMF Organismal Cell Lethal Interpreation
-# models.cv.main("models.smf_ordinal", "cfgs/models/human_smf_cell_org_lethal_orm.json", 
-#     "../results/smf_org_interpretation/human", interpreation=True, num_processes=20, epochs=150)
+models.cv.main("models.smf_ordinal", "cfgs/models/human_smf_ca_ma_v_mn.json", 
+    "../results/smf_ca_ma_v_interpretation/human", interpreation=True, num_processes=20, epochs=150)
 
-# models.cv.main("models.smf_ordinal", "cfgs/models/dro_smf_cell_org_lethal_orm.json", 
-#     "../results/smf_org_interpretation/dro", interpreation=True, num_processes=20, epochs=150)
-# analysis.fig_interpretation.main(smf_org_cfg)
+models.cv.main("models.smf_ordinal", "cfgs/models/dro_smf_ca_ma_v_mn.json", 
+    "../results/smf_ca_ma_v_interpretation/dro", interpreation=True, num_processes=20, epochs=150)
+analysis.fig_interpretation.main(smf_org_cfg)
 
 # # merge everything into one file
 # writer = pd.ExcelWriter('../figures/interpretation_smf.xlsx')
@@ -80,55 +80,55 @@ gi_cfg_no_sgo = load_cfg('cfgs/fig_interpretation/gi_binary_no_sgo.json')
 # writer.save()
 
 # GI non-binary interpretation
-models.cv.main("models.gi_mn", "cfgs/models/yeast_gi_mn.json", 
-    "../results/gi_interpretation/yeast_mn_nonbinary", interpreation=True, 
-    targets_path="../generated-data/targets/task_yeast_gi_hybrid_bin_simple.npz",
-    num_processes=20, epochs=50)
+# models.cv.main("models.gi_mn", "cfgs/models/yeast_gi_mn.json", 
+#     "../results/gi_interpretation/yeast_mn_nonbinary", interpreation=True, 
+#     targets_path="../generated-data/targets/task_yeast_gi_hybrid_bin_simple.npz",
+#     num_processes=20, epochs=50)
 
-models.cv.main("models.gi_mn", "cfgs/models/pombe_gi_mn.json", 
-    "../results/gi_interpretation/pombe_mn_nonbinary", interpreation=True, 
-    targets_path="../generated-data/targets/task_pombe_gi_bin_simple.npz",
-    num_processes=20, epochs=50)
-analysis.fig_interpretation.main(gi_cfg_nonbinary)
+# models.cv.main("models.gi_mn", "cfgs/models/pombe_gi_mn.json", 
+#     "../results/gi_interpretation/pombe_mn_nonbinary", interpreation=True, 
+#     targets_path="../generated-data/targets/task_pombe_gi_bin_simple.npz",
+#     num_processes=20, epochs=50)
+# analysis.fig_interpretation.main(gi_cfg_nonbinary)
 
-# Binary Interpreation
+# # Binary Interpreation
 
-costanzo_task_path = "../generated-data/task_yeast_gi_costanzo"
-costanzo_targets_path = "../generated-data/targets/task_yeast_gi_costanzo_bin_interacting.npz"
-costanzo_splits_path = "../generated-data/splits/task_yeast_gi_costanzo_10reps_4folds_0.20valid.npz"
+# costanzo_task_path = "../generated-data/task_yeast_gi_costanzo"
+# costanzo_targets_path = "../generated-data/targets/task_yeast_gi_costanzo_bin_interacting.npz"
+# costanzo_splits_path = "../generated-data/splits/task_yeast_gi_costanzo_10reps_4folds_0.20valid.npz"
 
-models.cv.main("models.gi_mn", "cfgs/models/yeast_gi_mn.json", 
-    "../results/gi_interpretation/yeast_costanzo_mn", 
-    interpreation=True, 
-    task_path = costanzo_task_path,
-    targets_path = costanzo_targets_path,
-    splits_path = costanzo_splits_path,
-    num_processes=20, epochs=50)
+# models.cv.main("models.gi_mn", "cfgs/models/yeast_gi_mn.json", 
+#     "../results/gi_interpretation/yeast_costanzo_mn", 
+#     interpreation=True, 
+#     task_path = costanzo_task_path,
+#     targets_path = costanzo_targets_path,
+#     splits_path = costanzo_splits_path,
+#     num_processes=20, epochs=50)
 
-models.cv.main("models.gi_mn", "cfgs/models/yeast_gi_mn.json", 
-    "../results/gi_interpretation/yeast_mn", interpreation=True, 
-    targets_path="../generated-data/targets/task_yeast_gi_hybrid_bin_interacting.npz",
-    num_processes=20, epochs=50)
+# models.cv.main("models.gi_mn", "cfgs/models/yeast_gi_mn.json", 
+#     "../results/gi_interpretation/yeast_mn", interpreation=True, 
+#     targets_path="../generated-data/targets/task_yeast_gi_hybrid_bin_interacting.npz",
+#     num_processes=20, epochs=50)
 
-models.cv.main("models.gi_mn", "cfgs/models/pombe_gi_mn.json", 
-    "../results/gi_interpretation/pombe_mn", interpreation=True, 
-    targets_path="../generated-data/targets/task_pombe_gi_bin_interacting.npz",
-    num_processes=20, epochs=50)
+# models.cv.main("models.gi_mn", "cfgs/models/pombe_gi_mn.json", 
+#     "../results/gi_interpretation/pombe_mn", interpreation=True, 
+#     targets_path="../generated-data/targets/task_pombe_gi_bin_interacting.npz",
+#     num_processes=20, epochs=50)
 
-models.cv.main("models.gi_mn", "cfgs/models/human_gi_mn.json", 
-    "../results/gi_interpretation/human_mn", interpreation=True, num_processes=20, epochs=50)
+# models.cv.main("models.gi_mn", "cfgs/models/human_gi_mn.json", 
+#     "../results/gi_interpretation/human_mn", interpreation=True, num_processes=20, epochs=50)
 
-models.cv.main("models.gi_mn", "cfgs/models/dro_gi_mn.json", 
-    "../results/gi_interpretation/dro_mn", interpreation=True, num_processes=20, epochs=50)
-analysis.fig_interpretation.main(gi_cfg)
+# models.cv.main("models.gi_mn", "cfgs/models/dro_gi_mn.json", 
+#     "../results/gi_interpretation/dro_mn", interpreation=True, num_processes=20, epochs=50)
+# analysis.fig_interpretation.main(gi_cfg)
 
-# merge everything into one file
-writer = pd.ExcelWriter('../figures/interpretation_gi.xlsx')
-for cfg, name in zip([gi_cfg_nonbinary, gi_cfg], ['GI', 'GI Binary']):
+# # merge everything into one file
+# writer = pd.ExcelWriter('../figures/interpretation_gi.xlsx')
+# for cfg, name in zip([gi_cfg_nonbinary, gi_cfg], ['GI', 'GI Binary']):
 
-    results_file = cfg['output_path'] + '.xlsx'
-    df = pd.read_excel(results_file, index_col=0, header=[0,1])
-    df = df.rename(columns=lambda x: x if not 'Unnamed' in str(x) else '')
-    print(df.columns)
-    df.to_excel(writer, sheet_name=name, index=True)
-writer.save()
+#     results_file = cfg['output_path'] + '.xlsx'
+#     df = pd.read_excel(results_file, index_col=0, header=[0,1])
+#     df = df.rename(columns=lambda x: x if not 'Unnamed' in str(x) else '')
+#     print(df.columns)
+#     df.to_excel(writer, sheet_name=name, index=True)
+# writer.save()
