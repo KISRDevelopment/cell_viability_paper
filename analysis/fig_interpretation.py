@@ -128,6 +128,8 @@ def main(cfg):
         if cfg.get('ylabel', True):
             ax.set_ylabel('Coefficient\nValue', fontsize=plot_cfg['ylabel_size'], fontweight='bold')
         ax.set_xlim([-0.5, n_entries - 0.5])
+        if cfg.get('ylim', None) is not None:
+            ax.set_ylim(cfg['ylim'])
         ax.grid()
     
     

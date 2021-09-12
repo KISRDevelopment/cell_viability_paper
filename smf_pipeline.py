@@ -219,8 +219,8 @@ models.cv.main("models.null_model", "cfgs/models/human_smf_ca_ma_v_nn.json",
 # # cell vs org lethal vs viable
 # models.cv.main("models.smf_nn", "cfgs/models/dro_smf_ca_ma_v_nn.json", 
 #     "../results/task_dro_ca_ma_v/refined", num_processes=20)
-# models.cv.main("models.smf_ordinal", "cfgs/models/dro_smf_ca_ma_v_mn.json", 
-#     "../results/task_dro_ca_ma_v/mn", num_processes=20, type="orm")
+models.cv.main("models.smf_ordinal", "cfgs/models/dro_smf_ca_ma_v_mn.json", 
+    "../results/task_dro_ca_ma_v/mn", num_processes=20, type="mn")
 # models.cv.main("models.null_model", "cfgs/models/dro_smf_ca_ma_v_nn.json", 
 #     "../results/task_dro_ca_ma_v/null", num_processes=20)
 

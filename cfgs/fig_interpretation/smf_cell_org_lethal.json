@@ -19,5 +19,6 @@
     "output_path" : "../figures/smf_cell_ca_ma_v_interpretation",
     "subplots" : 4,
     "plot_cfg" : {},
-    "errorbar_props" : {}
+    "errorbar_props" : {},
+    "ylim" : [-5, 5]
 }
