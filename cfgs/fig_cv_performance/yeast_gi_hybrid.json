@@ -1,39 +1,39 @@
 {
-    "output_path": "../figures/cv_figs_task_yeast_gi_hybrid/",
+    "output_path": "../figures/cv_figs_task_yeast_gi_hybrid_fs/",
     "models": [
         {
             "name": "Full model",
             "color": "#b300ff",
             "cm_color": "#b300ff",
-            "path": "../results/task_yeast_gi_hybrid/topology~go~redundancy~phosphorylation~abundance-and-loc~pairwise~smf",
+            "path": "../results/task_yeast_gi_hybrid_fs/topology~go~redundancy~phosphorylation~abundance-and-loc~pairwise~smf",
             "show": true
         },
         {
             "name": "Refined model",
             "color": "#FF0000",
             "cm_color": "#FF0000",
-            "path": "../results/task_yeast_gi_hybrid/refined",
+            "path": "../results/task_yeast_gi_hybrid_fs/refined",
             "show": true
         },
         {
             "name": "MN Model",
             "color": "#3A90FF",
             "cm_color": "#3A90FF",
-            "path": "../results/task_yeast_gi_hybrid/mn",
+            "path": "../results/task_yeast_gi_hybrid_fs/mn",
             "show": true
         },
         {
             "name": "OR model",
             "color": "#00CC00",
-            "path": "../results/task_yeast_gi_hybrid/orm",
+            "path": "../results/task_yeast_gi_hybrid_fs/orm",
             "show": false
         },
         {
             "name": "Null",
-            "color": "white",
+            "color": "#c9c9c9",
             "star_color": "grey",
             "cm_color": "grey",
-            "path": "../results/task_yeast_gi_hybrid/null",
+            "path": "../results/task_yeast_gi_hybrid_fs/null",
             "show": true,
             "show_roc": false
         }
@@ -53,9 +53,5 @@
     "ylim": [
         0,
         1
-    ],
-    "plot_cfg": {
-        "annot_size": 72,
-        "bar_label_size": 42
-    }
+    ]
 }

@@ -43,15 +43,15 @@ def load_cfg(path):
 # models.multiple_cv.main("models.tgi_nn", "../tmp/model_cfgs/tgi_topology_sweep", 
 #     "../results/task_yeast_tgi_fs", 10, n_runs=40)
 
-analysis.tbl_model_comp.main("../results/task_yeast_tgi_fs", 
-    "../tmp/task_yeast_tgi_feature_selection.xlsx", ['Interacting', 'Neutral'])
+# analysis.tbl_model_comp.main("../results/task_yeast_tgi_fs", 
+#     "../tmp/task_yeast_tgi_feature_selection.xlsx", ['Interacting', 'Neutral'])
 
 
 #
 # Cross validation performance
 #
 
-"""
+
 models.cv.main("models.tgi_nn", "cfgs/models/yeast_tgi_full_model.json", 
     "../results/task_yeast_tgi/full", 
     num_processes=5)
@@ -64,27 +64,59 @@ models.cv.main("models.tgi_mn", "cfgs/models/yeast_tgi_mn.json",
     "../results/task_yeast_tgi/mn", 
     num_processes=20)
 
-models.cv.main("models.tgi_nn", "cfgs/models/yeast_tgi_refined_model.json", 
+models.cv.main("models.null_model", "cfgs/models/yeast_tgi_refined_model.json", 
     "../results/task_yeast_tgi/null", 
-    num_processes=20, scramble=True)
+    num_processes=20)
+
+
+#
+# Test performance
+#
+models.cv.main("models.tgi_nn", "cfgs/models/yeast_tgi_full_model.json", 
+    "../results/task_yeast_tgi_test/full", 
+    task_path="../generated-data/task_yeast_tgi_train_test",
+    splits_path="../generated-data/splits/task_yeast_tgi_train_test.npz",
+    n_runs=1,
+    num_processes=5)
+
+models.cv.main("models.tgi_nn", "cfgs/models/yeast_tgi_refined_model.json", 
+    "../results/task_yeast_tgi_test/refined", 
+    task_path="../generated-data/task_yeast_tgi_train_test",
+    splits_path="../generated-data/splits/task_yeast_tgi_train_test.npz",
+    n_runs=1,
+    num_processes=20)
+
+models.cv.main("models.tgi_mn", "cfgs/models/yeast_tgi_mn.json", 
+    "../results/task_yeast_tgi_test/mn", 
+    task_path="../generated-data/task_yeast_tgi_train_test",
+    splits_path="../generated-data/splits/task_yeast_tgi_train_test.npz",
+    n_runs=1,
+    num_processes=20)
+
+models.cv.main("models.null_model", "cfgs/models/yeast_tgi_refined_model.json", 
+    "../results/task_yeast_tgi_test/null", 
+    task_path="../generated-data/task_yeast_tgi_train_test",
+    splits_path="../generated-data/splits/task_yeast_tgi_train_test.npz",
+    n_runs=1,
+    num_processes=20)
 
 #
 # Triple GI Interpretation
 #
 
-models.cv.main("models.tgi_mn", 
-    "cfgs/models/yeast_tgi_mn.json", 
-    "../results/tgi_interpretation/yeast_tgi_mn", 
-    interpreation=True,
-    num_processes=20, epochs=50)
-analysis.fig_interpretation.main(load_cfg("cfgs/fig_interpretation/tgi.json"))
+# models.cv.main("models.tgi_mn", 
+#     "cfgs/models/yeast_tgi_mn.json", 
+#     "../results/tgi_interpretation/yeast_tgi_mn", 
+#     interpreation=True,
+#     num_processes=20, epochs=50)
+# analysis.fig_interpretation.main(load_cfg("cfgs/fig_interpretation/tgi.json"))
 
 #
 # Figures
 #
 
-analysis.fig_cv_performance.main("cfgs/fig_cv_performance/yeast_tgi.json")
-"""
+# analysis.fig_cv_performance.main("cfgs/fig_cv_performance/yeast_tgi.json")
+
 
 # analysis.fig_pairwise_feature_violin.main("../generated-data/task_yeast_tgi", 
 #     "../generated-data/features/ppc_yeast_topology.npz", 

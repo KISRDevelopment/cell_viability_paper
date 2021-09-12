@@ -38,8 +38,9 @@ import analysis.tbl_model_comp
 #     "../results/yeast_smf_30_fs/refined",
 #     num_processes=20)
 
-# # we further constrain the refined model to be a simple OR model
-# models.cv.main("models.smf_ordinal", "cfgs/models/yeast_smf_orm.json", "../results/yeast_smf_30_fs/orm", num_processes=20)
+# we further constrain the refined model to be a simple OR model
+#models.cv.main("models.smf_ordinal", "cfgs/models/yeast_smf_orm.json", "../results/yeast_smf_30_fs/orm", num_processes=20)
+models.cv.main("models.smf_ordinal", "cfgs/models/yeast_smf_orm.json", "../results/yeast_smf_30_fs/mn", type="mn", num_processes=20)
 
 # # run the null model
 # models.cv.main("models.null_model", "cfgs/models/yeast_smf_full_model.json", "../results/yeast_smf_30_fs/null", num_processes=20)
@@ -73,6 +74,15 @@ import analysis.tbl_model_comp
 #     task_path="../generated-data/task_yeast_smf_30_train_test",
 #     splits_path="../generated-data/splits/task_yeast_smf_30_train_test.npz")
 
+models.cv.main("models.smf_ordinal", "cfgs/models/yeast_smf_orm.json", 
+    "../results/task_yeast_smf_30_test/mn", 
+    num_processes = 1,
+    type="mn",
+    target_col = "bin",
+    n_runs=1,
+    task_path="../generated-data/task_yeast_smf_30_train_test",
+    splits_path="../generated-data/splits/task_yeast_smf_30_train_test.npz")
+
 
 # models.cv.main("models.null_model", "cfgs/models/yeast_smf_refined_model.json", 
 #     "../results/task_yeast_smf_30_test/null", 
@@ -84,22 +94,23 @@ import analysis.tbl_model_comp
 
 
 # # pombe
-# models.cv.main("models.null_model", "cfgs/models/pombe_smf_refined_model.json", "../results/task_pombe_smf/null")
-# models.cv.main("models.smf_nn", "cfgs/models/pombe_smf_refined_model.json", "../results/task_pombe_smf/null_scrambled", scramble=True)
-# models.cv.main("models.smf_nn", "cfgs/models/pombe_smf_refined_model.json", "../results/task_pombe_smf/refined")
-# models.cv.main("models.smf_ordinal", "cfgs/models/pombe_smf_orm.json", "../results/task_pombe_smf/orm")
+models.cv.main("models.null_model", "cfgs/models/pombe_smf_refined_model.json", "../results/task_pombe_smf/null")
+models.cv.main("models.smf_nn", "cfgs/models/pombe_smf_refined_model.json", "../results/task_pombe_smf/refined")
+models.cv.main("models.smf_ordinal", "cfgs/models/pombe_smf_orm.json", "../results/task_pombe_smf/orm")
+models.cv.main("models.smf_ordinal", "cfgs/models/pombe_smf_orm.json", "../results/task_pombe_smf/mn", type="mn", num_processes=20)
 
 # # human
-# models.cv.main("models.null_model", "cfgs/models/human_smf_refined_model.json", "../results/task_human_smf/null")
-# models.cv.main("models.smf_nn", "cfgs/models/human_smf_refined_model.json", "../results/task_human_smf/null_scrambled", scramble=True)
-# models.cv.main("models.smf_nn", "cfgs/models/human_smf_refined_model.json", "../results/task_human_smf/refined")
-# models.cv.main("models.smf_ordinal", "cfgs/models/human_smf_orm.json", "../results/task_human_smf/orm")
+models.cv.main("models.null_model", "cfgs/models/human_smf_refined_model.json", "../results/task_human_smf/null")
+models.cv.main("models.smf_nn", "cfgs/models/human_smf_refined_model.json", "../results/task_human_smf/refined")
+models.cv.main("models.smf_ordinal", "cfgs/models/human_smf_orm.json", "../results/task_human_smf/orm")
+models.cv.main("models.smf_ordinal", "cfgs/models/human_smf_orm.json", "../results/task_human_smf/mn", type="mn", num_processes=20)
 
 # # dro
-# models.cv.main("models.null_model", "cfgs/models/dro_smf_refined_model.json", "../results/task_dro_smf/null")
-# models.cv.main("models.smf_nn", "cfgs/models/dro_smf_refined_model.json", "../results/task_dro_smf/null_scrambled", scramble=True)
-# models.cv.main("models.smf_nn", "cfgs/models/dro_smf_refined_model.json", "../results/task_dro_smf/refined")
-# models.cv.main("models.smf_ordinal", "cfgs/models/dro_smf_orm.json", "../results/task_dro_smf/orm")
+models.cv.main("models.null_model", "cfgs/models/dro_smf_refined_model.json", "../results/task_dro_smf/null")
+models.cv.main("models.smf_nn", "cfgs/models/dro_smf_refined_model.json", "../results/task_dro_smf/null_scrambled", scramble=True)
+models.cv.main("models.smf_nn", "cfgs/models/dro_smf_refined_model.json", "../results/task_dro_smf/refined")
+models.cv.main("models.smf_ordinal", "cfgs/models/dro_smf_orm.json", "../results/task_dro_smf/orm")
+models.cv.main("models.smf_ordinal", "cfgs/models/dro_smf_orm.json", "../results/task_dro_smf/mn", type="mn", num_processes=20)
 
 # # dro organsim viability
 # models.cv.main("models.null_model", "cfgs/models/dro_smf_org_refined_model.json", "../results/task_dro_smf_org/null")
@@ -116,28 +127,29 @@ import analysis.tbl_model_comp
 # # binary classification
 
 # Yeast
-# models.cv.main("models.smf_nn", "cfgs/models/yeast_smf_refined_model.json", "../results/task_yeast_smf_30_binary/refined", 
-#     task_path="../generated-data/task_yeast_smf_30",
-#     splits_path="../generated-data/splits/task_yeast_smf_30_full.npz",
-#     target_col="is_viable",
-#     num_processes=20
-# )
-# models.cv.main("models.smf_nn", "cfgs/models/yeast_smf_full_model.json", "../results/task_yeast_smf_30_binary/full", 
-#     task_path="../generated-data/task_yeast_smf_30",
-#     splits_path="../generated-data/splits/task_yeast_smf_30_full.npz",
-#     target_col="is_viable",
-#     num_processes=20
-# )
-# models.cv.main("models.smf_ordinal", "cfgs/models/yeast_smf_orm.json", "../results/task_yeast_smf_30_binary/orm",
-#     task_path="../generated-data/task_yeast_smf_30",
-#     splits_path="../generated-data/splits/task_yeast_smf_30_full.npz",
-#     target_col="is_viable",
-#     num_processes=20)
-# models.cv.main("models.null_model", "cfgs/models/yeast_smf_full_model.json", "../results/task_yeast_smf_30_binary/null",
-#     task_path="../generated-data/task_yeast_smf_30",
-#     splits_path="../generated-data/splits/task_yeast_smf_30_full.npz",
-#     target_col="is_viable",
-#     num_processes=20)
+models.cv.main("models.smf_nn", "cfgs/models/yeast_smf_refined_model.json", "../results/task_yeast_smf_30_binary/refined", 
+    task_path="../generated-data/task_yeast_smf_30",
+    splits_path="../generated-data/splits/task_yeast_smf_30_full.npz",
+    target_col="is_viable",
+    num_processes=20
+)
+models.cv.main("models.smf_nn", "cfgs/models/yeast_smf_full_model.json", "../results/task_yeast_smf_30_binary/full", 
+    task_path="../generated-data/task_yeast_smf_30",
+    splits_path="../generated-data/splits/task_yeast_smf_30_full.npz",
+    target_col="is_viable",
+    num_processes=20
+)
+models.cv.main("models.smf_ordinal", "cfgs/models/yeast_smf_orm.json", "../results/task_yeast_smf_30_binary/mn",
+    task_path="../generated-data/task_yeast_smf_30",
+    splits_path="../generated-data/splits/task_yeast_smf_30_full.npz",
+    target_col="is_viable",
+    type="mn",
+    num_processes=20)
+models.cv.main("models.null_model", "cfgs/models/yeast_smf_full_model.json", "../results/task_yeast_smf_30_binary/null",
+    task_path="../generated-data/task_yeast_smf_30",
+    splits_path="../generated-data/splits/task_yeast_smf_30_full.npz",
+    target_col="is_viable",
+    num_processes=20)
 
 # # Pombe
 # models.cv.main("models.null_model", "cfgs/models/pombe_smf_refined_model.json", "../results/task_pombe_smf_binary/null", 
@@ -147,8 +159,9 @@ import analysis.tbl_model_comp
 #     targets_path = "../generated-data/targets/task_pombe_smf_bin_lethal.npz")
 # models.cv.main("models.smf_nn", "cfgs/models/pombe_smf_refined_model.json", "../results/task_pombe_smf_binary/refined", 
 #     targets_path = "../generated-data/targets/task_pombe_smf_bin_lethal.npz")
-# models.cv.main("models.smf_ordinal", "cfgs/models/pombe_smf_orm.json", "../results/task_pombe_smf_binary/orm", 
-#     targets_path = "../generated-data/targets/task_pombe_smf_bin_lethal.npz")
+models.cv.main("models.smf_ordinal", "cfgs/models/pombe_smf_orm.json", "../results/task_pombe_smf_binary/mn", 
+    target_col="is_viable", type="mn", num_processes=20)
+
 
 # # human
 # models.cv.main("models.null_model", "cfgs/models/human_smf_refined_model.json", "../results/task_human_smf_binary/null", 
@@ -158,8 +171,8 @@ import analysis.tbl_model_comp
 #     targets_path = "../generated-data/targets/task_human_smf_bin_lethal.npz")
 # models.cv.main("models.smf_nn", "cfgs/models/human_smf_refined_model.json", "../results/task_human_smf_binary/refined", 
 #     targets_path = "../generated-data/targets/task_human_smf_bin_lethal.npz")
-# models.cv.main("models.smf_ordinal", "cfgs/models/human_smf_orm.json", "../results/task_human_smf_binary/orm", 
-#     targets_path = "../generated-data/targets/task_human_smf_bin_lethal.npz")
+models.cv.main("models.smf_ordinal", "cfgs/models/human_smf_orm.json", "../results/task_human_smf_binary/mn", 
+    target_col="is_viable", type="mn", num_processes=20)
 
 # # dro
 # models.cv.main("models.null_model", "cfgs/models/dro_smf_refined_model.json", "../results/task_dro_smf_binary/null", 
@@ -169,60 +182,60 @@ import analysis.tbl_model_comp
 #     targets_path = "../generated-data/targets/task_dro_smf_bin_lethal.npz")
 # models.cv.main("models.smf_nn", "cfgs/models/dro_smf_refined_model.json", "../results/task_dro_smf_binary/refined", 
 #     targets_path = "../generated-data/targets/task_dro_smf_bin_lethal.npz")
-# models.cv.main("models.smf_ordinal", "cfgs/models/dro_smf_orm.json", "../results/task_dro_smf_binary/orm", 
-#     targets_path = "../generated-data/targets/task_dro_smf_bin_lethal.npz")
+models.cv.main("models.smf_ordinal", "cfgs/models/dro_smf_orm.json", "../results/task_dro_smf_binary/mn", 
+    target_col="is_viable", type="mn", num_processes=20)
 
 #
 # Human CA MA V
 #
 
-# cell vs org lethal vs viable
-models.cv.main("models.smf_nn", "cfgs/models/human_smf_ca_ma_v_nn.json", 
-    "../results/task_human_ca_ma_v/refined", num_processes=20)
-models.cv.main("models.smf_ordinal", "cfgs/models/human_smf_ca_ma_v_mn.json", 
-    "../results/task_human_ca_ma_v/mn", num_processes=20)
-models.cv.main("models.null_model", "cfgs/models/human_smf_ca_ma_v_nn.json", 
-    "../results/task_human_ca_ma_v/null", num_processes=20)
+# # cell vs org lethal vs viable
+# models.cv.main("models.smf_nn", "cfgs/models/human_smf_ca_ma_v_nn.json", 
+#     "../results/task_human_ca_ma_v/refined", num_processes=20)
+# models.cv.main("models.smf_ordinal", "cfgs/models/human_smf_ca_ma_v_mn.json", 
+#     "../results/task_human_ca_ma_v/mn", num_processes=20)
+# models.cv.main("models.null_model", "cfgs/models/human_smf_ca_ma_v_nn.json", 
+#     "../results/task_human_ca_ma_v/null", num_processes=20)
 
-# org lethal vs viable
-models.cv.main("models.smf_nn", "cfgs/models/human_smf_ca_ma_v_nn.json", 
-    "../results/task_human_ma_v/refined", num_processes=20,
-    task_path="../generated-data/task_human_smf_ma_v2",
-    splits_path="../generated-data/splits/task_human_smf_ma_v2_10reps_5folds_0.20valid.npz")
-models.cv.main("models.smf_ordinal", "cfgs/models/human_smf_ca_ma_v_mn.json", 
-    "../results/task_human_ma_v/mn", num_processes=20,
-    task_path="../generated-data/task_human_smf_ma_v2",
-    splits_path="../generated-data/splits/task_human_smf_ma_v2_10reps_5folds_0.20valid.npz")
-models.cv.main("models.null_model", "cfgs/models/human_smf_ca_ma_v_nn.json", 
-    "../results/task_human_ma_v/null", num_processes=20,
-    task_path="../generated-data/task_human_smf_ma_v2",
-    splits_path="../generated-data/splits/task_human_smf_ma_v2_10reps_5folds_0.20valid.npz")
-
-
-#
-# Dro CA MA V
-#
-
-# cell vs org lethal vs viable
-models.cv.main("models.smf_nn", "cfgs/models/dro_smf_ca_ma_v_nn.json", 
-    "../results/task_dro_ca_ma_v/refined", num_processes=20)
-models.cv.main("models.smf_ordinal", "cfgs/models/dro_smf_ca_ma_v_mn.json", 
-    "../results/task_dro_ca_ma_v/mn", num_processes=20, type="orm")
-models.cv.main("models.null_model", "cfgs/models/dro_smf_ca_ma_v_nn.json", 
-    "../results/task_dro_ca_ma_v/null", num_processes=20)
+# # org lethal vs viable
+# models.cv.main("models.smf_nn", "cfgs/models/human_smf_ca_ma_v_nn.json", 
+#     "../results/task_human_ma_v/refined", num_processes=20,
+#     task_path="../generated-data/task_human_smf_ma_v2",
+#     splits_path="../generated-data/splits/task_human_smf_ma_v2_10reps_5folds_0.20valid.npz")
+# models.cv.main("models.smf_ordinal", "cfgs/models/human_smf_ca_ma_v_mn.json", 
+#     "../results/task_human_ma_v/mn", num_processes=20,
+#     task_path="../generated-data/task_human_smf_ma_v2",
+#     splits_path="../generated-data/splits/task_human_smf_ma_v2_10reps_5folds_0.20valid.npz")
+# models.cv.main("models.null_model", "cfgs/models/human_smf_ca_ma_v_nn.json", 
+#     "../results/task_human_ma_v/null", num_processes=20,
+#     task_path="../generated-data/task_human_smf_ma_v2",
+#     splits_path="../generated-data/splits/task_human_smf_ma_v2_10reps_5folds_0.20valid.npz")
 
 
-# org lethal vs viable
-models.cv.main("models.smf_nn", "cfgs/models/dro_smf_ca_ma_v_nn.json", 
-    "../results/task_dro_ma_v/refined", num_processes=20,
-    task_path="../generated-data/task_dro_smf_ma_v",
-    splits_path="../generated-data/splits/task_dro_smf_ma_v_10reps_5folds_0.20valid.npz")
-models.cv.main("models.smf_ordinal", "cfgs/models/dro_smf_ca_ma_v_mn.json", 
-    "../results/task_dro_ma_v/mn", num_processes=20,
-    task_path="../generated-data/task_dro_smf_ma_v",
-    splits_path="../generated-data/splits/task_dro_smf_ma_v_10reps_5folds_0.20valid.npz")
-models.cv.main("models.null_model", "cfgs/models/dro_smf_ca_ma_v_nn.json", 
-    "../results/task_dro_ma_v/null", num_processes=20,
-    task_path="../generated-data/task_dro_smf_ma_v",
-    splits_path="../generated-data/splits/task_dro_smf_ma_v_10reps_5folds_0.20valid.npz")
+# #
+# # Dro CA MA V
+# #
+
+# # cell vs org lethal vs viable
+# models.cv.main("models.smf_nn", "cfgs/models/dro_smf_ca_ma_v_nn.json", 
+#     "../results/task_dro_ca_ma_v/refined", num_processes=20)
+# models.cv.main("models.smf_ordinal", "cfgs/models/dro_smf_ca_ma_v_mn.json", 
+#     "../results/task_dro_ca_ma_v/mn", num_processes=20, type="orm")
+# models.cv.main("models.null_model", "cfgs/models/dro_smf_ca_ma_v_nn.json", 
+#     "../results/task_dro_ca_ma_v/null", num_processes=20)
+
+
+# # org lethal vs viable
+# models.cv.main("models.smf_nn", "cfgs/models/dro_smf_ca_ma_v_nn.json", 
+#     "../results/task_dro_ma_v/refined", num_processes=20,
+#     task_path="../generated-data/task_dro_smf_ma_v",
+#     splits_path="../generated-data/splits/task_dro_smf_ma_v_10reps_5folds_0.20valid.npz")
+# models.cv.main("models.smf_ordinal", "cfgs/models/dro_smf_ca_ma_v_mn.json", 
+#     "../results/task_dro_ma_v/mn", num_processes=20,
+#     task_path="../generated-data/task_dro_smf_ma_v",
+#     splits_path="../generated-data/splits/task_dro_smf_ma_v_10reps_5folds_0.20valid.npz")
+# models.cv.main("models.null_model", "cfgs/models/dro_smf_ca_ma_v_nn.json", 
+#     "../results/task_dro_ma_v/null", num_processes=20,
+#     task_path="../generated-data/task_dro_smf_ma_v",
+#     splits_path="../generated-data/splits/task_dro_smf_ma_v_10reps_5folds_0.20valid.npz")
 

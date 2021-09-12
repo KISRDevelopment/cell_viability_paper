@@ -22,9 +22,9 @@
     "verbose": true,
     "patience": 50,
     "balanced_loss" : true,
-    "batch_size" : 100,
+    "batch_size_p" : 1,
     "task_path" : "../generated-data/task_dro_smf",
-    "targets_path" : "../generated-data/targets/task_dro_smf_bin_simple.npz",
+    "target_col" : "bin",
     "splits_path" : "../generated-data/splits/task_dro_smf_10reps_5folds_0.20valid.npz",
     "train_on_full_dataset" : false,
     

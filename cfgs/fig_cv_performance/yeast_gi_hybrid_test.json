@@ -1,55 +1,57 @@
 {
-    "output_path": "../figures/cv_figs_task_yeast_smf_30_test/",
+    "output_path": "../figures/cv_figs_task_yeast_gi_hybrid_test/",
     "models": [
         {
             "name": "Full model",
             "color": "#b300ff",
             "cm_color": "#b300ff",
-            "path": "../results/task_yeast_smf_30_test/full",
+            "path": "../results/task_yeast_gi_hybrid_train_test/full",
             "show": true
         },
         {
             "name": "Refined model",
             "color": "#FF0000",
             "cm_color": "#FF0000",
-            "path": "../results/task_yeast_smf_30_test/refined",
+            "path": "../results/task_yeast_gi_hybrid_train_test/refined",
             "show": true
         },
         {
-            "name": "MN model",
+            "name": "MN Model",
             "color": "#3A90FF",
-            "path": "../results/task_yeast_smf_30_test/mn",
+            "cm_color": "#3A90FF",
+            "path": "../results/task_yeast_gi_hybrid_train_test/mn",
             "show": true
         },
         {
             "name": "OR model",
             "color": "#00CC00",
-            "path": "../results/task_yeast_smf_30_test/orm",
-            "show": true
+            "path": "../results/task_yeast_gi_hybrid_train_test/orm",
+            "show": false
         },
         {
             "name": "Null",
             "color": "#c9c9c9",
             "star_color": "grey",
             "cm_color": "grey",
-            "path": "../results/task_yeast_smf_30_test/null",
+            "path": "../results/task_yeast_gi_hybrid_train_test/null",
             "show": true,
             "show_roc": false
         }
     ],
     "classes": [
-        "Lethal",
-        "Reduced growth",
-        "Normal"
+        "Negative",
+        "Neutral",
+        "Positive",
+        "Suppression"
     ],
     "short_classes": [
-        "L",
-        "R",
-        "N"
+        "-",
+        "N",
+        "+",
+        "S"
     ],
     "ylim": [
         0,
-        0.75
-    ],
-    "aspect" : 1
+        0.7
+    ]
 }

@@ -28,14 +28,13 @@ def main(cfg, rep, fold, output_path, print_results=True, return_model=False):
     K.clear_session()
 
     dataset_path = cfg['task_path']
-    targets_path = cfg['targets_path']
     train_test_path = cfg['splits_path']
     
     # load dataset
     df = pd.read_csv(dataset_path)
     
     # create output
-    Y = keras.utils.to_categorical(np.load(targets_path)['y'])
+    Y = keras.utils.to_categorical(df[cfg['target_col']])
     
     # load train/test split 
     data = np.load(train_test_path)

@@ -16,17 +16,31 @@ import json
 import os 
 import utils.eval_funcs as eval_funcs
 from seaborn.utils import remove_na
+# plot_cfg = {
+#     "tick_label_size" : 55,
+#     "xlabel_size" : 65,
+#     "ylabel_size" : 65,
+#     "border_size" : 6,
+#     "bar_border_size" : 2.5,
+#     "bar_label_size" : 48,
+#     "stars_label_size" : 48,
+#     "annot_size" : 72,
+#     "max_cm_classes" : 4,
+#     "max_bars" : 4,
+#     "legend_font_size" : 60
+# }
 plot_cfg = {
-    "tick_label_size" : 50,
+    "tick_label_size" : 60,
     "xlabel_size" : 60,
-    "ylabel_size" : 60,
-    "border_size" : 6,
+    "ylabel_size" : 65,
+    "border_size" : 10,
     "bar_border_size" : 2.5,
-    "bar_label_size" : 48,
+    "bar_label_size" : 65,
     "stars_label_size" : 48,
     "annot_size" : 72,
     "max_cm_classes" : 4,
-    "max_bars" : 4
+    "max_bars" : 5,
+    "legend_font_size" : 60
 }
 
 ALPHA = 0.05
@@ -241,13 +255,40 @@ def per_class_roc(cfg):
     colors = [m['cm_color'] if 'cm_color' in m else m['color'] for m in models]
     
 
+    rows = []
+    for path, name in zip(paths, model_names):
+        r = eval_funcs.collate_results(path)
+        for _, class_bacc, class_roc, order in zip(*r):
+            for c in range(len(classes)):
+                rows.append({
+                    "model" : name,
+                    "bin" : classes[c],
+                    "bacc" : class_bacc[c],
+                    "roc" : class_roc[c],
+                    "rep" : order[0],
+                    "fold" : order[1]
+                })
+    df = pd.DataFrame(rows)
+
     n_classes = len(classes)
     for klass in range(n_classes-1, -1, -1):
         f, ax = plt.subplots(1, 1, figsize=(10, 10))
 
         for p, path in enumerate(paths):
+            
             fpr, roc_curve = eval_funcs.average_roc_curve(path, klass)
-            ax.plot(fpr, roc_curve, linewidth=7, color=colors[p])
+            ix = (df['model'] == model_names[p]) & (df['bin'] == classes[klass])
+            aucroc = np.array(df[ix]['roc'])[0]
+            print(aucroc)
+            ax.plot(fpr, roc_curve, linewidth=7, color=colors[p], label="%0.2f" % aucroc)
+
+        
+        
+        l = ax.legend(fontsize=plot_cfg['legend_font_size'], frameon=False)
+        for p, text in enumerate(l.get_texts()):
+            text.set_color(colors[p])
+        for line in l.get_lines():
+            line.set_linewidth(0)
 
         ax.plot(fpr, fpr, linewidth=2, color='black', linestyle='dashed')
         ax.set_xlim([0, 1])

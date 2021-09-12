@@ -9,6 +9,12 @@
             "show": true
         },
         {
+            "name": "MN model",
+            "color": "#3A90FF",
+            "path": "../results/task_pombe_smf/mn",
+            "show": true
+        },
+        {
             "name": "OR model",
             "color": "#00CC00",
             "path": "../results/task_pombe_smf/orm",
@@ -36,6 +42,6 @@
     ],
     "ylim": [
         0,
-        1
+        0.75
     ]
 }

@@ -46,6 +46,24 @@
                     "path": "../generated-data/pairwise_features/ppc_yeast_shortest_path_len.npy"
                 }
             ]
+        },
+
+        {
+            "name": "triplet_const",
+            "group": "triplet_const",
+            "hidden_activation": "tanh",
+            "layer_sizes": [
+                1
+            ],
+            "type": "ff",
+            "pairwise": true,
+            "triplet" : true,
+            "paths": [
+                {
+                    "normalize": false,
+                    "path": "../generated-data/pairwise_features/ppc_yeast_const.npy"
+                }
+            ]
         }
     ],
     "optimizer": "nadam",
@@ -58,6 +76,6 @@
     "embedding_activation": "tanh",
     "scramble" : false,
     "task_path" : "../generated-data/task_yeast_tgi",
-    "targets_path" : "../generated-data/targets/task_yeast_tgi_bin_simple.npz",
+    "target_col" : "bin",
     "splits_path" : "../generated-data/splits/task_yeast_tgi_10reps_4folds_0.20valid_simple.npz"
 }

@@ -5,28 +5,34 @@
             "name": "Full model",
             "color": "#b300ff",
             "cm_color": "#b300ff",
-            "path": "../results/task_yeast_smf_30/topology~go~redundancy~phosphorylation~transcription~abundance~localization",
+            "path": "../results/yeast_smf_30_fs/topology~go~redundancy~phosphorylation~transcription~abundance~localization",
             "show": true
         },
         {
             "name": "Refined model",
             "color": "#FF0000",
             "cm_color": "#FF0000",
-            "path": "../results/task_yeast_smf_30/refined",
+            "path": "../results/yeast_smf_30_fs/refined",
+            "show": true
+        },
+        {
+            "name": "MN model",
+            "color": "#3A90FF",
+            "path": "../results/yeast_smf_30_fs/mn",
             "show": true
         },
         {
             "name": "OR model",
             "color": "#00CC00",
-            "path": "../results/task_yeast_smf_30/orm",
+            "path": "../results/yeast_smf_30_fs/orm",
             "show": true
         },
         {
             "name": "Null",
-            "color": "white",
+            "color": "#c9c9c9",
             "star_color": "grey",
             "cm_color": "grey",
-            "path": "../results/task_yeast_smf_30/null",
+            "path": "../results/yeast_smf_30_fs/null",
             "show": true,
             "show_roc": false
         }
@@ -43,6 +49,6 @@
     ],
     "ylim": [
         0,
-        1
+        0.75
     ]
 }

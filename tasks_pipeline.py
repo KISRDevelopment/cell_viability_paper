@@ -73,19 +73,25 @@ smf_task_path = "../generated-data/task_yeast_smf_30"
 
 
 # gpath = "../generated-data/ppc_pombe"
-# smf_task_path = "../generated-data/task_pombe_smf"
+smf_task_path = "../generated-data/task_pombe_smf"
 # tasks.pombe_smf.main(gpath, smf_task_path)
-# utils.bin_simple.main(smf_task_path)
+# utils.bin_outcomes.main(smf_task_path, {
+#     "is_lethal" : lambda bins: bins == 0,
+#     "is_viable" : lambda bins: bins > 0,
+# }, smf_task_path)
 # utils.cv_simple.main(smf_task_path, 10, 5, 0.2)
-# utils.bin_lethal.main(smf_task_path)
 
 #
 # HUMAN smf tasks
 #
 
 # gpath = "../generated-data/ppc_human"
-# smf_task_path = "../generated-data/task_human_smf"
+smf_task_path = "../generated-data/task_human_smf"
 # tasks.human_smf.main(gpath, smf_task_path)
+utils.bin_outcomes.main(smf_task_path, {
+    "is_lethal" : lambda bins: bins == 0,
+    "is_viable" : lambda bins: bins > 0,
+}, smf_task_path)
 # utils.bin_simple.main(smf_task_path)
 # utils.cv_simple.main(smf_task_path, 10, 5, 0.2)
 # utils.bin_lethal.main(smf_task_path)
@@ -106,13 +112,17 @@ cell_smf_task_path = "../generated-data/task_human_smf"
 smf_task_path = "../generated-data/task_human_smf_ca_ma_v2"
 #tasks.human_ca_ma_v2.main(gpath, cell_smf_task_path, smf_task_path)
 #utils.cv_simple.main("../generated-data/task_human_smf_ca_ma_v2", 10, 5, 0.2)
-df = pd.read_csv(smf_task_path)
-df = df[df['bin'] > 0]
-df.to_csv("../generated-data/task_human_smf_ma_v2", index=False)
-utils.cv_simple.main("../generated-data/task_human_smf_ma_v2", 10, 5, 0.2)
+# df = pd.read_csv(smf_task_path)
+# df = df[df['bin'] > 0]
+# df.to_csv("../generated-data/task_human_smf_ma_v2", index=False)
+# utils.cv_simple.main("../generated-data/task_human_smf_ma_v2", 10, 5, 0.2)
 
 # gpath = "../generated-data/ppc_dro"
-# smf_task_path = "../generated-data/task_dro_smf"
+smf_task_path = "../generated-data/task_dro_smf"
+utils.bin_outcomes.main(smf_task_path, {
+    "is_lethal" : lambda bins: bins == 0,
+    "is_viable" : lambda bins: bins > 0,
+}, smf_task_path)
 # tasks.dro_smf.main(gpath, smf_task_path)
 # utils.bin_simple.main(smf_task_path)
 # utils.cv_simple.main(smf_task_path, 10, 5, 0.2)
