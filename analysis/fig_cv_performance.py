@@ -217,7 +217,7 @@ def cms(cfg):
         displayed_cm = np.zeros((plot_cfg['max_cm_classes'], plot_cfg['max_cm_classes']))
         displayed_cm[:cm.shape[0], :cm.shape[0]] = cm 
 
-        #print(cm)
+        print(cm)
         ax.imshow(displayed_cm, cmap=cmap)
         for i in range(len(classes)):
             for j in range(len(classes)):
