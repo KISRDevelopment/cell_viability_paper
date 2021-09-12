@@ -23,10 +23,10 @@
             "show": true
         },
         {
-            "name": "OR model",
+            "name": "OR",
             "color": "#00CC00",
             "path": "../results/task_yeast_gi_hybrid_train_test/orm",
-            "show": false
+            "show": true
         },
         {
             "name": "Null",
