@@ -145,6 +145,12 @@ models.cv.main("models.smf_ordinal", "cfgs/models/yeast_smf_orm.json", "../resul
     target_col="is_viable",
     type="mn",
     num_processes=20)
+models.cv.main("models.smf_ordinal", "cfgs/models/yeast_smf_orm.json", "../results/task_yeast_smf_30_binary/orm",
+    task_path="../generated-data/task_yeast_smf_30",
+    splits_path="../generated-data/splits/task_yeast_smf_30_full.npz",
+    target_col="is_viable",
+    type="orm",
+    num_processes=20)
 models.cv.main("models.null_model", "cfgs/models/yeast_smf_full_model.json", "../results/task_yeast_smf_30_binary/null",
     task_path="../generated-data/task_yeast_smf_30",
     splits_path="../generated-data/splits/task_yeast_smf_30_full.npz",

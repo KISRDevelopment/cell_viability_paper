@@ -10,6 +10,7 @@
         },
         {
             "name": "Refined model-No sGO",
+            "fsize" : 53,
             "color": "#ffb700",
             "cm_color": "#ffb700",
             "path": "../results/task_human_gi/refined_no_sgo",
@@ -24,6 +25,7 @@
         },
         {
             "name": "MN Model-No sGO",
+            "fsize" : 53,
             "color": "#38fffc",
             "cm_color": "#38fffc",
             "path": "../results/task_human_gi/mn_no_sgo",

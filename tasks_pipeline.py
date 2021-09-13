@@ -88,10 +88,10 @@ smf_task_path = "../generated-data/task_pombe_smf"
 # gpath = "../generated-data/ppc_human"
 smf_task_path = "../generated-data/task_human_smf"
 # tasks.human_smf.main(gpath, smf_task_path)
-utils.bin_outcomes.main(smf_task_path, {
-    "is_lethal" : lambda bins: bins == 0,
-    "is_viable" : lambda bins: bins > 0,
-}, smf_task_path)
+# utils.bin_outcomes.main(smf_task_path, {
+#     "is_lethal" : lambda bins: bins == 0,
+#     "is_viable" : lambda bins: bins > 0,
+# }, smf_task_path)
 # utils.bin_simple.main(smf_task_path)
 # utils.cv_simple.main(smf_task_path, 10, 5, 0.2)
 # utils.bin_lethal.main(smf_task_path)
@@ -102,12 +102,12 @@ cell_smf_task_path = "../generated-data/task_human_smf"
 smf_task_path = "../generated-data/task_human_smf_ca_ma_v2"
 #tasks.human_ca_ma_v2.main(gpath, cell_smf_task_path, smf_task_path)
 #utils.cv_simple.main("../generated-data/task_human_smf_ca_ma_v2", 10, 5, 0.2)
-df = pd.read_csv(smf_task_path)
-df = df[df['bin'] > 0]
-df['bin'] = df['bin'] - 1
-print(np.min(df['bin']), " ", np.max(df['bin']))
-df.to_csv("../generated-data/task_human_smf_ma_v2", index=False)
-utils.cv_simple.main("../generated-data/task_human_smf_ma_v2", 10, 5, 0.2)
+# df = pd.read_csv(smf_task_path)
+# df = df[df['bin'] > 0]
+# df['bin'] = df['bin'] - 1
+# print(np.min(df['bin']), " ", np.max(df['bin']))
+# df.to_csv("../generated-data/task_human_smf_ma_v2", index=False)
+# utils.cv_simple.main("../generated-data/task_human_smf_ma_v2", 10, 5, 0.2)
 
 # gpath = "../generated-data/ppc_dro"
 smf_task_path = "../generated-data/task_dro_smf"
@@ -124,12 +124,12 @@ smf_task_path = "../generated-data/task_dro_smf"
 smf_task_path = "../generated-data/task_dro_smf_ca_ma_v"
 # # tasks.dro_org_smf.main(gpath, "../generated-data/task_dro_smf", smf_task_path)
 # # utils.cv_simple.main(smf_task_path, 10, 5, 0.2)
-df = pd.read_csv(smf_task_path)
-df = df[df['bin'] > 0]
-df['bin'] = df['bin'] - 1
-print(np.min(df['bin']), " ", np.max(df['bin']))
-df.to_csv("../generated-data/task_dro_smf_ma_v", index=False)
-utils.cv_simple.main("../generated-data/task_dro_smf_ma_v", 10, 5, 0.2)
+# df = pd.read_csv(smf_task_path)
+# df = df[df['bin'] > 0]
+# df['bin'] = df['bin'] - 1
+# print(np.min(df['bin']), " ", np.max(df['bin']))
+# df.to_csv("../generated-data/task_dro_smf_ma_v", index=False)
+# utils.cv_simple.main("../generated-data/task_dro_smf_ma_v", 10, 5, 0.2)
 
 # # GI tasks
 
@@ -178,7 +178,7 @@ gi_task_path = "../generated-data/task_pombe_gi"
 # utils.cv_gi.main(gi_task_path, 10, 4, 0.2)
 
 # gpath = "../generated-data/ppc_human"
-# gi_task_path = "../generated-data/task_human_gi"
+gi_task_path = "../generated-data/task_human_gi"
 # smf_binned_path = "../generated-data/features/ppc_human_smf_binned.npz"
 # tasks.biogrid_plus_negative_sampling.main(gpath, "../generated-data/biogrid_human", smf_binned_path, gi_task_path, with_smf_only=True)
 # utils.bin_outcomes.main(gi_task_path, {
@@ -186,7 +186,7 @@ gi_task_path = "../generated-data/task_pombe_gi"
 #     "is_interacting" : lambda bins: bins != 1,
 #     "is_neutral" : lambda bins: bins == 1,
 # }, gi_task_path)
-# utils.cv_gi.main(gi_task_path, 10, 4, 0.2)
+utils.cv_gi.main(gi_task_path, 10, 4, 0.2)
 
 # gpath = "../generated-data/ppc_dro"
 # gi_task_path = "../generated-data/task_dro_gi"

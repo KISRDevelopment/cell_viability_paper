@@ -9,8 +9,8 @@
             "show": true
         },
         {
-            "name": "Refined model-No sGO",
-            "fsize" : 42,
+            "name": "Refined model\nNo sGO",
+            "fsize" : 50,
             "color": "#ffb700",
             "cm_color": "#ffb700",
             "path": "../results/task_pombe_gi_binary/refined_no_sgo",
@@ -24,8 +24,8 @@
             "show": true
         },
         {
-            "name": "MN Model-No sGO",
-            "fsize" : 42,
+            "name": "MN Model\nNo sGO",
+            "fsize" : 50,
             "color": "#38fffc",
             "cm_color": "#38fffc",
             "path": "../results/task_pombe_gi_binary/mn_no_sgo",

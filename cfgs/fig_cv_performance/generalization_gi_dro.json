@@ -10,6 +10,7 @@
         },
         {
             "name": "MN model\nNo sGO, SMF",
+            "fsize" : 53,
             "color": "#38fffc",
             "cm_color": "#38fffc",
             "path": "../results/gi_generalization/dro_mn_no_sgo_smf.npz",

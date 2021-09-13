@@ -36,7 +36,7 @@ gi_cfg_no_sgo = load_cfg('cfgs/fig_interpretation/gi_binary_no_sgo.json')
 # models.cv.main("models.smf_ordinal", "cfgs/models/dro_smf_orm.json", 
 #     "../results/smf_interpretation/dro_orm", interpreation=True, num_processes=10, epochs=500)
 
-# analysis.fig_interpretation.main(smf_cfg)
+analysis.fig_interpretation.main(smf_cfg)
 
 # # SMF Binary Interpretation
 # models.cv.main("models.smf_ordinal", "cfgs/models/yeast_smf_orm.json", 
@@ -58,16 +58,16 @@ gi_cfg_no_sgo = load_cfg('cfgs/fig_interpretation/gi_binary_no_sgo.json')
 #     "../results/smf_interpretation_binary/dro_orm", 
 #     targets_path="../generated-data/targets/task_dro_smf_bin_lethal.npz",
 #     interpreation=True, num_processes=10, epochs=500)
-# analysis.fig_interpretation.main(smf_cfg_binary)
+analysis.fig_interpretation.main(smf_cfg_binary)
 
 
 # # SMF Organismal Cell Lethal Interpreation
-models.cv.main("models.smf_ordinal", "cfgs/models/human_smf_ca_ma_v_mn.json", 
-    "../results/smf_ca_ma_v_interpretation/human", interpreation=True, num_processes=20, epochs=150)
+# models.cv.main("models.smf_ordinal", "cfgs/models/human_smf_ca_ma_v_mn.json", 
+#     "../results/smf_ca_ma_v_interpretation/human", interpreation=True, num_processes=20, epochs=150)
 
-models.cv.main("models.smf_ordinal", "cfgs/models/dro_smf_ca_ma_v_mn.json", 
-    "../results/smf_ca_ma_v_interpretation/dro", interpreation=True, num_processes=20, epochs=150)
-analysis.fig_interpretation.main(smf_org_cfg)
+# models.cv.main("models.smf_ordinal", "cfgs/models/dro_smf_ca_ma_v_mn.json", 
+#     "../results/smf_ca_ma_v_interpretation/dro", interpreation=True, num_processes=20, epochs=150)
+# analysis.fig_interpretation.main(smf_org_cfg)
 
 # # merge everything into one file
 # writer = pd.ExcelWriter('../figures/interpretation_smf.xlsx')
@@ -116,10 +116,10 @@ analysis.fig_interpretation.main(smf_org_cfg)
 #     num_processes=20, epochs=50)
 
 # models.cv.main("models.gi_mn", "cfgs/models/human_gi_mn.json", 
-#     "../results/gi_interpretation/human_mn", interpreation=True, num_processes=20, epochs=50)
+#     "../results/gi_interpretation/human_mn", interpreation=True, target_col="is_neutral", num_processes=20, epochs=50)
 
 # models.cv.main("models.gi_mn", "cfgs/models/dro_gi_mn.json", 
-#     "../results/gi_interpretation/dro_mn", interpreation=True, num_processes=20, epochs=50)
+#     "../results/gi_interpretation/dro_mn", interpreation=True, target_col="is_neutral", num_processes=20, epochs=50)
 # analysis.fig_interpretation.main(gi_cfg)
 
 # # merge everything into one file

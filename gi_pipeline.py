@@ -114,40 +114,49 @@ def load_cfg(path, **kwargs):
     Yeast Binary
 """
 
-# models.cv.main("models.gi_nn", "cfgs/models/yeast_gi_refined_model.json", 
-#     "../results/task_yeast_gi_hybrid_binary/refined", 
-#     num_processes = 1,
-#     target_col = "is_neutral"
-# )
+models.cv.main("models.gi_nn", "cfgs/models/yeast_gi_refined_model.json", 
+    "../results/task_yeast_gi_hybrid_binary/refined", 
+    task_path="../generated-data/task_yeast_gi_hybrid",
+    splits_path="../generated-data/splits/task_yeast_gi_hybrid_full.npz",
+    num_processes = 20,
+    target_col = "is_neutral"
+)
 
-# models.cv.main("models.gi_mn", "cfgs/models/yeast_gi_mn.json", 
-#     "../results/task_yeast_gi_hybrid_binary/mn", 
-#     num_processes=20,
-#     target_col = "is_neutral")
+models.cv.main("models.gi_mn", "cfgs/models/yeast_gi_mn.json", 
+    "../results/task_yeast_gi_hybrid_binary/mn", 
 
-# models.cv.main("models.null_model", "cfgs/models/yeast_gi_mn.json", 
-#     "../results/task_yeast_gi_hybrid_binary/null", 
-#     num_processes=20,
-#     target_col = "is_neutral")
+    task_path="../generated-data/task_yeast_gi_hybrid",
+    splits_path="../generated-data/splits/task_yeast_gi_hybrid_full.npz",
+    num_processes=20,
+    target_col = "is_neutral")
 
-# models.cv.main("models.gi_nn", "cfgs/models/yeast_gi_refined_model.json", 
-#     "../results/task_yeast_gi_hybrid_binary/null_scrambled", 
-#     num_processes=20,
-#     scramble=True,
-#     target_col = "is_neutral")
+models.cv.main("models.null_model", "cfgs/models/yeast_gi_mn.json", 
+    "../results/task_yeast_gi_hybrid_binary/null", 
 
-# models.cv.main("models.gi_nn", "cfgs/models/yeast_gi_refined_model.json", 
-#     "../results/task_yeast_gi_hybrid_binary/refined_no_sgo", 
-#     num_processes = 20,
-#     remove_specs=["go"],
-#     target_col = "is_neutral"
-# )
+    task_path="../generated-data/task_yeast_gi_hybrid",
+    splits_path="../generated-data/splits/task_yeast_gi_hybrid_full.npz",
+    num_processes=20,
+    target_col = "is_neutral")
 
-# models.cv.main("models.gi_mn", "cfgs/models/yeast_gi_mn.json", 
-#     "../results/task_yeast_gi_hybrid_binary/mn_no_sgo", 
-#     num_processes=20,
-#     remove_specs=["sgo"],
-#     target_col = "is_neutral")
+
+models.cv.main("models.gi_nn", "cfgs/models/yeast_gi_refined_model.json", 
+    "../results/task_yeast_gi_hybrid_binary/refined_no_sgo", 
+
+    task_path="../generated-data/task_yeast_gi_hybrid",
+    splits_path="../generated-data/splits/task_yeast_gi_hybrid_full.npz",
+    num_processes = 20,
+    remove_specs=["go"],
+    target_col = "is_neutral"
+)
+
+models.cv.main("models.gi_mn", "cfgs/models/yeast_gi_mn.json", 
+    "../results/task_yeast_gi_hybrid_binary/mn_no_sgo", 
+
+    task_path="../generated-data/task_yeast_gi_hybrid",
+    splits_path="../generated-data/splits/task_yeast_gi_hybrid_full.npz",
+    num_processes=20,
+    remove_specs=["sgo"],
+    target_col = "is_neutral")
 
 # test
 # models.cv.main("models.gi_nn", "cfgs/models/yeast_gi_refined_model.json", 
