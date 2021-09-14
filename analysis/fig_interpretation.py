@@ -16,7 +16,7 @@ from matplotlib.colors import LinearSegmentedColormap
 import matplotlib.colors as colors 
 
 plot_cfg = {
-    "x_tick_label_size" : 54,
+    "x_tick_label_size" : 58,
     "y_tick_label_size" : 40,
     "xlabel_size" : 40,
     "ylabel_size" : 55,
@@ -31,7 +31,7 @@ errorbar_props = {
     "capthick" : 5, 
     "capsize" : 10, 
     "elinewidth" : 10,
-    "markersize" : 15,
+    "markersize" : 20,
     "fmt" : "o"  
 }
 
