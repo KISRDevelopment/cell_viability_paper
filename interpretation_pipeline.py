@@ -16,12 +16,12 @@ def load_cfg(path):
 
 smf_cfg = load_cfg('cfgs/fig_interpretation/smf.json')
 smf_cfg_binary = load_cfg('cfgs/fig_interpretation/smf_binary.json')
-smf_org_cfg = load_cfg('cfgs/fig_interpretation/smf_cell_org_lethal.json')
+smf_org_cfg = load_cfg('cfgs/fig_interpretation/smf_ca_ma_v.json')
 gi_cfg = load_cfg('cfgs/fig_interpretation/gi_binary.json')
 gi_cfg_yeast = load_cfg('cfgs/fig_interpretation/gi_binary_yeast_only.json')
 gi_cfg_nonbinary = load_cfg('cfgs/fig_interpretation/gi_nonbinary.json')
 gi_cfg_no_sgo = load_cfg('cfgs/fig_interpretation/gi_binary_no_sgo.json')
-
+smf_cfg_mn = load_cfg("cfgs/fig_interpretation/smf_mn.json")
 
 # #SMF Interpretation
 # models.cv.main("models.smf_ordinal", "cfgs/models/yeast_smf_orm.json", 
@@ -35,8 +35,21 @@ gi_cfg_no_sgo = load_cfg('cfgs/fig_interpretation/gi_binary_no_sgo.json')
 
 # models.cv.main("models.smf_ordinal", "cfgs/models/dro_smf_orm.json", 
 #     "../results/smf_interpretation/dro_orm", interpreation=True, num_processes=10, epochs=500)
+#analysis.fig_interpretation.main(smf_cfg)
 
-analysis.fig_interpretation.main(smf_cfg)
+# SMF Interpration MN
+# models.cv.main("models.smf_ordinal", "cfgs/models/yeast_smf_orm.json", 
+#     "../results/smf_interpretation/yeast_mn", interpreation=True, num_processes=10, epochs=500, type="mn", target_col="bin")
+
+# models.cv.main("models.smf_ordinal", "cfgs/models/pombe_smf_orm.json", 
+#     "../results/smf_interpretation/pombe_mn", interpreation=True, num_processes=10, epochs=500, type="mn", target_col="bin")
+
+# models.cv.main("models.smf_ordinal", "cfgs/models/human_smf_orm.json", 
+#     "../results/smf_interpretation/human_mn", interpreation=True, num_processes=10, epochs=500, type="mn", target_col="bin")
+
+# models.cv.main("models.smf_ordinal", "cfgs/models/dro_smf_orm.json", 
+#     "../results/smf_interpretation/dro_mn", interpreation=True, num_processes=10, epochs=500, type="mn", target_col="bin")
+#analysis.fig_interpretation.main(smf_cfg_mn)
 
 # # SMF Binary Interpretation
 # models.cv.main("models.smf_ordinal", "cfgs/models/yeast_smf_orm.json", 
@@ -67,7 +80,7 @@ analysis.fig_interpretation.main(smf_cfg_binary)
 
 # models.cv.main("models.smf_ordinal", "cfgs/models/dro_smf_ca_ma_v_mn.json", 
 #     "../results/smf_ca_ma_v_interpretation/dro", interpreation=True, num_processes=20, epochs=150)
-# analysis.fig_interpretation.main(smf_org_cfg)
+analysis.fig_interpretation.main(smf_org_cfg)
 
 # # merge everything into one file
 # writer = pd.ExcelWriter('../figures/interpretation_smf.xlsx')
@@ -120,7 +133,7 @@ analysis.fig_interpretation.main(smf_cfg_binary)
 
 # models.cv.main("models.gi_mn", "cfgs/models/dro_gi_mn.json", 
 #     "../results/gi_interpretation/dro_mn", interpreation=True, target_col="is_neutral", num_processes=20, epochs=50)
-# analysis.fig_interpretation.main(gi_cfg)
+analysis.fig_interpretation.main(gi_cfg)
 
 # # merge everything into one file
 # writer = pd.ExcelWriter('../figures/interpretation_gi.xlsx')

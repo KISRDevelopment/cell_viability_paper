@@ -1,0 +1,67 @@
+{
+    "spec" : [
+        {
+            "text_name" : "S. cerevisiae (Lethal)",
+            "target_class" : 0,
+            "name" : "$\\it{S. cerevisiae}$",
+            "path" : "../results/smf_interpretation/yeast_mn/",
+            "color" : "#FF3AF2"
+        },
+        {
+            "text_name" : "S. pombe (Lethal)",
+            "target_class" : 0,
+            "name" : "$\\it{S. pombe}$",
+            "path" : "../results/smf_interpretation/pombe_mn/",
+            "color" : "#FFA93A"
+        },
+        {
+            "text_name" : "H. sapiens (Lethal)",
+            "name" : "$\\it{H. sapiens}$",
+            "path" : "../results/smf_interpretation/human_mn/",
+            "color" : "#00c20d",
+            "target_class" : 0
+        },
+        {
+            "text_name" : "D. melanogaster (Lethal)",
+            "name" : "$\\it{D. melanogaster}$",
+            "path" : "../results/smf_interpretation/dro_mn/",
+            "color" : "#3A90FF",
+            "target_class" : 0
+        },
+        {
+            "text_name" : "S. cerevisiae (Reduced Growth)",
+            "target_class" : 1,
+            "name" : "$\\it{S. cerevisiae}$",
+            "path" : "../results/smf_interpretation/yeast_mn/",
+            "color" : "#FF3AF2"
+        },
+        {
+            "text_name" : "S. pombe (Reduced Growth)",
+            "target_class" : 1,
+            "name" : "$\\it{S. pombe}$",
+            "path" : "../results/smf_interpretation/pombe_mn/",
+            "color" : "#FFA93A"
+        },
+        {
+            "text_name" : "H. sapiens (Reduced Growth)",
+            "name" : "$\\it{H. sapiens}$",
+            "path" : "../results/smf_interpretation/human_mn/",
+            "color" : "#00c20d",
+            "target_class" : 1
+        },
+        {
+            "text_name" : "D. melanogaster (Reduced Growth)",
+            "name" : "$\\it{D. melanogaster}$",
+            "path" : "../results/smf_interpretation/dro_mn/",
+            "color" : "#3A90FF",
+            "target_class" : 1
+        }
+    ],
+    "n_entries" : 53,
+    "model" : "mn",
+    "color" : "#3A90FF",
+    "ref_class" : 2,
+    "output_path" : "../figures/smf_interpretation_mn",
+    "plot_cfg" : {},
+    "target_class" : 0
+}

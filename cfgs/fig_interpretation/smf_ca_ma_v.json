@@ -3,13 +3,13 @@
         {
             "text_name" : "H. sapiens",
             "name" : "$\\it{H. sapiens}$",
-            "path" : "../results/smf_org_interpretation/human/",
+            "path" : "../results/smf_ca_ma_v_interpretation/human/",
             "color" : "#00c20d"
         },
         {
             "text_name" : "D. melanogaster",
             "name" : "$\\it{D. melanogaster}$",
-            "path" : "../results/smf_org_interpretation/dro/",
+            "path" : "../results/smf_ca_ma_v_interpretation/dro/",
             "color" : "#3A90FF"
         }
     ],
@@ -20,5 +20,5 @@
     "subplots" : 4,
     "plot_cfg" : {},
     "errorbar_props" : {},
-    "ylim" : [-5, 5]
+    "ylim" : [-2.5, 2.5]
 }

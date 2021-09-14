@@ -17,9 +17,9 @@ import matplotlib.colors as colors
 
 plot_cfg = {
     "x_tick_label_size" : 54,
-    "y_tick_label_size" : 54,
+    "y_tick_label_size" : 40,
     "xlabel_size" : 40,
-    "ylabel_size" : 40,
+    "ylabel_size" : 55,
     "border_size" : 6,
     "bar_border_size" : 2.5,
     "bar_label_size" : 48,
@@ -30,8 +30,8 @@ plot_cfg = {
 errorbar_props = {
     "capthick" : 5, 
     "capsize" : 10, 
-    "elinewidth" : 5,
-    "markersize" : 10,
+    "elinewidth" : 10,
+    "markersize" : 15,
     "fmt" : "o"  
 }
 

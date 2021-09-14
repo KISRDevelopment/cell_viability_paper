@@ -27,7 +27,7 @@
     ],
     "n_entries" : 53,
     "model" : "orm",
-    "color" : "#00CC00",
+    "color" : "#3A90FF",
     "output_path" : "../figures/smf_interpretation_binary",
     "plot_cfg" : {},
     "errorbar_props" : {}
