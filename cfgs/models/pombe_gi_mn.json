@@ -34,7 +34,7 @@
     "train_model" : true,
     "trained_model_path" : "../tmp/mnmodel",
     "task_path" : "../generated-data/task_pombe_gi",
-    "targets_path" : "../generated-data/targets/task_pombe_gi_bin_simple.npz",
+    "target_col" : "bin",
     "splits_path" : "../generated-data/splits/task_pombe_gi_10reps_4folds_0.20valid.npz",
     "type" : "mn"
 }

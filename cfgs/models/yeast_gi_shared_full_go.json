@@ -1,0 +1,41 @@
+{
+    "spec": [
+        {
+            "name": "const",
+            "group": "const",
+            "hidden_activation": "tanh",
+            "layer_sizes": [
+                1
+            ],
+            "type": "ff",
+            "pairwise": false,
+            "paths": [
+                "../generated-data/features/ppc_yeast_const.npz"
+            ]
+        },
+        {
+            "name": "pairwise",
+            "group": "pairwise",
+            "hidden_activation": "tanh",
+            "layer_sizes": [
+                100
+            ],
+            "gosum" : true,
+            "type": "ff",
+            "pairwise": true,
+            "path" : "../generated-data/features/ppc_yeast_full_go.npz"
+        }
+    ],
+    "optimizer": "nadam",
+    "epochs": 200,
+    "verbose": true,
+    "patience": 10,
+    "balanced_loss": true,
+    "batch_size": 10000,
+    "embedding_size": 10,
+    "embedding_activation": "tanh",
+    "scramble" : false,
+    "task_path" : "../generated-data/task_yeast_gi_hybrid",
+    "target_col" : "is_not_negative",
+    "splits_path" : "../generated-data/splits/task_yeast_gi_hybrid_full.npz"
+}

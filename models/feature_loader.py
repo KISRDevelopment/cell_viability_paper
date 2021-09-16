@@ -58,6 +58,12 @@ def load_feature_sets(spec, scramble=False):
                 fshapes.append(F.shape())
                 continue 
             
+            if elm.get('gosum', False):
+                F = SumGOTerms(**elm)
+                feature_sets.append(F)
+                fshapes.append(F.shape())
+                continue 
+
             if not elm.get('sparse', False):
 
                 paths = elm['paths']
@@ -124,6 +130,24 @@ def load_feature_sets(spec, scramble=False):
                 fshapes.append([data.shape[1],])
 
     return feature_sets, fshapes
+
+
+class SumGOTerms(object):
+
+    def __init__(self, path, **kwargs):
+        d = np.load(path)
+
+        self.F = d['F']
+    
+    def shape(self):
+        return (self.F.shape[1],)
+    
+    def transform(self, df):
+
+        a_id = np.array(df['a_id'])
+        b_id = np.array(df['b_id'])
+
+        return self.F[a_id, :] + self.F[b_id, :]
 
 class SparsePairwiseMatrix(object):
 

@@ -1,0 +1,45 @@
+{
+    "output_path": "../figures/cv_lit_gi/",
+    "models": [
+        {
+            "name": "MN model",
+            "color": "#3A90FF",
+            "path": "../results/lit_graeme2019/mn",
+            "show": true
+        },
+        {
+            "name": "Benstead-Hume 2019",
+            "color": "#b300ff",
+            "cm_color": "#b300ff",
+            "path": "../results/lit_graeme2019/slant",
+            "fsize" : 50,
+            "show": true
+        },
+        {
+            "name": "Yu 2015",
+            "color": "orange",
+            "path": "../results/lit_yu2016/yu",
+            "show": true
+        },
+        {
+            "name": "Alanis-Lobato 2013",
+            "color": "#FF0000",
+            "cm_color": "#FF0000",
+            "fsize" : 46,
+            "path": "../results/lit_alanislobato2013/acdd",
+            "show": true
+        }
+    ],
+    "classes": [
+        "Interacting",
+        "Neutral"
+    ],
+    "short_classes": [
+        "I",
+        "N"
+    ],
+    "ylim": [
+        0,
+        1
+    ]
+}

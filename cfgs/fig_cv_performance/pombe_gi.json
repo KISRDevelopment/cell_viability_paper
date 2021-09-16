@@ -16,6 +16,14 @@
             "show": true
         },
         {
+            "name": "OR Model",
+            "fsize" : 55,
+            "color": "#00CC00",
+            "cm_color": "#00CC00",
+            "path": "../results/task_pombe_gi/orm",
+            "show": true
+        },
+        {
             "name": "Null",
             "color": "white",
             "star_color": "grey",
@@ -39,10 +47,6 @@
     ],
     "ylim": [
         0,
-        1
-    ],
-    "plot_cfg": {
-        "annot_size": 72,
-        "bar_label_size": 42
-    }
+        0.6
+    ]
 }

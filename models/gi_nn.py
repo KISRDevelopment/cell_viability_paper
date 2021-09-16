@@ -212,16 +212,7 @@ def feature_transform(df, single_fsets, pairwise_fsets):
 
         if hasattr(fset, 'transform'):
             inputs_AB.append(fset.transform(df))
-        # if type(fset) == scipy.sparse.csr.csr_matrix:
-            
-        #     F = np.zeros((df.shape[0], 1))
-        #     for i, pair in enumerate(zip(a_id, b_id)):
-        #         aid, bid = pair 
-        #         F[i, 0] = fset[aid, bid]
-        #         if F[i, 0] == 0:
-        #             F[i, 0] = 1e5
-        #     F = stats.zscore(F)
-        #     inputs_AB.append(F)
+        
         elif type(fset) != dict:
             inputs_AB.append(fset[df['a_id'], df['b_id'], :])
 

@@ -315,6 +315,12 @@ models.cv.main("models.gi_mn", "cfgs/models/yeast_gi_mn.json",
 #     num_processes = 20
 # )
 
+models.cv.main("models.gi_mn", "cfgs/models/pombe_gi_mn.json", 
+    "../results/task_pombe_gi/orm", 
+    type="orm",
+    num_processes = 20
+)
+
 # models.cv.main("models.null_model", "cfgs/models/pombe_gi_mn.json", 
 #     "../results/task_pombe_gi/null", 
 #     num_processes=20)

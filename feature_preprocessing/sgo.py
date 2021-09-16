@@ -52,6 +52,8 @@ def main(gpath, gaf_file, gene_name_col, output_path=None, all_go_terms=None, an
     #print(all_go_terms)
     print(len(all_go_terms))
 
+    n_terms_per_gene = np.sum(F, axis=1)
+    print("Avg terms per gene: %f" % np.median(n_terms_per_gene))
 def read_annotations(path, gene_name_col):
 
     genes_to_go = defaultdict(set)
@@ -93,5 +95,5 @@ if __name__ == "__main__":
     gaf_file = sys.argv[2]
     gene_name_col = int(sys.argv[3])
 
-    main(gpath, gaf_file, gene_name_col)
+    main(gpath, gaf_file, gene_name_col, annotations_reader=read_annotations_yeast)
     
