@@ -2,28 +2,28 @@
     "output_path": "../figures/cv_figs_task_yeast_gi_hybrid_fs/",
     "models": [
         {
-            "name": "Full model",
+            "name": "D-Full",
             "color": "#b300ff",
             "cm_color": "#b300ff",
             "path": "../results/task_yeast_gi_hybrid_fs/topology~go~redundancy~phosphorylation~abundance-and-loc~pairwise~smf",
             "show": true
         },
         {
-            "name": "Refined model",
+            "name": "D-Refined",
             "color": "#FF0000",
             "cm_color": "#FF0000",
             "path": "../results/task_yeast_gi_hybrid_fs/refined",
             "show": true
         },
         {
-            "name": "MN Model",
+            "name": "D-MN",
             "color": "#3A90FF",
             "cm_color": "#3A90FF",
             "path": "../results/task_yeast_gi_hybrid_fs/mn",
             "show": true
         },
         {
-            "name": "OR",
+            "name": "D-OR",
             "color": "#00CC00",
             "path": "../results/task_yeast_gi_hybrid_fs/orm",
             "show": true

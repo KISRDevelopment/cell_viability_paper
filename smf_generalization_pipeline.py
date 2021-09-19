@@ -164,6 +164,6 @@ cfg["trained_model_path"] = refined_cfg["trained_model_path"]
 models.null_model.main(cfg, 0, 0, "%s/dro_null" % output_dir)
 
 # Analysis
-analysis.fig_cv_performance.main("cfgs/fig_cv_performance/generalization_smf_pombe.json")
-analysis.fig_cv_performance.main("cfgs/fig_cv_performance/generalization_smf_human.json")
-analysis.fig_cv_performance.main("cfgs/fig_cv_performance/generalization_smf_dro.json")
+analysis.fig_cv_performance.main("cfgs/fig_cv_performance/generalization_smf_pombe_binary.json")
+analysis.fig_cv_performance.main("cfgs/fig_cv_performance/generalization_smf_human_binary.json")
+analysis.fig_cv_performance.main("cfgs/fig_cv_performance/generalization_smf_dro_binary.json")

@@ -2,14 +2,14 @@
     "output_path": "../figures/cv_figs_pombe_gi_binary_no_sgo/",
     "models": [
         {
-            "name": "Refined model",
+            "name": "D-Refined",
             "color": "#FF0000",
             "cm_color": "#FF0000",
             "path": "../results/task_pombe_gi_binary/refined",
             "show": true
         },
         {
-            "name": "Refined model\nNo sGO",
+            "name": "D-Refined No sGO",
             "fsize" : 50,
             "color": "#ffb700",
             "cm_color": "#ffb700",
@@ -17,15 +17,14 @@
             "show": true
         },
         {
-            "name": "MN Model",
+            "name": "D-MN",
             "color": "#3A90FF",
             "cm_color": "#3A90FF",
             "path": "../results/task_pombe_gi_binary/mn",
             "show": true
         },
         {
-            "name": "MN Model\nNo sGO",
-            "fsize" : 50,
+            "name": "D-MN No sGO",
             "color": "#38fffc",
             "cm_color": "#38fffc",
             "path": "../results/task_pombe_gi_binary/mn_no_sgo",

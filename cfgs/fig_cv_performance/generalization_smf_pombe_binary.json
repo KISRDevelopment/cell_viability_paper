@@ -2,7 +2,7 @@
     "output_path": "../figures/fig_smf_generalization_pombe_binary/",
     "models": [
         {
-            "name": "MN model",
+            "name": "S-MN",
             "color": "#3A90FF",
             "path": "../results/smf_generalization/pombe_mn.npz",
             "show": true

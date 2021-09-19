@@ -2,14 +2,14 @@
     "output_path": "../figures/cv_figs_task_human_smf_binary/",
     "models": [
         {
-            "name": "Refined model",
+            "name": "S-Refined",
             "color": "#FF0000",
             "cm_color": "#FF0000",
             "path": "../results/task_human_smf_binary/refined",
             "show": true
         },
         {
-            "name": "MN model",
+            "name": "S-MN",
             "color": "#3A90FF",
             "path": "../results/task_human_smf_binary/mn",
             "show": true

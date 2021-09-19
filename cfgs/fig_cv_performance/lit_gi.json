@@ -2,7 +2,7 @@
     "output_path": "../figures/cv_lit_gi/",
     "models": [
         {
-            "name": "MN model",
+            "name": "D-MN",
             "color": "#3A90FF",
             "path": "../results/lit_graeme2019/mn",
             "show": true
@@ -31,12 +31,12 @@
         }
     ],
     "classes": [
-        "Interacting",
-        "Neutral"
+        "Negative",
+        "All"
     ],
     "short_classes": [
-        "I",
-        "N"
+        "-",
+        "All"
     ],
     "ylim": [
         0,

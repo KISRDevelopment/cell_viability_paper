@@ -2,7 +2,7 @@
     "output_path": "../figures/cv_lit_smf/",
     "models": [
         {
-            "name": "MN model",
+            "name": "S-MN",
             "color": "#3A90FF",
             "path": "../results/task_yeast_smf_30_binary/mn",
             "show": true

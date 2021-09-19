@@ -2,18 +2,17 @@
     "output_path": "../figures/fig_gi_generalization_human/",
     "models": [
         {
-            "name": "MN model",
+            "name": "D-MN",
             "color": "#3A90FF",
             "cm_color": "#3A90FF",
             "path": "../results/gi_generalization/human_mn.npz",
             "show": true
         },
         {
-            "name": "MN model\nNo sGO, SMF",
-            "fsize" : 53,
+            "name": "D-MN No sGO",
             "color": "#38fffc",
             "cm_color": "#38fffc",
-            "path": "../results/gi_generalization/human_mn_no_sgo_smf.npz",
+            "path": "../results/gi_generalization/human_mn_no_sgo.npz",
             "show": true
         },
         {

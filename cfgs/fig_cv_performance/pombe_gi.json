@@ -2,22 +2,21 @@
     "output_path": "../figures/cv_figs_pombe_gi/",
     "models": [
         {
-            "name": "Refined model",
+            "name": "D-Refined",
             "color": "#FF0000",
             "cm_color": "#FF0000",
             "path": "../results/task_pombe_gi/refined",
             "show": true
         },
         {
-            "name": "MN Model",
+            "name": "D-MN",
             "color": "#3A90FF",
             "cm_color": "#3A90FF",
             "path": "../results/task_pombe_gi/mn",
             "show": true
         },
         {
-            "name": "OR Model",
-            "fsize" : 55,
+            "name": "D-OR",
             "color": "#00CC00",
             "cm_color": "#00CC00",
             "path": "../results/task_pombe_gi/orm",

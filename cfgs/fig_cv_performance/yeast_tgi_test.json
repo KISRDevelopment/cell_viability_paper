@@ -2,21 +2,21 @@
     "output_path": "../figures/cv_figs_task_yeast_tgi_test/",
     "models": [
         {
-            "name": "Full model",
+            "name": "T-Full",
             "color": "#b300ff",
             "cm_color": "#b300ff",
             "path": "../results/task_yeast_tgi_test/full",
             "show": true
         },
         {
-            "name": "Refined model",
+            "name": "T-Refined",
             "color": "#FF0000",
             "cm_color": "#FF0000",
             "path": "../results/task_yeast_tgi_test/refined",
             "show": true
         },
         {
-            "name": "MN Model",
+            "name": "T-MN",
             "color": "#3A90FF",
             "cm_color": "#3A90FF",
             "path": "../results/task_yeast_tgi_test/mn",

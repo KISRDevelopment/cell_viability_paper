@@ -2,30 +2,28 @@
     "output_path": "../figures/cv_figs_human_gi_no_sgo/",
     "models": [
         {
-            "name": "Refined model",
+            "name": "D-Refined",
             "color": "#FF0000",
             "cm_color": "#FF0000",
             "path": "../results/task_human_gi/refined",
             "show": true
         },
         {
-            "name": "Refined model-No sGO",
-            "fsize" : 53,
+            "name": "D-Refined No sGO",
             "color": "#ffb700",
             "cm_color": "#ffb700",
             "path": "../results/task_human_gi/refined_no_sgo",
             "show": true
         },
         {
-            "name": "MN Model",
+            "name": "D-MN",
             "color": "#3A90FF",
             "cm_color": "#3A90FF",
             "path": "../results/task_human_gi/mn",
             "show": true
         },
         {
-            "name": "MN Model-No sGO",
-            "fsize" : 53,
+            "name": "D-MN No sGO",
             "color": "#38fffc",
             "cm_color": "#38fffc",
             "path": "../results/task_human_gi/mn_no_sgo",

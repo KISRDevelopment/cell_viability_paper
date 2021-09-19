@@ -2,20 +2,20 @@
     "output_path": "../figures/cv_figs_task_pombe_smf/",
     "models": [
         {
-            "name": "Refined model",
+            "name": "S-Refined",
             "color": "#FF0000",
             "cm_color": "#FF0000",
             "path": "../results/task_pombe_smf/refined",
             "show": true
         },
         {
-            "name": "MN model",
+            "name": "S-MN",
             "color": "#3A90FF",
             "path": "../results/task_pombe_smf/mn",
             "show": true
         },
         {
-            "name": "OR model",
+            "name": "S-OR",
             "color": "#00CC00",
             "path": "../results/task_pombe_smf/orm",
             "show": true
