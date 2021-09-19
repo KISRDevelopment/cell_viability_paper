@@ -42,7 +42,7 @@ plt.rcParams['mathtext.fontset'] = 'stix'
 with open('../generated-data/go_ids_to_names.json', 'r') as f:
     goid_names = json.load(f)
 
-def main(cfg):
+def main(cfg, save_plots=True):
 
     plot_cfg.update(cfg['plot_cfg'])
 
@@ -139,6 +139,9 @@ def main(cfg):
 
     f.subplots_adjust(hspace=0.05)
 
+    if not save_plots:
+        return 
+        
     plt.savefig(cfg['output_path'], bbox_inches='tight', dpi=150)
 
     # spearman corr

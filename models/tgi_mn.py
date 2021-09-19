@@ -17,6 +17,7 @@ import sklearn.metrics
 import scipy.stats as stats 
 import numpy.random as rng
 import utils.eval_funcs as eval_funcs
+from keras.utils import np_utils
 
 import scipy.sparse 
 import models.feature_loader
@@ -34,7 +35,7 @@ def main(cfg, rep, fold, output_path, print_results=True, return_model=False):
     df = pd.read_csv(dataset_path)
     
     # create output
-    Y = keras.utils.to_categorical(df[cfg['target_col']])
+    Y = np_utils.to_categorical(df[cfg['target_col']])
     
     # load train/test split 
     data = np.load(train_test_path)

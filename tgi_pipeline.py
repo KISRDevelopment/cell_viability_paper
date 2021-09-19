@@ -46,26 +46,12 @@ def load_cfg(path):
 # analysis.tbl_model_comp.main("../results/task_yeast_tgi_fs", 
 #     "../tmp/task_yeast_tgi_feature_selection.xlsx", ['Interacting', 'Neutral'])
 
-
-#
-# Cross validation performance
-#
-
-
-models.cv.main("models.tgi_nn", "cfgs/models/yeast_tgi_full_model.json", 
-    "../results/task_yeast_tgi/full", 
-    num_processes=5)
-
 models.cv.main("models.tgi_nn", "cfgs/models/yeast_tgi_refined_model.json", 
-    "../results/task_yeast_tgi/refined", 
+    "../results/task_yeast_tgi_fs/refined", 
     num_processes=20)
 
 models.cv.main("models.tgi_mn", "cfgs/models/yeast_tgi_mn.json", 
-    "../results/task_yeast_tgi/mn", 
-    num_processes=20)
-
-models.cv.main("models.null_model", "cfgs/models/yeast_tgi_refined_model.json", 
-    "../results/task_yeast_tgi/null", 
+    "../results/task_yeast_tgi_fs/mn", 
     num_processes=20)
 
 
