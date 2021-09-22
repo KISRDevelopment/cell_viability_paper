@@ -23,6 +23,8 @@ import models.nn_arch as nn_arch
 import utils.eval_funcs as eval_funcs
 import scipy.sparse
 from termcolor import colored
+from keras.utils import np_utils
+
 def main(cfg, rep, fold, output_path, print_results=True, return_model=False):
 
     dataset_path = cfg['task_path']
@@ -38,7 +40,7 @@ def main(cfg, rep, fold, output_path, print_results=True, return_model=False):
     pairwise_fsets, pairwise_fsets_shapes = feature_loader.load_feature_sets(pairwise_gene_spec, False)
     
     # create output
-    Y = keras.utils.to_categorical(df[cfg['target_col']])
+    Y = np_utils.to_categorical(df[cfg['target_col']])
     
     # load train/test split 
     data = np.load(train_test_path)

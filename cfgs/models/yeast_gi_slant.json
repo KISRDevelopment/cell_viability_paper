@@ -40,7 +40,7 @@
                 },
                 {
                     "normalize": true,
-                    "path": "../generated-data/pairwise_features/ppc_yeast_shared_sgo.npy"
+                    "path": "../generated-data/pairwise_features/ppc_yeast_shared_go.npy"
                 }
             ]
         },
