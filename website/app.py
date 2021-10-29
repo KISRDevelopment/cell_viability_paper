@@ -2,6 +2,8 @@ from flask import Flask, request, send_from_directory, render_template, g, curre
 import db_layer 
 import lrm 
 import numpy as np 
+import waitress
+import sys 
 
 app = Flask(__name__)
 
@@ -64,7 +66,7 @@ def common_interactors():
         gene_id = gene_row['gene_id']
         full_names[k] = [gene_row['locus_tag'], gene_row['common_name']]
 
-        interactors = db.get_interactors(rp['species_id'], gene_id, rp['threshold'], rp['published_only'], rp['max_spl'])
+        interactors = db.get_interactors(rp['species_id'], gene_id, rp['threshold'], rp['published_only'])
         interactor_dicts[k] = interactors
 
         targets = set(interactors.keys())
@@ -101,8 +103,7 @@ def gi_pairs():
         rp['gene_a'], 
         rp['gene_b'], 
         rp['page'], 
-        rp['published_only'],
-        rp['max_spl'])
+        rp['published_only'])
 
     for r in rows:
         r['reported_gi'] = r['observed'] and r['observed_gi']
@@ -146,4 +147,11 @@ def close_db(e=None):
     if db is not None:
         db.close()
 
-init()
+if __name__ == "__main__":
+    init()
+
+    url_prefix = ''
+    if len(sys.argv) > 1:
+        url_prefix = sys.argv[1]
+    
+    waitress.serve(app, host='0.0.0.0', url_prefix=url_prefix, port=8090)

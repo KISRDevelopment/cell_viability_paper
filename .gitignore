@@ -2,3 +2,6 @@ __pycache__
 db.sqlite
 .ipynb_checkpoints
 Untitled.ipynb
+venv
+
+db.7z
