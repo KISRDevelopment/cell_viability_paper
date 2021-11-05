@@ -79,15 +79,18 @@ def compartment_ff(layer_sizes, hidden_activation, name, **kwargs):
 
     return apply 
 
-def compartment_loc(kernel_size, output_size, hidden_activation, name, locations, **kwargs):
+def compartment_loc(kernel_size, layer_sizes, hidden_activation, name, locations, **kwargs):
     """ 
         specialized compartment to handle localization features 
         a simple nn kernel is applied to the time series for each location and
         the outputs are passed through one final layer
     """
     nn = layers.Dense(kernel_size, activation=hidden_activation, name="loc_nn_%s" % name)
-    output_nn = layers.Dense(output_size, activation=hidden_activation, name="loc_output_%s" % name)
-
+    output_nns = [
+        layers.Dense(l, activation=hidden_activation, name="loc_output_%s_%d" % (name, l))
+        for l in layer_sizes
+    ]
+    
     def apply(input_node):
         comp_outputs = []
         input_name = friendly_name(input_node)
@@ -96,7 +99,8 @@ def compartment_loc(kernel_size, output_size, hidden_activation, name, locations
             output = nn(row_slice)
             comp_outputs.append(output)
         output = concatenate(comp_outputs, name='loc_preoutput_%s' % input_name)
-        output = output_nn(output)
+        for i in range(len(layer_sizes)):
+            output = output_nns[i](output)
 
         return output 
     

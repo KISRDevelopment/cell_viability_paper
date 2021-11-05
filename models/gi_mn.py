@@ -23,7 +23,6 @@ import scipy.sparse
 import models.feature_loader
 from termcolor import colored
 
-import tensorflowjs as tfjs 
 
 def main(cfg, rep, fold, output_path, print_results=True, return_model=False):
     K.clear_session()

@@ -23,7 +23,7 @@ import models.nn_arch as nn_arch
 import utils.eval_funcs as eval_funcs
 
 from termcolor import colored
-
+from keras.utils import np_utils
 def main(cfg, rep, fold, output_path, print_results=True):
     
     
@@ -34,7 +34,7 @@ def main(cfg, rep, fold, output_path, print_results=True):
     df = pd.read_csv(dataset_path)
     
     # create output
-    Y = keras.utils.to_categorical(df[cfg['target_col']])
+    Y = np_utils.to_categorical(df[cfg['target_col']])
     
     # load input features
     single_gene_spec = [s for s in cfg['spec'] if not s['pairwise']]
@@ -95,7 +95,10 @@ def main(cfg, rep, fold, output_path, print_results=True):
         loss = 'categorical_crossentropy'
         
     model = keras.models.Model(inputs=inputs_a, outputs=output_node)
-    model.compile(cfg['optimizer'], loss=loss)
+
+    
+    opt = tf.keras.optimizers.Nadam(learning_rate=cfg.get('learning_rate', 0.001))
+    model.compile(opt, loss=loss)
 
     if cfg.get("train_model", True):
         # setup early stopping
