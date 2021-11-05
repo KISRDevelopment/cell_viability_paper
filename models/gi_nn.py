@@ -99,7 +99,11 @@ def main(cfg, rep, fold, output_path, print_results=True, return_model=False):
         loss = 'categorical_crossentropy'
     
     model = keras.models.Model(inputs=inputs_a + inputs_b + inputs_ab, outputs=output_node)
-    model.compile(cfg['optimizer'], loss)
+
+
+    opt = tf.keras.optimizers.Nadam(learning_rate=cfg.get('learning_rate', 0.001))
+
+    model.compile(opt, loss)
     model.outputs[0]._uses_learning_phase = True
     
     # train

@@ -76,7 +76,7 @@
             "name" : "localization_hu",
             "hidden_activation" : "tanh",
             "kernel_size" : 5,
-            "output_size" : 5,
+            "layer_sizes" : [5],
             "type" : "loc",
             "pairwise" : false,
             "locations" : 16,
@@ -86,7 +86,7 @@
             "name" : "localization_rap",
             "hidden_activation" : "tanh",
             "kernel_size" : 5,
-            "output_size" : 5,
+            "layer_sizes" : [5],
             "type" : "loc",
             "pairwise" : false,
             "locations" : 16,
@@ -96,7 +96,7 @@
             "name" : "localization_wt3",
             "hidden_activation" : "tanh",
             "kernel_size" : 5,
-            "output_size" : 5,
+            "layer_sizes" : [5],
             "type" : "loc",
             "pairwise" : false,
             "locations" : 16,
@@ -172,5 +172,10 @@
     "scramble" : false,
     "task_path" : "../generated-data/train_sets/task_yeast_gi_hybrid",
     "target_col" : "bin",
-    "splits_path" : "../generated-data/splits/task_yeast_gi_hybrid_10reps_4folds_0.20valid.npz"
+    "splits_path" : "../generated-data/splits/task_yeast_gi_hybrid_10reps_4folds_0.20valid.npz",
+    "hyperparams" : {
+        "layer_sizes" : [[1], [5], [10], [5, 2]],
+        "embedding_size" : [1, 5, 10],
+        "learning_rate" : [0.1, 0.01, 0.001]
+    }
 }
