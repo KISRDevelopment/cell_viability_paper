@@ -11,6 +11,9 @@ if not os.path.exists('../generated-data/lit_tasks'):
 if not os.path.exists('../generated-data/lit_splits'):
     os.makedirs('../generated-data/lit_splits')
 
+utils.make_biogrid_dataset.BIOGRID_PATH = utils.make_biogrid_dataset.WU_BIOGRID_PATH
+utils.make_biogrid_dataset.PATHS = utils.make_biogrid_dataset.WU_PATHS
+
 # make biogrid dataset similar to the one used by Wu 2014
 utils.make_biogrid_dataset.main(4932, 0, "../generated-data/biogrid_old_yeast_sl")
 

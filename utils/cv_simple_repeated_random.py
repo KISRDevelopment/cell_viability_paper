@@ -4,7 +4,7 @@ import sys
 import pandas as pd 
 import numpy as np 
 import os 
-import keras.utils 
+from keras.utils import np_utils
 
 def main(path, reps, folds, valid_prop, output_path=None):
     
@@ -25,7 +25,7 @@ def main(path, reps, folds, valid_prop, output_path=None):
 def generate_cv_splits(path, reps, folds, valid_prop):
     
     df = pd.read_csv(path)
-    bins = keras.utils.to_categorical(df['bin'])
+    bins =np_utils.to_categorical(df['bin'])
 
     n = df.shape[0]
     

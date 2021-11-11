@@ -26,10 +26,10 @@ PATHS = [
 ]
 
 # OLD Biogrid (to replicate wu 2014)
-# BIOGRID_PATH = "../data-sources/biogrid-old/"
-# PATHS = [
-#     ("BIOGRID-SYSTEM-Synthetic_Lethality-3.0.64.mitab", 0)
-# ]
+WU_BIOGRID_PATH = "../data-sources/biogrid-old/"
+WU_PATHS = [
+    ("BIOGRID-SYSTEM-Synthetic_Lethality-3.0.64.mitab", 0)
+]
 
 def main(taxid, pub_threshold, output_path):
     taxid_str = "taxid:%d" % taxid
