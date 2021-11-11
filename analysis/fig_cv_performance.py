@@ -278,7 +278,7 @@ def per_class_roc(cfg):
             
             fpr, roc_curve = eval_funcs.average_roc_curve(path, klass)
             ix = (df['model'] == model_names[p]) & (df['bin'] == classes[klass])
-            aucroc = np.array(df[ix]['roc'])[0]
+            aucroc = np.mean(df[ix]['roc'])
             print(aucroc)
             ax.plot(fpr, roc_curve, linewidth=7, color=colors[p], label="%0.2f" % aucroc)
 

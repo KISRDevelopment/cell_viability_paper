@@ -28,6 +28,13 @@
             "fsize" : 46,
             "path": "../results/lit_alanislobato2013/acdd",
             "show": true
+        },
+        {
+            "name" : "Pandey 2010",
+            "color" : "#00ffea",
+            "cm_color" : "#00ffea",
+            "path": "../results/lit_pandey2010/mnmc.slif",
+            "show": true
         }
     ],
     "classes": [
