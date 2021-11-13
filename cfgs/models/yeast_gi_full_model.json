@@ -174,7 +174,7 @@
     "target_col" : "bin",
     "splits_path" : "../generated-data/splits/task_yeast_gi_hybrid_10reps_4folds_0.20valid.npz",
     "hyperparams" : {
-        "layer_sizes" : [[1], [5], [10], [5, 2]],
+        "layer_sizes" : [[1], [5], [10], [5, 2], [10, 5]],
         "embedding_size" : [1, 5, 10],
         "learning_rate" : [0.1, 0.01, 0.001]
     }
