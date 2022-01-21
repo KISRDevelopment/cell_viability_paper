@@ -15,13 +15,7 @@
             "path": "../results/task_pombe_gi/mn",
             "show": true
         },
-        {
-            "name": "D-OR",
-            "color": "#00CC00",
-            "cm_color": "#00CC00",
-            "path": "../results/task_pombe_gi/orm",
-            "show": true
-        },
+
         {
             "name": "Null",
             "color": "white",

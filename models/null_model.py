@@ -11,8 +11,10 @@ import numpy.random as rng
 import uuid
 
 import utils.eval_funcs
-import keras.utils 
+
 from termcolor import colored
+from keras.utils import np_utils
+
 def main(cfg, rep, fold, output_path, print_results=False):
     
 
@@ -24,7 +26,7 @@ def main(cfg, rep, fold, output_path, print_results=False):
     df = pd.read_csv(dataset_path)
     
     # create output
-    Y = keras.utils.to_categorical(df[cfg['target_col']])
+    Y = np_utils.to_categorical(df[cfg['target_col']])
     
     # load train/test split 
     data = np.load(train_test_path)

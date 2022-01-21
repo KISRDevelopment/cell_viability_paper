@@ -67,7 +67,7 @@ def main(cfg_path):
     cfg['models'] = [m for m in cfg['models'] if m['show']]
 
     overall_bacc(cfg)
-    per_class_figures(cfg)
+    #per_class_figures(cfg)
     per_class_roc(cfg)
     cms(cfg)
 
@@ -279,7 +279,7 @@ def per_class_roc(cfg):
             fpr, roc_curve = eval_funcs.average_roc_curve(path, klass)
             ix = (df['model'] == model_names[p]) & (df['bin'] == classes[klass])
             aucroc = np.mean(df[ix]['roc'])
-            print(aucroc)
+            print(np.sum(ix))
             ax.plot(fpr, roc_curve, linewidth=7, color=colors[p], label="%0.2f" % aucroc)
 
         

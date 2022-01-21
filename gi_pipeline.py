@@ -114,49 +114,49 @@ def load_cfg(path, **kwargs):
     Yeast Binary
 """
 
-models.cv.main("models.gi_nn", "cfgs/models/yeast_gi_refined_model.json", 
-    "../results/task_yeast_gi_hybrid_binary/refined", 
-    task_path="../generated-data/task_yeast_gi_hybrid",
-    splits_path="../generated-data/splits/task_yeast_gi_hybrid_full.npz",
-    num_processes = 20,
-    target_col = "is_neutral"
-)
+# models.cv.main("models.gi_nn", "cfgs/models/yeast_gi_refined_model.json", 
+#     "../results/task_yeast_gi_hybrid_binary/refined", 
+#     task_path="../generated-data/task_yeast_gi_hybrid",
+#     splits_path="../generated-data/splits/task_yeast_gi_hybrid_full.npz",
+#     num_processes = 20,
+#     target_col = "is_neutral"
+# )
 
-models.cv.main("models.gi_mn", "cfgs/models/yeast_gi_mn.json", 
-    "../results/task_yeast_gi_hybrid_binary/mn", 
+# models.cv.main("models.gi_mn", "cfgs/models/yeast_gi_mn.json", 
+#     "../results/task_yeast_gi_hybrid_binary/mn", 
 
-    task_path="../generated-data/task_yeast_gi_hybrid",
-    splits_path="../generated-data/splits/task_yeast_gi_hybrid_full.npz",
-    num_processes=20,
-    target_col = "is_neutral")
+#     task_path="../generated-data/task_yeast_gi_hybrid",
+#     splits_path="../generated-data/splits/task_yeast_gi_hybrid_full.npz",
+#     num_processes=20,
+#     target_col = "is_neutral")
 
-models.cv.main("models.null_model", "cfgs/models/yeast_gi_mn.json", 
-    "../results/task_yeast_gi_hybrid_binary/null", 
+# models.cv.main("models.null_model", "cfgs/models/yeast_gi_mn.json", 
+#     "../results/task_yeast_gi_hybrid_binary/null", 
 
-    task_path="../generated-data/task_yeast_gi_hybrid",
-    splits_path="../generated-data/splits/task_yeast_gi_hybrid_full.npz",
-    num_processes=20,
-    target_col = "is_neutral")
+#     task_path="../generated-data/task_yeast_gi_hybrid",
+#     splits_path="../generated-data/splits/task_yeast_gi_hybrid_full.npz",
+#     num_processes=20,
+#     target_col = "is_neutral")
 
 
-models.cv.main("models.gi_nn", "cfgs/models/yeast_gi_refined_model.json", 
-    "../results/task_yeast_gi_hybrid_binary/refined_no_sgo", 
+# models.cv.main("models.gi_nn", "cfgs/models/yeast_gi_refined_model.json", 
+#     "../results/task_yeast_gi_hybrid_binary/refined_no_sgo", 
 
-    task_path="../generated-data/task_yeast_gi_hybrid",
-    splits_path="../generated-data/splits/task_yeast_gi_hybrid_full.npz",
-    num_processes = 20,
-    remove_specs=["go"],
-    target_col = "is_neutral"
-)
+#     task_path="../generated-data/task_yeast_gi_hybrid",
+#     splits_path="../generated-data/splits/task_yeast_gi_hybrid_full.npz",
+#     num_processes = 20,
+#     remove_specs=["go"],
+#     target_col = "is_neutral"
+# )
 
-models.cv.main("models.gi_mn", "cfgs/models/yeast_gi_mn.json", 
-    "../results/task_yeast_gi_hybrid_binary/mn_no_sgo", 
+# models.cv.main("models.gi_mn", "cfgs/models/yeast_gi_mn.json", 
+#     "../results/task_yeast_gi_hybrid_binary/mn_no_sgo", 
 
-    task_path="../generated-data/task_yeast_gi_hybrid",
-    splits_path="../generated-data/splits/task_yeast_gi_hybrid_full.npz",
-    num_processes=20,
-    remove_specs=["sgo"],
-    target_col = "is_neutral")
+#     task_path="../generated-data/task_yeast_gi_hybrid",
+#     splits_path="../generated-data/splits/task_yeast_gi_hybrid_full.npz",
+#     num_processes=20,
+#     remove_specs=["sgo"],
+#     target_col = "is_neutral")
 
 # test
 # models.cv.main("models.gi_nn", "cfgs/models/yeast_gi_refined_model.json", 
@@ -207,62 +207,39 @@ models.cv.main("models.gi_mn", "cfgs/models/yeast_gi_mn.json",
     Costanzo data
 """
 
-# costanzo_task_path = "../generated-data/task_yeast_gi_costanzo"
-# costanzo_targets_path = "../generated-data/targets/task_yeast_gi_costanzo_bin_simple.npz"
-# costanzo_splits_path = "../generated-data/splits/task_yeast_gi_costanzo_10reps_4folds_0.20valid.npz"
+costanzo_task_path = "../generated-data/task_yeast_gi_costanzo"
+costanzo_targets_path = "../generated-data/targets/task_yeast_gi_costanzo_bin_simple.npz"
+costanzo_splits_path = "../generated-data/splits/task_yeast_gi_costanzo_10reps_4folds_0.20valid.npz"
 
-# models.cv.main("models.gi_nn", "cfgs/models/yeast_gi_full_model.json", 
-#     "../results/task_yeast_gi_costanzo/full", 
-#     num_processes = 10,
-#     task_path = costanzo_task_path,
-#     targets_path = costanzo_targets_path,
-#     splits_path = costanzo_splits_path
-# )
+models.cv.main("models.gi_nn", "cfgs/models/yeast_gi_full_model.json", 
+    "../results/task_yeast_gi_costanzo/full", 
+    num_processes = 10,
+    task_path = costanzo_task_path,
+    targets_path = costanzo_targets_path,
+    splits_path = costanzo_splits_path
+)
 
-# models.cv.main("models.gi_nn", "cfgs/models/yeast_gi_refined_model.json", 
-#     "../results/task_yeast_gi_costanzo_asym/refined", 
-#     num_processes = 20,
-#     task_path = costanzo_task_path,
-#     targets_path = costanzo_targets_path,
-#     splits_path = costanzo_splits_path
-# )
+models.cv.main("models.gi_nn", "cfgs/models/yeast_gi_refined_model.json", 
+    "../results/task_yeast_gi_costanzo/refined", 
+    num_processes = 20,
+    task_path = costanzo_task_path,
+    targets_path = costanzo_targets_path,
+    splits_path = costanzo_splits_path
+)
 
-# models.cv.main("models.gi_nn", "cfgs/models/yeast_gi_refined_model.json", 
-#     "../results/task_yeast_gi_costanzo_asym_binary/refined", 
-#     num_processes = 20,
-#     task_path = costanzo_task_path,
-#     targets_path = "../generated-data/targets/task_yeast_gi_costanzo_asym_bin_interacting.npz",
-#     splits_path = costanzo_splits_path
-# )
+models.cv.main("models.gi_mn", "cfgs/models/yeast_gi_mn.json", 
+    "../results/task_yeast_gi_costanzo/mn", 
+    num_processes=20,
+    task_path = costanzo_task_path,
+    targets_path = costanzo_targets_path,
+    splits_path = costanzo_splits_path)
 
-# models.cv.main("models.gi_mn", "cfgs/models/yeast_gi_mn.json", 
-#     "../results/task_yeast_gi_costanzo/mn", 
-#     num_processes=20,
-#     task_path = costanzo_task_path,
-#     targets_path = costanzo_targets_path,
-#     splits_path = costanzo_splits_path)
-
-# models.cv.main("models.gi_mn", "cfgs/models/yeast_gi_mn.json", 
-#     "../results/task_yeast_gi_costanzo/orm", 
-#     num_processes=20, type="orm",
-#     task_path = costanzo_task_path,
-#     targets_path = costanzo_targets_path,
-#     splits_path = costanzo_splits_path)
-
-# models.cv.main("models.null_model", "cfgs/models/yeast_gi_mn.json", 
-#     "../results/task_yeast_gi_costanzo/null", 
-#     num_processes=10,
-#     task_path = costanzo_task_path,
-#     targets_path = costanzo_targets_path,
-#     splits_path = costanzo_splits_path)
-
-# models.cv.main("models.gi_nn", "cfgs/models/yeast_gi_full_model.json", 
-#     "../results/task_yeast_gi_costanzo/null_scrambled", 
-#     num_processes=10,
-#     scramble=True,
-#     task_path = costanzo_task_path,
-#     targets_path = costanzo_targets_path,
-#     splits_path = costanzo_splits_path)
+models.cv.main("models.null_model", "cfgs/models/yeast_gi_mn.json", 
+    "../results/task_yeast_gi_costanzo/null", 
+    num_processes=10,
+    task_path = costanzo_task_path,
+    targets_path = costanzo_targets_path,
+    splits_path = costanzo_splits_path)
 
 # """
 #     Yeast Costanzo Binary
@@ -315,11 +292,11 @@ models.cv.main("models.gi_mn", "cfgs/models/yeast_gi_mn.json",
 #     num_processes = 20
 # )
 
-models.cv.main("models.gi_mn", "cfgs/models/pombe_gi_mn.json", 
-    "../results/task_pombe_gi/orm", 
-    type="orm",
-    num_processes = 20
-)
+# models.cv.main("models.gi_mn", "cfgs/models/pombe_gi_mn.json", 
+#     "../results/task_pombe_gi/orm", 
+#     type="orm",
+#     num_processes = 20
+# )
 
 # models.cv.main("models.null_model", "cfgs/models/pombe_gi_mn.json", 
 #     "../results/task_pombe_gi/null", 
@@ -391,82 +368,82 @@ targets_path = "../generated-data/targets/task_pombe_gi_bin_interacting.npz"
 # # Human
 # # """
 
-models.cv.main("models.gi_nn", "cfgs/models/human_gi_refined_model.json", 
-    "../results/task_human_gi/refined", 
-    num_processes = 20
-)
+# models.cv.main("models.gi_nn", "cfgs/models/human_gi_refined_model.json", 
+#     "../results/task_human_gi/refined", 
+#     num_processes = 20
+# )
 
-models.cv.main("models.gi_mn", "cfgs/models/human_gi_mn.json", 
-    "../results/task_human_gi/mn", 
-    num_processes = 20
-)
+# models.cv.main("models.gi_mn", "cfgs/models/human_gi_mn.json", 
+#     "../results/task_human_gi/mn", 
+#     num_processes = 20
+# )
 
-models.cv.main("models.null_model", "cfgs/models/human_gi_mn.json", 
-    "../results/task_human_gi/null", 
-    num_processes=20)
+# models.cv.main("models.null_model", "cfgs/models/human_gi_mn.json", 
+#     "../results/task_human_gi/null", 
+#     num_processes=20)
 
-models.cv.main("models.gi_nn", "cfgs/models/human_gi_refined_model.json", 
-    "../results/task_human_gi/refined_no_sgo", 
-    remove_specs=["go"],
-    num_processes = 20
-)
+# models.cv.main("models.gi_nn", "cfgs/models/human_gi_refined_model.json", 
+#     "../results/task_human_gi/refined_no_sgo", 
+#     remove_specs=["go"],
+#     num_processes = 20
+# )
 
-models.cv.main("models.gi_mn", "cfgs/models/human_gi_mn.json", 
-    "../results/task_human_gi/mn_no_sgo",
-    remove_specs=["sgo"], 
-    num_processes = 20
-)
+# models.cv.main("models.gi_mn", "cfgs/models/human_gi_mn.json", 
+#     "../results/task_human_gi/mn_no_sgo",
+#     remove_specs=["sgo"], 
+#     num_processes = 20
+# )
 
-models.cv.main("models.gi_nn", "cfgs/models/human_gi_refined_model.json", 
-    "../results/task_human_gi/refined_no_sgo_and_smf", 
-    remove_specs=["go","smf"],
-    num_processes = 20
-)
+# models.cv.main("models.gi_nn", "cfgs/models/human_gi_refined_model.json", 
+#     "../results/task_human_gi/refined_no_sgo_and_smf", 
+#     remove_specs=["go","smf"],
+#     num_processes = 20
+# )
 
-models.cv.main("models.gi_mn", "cfgs/models/human_gi_mn.json", 
-    "../results/task_human_gi/mn_no_sgo_and_smf",
-    remove_specs=["sgo","smf"], 
-    num_processes = 20
-)
+# models.cv.main("models.gi_mn", "cfgs/models/human_gi_mn.json", 
+#     "../results/task_human_gi/mn_no_sgo_and_smf",
+#     remove_specs=["sgo","smf"], 
+#     num_processes = 20
+# )
 
-# # """
-# # Dro
-# # """
+# # # """
+# # # Dro
+# # # """
 
-models.cv.main("models.gi_nn", "cfgs/models/dro_gi_refined_model.json", 
-    "../results/task_dro_gi/refined", 
-    num_processes = 20
-)
+# models.cv.main("models.gi_nn", "cfgs/models/dro_gi_refined_model.json", 
+#     "../results/task_dro_gi/refined", 
+#     num_processes = 20
+# )
 
-models.cv.main("models.gi_mn", "cfgs/models/dro_gi_mn.json", 
-    "../results/task_dro_gi/mn", 
-    num_processes = 20
-)
+# models.cv.main("models.gi_mn", "cfgs/models/dro_gi_mn.json", 
+#     "../results/task_dro_gi/mn", 
+#     num_processes = 20
+# )
 
-models.cv.main("models.null_model", "cfgs/models/dro_gi_mn.json", 
-    "../results/task_dro_gi/null", 
-    num_processes=20)
+# models.cv.main("models.null_model", "cfgs/models/dro_gi_mn.json", 
+#     "../results/task_dro_gi/null", 
+#     num_processes=20)
 
-models.cv.main("models.gi_nn", "cfgs/models/dro_gi_refined_model.json", 
-    "../results/task_dro_gi/refined_no_sgo", 
-    num_processes = 20,
-    remove_specs=["go"],
-)
+# models.cv.main("models.gi_nn", "cfgs/models/dro_gi_refined_model.json", 
+#     "../results/task_dro_gi/refined_no_sgo", 
+#     num_processes = 20,
+#     remove_specs=["go"],
+# )
 
-models.cv.main("models.gi_mn", "cfgs/models/dro_gi_mn.json", 
-    "../results/task_dro_gi/mn_no_sgo", 
-    num_processes = 20,
-    remove_specs=["sgo"]
-)
+# models.cv.main("models.gi_mn", "cfgs/models/dro_gi_mn.json", 
+#     "../results/task_dro_gi/mn_no_sgo", 
+#     num_processes = 20,
+#     remove_specs=["sgo"]
+# )
 
-models.cv.main("models.gi_nn", "cfgs/models/dro_gi_refined_model.json", 
-    "../results/task_dro_gi/refined_no_sgo_and_smf", 
-    num_processes = 20,
-    remove_specs=["go","smf"],
-)
+# models.cv.main("models.gi_nn", "cfgs/models/dro_gi_refined_model.json", 
+#     "../results/task_dro_gi/refined_no_sgo_and_smf", 
+#     num_processes = 20,
+#     remove_specs=["go","smf"],
+# )
 
-models.cv.main("models.gi_mn", "cfgs/models/dro_gi_mn.json", 
-    "../results/task_dro_gi/mn_no_sgo_and_smf", 
-    num_processes = 20,
-    remove_specs=["sgo","smf"]
-)
+# models.cv.main("models.gi_mn", "cfgs/models/dro_gi_mn.json", 
+#     "../results/task_dro_gi/mn_no_sgo_and_smf", 
+#     num_processes = 20,
+#     remove_specs=["sgo","smf"]
+# )

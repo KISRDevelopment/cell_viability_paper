@@ -22,12 +22,7 @@
             "path": "../results/task_yeast_gi_hybrid_train_test/mn",
             "show": true
         },
-        {
-            "name": "D-OR",
-            "color": "#00CC00",
-            "path": "../results/task_yeast_gi_hybrid_train_test/orm",
-            "show": true
-        },
+
         {
             "name": "Null",
             "color": "#c9c9c9",

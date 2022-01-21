@@ -22,12 +22,7 @@
             "path": "../results/task_yeast_gi_costanzo/mn",
             "show": true
         },
-        {
-            "name": "D-OR",
-            "color": "#00CC00",
-            "path": "../results/task_yeast_gi_costanzo/orm",
-            "show": true
-        },
+
         {
             "name": "Null",
             "color": "white",

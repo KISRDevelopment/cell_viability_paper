@@ -14,12 +14,7 @@
             "path": "../results/task_pombe_smf/mn",
             "show": true
         },
-        {
-            "name": "S-OR",
-            "color": "#00CC00",
-            "path": "../results/task_pombe_smf/orm",
-            "show": true
-        },
+
         {
             "name": "Null",
             "color": "white",
