@@ -20,7 +20,7 @@ import numpy.random as rng
 import uuid
 
 import utils.eval_funcs as eval_funcs
-
+from keras.utils import np_utils
 from termcolor import colored
 
 def main(cfg, rep, fold, output_path, print_results=True):
@@ -32,7 +32,7 @@ def main(cfg, rep, fold, output_path, print_results=True):
     df = pd.read_csv(dataset_path)
     
     # create output
-    Y = keras.utils.to_categorical(df[cfg['target_col']])
+    Y = np_utils.to_categorical(df[cfg['target_col']])
     
     # read features
     all_features, labels = read_features(cfg)
@@ -72,7 +72,6 @@ def main(cfg, rep, fold, output_path, print_results=True):
     valid_F = F[valid_ix, :]
     test_F = F[test_ix, :]
     
-
     if cfg.get("bootstrap_training", False):
         print(colored("******** BOOTSTRAPPING TRAINING ***********", "blue"))
         rix = rng.choice(train_df.shape[0], train_df.shape[0], replace=True)
