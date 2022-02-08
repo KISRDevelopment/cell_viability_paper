@@ -141,9 +141,11 @@ def main(cfg, rep, fold, output_path, print_results=True, return_model=False):
         return model, fsets
     
 
-    test_iterator = create_data_iterator(test_df, test_Y, fsets, cfg, False)
+    batch_size = cfg.get('test_batch_size', cfg['batch_size'])
+
+    test_iterator = create_data_iterator(test_df, test_Y, fsets, cfg, batch_size, False)
         
-    preds = model.predict(test_iterator(), steps=np.ceil(test_df.shape[0] / cfg['batch_size']))
+    preds = model.predict(test_iterator(), steps=np.ceil(test_df.shape[0] / batch_size))
     y_target = np.argmax(test_Y, axis=1)
 
 
@@ -201,10 +203,12 @@ def load_features(cfg):
 
     return processors, feature_labels
 
-def create_data_iterator(df, y, processors, cfg, shuffle=True):
+def create_data_iterator(df, y, processors, cfg, batch_size=None, shuffle=True):
     idx = np.arange(df.shape[0])
-    batch_size = cfg['batch_size']
+    if batch_size is None:
+        batch_size = cfg['batch_size']
 
+    print(batch_size)
 
     def iterator():
         while True:

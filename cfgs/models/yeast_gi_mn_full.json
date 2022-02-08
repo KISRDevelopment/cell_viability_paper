@@ -1,0 +1,42 @@
+{
+    "spec" : [
+        {
+            "name" : "smf",
+            "path" : "../generated-data/features/ppc_yeast_smf_binned.npz",
+            "processor" : "BinnedSmfProcessor"
+        },
+        {
+            "name" : "sgo",
+            "path" : "../generated-data/features/ppc_yeast_common_sgo.npz",
+            "processor" : "GoProcessorSum"
+        },
+        {
+            "name" : "spl",
+            "normalize" : true,
+            "path" : "../generated-data/pairwise_features/ppc_yeast_shortest_path_len.npy",
+            "processor" : "PairwiseProcessor"
+        },
+        {
+            "name" : "topology",
+            "path" : "../generated-data/features/ppc_yeast_topology.npz",
+            "feature" : "lid",
+            "processor" : "StandardProcessor"
+        }
+    ],
+    "optimizer": "nadam",
+    "epochs": 1,
+    "verbose": true,
+    "patience": 10,
+    "balanced_loss": true,
+    "batch_size": 10000,
+    "test_batch_size": 100000,
+    "scramble" : false,
+    "train_model" : true,
+    "trained_model_path" : "../tmp/mnmodel",
+    "task_path" : "../generated-data/task_yeast_gi_hybrid",
+    "target_col" : "is_neutral",
+    "splits_path" : "../generated-data/splits/task_yeast_gi_hybrid_full.npz",
+    "type" : "mn",
+    "save_tjs" : false,
+    "tjs_path" : "../tmp/yeast_gi_mn"
+}
