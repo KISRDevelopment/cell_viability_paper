@@ -1,6 +1,20 @@
 import models.gi_mn
 import json 
 import os 
+import numpy as np
+
+# create GO without some terms
+# exclude_GOIDS = ['GO:0016791', 'GO:0016301', 'GO:0008134']
+# d = np.load("../generated-data/features/ppc_yeast_common_sgo.npz")
+# labels = d['feature_labels']
+
+# ix = [i for i in range(d['F'].shape[1]) if labels[i] not in exclude_GOIDS]
+
+# F = d['F'][:,ix]
+# labels = labels[ix]
+
+# np.savez("../generated-data/features/ppc_yeast_common_sgo_strict.npz", F=F, feature_labels=labels)
+
 
 # os.makedirs("../results/gi_cross_pred/", exist_ok=True)
 

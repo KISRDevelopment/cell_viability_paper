@@ -7,7 +7,7 @@
         },
         {
             "name" : "sgo",
-            "path" : "../generated-data/features/ppc_yeast_common_sgo.npz",
+            "path" : "../generated-data/features/ppc_yeast_common_sgo_strict.npz",
             "processor" : "GoProcessorSum"
         }
     ],
