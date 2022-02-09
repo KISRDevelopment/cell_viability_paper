@@ -1,5 +1,5 @@
 {
-    "output_path": "../figures/cv_gi_bacc_reduction/",
+    "output_path": "../figures/double_gi_bacc_reduction.png",
     "ref_model" : {
         "color": "#3A90FF",
         "path": "../results/task_yeast_gi_hybrid_fs/mn"
@@ -7,10 +7,16 @@
     "models": [
         
         {
-            "name": "No Topology",
+            "name": "No LID",
             "color": "magenta",
             "fsize" : 50,
-            "path": "../results/task_yeast_gi_hybrid_fs/mn_no_topology"
+            "path": "../results/task_yeast_gi_hybrid_fs/mn_no_lid"
+        },
+        {
+            "name": "No SPL",
+            "color": "#9467bd",
+            "fsize" : 50,
+            "path": "../results/task_yeast_gi_hybrid_fs/mn_no_spl"
         },
         {
             "name": "No sGO",

@@ -46,9 +46,6 @@ def main(cfg_path):
     if 'plot_cfg' in cfg:
         plot_cfg.update(cfg['plot_cfg'])
 
-    if not os.path.exists(cfg['output_path']):
-        os.makedirs(cfg['output_path'])
-
     cfg['n_models'] = len(cfg['models'])
 
     overall_bacc(cfg)
@@ -168,7 +165,7 @@ def overall_bacc(cfg):
     ax.set_ylim(ylim)
     plt.setp(ax.spines.values(), linewidth=plot_cfg["border_size"], color='black')
 
-    plt.savefig("%s/%s" % (cfg['output_path'], "/overall_bacc.png"), bbox_inches='tight', dpi=100)
+    plt.savefig(cfg['output_path'], bbox_inches='tight', dpi=100)
 
 
 if __name__ == "__main__":
