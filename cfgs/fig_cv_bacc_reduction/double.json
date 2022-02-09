@@ -1,0 +1,33 @@
+{
+    "output_path": "../figures/cv_gi_bacc_reduction/",
+    "ref_model" : {
+        "color": "#3A90FF",
+        "path": "../results/task_yeast_gi_hybrid_fs/mn"
+    },
+    "models": [
+        
+        {
+            "name": "No Topology",
+            "color": "magenta",
+            "fsize" : 50,
+            "path": "../results/task_yeast_gi_hybrid_fs/mn_no_topology"
+        },
+        {
+            "name": "No sGO",
+            "color": "cyan",
+            "fsize" : 50,
+            "path": "../results/task_yeast_gi_hybrid_fs/mn_no_sgo"
+        },
+        {
+            "name": "No SMF",
+            "color": "orange",
+            "fsize" : 50,
+            "path": "../results/task_yeast_gi_hybrid_fs/mn_no_smf"
+        }
+    ],
+    
+    "ylim": [
+        0,
+        25
+    ]
+}

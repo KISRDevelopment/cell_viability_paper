@@ -1,0 +1,34 @@
+{
+    "output_path": "../figures/cv_smf_bacc_reduction/",
+    "ref_model" : {
+        "name": "S-MN",
+        "color": "#3A90FF",
+        "path": "../results/yeast_smf_30_fs/mn"
+    },
+    "models": [
+        
+        {
+            "name": "No Topology",
+            "color": "magenta",
+            "fsize" : 50,
+            "path": "../results/yeast_smf_30_fs/mn_no_topology"
+        },
+        {
+            "name": "No sGO",
+            "color": "cyan",
+            "fsize" : 50,
+            "path": "../results/yeast_smf_30_fs/mn_no_sgo"
+        },
+        {
+            "name": "No Homology",
+            "color": "orange",
+            "fsize" : 50,
+            "path": "../results/yeast_smf_30_fs/mn_no_redundancy"
+        }
+    ],
+
+    "ylim": [
+        0,
+        25
+    ]
+}

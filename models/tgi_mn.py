@@ -23,7 +23,6 @@ import scipy.sparse
 import models.feature_loader
 from termcolor import colored
 
-import tensorflowjs as tfjs 
 
 def main(cfg, rep, fold, output_path, print_results=True, return_model=False):
     K.clear_session()
@@ -124,9 +123,6 @@ def main(cfg, rep, fold, output_path, print_results=True, return_model=False):
         if cfg.get("trained_model_path", None) is not None:
             print("Saving model")
             model.save_weights(cfg["trained_model_path"])
-
-        if cfg.get("save_tjs", False):
-            tfjs.converters.save_keras_model(model, cfg["tjs_path"])
 
     else:
         
