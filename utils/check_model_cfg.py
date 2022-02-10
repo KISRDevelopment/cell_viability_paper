@@ -13,3 +13,6 @@ print(d['cm'] / np.sum(d['cm'], axis=1, keepdims=True))
 if 'labels' in d:
     print(d['labels'])
     print(len(d['labels']))
+
+print(list(d.keys()))
+print(len(d['y_target']))
