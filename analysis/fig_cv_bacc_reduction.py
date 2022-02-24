@@ -136,7 +136,7 @@ def overall_bacc(cfg):
             stars = '*' * eval_funcs.compute_stars(pvalue, adjusted_alpha)
             
             target_color = cfg['ref_model']['color']
-            ax.text(i, np.mean(a_drop) + np.std(a_drop) + yoffset, stars, color=target_color, ha="center", va="center", weight='bold', fontsize=plot_cfg['stars_label_size'])
+            #ax.text(i, np.mean(a_drop) + np.std(a_drop) + yoffset, stars, color=target_color, ha="center", va="center", weight='bold', fontsize=plot_cfg['stars_label_size'])
             yoffset += incr_val
         
 
