@@ -1,4 +1,3 @@
-import os 
 import sys 
 import pandas as pd 
 import numpy as np 
@@ -13,7 +12,7 @@ def main(gpath, cell_smf_task_path, output_path, use_haploinsufficient=False, de
     cell_sick_genes = set(task_df[ix]['gene'])
     ix = task_df['bin'] == 2
     cell_viable_genes = set(task_df[ix]['gene'])
-    cell_genes = set(task_df['gene'])
+    
     G = nx.read_gpickle(gpath)
     nodes = sorted(G.nodes())
     node_ix = dict(zip(nodes, range(len(nodes))))

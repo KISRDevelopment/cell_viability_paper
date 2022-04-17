@@ -1,16 +1,9 @@
-import os
 import pandas as pd
 import numpy as np
-import re
-import scipy.stats as stats
-import sys
 import networkx as nx
-from collections import defaultdict
 import numpy.random as rng 
-import pickle
-import itertools 
 
-def main(gpath, biogrid_path, smf_binned_path, output_path, n_samples=1000000, with_smf_only=True):
+def main(gpath, biogrid_path, smf_task_path, output_path, n_samples=1000000, with_smf_only=True):
     
     biogrid_df = pd.read_csv(biogrid_path)
     biogrid_pairs = to_pairs(biogrid_df)
@@ -20,11 +13,10 @@ def main(gpath, biogrid_path, smf_binned_path, output_path, n_samples=1000000, w
     node_ix = dict(zip(nodes, np.arange(len(nodes))))
     
     if with_smf_only:
-        d = np.load(smf_binned_path)
-        F_smf = d['F']
-        ix_has_smf = np.sum(F_smf, axis=1) > 0
-        nodes = nodes[ix_has_smf]
+        smf_df = pd.read_csv(smf_task_path)
+        nodes = list(set(smf_df['gene']))
         print("# nodes with SMF: %d" % len(nodes))
+        genes_with_smf = list(set(smf_df['id']))
 
     N = len(nodes)
     combs = N*(N-1)/2
@@ -57,11 +49,7 @@ def main(gpath, biogrid_path, smf_binned_path, output_path, n_samples=1000000, w
     print([np.sum(df['bin'] == b) for b in [0,1,2,3]])
 
     if with_smf_only:
-        a_smf = F_smf[df['a_id'],:]
-        b_smf = F_smf[df['b_id'],:]
-        ix_a_no_smf = np.sum(a_smf, axis=1) == 0
-        ix_b_no_smf = np.sum(b_smf, axis=1) == 0
-        ix_no_smf_either = ix_a_no_smf | ix_b_no_smf
+        ix_no_smf_either = ~df['a_id'].isin(genes_with_smf) | ~df['b_id'].isin(genes_with_smf)
         df = df[~ix_no_smf_either]
         print("After filtering out pairs without SMF:")
         print("Data size: ", df.shape)

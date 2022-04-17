@@ -1,15 +1,6 @@
-import os
 import pandas as pd
 import numpy as np
-import re
-import scipy.stats as stats
-import sys
-import networkx as nx
 from collections import defaultdict
-import numpy.random as rng 
-import pickle
-import json 
-import itertools
 
 BIOGRID_PATH = '../data-sources/dro/gene_genetic_interactions_fb_2020_01.tsv'
 

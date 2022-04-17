@@ -11,7 +11,7 @@ import pickle
 
 POMBE_GI = "../data-sources/pombe/Dataset S2 - Averaged E-MAP one allele per gene.txt"
 
-def main(gpath, biogrid_path, binned_smf_path, output_path):
+def main(gpath, biogrid_path, smf_path, output_path):
     
     gi_df = read_source_gi()
     vals = np.array(gi_df)
@@ -54,13 +54,9 @@ def main(gpath, biogrid_path, binned_smf_path, output_path):
     print([np.sum(df['bin'] == b) for b in [0,1,2,3]])
 
     # filter out entries without SMF
-    d = np.load(binned_smf_path)
-    F_smf = d['F']
-    a_smf = F_smf[df['a_id'],:]
-    b_smf = F_smf[df['b_id'],:]
-    ix_a_no_smf = np.sum(a_smf, axis=1) == 0
-    ix_b_no_smf = np.sum(b_smf, axis=1) == 0
-    ix_no_smf_either = ix_a_no_smf | ix_b_no_smf
+    smf_df = pd.read_csv(smf_path)
+    genes_with_smf = set(smf_df['id'])
+    ix_no_smf_either = ~df['a_id'].isin(genes_with_smf) | ~df['b_id'].isin(genes_with_smf)
     df = df[~ix_no_smf_either]
     print("After filtering out pairs without SMF:")
     print("Data size: ", df.shape)

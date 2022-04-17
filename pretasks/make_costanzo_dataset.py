@@ -5,16 +5,10 @@
 # It also filters entries where either gene in the pair is essential
 # yet not temp sensetive allele, and vice versa.
 #
-
-import os
 import pandas as pd
 import numpy as np
 import re
-import scipy.stats as stats
-import sys
 from collections import defaultdict
-import json 
-
 import utils.yeast_name_resolver
 
 nr = utils.yeast_name_resolver.NameResolver()

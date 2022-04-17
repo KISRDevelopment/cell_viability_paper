@@ -1,11 +1,8 @@
-import os
 import pandas as pd
 import numpy as np
 import scipy.stats as stats
 import sys
 import networkx as nx
-from collections import defaultdict
-import json 
 
 def main(gpath, cell_smf_task_path, output_path):
     
@@ -41,20 +38,6 @@ def main(gpath, cell_smf_task_path, output_path):
     organism_lethal_genes = set(df_allele[ix]['gene'])
     
     print("Organismal lethal: %d" % len(organism_lethal_genes))
-
-    # pupal_ix = ix & df_allele['phenotype'].str.lower().str.contains('pupal')
-    # nonpupal_ix = ix & ~df_allele['phenotype'].str.lower().str.contains('pupal')
-
-    # pupal_genes = set(df_allele[pupal_ix]['gene'])
-    # nonpupal_genes = set(df_allele[nonpupal_ix]['gene'])
-
-    # # want pure pupal genes
-    
-    # print("Of which pupal: %d" % len(pupal_genes))
-    # pupal_genes = pupal_genes - nonpupal_genes
-
-    # print("Of which pupal: %d" % len(pupal_genes))
-    # print("%d" % len(nonpupal_genes - pupal_genes))
 
     coding_set = set(edf['gene'])
 

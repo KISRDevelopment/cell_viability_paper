@@ -4,6 +4,7 @@
 ## File Description
 
 - `ppc.py` creates the protein-protein interaction networks for the budding yeast, fission yeast, human, and fruit fly. 
+- `create_tasks.py` generates the single-, double-, and triple-mutant tasks studied in the paper. It assumes that `ppc.py` has already been executed.
 
 This repository includes the code to process source data and run all experiments and analyses in the paper. 
 

@@ -1,17 +1,11 @@
-import os
 import pandas as pd
 import numpy as np
-import re
-import scipy.stats as stats
 import sys
 import networkx as nx
-from collections import defaultdict
 
-COSTANZO_PATH = '../generated-data/costanzo_gi'
-
-def main(gpath, temps, allowed_combs, output_path, neg_thres=-0.08, pos_thres=0.08):
+def main(gpath, pretask_path, temps, allowed_combs, output_path, neg_thres=-0.08, pos_thres=0.08):
     
-    df = pd.read_csv(COSTANZO_PATH)
+    df = pd.read_csv(pretask_path)
 
     # filter based on tempreatures
     ix = (df['temp'].isin(temps))

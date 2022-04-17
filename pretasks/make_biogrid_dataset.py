@@ -1,12 +1,8 @@
 import os
 import pandas as pd
 import numpy as np
-import re
-import scipy.stats as stats
 import sys
 from collections import defaultdict
-import numpy.random as rng 
-import pickle
 import utils.yeast_name_resolver
 
 thismodule = sys.modules[__name__]
@@ -23,12 +19,6 @@ PATHS = [
     ("BIOGRID-SYSTEM-Dosage_Rescue-3.4.156.mitab", 3),
     ("BIOGRID-SYSTEM-Synthetic_Rescue-3.4.156.mitab", 3),
     ("BIOGRID-SYSTEM-Positive_Genetic-3.4.156.mitab", 2)
-]
-
-# OLD Biogrid (to replicate wu 2014)
-WU_BIOGRID_PATH = "../data-sources/biogrid-old/"
-WU_PATHS = [
-    ("BIOGRID-SYSTEM-Synthetic_Lethality-3.0.64.mitab", 0)
 ]
 
 def main(taxid, pub_threshold, output_path):
