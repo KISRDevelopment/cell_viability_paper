@@ -1,11 +1,11 @@
 import pandas as pd 
-import json 
-import sys 
+import json
 import numpy as np 
 
 MAP_FILE = "../data-sources/dro/fbgn_NAseq_Uniprot_fb_2020_01.tsv"
 
 def main():
+    print("Creating Dmel Entrez -> FBGN map")
 
     df = pd.read_csv(MAP_FILE, sep='\t', header=4, na_filter=True)
 
@@ -26,7 +26,7 @@ def main():
             
             mapping[int(en_id)] = fb_id
     
-    with open('../tmp/dro_gene_map.json', 'w') as f:
+    with open('../generated-data/dro_gene_map.json', 'w') as f:
         json.dump(mapping, f, indent=4)
 
 if __name__ == "__main__":

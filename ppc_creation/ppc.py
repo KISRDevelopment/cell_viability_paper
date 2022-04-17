@@ -1,4 +1,3 @@
-import os
 import sys
 import pandas as pd
 import networkx as nx
@@ -20,6 +19,7 @@ r'../data-sources/biogrid/BIOGRID-SYSTEM-Protein-peptide-3.4.156.mitab.txt',
 
 def main(organism, output):
 
+    print("%s -> %s" % (organism, output))
     reader = read_mitab_file
     if organism == 'yeast':
         genes_to_remove = ['yar062w  yar062w', 'yir044c  yir044c']
@@ -49,7 +49,7 @@ def main(organism, output):
 
     elif organism == "dro":
         genes_to_remove = []
-        with open('../tmp/dro_gene_map.json', 'r') as f:
+        with open('../generated-data/dro_gene_map.json', 'r') as f:
             en_fbgn = json.load(f)
         gc_only = False 
         extractor = lambda s: dro_extract_locus_tag(s, en_fbgn)

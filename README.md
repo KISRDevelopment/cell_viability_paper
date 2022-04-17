@@ -1,5 +1,10 @@
 # Predicting and explaining the impact of genetic disruptions and interactions on cell and organismal viability 
 
+
+## File Description
+
+- `ppc.py` creates the protein-protein interaction networks for the budding yeast, fission yeast, human, and fruit fly. 
+
 This repository includes the code to process source data and run all experiments and analyses in the paper. 
 
 The code relies on Python 3.6+ and requires Tensorflow 2+ for modeling. 
