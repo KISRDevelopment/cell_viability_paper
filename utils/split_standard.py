@@ -4,7 +4,7 @@ from sklearn.model_selection import StratifiedKFold, RepeatedStratifiedKFold
 
 SEED = 425345
 rng = np.random.RandomState(SEED)
-def main(dataset_path, reps, folds, dev_test, test_n, output_path):
+def main(dataset_path, reps, folds, dev_test, test_n, output_path, **kwargs):
 
     smf_df = pd.read_csv(dataset_path)
     y = np.array(smf_df['bin'])
@@ -49,10 +49,10 @@ def main(dataset_path, reps, folds, dev_test, test_n, output_path):
         splits[i, :] = split
         
         rep, fold = (i // folds), (i % folds)
-        print_props("[%d, %d] Train props:" % (rep,fold), smf_df, split == 1)
-        print_props("[%d, %d] Valid props:"% (rep,fold), smf_df, split == 2)
-        print_props("[%d, %d] Test props:"% (rep,fold), smf_df, split == 3)
-        print()
+        # print_props("[%d, %d] Train props:" % (rep,fold), smf_df, split == 1)
+        # print_props("[%d, %d] Valid props:"% (rep,fold), smf_df, split == 2)
+        # print_props("[%d, %d] Test props:"% (rep,fold), smf_df, split == 3)
+        # print()
 
         i+=1
 
