@@ -12,7 +12,7 @@ from Bio import SeqIO
 from utils import yeast_name_resolver
 import re 
 
-BLAST_COMMAND = "blastp -query %s -db %s -outfmt '6 qseqid sseqid nident positive mismatch gaps gapopen length pident ppos evalue bitscore' -max_hsps 1 -evalue 0.01 -out %s -seg yes"
+BLAST_COMMAND = "blastp -query %s -db %s -outfmt '6 qseqid sseqid nident positive mismatch gaps gapopen length pident ppos evalue bitscore' -max_hsps 1 -evalue 0.01 -out %s -seg yes -num_threads 32"
 res = yeast_name_resolver.NameResolver()
 
 def main(organism, gpath):

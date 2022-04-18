@@ -5,6 +5,9 @@
 
 - `ppc.py` creates the protein-protein interaction networks for the budding yeast, fission yeast, human, and fruit fly. 
 - `create_tasks.py` generates the single-, double-, and triple-mutant tasks studied in the paper. It assumes that `ppc.py` has already been executed.
+- `create_splits.py` generates the development/test splits, and the cross-validation splits for all tasks.
+- `create_features.py` creates the single and pairwise gene features for all four organisms. This requires the `owltool` application from geneontology.org to be present in `../tools`, and requires an NCBI-Blast+ installation (on Ubuntu, this can be installed via `sudo apt install ncbi-blast+`)
+
 
 This repository includes the code to process source data and run all experiments and analyses in the paper. 
 
