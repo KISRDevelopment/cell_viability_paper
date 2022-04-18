@@ -4,13 +4,14 @@ from sklearn.model_selection import StratifiedKFold, RepeatedStratifiedKFold
 
 SEED = 425345
 rng = np.random.RandomState(SEED)
-def main(dataset_path, reps, folds, dev_test, test_n, output_path, **kwargs):
+def main(dataset_path, reps, folds, valid_p, dev_test, test_p, output_path, **kwargs):
 
     smf_df = pd.read_csv(dataset_path)
     y = np.array(smf_df['bin'])
 
     # split data into development and testing
     if dev_test:
+        test_n = int(1/test_p)
         is_dev = split_train_test_stratified(test_n, y)
         dev_indecies = np.where(is_dev)[0]
     else:
@@ -28,7 +29,8 @@ def main(dataset_path, reps, folds, dev_test, test_n, output_path, **kwargs):
         train_y = y[train_indecies]
         
         # create train/validation out of training set
-        is_train = split_train_test_stratified(5, train_y)
+        valid_n = int(1/valid_p)
+        is_train = split_train_test_stratified(valid_n, train_y)
         
         valid_indecies = train_indecies[~is_train]
         train_indecies = train_indecies[is_train]
@@ -62,7 +64,12 @@ def main(dataset_path, reps, folds, dev_test, test_n, output_path, **kwargs):
     if dev_test:
         assert np.all(np.sum(splits, axis=0)[~is_dev] == 0)
     
-    np.savez(output_path, splits=splits, reps=reps, folds=folds)
+    np.savez(output_path, splits=splits, 
+                          reps=reps, 
+                          folds=folds,
+                          valid_p=valid_p,
+                          dev_test=dev_test,
+                          test_p=test_p)
 
 def split_train_test_stratified(n_splits, y):
     """ Just do a single stratified training and testing split """
