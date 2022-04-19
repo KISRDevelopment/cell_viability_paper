@@ -3,6 +3,7 @@ import tensorflow.keras as keras
 import numpy as np
 import json 
 import pandas as pd 
+import sklearn.metrics 
 
 def train_model(model_spec, train_df, valid_df):
     
@@ -131,40 +132,82 @@ def weighted_categorical_xentropy(y_true, y_pred):
 
     return -tf.reduce_sum(xe / weights)
 
-def main(spec_path, dataset_path, splits_path, rep):
-    rep = int(rep)
+def train_and_evaluate_model(model_spec, df, split, model_output_path=None, train_ids=[1], valid_ids=[2], test_ids=[3]):
+    
+    add_extra_info_to_spec(model_spec, df)
 
-    df = pd.read_csv(dataset_path)
-
-    model_spec = load_spec(spec_path, df)
-
-    split = load_split(splits_path, rep)
-
-    train_ix = split == 1
-    valid_ix = split == 2
-    test_ix = split == 3
+    train_ix = np.isin(split, train_ids)
+    valid_ix = np.isin(split, valid_ids)
+    test_ix = np.isin(split, test_ids)
 
     train_df = df[train_ix]
     valid_df = df[valid_ix]
     test_df = df[test_ix]
 
     model, mus, stds = train_model(model_spec, train_df, valid_df)
+    
+    if model_output_path is not None:
+        weights = model.get_weights()
+        np.savez(model_output_path,
+            model_spec=model_spec, 
+            weights=np.array(weights, dtype=object), 
+            mus=np.array(mus, dtype=object), 
+            stds=np.array(stds, dtype=object))
 
-    test_inputs = create_inputs(model_spec, test_df)
+
+    return evaluate_model(model_output_path, test_df)
+    
+def evaluate_model(saved_model_path, df):
+
+    d = np.load(saved_model_path, allow_pickle=True)
+    weights = d['weights']
+    mus = d['mus']
+    stds = d['stds']
+    model_spec = d['model_spec'].item()
+    
+    model = create_model(model_spec, model_spec['n_output_dim'])
+    model.set_weights(weights)
+
+    test_inputs = create_inputs(model_spec, df)
     test_inputs, _, _ = normalize_inputs(model_spec, test_inputs, mus, stds)
+    
     preds = model.predict(test_inputs, batch_size=1000000)
+    
+    r = evaluate(np.array(df[model_spec['target_col']]), preds)
+    
+    return r
 
-    print(preds.shape)
+def evaluate(ytrue, preds):
+    
+    yhat = np.argmax(preds, axis=1)
+
+    bacc = sklearn.metrics.balanced_accuracy_score(ytrue, yhat)
+    acc = sklearn.metrics.accuracy_score(ytrue, yhat)
+    cm = sklearn.metrics.confusion_matrix(ytrue, yhat)
+
+    Ytrue = keras.utils.to_categorical(ytrue)
+    auc_roc = sklearn.metrics.roc_auc_score(Ytrue, preds, average=None)
+
+    print("Accuracy: %0.2f" % acc)
+    print("Balanced Accuracy: %0.2f" % bacc)
+    print("AUC-ROC: ", auc_roc)
+    print("Confusion Matrix: ")
+    print(cm)
+
+    return {
+        "bacc" : bacc,
+        "acc" : acc,
+        "auc_roc" : auc_roc.tolist(),
+        "cm" : cm.tolist()
+    }
+
 def load_split(splits_path, rep):
 
     d = np.load(splits_path)
     splits = d['splits']
     return splits[rep,:]
 
-def load_spec(spec_path, df):
-
-    with open(spec_path, 'r') as f:
-        model_spec = json.load(f)
+def add_extra_info_to_spec(model_spec, df):
 
     if len(model_spec['selected_feature_sets']) == 0:
         model_spec['selected_feature_sets'] = list(model_spec['feature_sets'].keys())
@@ -177,9 +220,23 @@ def load_spec(spec_path, df):
 
     # calculate output dimension size (number of classes)
     model_spec['n_output_dim'] = np.unique(df[model_spec['target_col']]).shape[0]
-    
-    return model_spec
 
 if __name__ == "__main__":
     import sys 
-    main(*sys.argv[1:])
+
+    model_spec_path = sys.argv[1]
+    dataset_path = sys.argv[2]
+    splits_path = sys.argv[3]
+    split = int(sys.argv[4])
+    model_output_path = sys.argv[5]
+
+    with open(model_spec_path, 'r') as f:
+        model_spec = json.load(f)
+    
+    df = pd.read_csv(dataset_path)
+
+    splits = np.load(splits_path)['splits']
+    split = splits[split,:]
+
+    train_and_evaluate_model(model_spec, df, split, model_output_path)
+

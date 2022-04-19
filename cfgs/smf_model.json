@@ -1,4 +1,5 @@
 {
+    "class" : "nn_single",
     "modules" : {
         "topology" : {
             "layer_sizes" : [5],
