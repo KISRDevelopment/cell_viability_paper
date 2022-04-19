@@ -32,7 +32,7 @@ def main():
                                 'localization_rap',
                                 'localization_wt3'
                             ], "../generated-data/dataset_yeast_smf")
-    
+    exit()
     compile_dataset("../generated-data/task_pombe_smf",
                     [
                         "../generated-data/features/ppc_pombe_topology.npz",
@@ -116,7 +116,7 @@ def main():
                         "sgo",
                         "redundancy"
                     ], "../generated-data/dataset_dro_smf_mo_v")
-
+   
     yeast_features_spec = [
             {
                 "path" : "../generated-data/pairwise_features/ppc_yeast_shortest_path_len.npy",
@@ -210,7 +210,7 @@ def compile_dataset(path, feature_files, feature_sets, output_path):
             for i in range(F.shape[1]):
                 sub_F = F[:, i, :]
                 f = sub_F[gene_id,:]
-                f_cols = ['%s-comp%d_%s' % (feature_set, i,c) for c in d['feature_labels']]
+                f_cols = ['%s_comp%d-%s' % (feature_set, i,c) for c in d['feature_labels']]
                 f_mu = d['mu'][i,:]
                 f_std = d['std'][i,:]
 
@@ -230,7 +230,7 @@ def compile_dataset(path, feature_files, feature_sets, output_path):
     df = pd.concat((df, F_df), axis=1)
     df.to_csv(output_path, index=False)
     print(df.shape)
-
+    print(list(df.columns))
 def compile_gi_dataset(path, spec, output_path):
     print("Compiling ", path)
 
