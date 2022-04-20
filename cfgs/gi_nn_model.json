@@ -1,0 +1,330 @@
+{
+    "class" : "nn_single",
+    "single_gene_spec" : {
+        "modules" : {
+            "topology" : {
+                "layer_sizes" : [5],
+                "hidden_activation" : "tanh"
+            },
+            "sgo" : {
+                "layer_sizes" : [5],
+                "hidden_activation" : "tanh"
+            },
+            "redundancy" : {
+                "layer_sizes" : [5],
+                "hidden_activation" : "tanh"
+            },
+            "smf" : {
+                "layer_sizes" : [5],
+                "hidden_activation" : "tanh"
+            },
+            "phosphotase" : {
+                "layer_sizes" : [5],
+                "hidden_activation" : "tanh"
+            },
+            "kinase" : {
+                "layer_sizes" : [5],
+                "hidden_activation" : "tanh"
+            },
+            "transcription" : {
+                "layer_sizes" : [5],
+                "hidden_activation" : "tanh"
+            },
+            "abundance_hu" : {
+                "layer_sizes" : [5],
+                "hidden_activation" : "tanh"
+            },
+            "abundance_rap" : {
+                "layer_sizes" : [5],
+                "hidden_activation" : "tanh"
+            },
+            "abundance_wt3" : {
+                "layer_sizes" : [5],
+                "hidden_activation" : "tanh"
+            },
+            "localization_hu" : {
+                "layer_sizes" : [5],
+                "hidden_activation" : "tanh"
+            },
+            "localization_rap" : {
+                "layer_sizes" : [5],
+                "hidden_activation" : "tanh"
+            },
+            "localization_wt3" : {
+                "layer_sizes" : [5],
+                "hidden_activation" : "tanh"
+            }
+        },
+        "feature_sets" : {
+            "topology" : {
+                "module" : "topology",
+                "normalize" : true
+            },
+            "sgo" : {
+                "module" : "sgo",
+                "normalize" : false
+            },
+            "redundancy" : {
+                "module" : "redundancy",
+                "normalize" : true
+            },
+            "smf" : {
+                "module" : "smf",
+                "normalize" : false
+            },
+            "phosphotase" : {
+                "module" : "phosphotase",
+                "normalize" : true
+            },
+            "kinase" : {
+                "module" : "kinase",
+                "normalize" : true
+            },
+            "transcription" : {
+                "module" : "transcription",
+                "normalize" : true
+            },
+            "abundance_hu" : {
+                "module" : "abundance_hu",
+                "normalize" : true
+            },
+            "abundance_rap" : {
+                "module" : "abundance_rap",
+                "normalize" : true
+            },
+            "abundance_wt3" : {
+                "module" : "abundance_wt3",
+                "normalize" : true
+            },
+            
+            "localization_hu_comp0" : {
+                "module" : "localization_hu",
+                "normalize" : true
+            },
+            "localization_hu_comp1" : {
+                "module" : "localization_hu",
+                "normalize" : true
+            },
+            "localization_hu_comp2" : {
+                "module" : "localization_hu",
+                "normalize" : true
+            },
+            "localization_hu_comp3" : {
+                "module" : "localization_hu",
+                "normalize" : true
+            },
+            "localization_hu_comp4" : {
+                "module" : "localization_hu",
+                "normalize" : true
+            },
+            "localization_hu_comp5" : {
+                "module" : "localization_hu",
+                "normalize" : true
+            },
+            "localization_hu_comp6" : {
+                "module" : "localization_hu",
+                "normalize" : true
+            },
+            "localization_hu_comp7" : {
+                "module" : "localization_hu",
+                "normalize" : true
+            },
+            "localization_hu_comp8" : {
+                "module" : "localization_hu",
+                "normalize" : true
+            },
+            "localization_hu_comp9" : {
+                "module" : "localization_hu",
+                "normalize" : true
+            },
+            "localization_hu_comp10" : {
+                "module" : "localization_hu",
+                "normalize" : true
+            },
+            "localization_hu_comp11" : {
+                "module" : "localization_hu",
+                "normalize" : true
+            },
+            "localization_hu_comp12" : {
+                "module" : "localization_hu",
+                "normalize" : true
+            },
+            "localization_hu_comp13" : {
+                "module" : "localization_hu",
+                "normalize" : true
+            },
+            "localization_hu_comp14" : {
+                "module" : "localization_hu",
+                "normalize" : true
+            },
+            "localization_hu_comp15" : {
+                "module" : "localization_hu",
+                "normalize" : true
+            },
+            
+            "localization_rap_comp0" : {
+                "module" : "localization_rap",
+                "normalize" : true
+            },
+            "localization_rap_comp1" : {
+                "module" : "localization_rap",
+                "normalize" : true
+            },
+            "localization_rap_comp2" : {
+                "module" : "localization_rap",
+                "normalize" : true
+            },
+            "localization_rap_comp3" : {
+                "module" : "localization_rap",
+                "normalize" : true
+            },
+            "localization_rap_comp4" : {
+                "module" : "localization_rap",
+                "normalize" : true
+            },
+            "localization_rap_comp5" : {
+                "module" : "localization_rap",
+                "normalize" : true
+            },
+            "localization_rap_comp6" : {
+                "module" : "localization_rap",
+                "normalize" : true
+            },
+            "localization_rap_comp7" : {
+                "module" : "localization_rap",
+                "normalize" : true
+            },
+            "localization_rap_comp8" : {
+                "module" : "localization_rap",
+                "normalize" : true
+            },
+            "localization_rap_comp9" : {
+                "module" : "localization_rap",
+                "normalize" : true
+            },
+            "localization_rap_comp10" : {
+                "module" : "localization_rap",
+                "normalize" : true
+            },
+            "localization_rap_comp11" : {
+                "module" : "localization_rap",
+                "normalize" : true
+            },
+            "localization_rap_comp12" : {
+                "module" : "localization_rap",
+                "normalize" : true
+            },
+            "localization_rap_comp13" : {
+                "module" : "localization_rap",
+                "normalize" : true
+            },
+            "localization_rap_comp14" : {
+                "module" : "localization_rap",
+                "normalize" : true
+            },
+            "localization_rap_comp15" : {
+                "module" : "localization_rap",
+                "normalize" : true
+            },
+    
+    
+            "localization_wt3_comp0" : {
+                "module" : "localization_wt3",
+                "normalize" : true
+            },
+            "localization_wt3_comp1" : {
+                "module" : "localization_wt3",
+                "normalize" : true
+            },
+            "localization_wt3_comp2" : {
+                "module" : "localization_wt3",
+                "normalize" : true
+            },
+            "localization_wt3_comp3" : {
+                "module" : "localization_wt3",
+                "normalize" : true
+            },
+            "localization_wt3_comp4" : {
+                "module" : "localization_wt3",
+                "normalize" : true
+            },
+            "localization_wt3_comp5" : {
+                "module" : "localization_wt3",
+                "normalize" : true
+            },
+            "localization_wt3_comp6" : {
+                "module" : "localization_wt3",
+                "normalize" : true
+            },
+            "localization_wt3_comp7" : {
+                "module" : "localization_wt3",
+                "normalize" : true
+            },
+            "localization_wt3_comp8" : {
+                "module" : "localization_wt3",
+                "normalize" : true
+            },
+            "localization_wt3_comp9" : {
+                "module" : "localization_wt3",
+                "normalize" : true
+            },
+            "localization_wt3_comp10" : {
+                "module" : "localization_wt3",
+                "normalize" : true
+            },
+            "localization_wt3_comp11" : {
+                "module" : "localization_wt3",
+                "normalize" : true
+            },
+            "localization_wt3_comp12" : {
+                "module" : "localization_wt3",
+                "normalize" : true
+            },
+            "localization_wt3_comp13" : {
+                "module" : "localization_wt3",
+                "normalize" : true
+            },
+            "localization_wt3_comp14" : {
+                "module" : "localization_wt3",
+                "normalize" : true
+            },
+            "localization_wt3_comp15" : {
+                "module" : "localization_wt3",
+                "normalize" : true
+            }
+        },
+        "selected_feature_sets" : [],
+        "embedding_size" : 5,
+        "embedding_activation" : "tanh"
+    },
+    "double_gene_spec" : {
+        "modules" : {
+            "pairwise" : {
+                "layer_sizes" : [5],
+                "hidden_activation" : "tanh"
+            }
+        },
+        "feature_sets" : {
+            "pairwise" : {
+                "module" : "pairwise",
+                "normalize" : true
+            }
+        },
+        "selected_feature_sets" : [],
+        "embedding_size" : 5,
+        "embedding_activation" : "tanh"
+    },
+    "optimizer": "nadam",
+    "epochs": 1000,
+    "verbose": true,
+    "patience": 50,
+    "balanced_loss" : true,
+    "batch_size_p" : 1,
+    "target_col" : "bin",
+    "learning_rate" : 0.001,
+    "hyperparams" : {
+        "layer_sizes" : [[1], [5], [10], [5, 2], [10, 5]],
+        "embedding_size" : [1, 5, 10],
+        "learning_rate" : [0.1, 0.01, 0.001]
+    }
+}
