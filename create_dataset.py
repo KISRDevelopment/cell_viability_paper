@@ -16,7 +16,8 @@ def main():
                                 "../generated-data/features/ppc_yeast_abundance_wt3.npz",
                                 "../generated-data/features/ppc_yeast_localization_hu.npz",
                                 "../generated-data/features/ppc_yeast_localization_rap.npz",
-                                "../generated-data/features/ppc_yeast_localization_wt3.npz"
+                                "../generated-data/features/ppc_yeast_localization_wt3.npz",
+                                "../generated-data/features/ppc_yeast_smf_binned.npz" # this is only used for double- and triple-prediction
                             ],
                             [
                                 'topology',
@@ -30,19 +31,22 @@ def main():
                                 'abundance_wt3',
                                 'localization_hu',
                                 'localization_rap',
-                                'localization_wt3'
+                                'localization_wt3',
+                                'smf'
                             ], "../generated-data/dataset_yeast_smf")
-    exit()
+    
     compile_dataset("../generated-data/task_pombe_smf",
                     [
                         "../generated-data/features/ppc_pombe_topology.npz",
                         "../generated-data/features/ppc_pombe_common_sgo.npz",
                         "../generated-data/features/ppc_pombe_redundancy.npz",
+                        "../generated-data/features/ppc_pombe_smf_binned.npz", # this is only used for double- and triple-prediction
                     ],
                     [
                         "topology",
                         "sgo",
-                        "redundancy"
+                        "redundancy",
+                        "smf"
                     ], "../generated-data/dataset_pombe_smf")
     
     compile_dataset("../generated-data/task_human_smf",
@@ -50,11 +54,13 @@ def main():
                         "../generated-data/features/ppc_human_topology.npz",
                         "../generated-data/features/ppc_human_common_sgo.npz",
                         "../generated-data/features/ppc_human_redundancy.npz",
+                        "../generated-data/features/ppc_human_smf_binned.npz",# this is only used for double- and triple-prediction
                     ],
                     [
                         "topology",
                         "sgo",
-                        "redundancy"
+                        "redundancy",
+                        "smf"
                     ], "../generated-data/dataset_human_smf")
 
     compile_dataset("../generated-data/task_human_smf_ca_mo_v",
@@ -86,11 +92,13 @@ def main():
                         "../generated-data/features/ppc_dro_topology.npz",
                         "../generated-data/features/ppc_dro_common_sgo.npz",
                         "../generated-data/features/ppc_dro_redundancy.npz",
+                        "../generated-data/features/ppc_dro_smf_binned.npz",# this is only used for double- and triple-prediction
                     ],
                     [
                         "topology",
                         "sgo",
-                        "redundancy"
+                        "redundancy",
+                        "smf"
                     ], "../generated-data/dataset_dro_smf")
     
     compile_dataset("../generated-data/task_dro_smf_ca_mo_v",
@@ -116,7 +124,7 @@ def main():
                         "sgo",
                         "redundancy"
                     ], "../generated-data/dataset_dro_smf_mo_v")
-   
+    
     yeast_features_spec = [
             {
                 "path" : "../generated-data/pairwise_features/ppc_yeast_shortest_path_len.npy",
@@ -228,9 +236,8 @@ def compile_dataset(path, feature_files, feature_sets, output_path):
     F_df = pd.DataFrame(data=F, columns=cols)
     
     df = pd.concat((df, F_df), axis=1)
-    df.to_csv(output_path, index=False)
-    print(df.shape)
-    print(list(df.columns))
+    df.to_feather(output_path + '.feather')
+    
 def compile_gi_dataset(path, spec, output_path):
     print("Compiling ", path)
 
@@ -261,7 +268,7 @@ def compile_gi_dataset(path, spec, output_path):
 
     df = pd.concat([df, F_df], axis=1)
 
-    df.to_csv(output_path, index=False)
+    df.to_feather(output_path + '.feather')
     print(df.shape)
 def compile_tgi_dataset(path, spec, output_path):
     print("Compiling ", path)
@@ -294,7 +301,7 @@ def compile_tgi_dataset(path, spec, output_path):
 
     df = pd.concat([df, F_df], axis=1)
 
-    df.to_csv(output_path, index=False)
+    df.to_feather(output_path + '.feather')
     print(df.shape)
 def expand_col_names(name, f_cols):
     if f_cols is None:

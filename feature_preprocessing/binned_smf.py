@@ -4,6 +4,8 @@ import sys
 import pandas as pd
 import os 
 
+LABELS = ['L', 'R', 'N']
+
 def main(gpath, smf_task_path):
 
     G = nx.read_gpickle(gpath)
@@ -12,7 +14,7 @@ def main(gpath, smf_task_path):
 
     df = pd.read_csv(smf_task_path)
 
-    bins = sorted(set(df['bin']))
+    bins = [LABELS[int(i)] for i in sorted(set(df['bin']))]
 
     F = np.zeros((len(nodes), len(bins)))
 
