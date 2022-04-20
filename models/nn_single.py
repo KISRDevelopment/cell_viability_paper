@@ -7,7 +7,7 @@ import sklearn.metrics
 
 def train_model(model_spec, train_df, valid_df):
     
-    model = create_model(model_spec, model_spec['n_output_dim'])
+    model = create_model(model_spec)
 
     train_inputs = create_inputs(model_spec, train_df)
     train_inputs, mus, stds = normalize_inputs(model_spec, train_inputs)
@@ -59,7 +59,23 @@ def normalize_inputs(model_spec, inputs, mus = None, stds = None):
         
     return normalized_inputs, mus, stds
 
-def create_model(model_spec, output_dim):
+def create_model(model_spec):
+    output_dim = model_spec['n_output_dim']
+
+    input_layers = [keras.layers.Input(shape=(model_spec['feature_sets'][fs]['dim'],)) for 
+        fs in model_spec['selected_feature_sets']]
+    
+    emb_layer = create_single_gene_embedding_module(model_spec)(input_layers)
+    output_layer = keras.layers.Dense(output_dim, activation='softmax')(emb_layer)
+
+    model = keras.Model(inputs=input_layers, outputs=output_layer)
+    opt = keras.optimizers.Nadam(learning_rate=model_spec['learning_rate'])
+    model.compile(opt, loss=weighted_categorical_xentropy)
+    #print(model.summary())
+
+    return model
+
+def create_single_gene_embedding_module(model_spec):
     selected_feature_sets = model_spec['selected_feature_sets']
     
     modules = {}
@@ -94,15 +110,7 @@ def create_model(model_spec, output_dim):
     emb_layer = keras.layers.Dense(model_spec['embedding_size'], 
         activation=model_spec['embedding_activation'])(concatenated_module_output)
 
-    # output
-    output_layer = keras.layers.Dense(output_dim, activation='softmax')(emb_layer)
-
-    model = keras.Model(inputs=input_layers, outputs=output_layer)
-    opt = keras.optimizers.Nadam(learning_rate=model_spec['learning_rate'])
-    model.compile(opt, loss=weighted_categorical_xentropy)
-    #print(model.summary())
-
-    return model
+    return keras.Model(inputs=input_layers, outputs=emb_layer)
 
 def create_module(module_spec, dim):
 
@@ -165,7 +173,7 @@ def evaluate_model(saved_model_path, df):
     stds = d['stds']
     model_spec = d['model_spec'].item()
     
-    model = create_model(model_spec, model_spec['n_output_dim'])
+    model = create_model(model_spec)
     model.set_weights(weights)
 
     test_inputs = create_inputs(model_spec, df)
