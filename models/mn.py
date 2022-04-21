@@ -41,14 +41,17 @@ def create_inputs(model_spec, df):
 
 def normalize_inputs(model_spec, F, mu = None, std = None):
 
-    normalize = np.array(model_spec['normalize'])
-
     if mu is None:
         mu = np.mean(F, axis=0)
         std = np.std(F, axis=0, ddof=1)+1e-9
 
-    mu = mu * normalize
-    std = std * normalize + (1-normalize)
+        min_F = np.min(F, axis=0)
+        max_F = np.max(F, axis=0)
+        between_zero_and_one = (min_F >= 0) & (max_F <= 1)
+        normalize = ~between_zero_and_one
+        
+        mu = mu * normalize
+        std = std * normalize + (1-normalize)
 
     F = (F - mu) / std    
         
@@ -85,13 +88,7 @@ def train_and_evaluate_model(model_spec, df, split, model_output_path=None, trai
     
     add_extra_info_to_spec(model_spec, df)
     
-    train_ix = np.isin(split, train_ids)
-    valid_ix = np.isin(split, valid_ids)
-    test_ix = np.isin(split, test_ids)
-
-    train_df = df[train_ix]
-    valid_df = df[valid_ix]
-    test_df = df[test_ix]
+    train_df, valid_df, test_df = get_dfs(df, split, train_ids, valid_ids, test_ids)
 
     model, mus, stds = train_model(model_spec, train_df, valid_df)
     
@@ -106,6 +103,33 @@ def train_and_evaluate_model(model_spec, df, split, model_output_path=None, trai
 
     return evaluate_model(model_output_path, test_df)
     
+def get_dfs(df, split, train_ids, valid_ids, test_ids):
+
+    if type(split) == dict:
+        partition = [split['test_genes'], split['train_genes'], split['valid_genes'], split['dev_test_genes']]
+
+        train_genes = set.union(*[set(partition[i]) for i in train_ids])
+        valid_genes = set.union(*[set(partition[i]) for i in valid_ids])
+        test_genes = set.union(*[set(partition[i]) for i in test_ids])
+        
+        train_ix = df['a_id'].isin(train_genes) & df['b_id'].isin(train_genes)
+        valid_ix = df['a_id'].isin(valid_genes) & df['b_id'].isin(valid_genes)
+        test_ix = df['a_id'].isin(test_genes) & df['b_id'].isin(test_genes)
+
+        train_df = df[train_ix]
+        valid_df = df[valid_ix]
+        test_df = df[test_ix]
+    else:
+        train_ix = np.isin(split, train_ids)
+        valid_ix = np.isin(split, valid_ids)
+        test_ix = np.isin(split, test_ids)
+
+        train_df = df[train_ix]
+        valid_df = df[valid_ix]
+        test_df = df[test_ix]
+    
+    return train_df, valid_df, test_df 
+
 def evaluate_model(saved_model_path, df):
 
     d = np.load(saved_model_path, allow_pickle=True)
@@ -167,13 +191,6 @@ def add_extra_info_to_spec(model_spec, df):
         ix = ix | df.columns.str.startswith(f)
     model_spec['features'] = list(df.columns[ix])
 
-    # don't normalize small features
-    F = df[model_spec['features']]
-    min_F = np.min(F, axis=0)
-    max_F = np.max(F, axis=0)
-    between_zero_and_one = (min_F >= 0) & (max_F <= 1)
-    model_spec['normalize'] = (~between_zero_and_one).tolist()
-
 if __name__ == "__main__":
     import sys 
 
@@ -186,10 +203,10 @@ if __name__ == "__main__":
     with open(model_spec_path, 'r') as f:
         model_spec = json.load(f)
     
-    df = pd.read_csv(dataset_path)
+    df = pd.read_feather(dataset_path)
 
-    splits = np.load(splits_path)['splits']
-    split = splits[split,:]
-
+    splits = np.load(splits_path, allow_pickle=True)['splits']
+    split = splits[split]
+    
     train_and_evaluate_model(model_spec, df, split, model_output_path)
 

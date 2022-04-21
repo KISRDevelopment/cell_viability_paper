@@ -8,7 +8,7 @@
     "optimizer": "nadam",
     "epochs": 1000,
     "verbose": true,
-    "patience": 50,
+    "patience": 10,
     "balanced_loss" : true,
     "batch_size_p" : 1,
     "embedding_size" : 5,
