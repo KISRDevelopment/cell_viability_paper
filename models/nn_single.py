@@ -46,15 +46,29 @@ def create_inputs(model_spec, df):
 def normalize_inputs(model_spec, inputs, mus = None, stds = None):
 
     if mus is None:
-        mus = [np.mean(F, axis=0) for F in inputs]
-        stds = [np.std(F, axis=0, ddof=1)+1e-9 for F in inputs]
+        mus = []
+        stds = []
+        for F in inputs:
+            mu = np.mean(F, axis=0)
+            std = np.std(F, axis=0, ddof=1)
+
+            min_F = np.min(F, axis=0)
+            max_F = np.max(F, axis=0)
+            between_zero_and_one = (min_F >= 0) & (max_F <= 1)
+            normalize = ~between_zero_and_one
+            
+            mu = mu * normalize
+            std = std * normalize + (1-normalize)
+
+            mus.append(mu)
+            stds.append(std)
     
     normalized_inputs = []
     for feature_set, F, mu, std in zip(model_spec['selected_feature_sets'], inputs, mus, stds):
         props = model_spec['feature_sets'][feature_set]
+        
+        F = (F - mu) / std
 
-        if props['normalize']:
-            F = (F - mu) / std
         normalized_inputs.append(F)
         
     return normalized_inputs, mus, stds
@@ -241,7 +255,7 @@ if __name__ == "__main__":
     with open(model_spec_path, 'r') as f:
         model_spec = json.load(f)
     
-    df = pd.read_csv(dataset_path)
+    df = pd.read_feather(dataset_path)
 
     splits = np.load(splits_path)['splits']
     split = splits[split,:]

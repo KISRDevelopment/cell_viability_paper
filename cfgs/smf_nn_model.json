@@ -52,236 +52,179 @@
     },
     "feature_sets" : {
         "topology" : {
-            "module" : "topology",
-            "normalize" : true
+            "module" : "topology"
         },
         "sgo" : {
-            "module" : "sgo",
-            "normalize" : false
+            "module" : "sgo"
         },
         "redundancy" : {
-            "module" : "redundancy",
-            "normalize" : true
+            "module" : "redundancy"
         },
         "phosphotase" : {
-            "module" : "phosphotase",
-            "normalize" : true
+            "module" : "phosphotase"
         },
         "kinase" : {
-            "module" : "kinase",
-            "normalize" : true
+            "module" : "kinase"
         },
         "transcription" : {
-            "module" : "transcription",
-            "normalize" : true
+            "module" : "transcription"
         },
         "abundance_hu" : {
-            "module" : "abundance_hu",
-            "normalize" : true
+            "module" : "abundance_hu"
         },
         "abundance_rap" : {
-            "module" : "abundance_rap",
-            "normalize" : true
+            "module" : "abundance_rap"
         },
         "abundance_wt3" : {
-            "module" : "abundance_wt3",
-            "normalize" : true
+            "module" : "abundance_wt3"
         },
         
         "localization_hu_comp0" : {
-            "module" : "localization_hu",
-            "normalize" : true
+            "module" : "localization_hu"
         },
         "localization_hu_comp1" : {
-            "module" : "localization_hu",
-            "normalize" : true
+            "module" : "localization_hu"
         },
         "localization_hu_comp2" : {
-            "module" : "localization_hu",
-            "normalize" : true
+            "module" : "localization_hu"
         },
         "localization_hu_comp3" : {
-            "module" : "localization_hu",
-            "normalize" : true
+            "module" : "localization_hu"
         },
         "localization_hu_comp4" : {
-            "module" : "localization_hu",
-            "normalize" : true
+            "module" : "localization_hu"
         },
         "localization_hu_comp5" : {
-            "module" : "localization_hu",
-            "normalize" : true
+            "module" : "localization_hu"
         },
         "localization_hu_comp6" : {
-            "module" : "localization_hu",
-            "normalize" : true
+            "module" : "localization_hu"
         },
         "localization_hu_comp7" : {
-            "module" : "localization_hu",
-            "normalize" : true
+            "module" : "localization_hu"
         },
         "localization_hu_comp8" : {
-            "module" : "localization_hu",
-            "normalize" : true
+            "module" : "localization_hu"
         },
         "localization_hu_comp9" : {
-            "module" : "localization_hu",
-            "normalize" : true
+            "module" : "localization_hu"
         },
         "localization_hu_comp10" : {
-            "module" : "localization_hu",
-            "normalize" : true
+            "module" : "localization_hu"
         },
         "localization_hu_comp11" : {
-            "module" : "localization_hu",
-            "normalize" : true
+            "module" : "localization_hu"
         },
         "localization_hu_comp12" : {
-            "module" : "localization_hu",
-            "normalize" : true
+            "module" : "localization_hu"
         },
         "localization_hu_comp13" : {
-            "module" : "localization_hu",
-            "normalize" : true
+            "module" : "localization_hu"
         },
         "localization_hu_comp14" : {
-            "module" : "localization_hu",
-            "normalize" : true
+            "module" : "localization_hu"
         },
         "localization_hu_comp15" : {
-            "module" : "localization_hu",
-            "normalize" : true
+            "module" : "localization_hu"
         },
         
         "localization_rap_comp0" : {
-            "module" : "localization_rap",
-            "normalize" : true
+            "module" : "localization_rap"
         },
         "localization_rap_comp1" : {
-            "module" : "localization_rap",
-            "normalize" : true
+            "module" : "localization_rap"
         },
         "localization_rap_comp2" : {
-            "module" : "localization_rap",
-            "normalize" : true
+            "module" : "localization_rap"
         },
         "localization_rap_comp3" : {
-            "module" : "localization_rap",
-            "normalize" : true
+            "module" : "localization_rap"
         },
         "localization_rap_comp4" : {
-            "module" : "localization_rap",
-            "normalize" : true
+            "module" : "localization_rap"
         },
         "localization_rap_comp5" : {
-            "module" : "localization_rap",
-            "normalize" : true
+            "module" : "localization_rap"
         },
         "localization_rap_comp6" : {
-            "module" : "localization_rap",
-            "normalize" : true
+            "module" : "localization_rap"
         },
         "localization_rap_comp7" : {
-            "module" : "localization_rap",
-            "normalize" : true
+            "module" : "localization_rap"
         },
         "localization_rap_comp8" : {
-            "module" : "localization_rap",
-            "normalize" : true
+            "module" : "localization_rap"
         },
         "localization_rap_comp9" : {
-            "module" : "localization_rap",
-            "normalize" : true
+            "module" : "localization_rap"
         },
         "localization_rap_comp10" : {
-            "module" : "localization_rap",
-            "normalize" : true
+            "module" : "localization_rap"
         },
         "localization_rap_comp11" : {
-            "module" : "localization_rap",
-            "normalize" : true
+            "module" : "localization_rap"
         },
         "localization_rap_comp12" : {
-            "module" : "localization_rap",
-            "normalize" : true
+            "module" : "localization_rap"
         },
         "localization_rap_comp13" : {
-            "module" : "localization_rap",
-            "normalize" : true
+            "module" : "localization_rap"
         },
         "localization_rap_comp14" : {
-            "module" : "localization_rap",
-            "normalize" : true
+            "module" : "localization_rap"
         },
         "localization_rap_comp15" : {
-            "module" : "localization_rap",
-            "normalize" : true
+            "module" : "localization_rap"
         },
 
 
         "localization_wt3_comp0" : {
-            "module" : "localization_wt3",
-            "normalize" : true
+            "module" : "localization_wt3"
         },
         "localization_wt3_comp1" : {
-            "module" : "localization_wt3",
-            "normalize" : true
+            "module" : "localization_wt3"
         },
         "localization_wt3_comp2" : {
-            "module" : "localization_wt3",
-            "normalize" : true
+            "module" : "localization_wt3"
         },
         "localization_wt3_comp3" : {
-            "module" : "localization_wt3",
-            "normalize" : true
+            "module" : "localization_wt3"
         },
         "localization_wt3_comp4" : {
-            "module" : "localization_wt3",
-            "normalize" : true
+            "module" : "localization_wt3"
         },
         "localization_wt3_comp5" : {
-            "module" : "localization_wt3",
-            "normalize" : true
+            "module" : "localization_wt3"
         },
         "localization_wt3_comp6" : {
-            "module" : "localization_wt3",
-            "normalize" : true
+            "module" : "localization_wt3"
         },
         "localization_wt3_comp7" : {
-            "module" : "localization_wt3",
-            "normalize" : true
+            "module" : "localization_wt3"
         },
         "localization_wt3_comp8" : {
-            "module" : "localization_wt3",
-            "normalize" : true
+            "module" : "localization_wt3"
         },
         "localization_wt3_comp9" : {
-            "module" : "localization_wt3",
-            "normalize" : true
+            "module" : "localization_wt3"
         },
         "localization_wt3_comp10" : {
-            "module" : "localization_wt3",
-            "normalize" : true
+            "module" : "localization_wt3"
         },
         "localization_wt3_comp11" : {
-            "module" : "localization_wt3",
-            "normalize" : true
+            "module" : "localization_wt3"
         },
         "localization_wt3_comp12" : {
-            "module" : "localization_wt3",
-            "normalize" : true
+            "module" : "localization_wt3"
         },
         "localization_wt3_comp13" : {
-            "module" : "localization_wt3",
-            "normalize" : true
+            "module" : "localization_wt3"
         },
         "localization_wt3_comp14" : {
-            "module" : "localization_wt3",
-            "normalize" : true
+            "module" : "localization_wt3"
         },
         "localization_wt3_comp15" : {
-            "module" : "localization_wt3",
-            "normalize" : true
+            "module" : "localization_wt3"
         }
     },
     "selected_feature_sets" : [],

@@ -16,10 +16,10 @@ def train_model(model_spec, smf_df, train_df, valid_df):
     single_gene_inputs = create_smf_inputs(sgs, smf_df)
     
     # prepare pairwise inputs
-    train_double_gene_inputs = create_inputs(dgs, train_df)
-    train_double_gene_inputs, mus, stds = normalize_inputs(dgs, train_double_gene_inputs)
-    valid_double_gene_inputs = create_inputs(dgs, valid_df)
-    valid_double_gene_inputs, _, _ = normalize_inputs(dgs, valid_double_gene_inputs, mus, stds)
+    train_double_gene_inputs = models.nn_single.create_inputs(dgs, train_df)
+    train_double_gene_inputs, mus, stds = models.nn_single.normalize_inputs(dgs, train_double_gene_inputs)
+    valid_double_gene_inputs = models.nn_single.create_inputs(dgs, valid_df)
+    valid_double_gene_inputs, _, _ = models.nn_single.normalize_inputs(dgs, valid_double_gene_inputs, mus, stds)
     
     # outputs
     train_Y = keras.utils.to_categorical(train_df[model_spec['target_col']])
@@ -61,47 +61,6 @@ def create_smf_inputs(model_spec, df):
         inputs.append(fdf)
     
     return inputs
-
-
-def create_inputs(model_spec, df):
-
-    inputs = []
-    for feature_set in model_spec['selected_feature_sets']:
-        props = model_spec['feature_sets'][feature_set]
-        F = np.array(df[ props['cols'] ])
-        inputs.append(F)
-    
-    return inputs
-
-def normalize_inputs(model_spec, inputs, mus = None, stds = None):
-
-    if mus is None:
-        mus = []
-        stds = []
-        for F in inputs:
-            mu = np.mean(F, axis=0)
-            std = np.std(F, axis=0, ddof=1)
-
-            min_F = np.min(F, axis=0)
-            max_F = np.max(F, axis=0)
-            between_zero_and_one = (min_F >= 0) & (max_F <= 1)
-            normalize = ~between_zero_and_one
-            
-            mu = mu * normalize
-            std = std * normalize + (1-normalize)
-
-            mus.append(mu)
-            stds.append(std)
-    
-    normalized_inputs = []
-    for feature_set, F, mu, std in zip(model_spec['selected_feature_sets'], inputs, mus, stds):
-        props = model_spec['feature_sets'][feature_set]
-        
-        F = (F - mu) / std
-
-        normalized_inputs.append(F)
-        
-    return normalized_inputs, mus, stds
 
 def create_model(model_spec):
     output_dim = model_spec['n_output_dim']
@@ -207,8 +166,8 @@ def train_and_evaluate_model(model_spec, smf_df, df, split, model_output_path=No
 def evaluate_model(model_spec, model, single_gene_inputs, df, mus, stds):
     # prepare double inputs
     dgs = model_spec['double_gene_spec']
-    test_double_gene_inputs = create_inputs(dgs, df)
-    test_double_gene_inputs, _, _ = normalize_inputs(dgs, test_double_gene_inputs, mus, stds)
+    test_double_gene_inputs = models.nn_single.create_inputs(dgs, df)
+    test_double_gene_inputs, _, _ = models.nn_single.normalize_inputs(dgs, test_double_gene_inputs, mus, stds)
 
     batch_size =  model_spec['batch_size']*10
     test_iterator = create_data_iterator(df, np.zeros((df.shape[0], model_spec['n_output_dim'])), single_gene_inputs, test_double_gene_inputs, batch_size, True)
