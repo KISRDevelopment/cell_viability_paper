@@ -315,11 +315,10 @@
         "embedding_activation" : "tanh"
     },
     "optimizer": "nadam",
-    "epochs": 1000,
+    "epochs": 1,
     "verbose": true,
-    "patience": 50,
-    "balanced_loss" : true,
-    "batch_size_p" : 1,
+    "patience": 10,
+    "batch_size" : 10000,
     "target_col" : "bin",
     "learning_rate" : 0.001,
     "hyperparams" : {

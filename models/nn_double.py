@@ -12,15 +12,16 @@ def train_model(model_spec, smf_df, train_df, valid_df):
 
     model = create_model(model_spec)
     
-    # grab single-gene inputs and fully normalize them
+    # prepare single gene inputs
     single_gene_inputs = create_smf_inputs(sgs, smf_df)
-
-    # grab training double-gene inputs and normalize them
-    double_gene_inputs = create_inputs(dgs, train_df)
-    double_gene_inputs, mus, stds = normalize_inputs(dgs, double_gene_inputs)
-    print(stds)
-    exit()
-
+    
+    # prepare pairwise inputs
+    train_double_gene_inputs = create_inputs(dgs, train_df)
+    train_double_gene_inputs, mus, stds = normalize_inputs(dgs, train_double_gene_inputs)
+    valid_double_gene_inputs = create_inputs(dgs, valid_df)
+    valid_double_gene_inputs, _, _ = normalize_inputs(dgs, valid_double_gene_inputs, mus, stds)
+    
+    # outputs
     train_Y = keras.utils.to_categorical(train_df[model_spec['target_col']])
     valid_Y = keras.utils.to_categorical(valid_df[model_spec['target_col']])
 
@@ -28,16 +29,19 @@ def train_model(model_spec, smf_df, train_df, valid_df):
                                 patience=model_spec['patience'], restore_best_weights=True)
     callbacks = [earlystopping_callback]
 
-    model.fit(train_inputs, 
-              train_Y, 
-              batch_size=int(model_spec['batch_size_p'] * train_Y.shape[0]),
+    # create data iterators (necessary because some feature sets are too large to put in ram)
+    train_iterator = create_data_iterator(train_df, train_Y, single_gene_inputs, train_double_gene_inputs, model_spec['batch_size'])
+    valid_iterator = create_data_iterator(valid_df, valid_Y, single_gene_inputs, valid_double_gene_inputs, model_spec['batch_size']*10, False)
+
+    model.fit(x=train_iterator(),
+              steps_per_epoch=np.ceil(train_df.shape[0] / model_spec['batch_size']),
               epochs=model_spec['epochs'],
               verbose=model_spec['verbose'],
-              validation_data=(valid_inputs, valid_Y),
-              validation_batch_size=100000,
+              validation_data=valid_iterator(),
+              validation_steps=np.ceil(valid_df.shape[0] / model_spec['batch_size']),
               callbacks=callbacks)
 
-    return model, mus, stds
+    return model, mus, stds, single_gene_inputs
 
 
 def create_smf_inputs(model_spec, df):
@@ -126,6 +130,31 @@ def create_model(model_spec):
 
     return model
 
+def create_data_iterator(df, Y, single_fsets, pairwise_fsets, batch_size, training=True):
+    idx = np.arange(df.shape[0])
+    
+    def iterator():
+        while True:
+            if training:
+                np.random.shuffle(idx)
+            for i in range(0, len(idx), batch_size):
+                indecies = idx[i:(i+batch_size)]
+                
+                batch_df = df.iloc[indecies]
+                batch_Y = Y[indecies,:]
+
+                a_id = batch_df['a_id']
+                b_id = batch_df['b_id']
+
+                inputs_a = [np.array(fs.loc[a_id]) for fs in single_fsets]
+                inputs_b = [np.array(fs.loc[b_id]) for fs in single_fsets]
+                inputs_ab = [fs[indecies,:] for fs in pairwise_fsets] 
+
+                inputs = inputs_a + inputs_b + inputs_ab
+                yield (inputs, batch_Y)
+    
+    return iterator 
+
 def train_and_evaluate_model(model_spec, smf_df, df, split, model_output_path=None, train_ids=[1], valid_ids=[2], test_ids=[3]):
     
     add_extra_info_to_spec(model_spec, smf_df, df)
@@ -144,8 +173,7 @@ def train_and_evaluate_model(model_spec, smf_df, df, split, model_output_path=No
     valid_df = df[valid_ix]
     test_df = df[test_ix]
 
-    model, mus, stds = train_model(model_spec, smf_df, train_df, valid_df)
-    exit()
+    model, mus, stds, single_gene_inputs = train_model(model_spec, smf_df, train_df, valid_df)
     
     if model_output_path is not None:
         weights = model.get_weights()
@@ -155,24 +183,37 @@ def train_and_evaluate_model(model_spec, smf_df, df, split, model_output_path=No
             mus=np.array(mus, dtype=object), 
             stds=np.array(stds, dtype=object))
 
+    r = evaluate_model(model_spec, model, single_gene_inputs, test_df, mus, stds)
 
-    return evaluate_model(model_output_path, test_df)
-    
-def evaluate_model(saved_model_path, df):
+    return r 
 
-    d = np.load(saved_model_path, allow_pickle=True)
-    weights = d['weights']
-    mus = d['mus']
-    stds = d['stds']
-    model_spec = d['model_spec'].item()
-    
-    model = create_model(model_spec)
-    model.set_weights(weights)
+# def evaluate_saved_model(saved_model_path, smf_df, df):
 
-    test_inputs = create_inputs(model_spec, df)
-    test_inputs, _, _ = normalize_inputs(model_spec, test_inputs, mus, stds)
+#     d = np.load(saved_model_path, allow_pickle=True)
+#     weights = d['weights']
+#     mus = d['mus'].tolist()
+#     stds = d['stds'].tolist()
+#     model_spec = d['model_spec'].item()
     
-    preds = model.predict(test_inputs, batch_size=1000000)
+#     model = create_model(model_spec)
+#     model.set_weights(weights)
+
+#     # prepare single gene inputs
+#     single_gene_inputs = create_smf_inputs(model_spec['single_gene_spec'], smf_df)
+    
+#     return evaluate_model(model_spec, model, single_gene_inputs, df)
+    
+
+def evaluate_model(model_spec, model, single_gene_inputs, df, mus, stds):
+    # prepare double inputs
+    dgs = model_spec['double_gene_spec']
+    test_double_gene_inputs = create_inputs(dgs, df)
+    test_double_gene_inputs, _, _ = normalize_inputs(dgs, test_double_gene_inputs, mus, stds)
+
+    batch_size =  model_spec['batch_size']*10
+    test_iterator = create_data_iterator(df, np.zeros((df.shape[0], model_spec['n_output_dim'])), single_gene_inputs, test_double_gene_inputs, batch_size, True)
+
+    preds = model.predict(x=test_iterator(), steps=np.ceil(df.shape[0] / batch_size))
     
     r = evaluate(np.array(df[model_spec['target_col']]), preds)
     
