@@ -145,7 +145,7 @@ def create_module(module_spec, dim):
 
 def add_extra_info_to_spec(model_spec, df):
     
-    if len(model_spec['selected_feature_sets']) == 0:
+    if 'selected_feature_sets' not in model_spec:
         model_spec['selected_feature_sets'] = list(model_spec['feature_sets'].keys())
         
     # add the feature dimensions and column names for each feature set

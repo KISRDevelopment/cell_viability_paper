@@ -104,18 +104,33 @@ class DoubleInputNNModel:
         sgs = model_spec['single_gene_spec']
         dgs = model_spec['double_gene_spec']
 
-        single_gene_emb_module = models.nn_single.create_single_gene_embedding_module(sgs)
-        double_gene_emb_module = models.nn_single.create_single_gene_embedding_module(dgs)
+        has_single_gene_features = len(sgs['selected_feature_sets']) > 0
+        has_double_gene_features = len(dgs['selected_feature_sets']) > 0
 
-        inputs_a = [keras.layers.Input(shape=(sgs['feature_sets'][fs]['dim'],)) for fs in sgs['selected_feature_sets']]
-        inputs_b = [keras.layers.Input(shape=(sgs['feature_sets'][fs]['dim'],)) for fs in sgs['selected_feature_sets']]
-        inputs_ab = [keras.layers.Input(shape=(dgs['feature_sets'][fs]['dim'],)) for fs in dgs['selected_feature_sets']]
+        inputs_a = []
+        inputs_b = []
+        inputs_ab = []
+        if has_single_gene_features:
+            single_gene_emb_module = models.nn_single.create_single_gene_embedding_module(sgs)
+            inputs_a = [keras.layers.Input(shape=(sgs['feature_sets'][fs]['dim'],)) for fs in sgs['selected_feature_sets']]
+            inputs_b = [keras.layers.Input(shape=(sgs['feature_sets'][fs]['dim'],)) for fs in sgs['selected_feature_sets']]
+            output_a = single_gene_emb_module(inputs_a)
+            output_b = single_gene_emb_module(inputs_b)
+        
+        if has_double_gene_features:
+            double_gene_emb_module = models.nn_single.create_single_gene_embedding_module(dgs)
+            inputs_ab = [keras.layers.Input(shape=(dgs['feature_sets'][fs]['dim'],)) for fs in dgs['selected_feature_sets']]
+            output_ab = double_gene_emb_module(inputs_ab)
 
-        output_a = single_gene_emb_module(inputs_a)
-        output_b = single_gene_emb_module(inputs_b)
-        output_ab = double_gene_emb_module(inputs_ab)
-
-        merged = keras.layers.Concatenate()([(output_a + output_b)/2, output_ab])
+        if has_single_gene_features and not has_double_gene_features:
+            merged = (output_a + output_b) / 2
+        elif has_single_gene_features and has_double_gene_features:
+            merged = keras.layers.Concatenate()([(output_a + output_b)/2, output_ab])
+        elif not has_single_gene_features and has_double_gene_features:
+            merged = output_ab 
+        else:
+            raise Exception("Must have at least single or double features.")
+        
         output_layer = keras.layers.Dense(output_dim, activation='softmax')(merged)
 
         model = keras.Model(inputs=inputs_a + inputs_b + inputs_ab, outputs=output_layer)

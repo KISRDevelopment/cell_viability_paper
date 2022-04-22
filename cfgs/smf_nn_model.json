@@ -227,7 +227,6 @@
             "module" : "localization_wt3"
         }
     },
-    "selected_feature_sets" : [],
     "optimizer": "nadam",
     "epochs": 1000,
     "verbose": true,

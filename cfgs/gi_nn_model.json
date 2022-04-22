@@ -298,6 +298,7 @@
         "embedding_activation" : "tanh"
     },
     "double_gene_spec" : {
+        
         "modules" : {
             "pairwise" : {
                 "layer_sizes" : [5],
@@ -310,12 +311,11 @@
                 "normalize" : true
             }
         },
-        "selected_feature_sets" : [],
         "embedding_size" : 5,
         "embedding_activation" : "tanh"
     },
     "optimizer": "nadam",
-    "epochs": 20,
+    "epochs": 1,
     "verbose": true,
     "patience": 10,
     "batch_size" : 10000,
