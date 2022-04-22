@@ -16,6 +16,7 @@ class SingleInputNNModel:
         model_spec = self._model_spec
 
         add_extra_info_to_spec(model_spec, train_df)
+        model_spec['n_output_dim'] = models.common.calculate_output_dim(train_df, model_spec['target_col'])
 
         self._create_model()
 
@@ -56,8 +57,8 @@ class SingleInputNNModel:
         d = np.load(path, allow_pickle=True)
         model_spec = d['model_spec'].item()
         weights = d['weights']
-        mus = d['mus']
-        stds = d['stds']
+        mus = d['mus'].tolist()
+        stds = d['stds'].tolist()
         
         m = SingleInputNNModel(model_spec)
         m._create_model()
@@ -91,21 +92,6 @@ class SingleInputNNModel:
         #print(model.summary())
 
         self._model = model
-
-
-def add_extra_info_to_spec(model_spec, df):
-    
-    if len(model_spec['selected_feature_sets']) == 0:
-        model_spec['selected_feature_sets'] = list(model_spec['feature_sets'].keys())
-        
-    # add the feature dimensions and column names for each feature set
-    for feature_set, props in model_spec['feature_sets'].items():
-        ix = df.columns.str.startswith('%s-' % feature_set)
-        props['dim'] = np.sum(ix)
-        props['cols'] = list(df.columns[ix])
-
-    # calculate output dimension size (number of classes)
-    model_spec['n_output_dim'] = np.unique(df[model_spec['target_col']]).shape[0]
 
 def create_single_gene_embedding_module(model_spec):
     selected_feature_sets = model_spec['selected_feature_sets']
@@ -156,6 +142,18 @@ def create_module(module_spec, dim):
         input_dim = layer_size 
     
     return module 
+
+def add_extra_info_to_spec(model_spec, df):
+    
+    if len(model_spec['selected_feature_sets']) == 0:
+        model_spec['selected_feature_sets'] = list(model_spec['feature_sets'].keys())
+        
+    # add the feature dimensions and column names for each feature set
+    for feature_set, props in model_spec['feature_sets'].items():
+        ix = df.columns.str.startswith('%s-' % feature_set)
+        props['dim'] = np.sum(ix)
+        props['cols'] = list(df.columns[ix])
+
 
 if __name__ == "__main__":
     import sys 

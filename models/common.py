@@ -113,3 +113,6 @@ def weighted_categorical_xentropy(y_true, y_pred):
     weights = tf.matmul(y_true, class_freq, transpose_b=True)
 
     return -tf.reduce_sum(xe / weights)
+
+def calculate_output_dim(df, col):
+    return np.unique(df[col]).shape[0]

@@ -4,90 +4,136 @@ import numpy as np
 import json 
 import pandas as pd 
 import sklearn.metrics 
-import models.nn_single
+import models.common
+import models.nn_single 
 
-def train_model(model_spec, smf_df, train_df, valid_df):
-    sgs = model_spec['single_gene_spec']
-    dgs = model_spec['double_gene_spec']
+class DoubleInputNNModel:
 
-    model = create_model(model_spec)
+    def __init__(self, model_spec, sg_path):
+        self._model_spec = model_spec
+        self._sg_path = sg_path
+        self._sgdf = pd.read_feather(sg_path) 
+
+        sgs = model_spec['single_gene_spec']
+        models.nn_single.add_extra_info_to_spec(sgs, self._sgdf)
+        self._sg_inputs = create_sg_inputs(sgs, self._sgdf)
+
+    def train(self, train_df, valid_df):
+        model_spec = self._model_spec 
+        dgs = model_spec['double_gene_spec']
+
+        models.nn_single.add_extra_info_to_spec(dgs, train_df)
+        model_spec['n_output_dim'] = models.common.calculate_output_dim(train_df, model_spec['target_col'])
+
+        self._create_model() 
+
+        # prepare pairwise inputs
+        train_double_gene_inputs = models.common.create_inputs(dgs, train_df)
+        train_double_gene_inputs, mus, stds = models.common.normalize_inputs(train_double_gene_inputs)
+        valid_double_gene_inputs = models.common.create_inputs(dgs, valid_df)
+        valid_double_gene_inputs, _, _ = models.common.normalize_inputs(valid_double_gene_inputs, mus, stds)
+        
+        # outputs
+        train_Y = keras.utils.to_categorical(train_df[model_spec['target_col']])
+        valid_Y = keras.utils.to_categorical(valid_df[model_spec['target_col']])
+
+        earlystopping_callback = keras.callbacks.EarlyStopping(monitor='val_loss', 
+                                    patience=model_spec['patience'], restore_best_weights=True)
+        callbacks = [earlystopping_callback]
+
+        # create data iterators (necessary because some feature sets are too large to put in ram)
+        train_iterator = create_data_iterator(train_df, train_Y, self._sg_inputs, train_double_gene_inputs, model_spec['batch_size'])
+        valid_iterator = create_data_iterator(valid_df, valid_Y, self._sg_inputs, valid_double_gene_inputs, model_spec['batch_size']*10, False)
+
+        self._model.fit(x=train_iterator(),
+                steps_per_epoch=np.ceil(train_df.shape[0] / model_spec['batch_size']),
+                epochs=model_spec['epochs'],
+                verbose=model_spec['verbose'],
+                validation_data=valid_iterator(),
+                validation_steps=np.ceil(valid_df.shape[0] / model_spec['batch_size']),
+                callbacks=callbacks)
+
+        self._mus = mus 
+        self._stds = stds 
+
+    def save(self, path):
+        weights = self._model.get_weights()
+        np.savez(path,
+            model_spec=self._model_spec, 
+            sg_path=self._sg_path,
+            weights=np.array(weights, dtype=object), 
+            mus=np.array(self._mus, dtype=object), 
+            stds=np.array(self._stds, dtype=object)) 
     
-    # prepare single gene inputs
-    single_gene_inputs = create_smf_inputs(sgs, smf_df)
+    @staticmethod
+    def load(path):
+        d = np.load(path, allow_pickle=True)
+        model_spec = d['model_spec'].item()
+        sg_path = d['sg_path'].item()
+        weights = d['weights']
+        mus = d['mus'].tolist()
+        stds = d['stds'].tolist()
+        
+        m = DoubleInputNNModel(model_spec, sg_path)
+        m._create_model()
+        m._model.set_weights(weights)
+        m._mus = mus 
+        m._stds = stds 
+
+        return m 
     
-    # prepare pairwise inputs
-    train_double_gene_inputs = models.nn_single.create_inputs(dgs, train_df)
-    train_double_gene_inputs, mus, stds = models.nn_single.normalize_inputs(dgs, train_double_gene_inputs)
-    valid_double_gene_inputs = models.nn_single.create_inputs(dgs, valid_df)
-    valid_double_gene_inputs, _, _ = models.nn_single.normalize_inputs(dgs, valid_double_gene_inputs, mus, stds)
+    def predict(self, test_df):
+
+        dgs = self._model_spec['double_gene_spec']
+        test_double_gene_inputs = models.common.create_inputs(dgs, test_df)
+        test_double_gene_inputs, _, _ = models.common.normalize_inputs(test_double_gene_inputs, self._mus, self._stds)
+
+        batch_size =  self._model_spec['batch_size']*10
+        test_iterator = create_data_iterator(test_df, np.zeros((test_df.shape[0], self._model_spec['n_output_dim'])),
+            self._sg_inputs, test_double_gene_inputs, batch_size, False)
+
+        preds = self._model.predict(x=test_iterator(), steps=np.ceil(test_df.shape[0] / batch_size))
+        
+        return preds 
     
-    # outputs
-    train_Y = keras.utils.to_categorical(train_df[model_spec['target_col']])
-    valid_Y = keras.utils.to_categorical(valid_df[model_spec['target_col']])
+    def _create_model(self):
+        model_spec = self._model_spec
 
-    earlystopping_callback = keras.callbacks.EarlyStopping(monitor='val_loss', 
-                                patience=model_spec['patience'], restore_best_weights=True)
-    callbacks = [earlystopping_callback]
+        output_dim = model_spec['n_output_dim']
 
-    # create data iterators (necessary because some feature sets are too large to put in ram)
-    train_iterator = create_data_iterator(train_df, train_Y, single_gene_inputs, train_double_gene_inputs, model_spec['batch_size'])
-    valid_iterator = create_data_iterator(valid_df, valid_Y, single_gene_inputs, valid_double_gene_inputs, model_spec['batch_size']*10, False)
+        sgs = model_spec['single_gene_spec']
+        dgs = model_spec['double_gene_spec']
 
-    model.fit(x=train_iterator(),
-              steps_per_epoch=np.ceil(train_df.shape[0] / model_spec['batch_size']),
-              epochs=model_spec['epochs'],
-              verbose=model_spec['verbose'],
-              validation_data=valid_iterator(),
-              validation_steps=np.ceil(valid_df.shape[0] / model_spec['batch_size']),
-              callbacks=callbacks)
+        single_gene_emb_module = models.nn_single.create_single_gene_embedding_module(sgs)
+        double_gene_emb_module = models.nn_single.create_single_gene_embedding_module(dgs)
 
-    return model, mus, stds, single_gene_inputs
+        inputs_a = [keras.layers.Input(shape=(sgs['feature_sets'][fs]['dim'],)) for fs in sgs['selected_feature_sets']]
+        inputs_b = [keras.layers.Input(shape=(sgs['feature_sets'][fs]['dim'],)) for fs in sgs['selected_feature_sets']]
+        inputs_ab = [keras.layers.Input(shape=(dgs['feature_sets'][fs]['dim'],)) for fs in dgs['selected_feature_sets']]
 
+        output_a = single_gene_emb_module(inputs_a)
+        output_b = single_gene_emb_module(inputs_b)
+        output_ab = double_gene_emb_module(inputs_ab)
 
-def create_smf_inputs(model_spec, df):
+        merged = keras.layers.Concatenate()([(output_a + output_b)/2, output_ab])
+        output_layer = keras.layers.Dense(output_dim, activation='softmax')(merged)
 
+        model = keras.Model(inputs=inputs_a + inputs_b + inputs_ab, outputs=output_layer)
+        opt = keras.optimizers.Nadam(learning_rate=model_spec['learning_rate'])
+        model.compile(opt, loss=models.common.weighted_categorical_xentropy)
+        #print(model.summary())
+
+        self._model = model
+
+def create_sg_inputs(model_spec, df):
     inputs = []
     for feature_set in model_spec['selected_feature_sets']:
         props = model_spec['feature_sets'][feature_set]
         F = np.array(df[ props['cols'] ])
-        
-        if props['normalize']:
-            mu = np.mean(F, axis=0)
-            std = np.std(F, axis=0, ddof=1)+1e-9
-            F = (F - mu) / std
-        
+        F,_,_ = models.common.normalize(F)
         fdf = pd.DataFrame(data=F, index=df['id'], columns=props['cols'])
-        
         inputs.append(fdf)
-    
     return inputs
-
-def create_model(model_spec):
-    output_dim = model_spec['n_output_dim']
-
-    sgs = model_spec['single_gene_spec']
-    dgs = model_spec['double_gene_spec']
-
-    single_gene_emb_module = models.nn_single.create_single_gene_embedding_module(sgs)
-    double_gene_emb_module = models.nn_single.create_single_gene_embedding_module(dgs)
-
-    inputs_a = [keras.layers.Input(shape=(sgs['feature_sets'][fs]['dim'],)) for fs in sgs['selected_feature_sets']]
-    inputs_b = [keras.layers.Input(shape=(sgs['feature_sets'][fs]['dim'],)) for fs in sgs['selected_feature_sets']]
-    inputs_ab = [keras.layers.Input(shape=(dgs['feature_sets'][fs]['dim'],)) for fs in dgs['selected_feature_sets']]
-
-    output_a = single_gene_emb_module(inputs_a)
-    output_b = single_gene_emb_module(inputs_b)
-    output_ab = double_gene_emb_module(inputs_ab)
-
-    merged = keras.layers.Concatenate()([(output_a + output_b)/2, output_ab])
-    output_layer = keras.layers.Dense(output_dim, activation='softmax')(merged)
-
-    model = keras.Model(inputs=inputs_a + inputs_b + inputs_ab, outputs=output_layer)
-    opt = keras.optimizers.Nadam(learning_rate=model_spec['learning_rate'])
-    model.compile(opt, loss=models.nn_single.weighted_categorical_xentropy)
-    #print(model.summary())
-
-    return model
 
 def create_data_iterator(df, Y, single_fsets, pairwise_fsets, batch_size, training=True):
     idx = np.arange(df.shape[0])
@@ -104,128 +150,16 @@ def create_data_iterator(df, Y, single_fsets, pairwise_fsets, batch_size, traini
 
                 a_id = batch_df['a_id']
                 b_id = batch_df['b_id']
-
+                
                 inputs_a = [np.array(fs.loc[a_id]) for fs in single_fsets]
                 inputs_b = [np.array(fs.loc[b_id]) for fs in single_fsets]
                 inputs_ab = [fs[indecies,:] for fs in pairwise_fsets] 
 
                 inputs = inputs_a + inputs_b + inputs_ab
+                
                 yield (inputs, batch_Y)
     
     return iterator 
-
-def train_and_evaluate_model(model_spec, smf_df, df, split, model_output_path=None, train_ids=[1], valid_ids=[2], test_ids=[3]):
-    
-    add_extra_info_to_spec(model_spec, smf_df, df)
-    
-    partition = [split['test_genes'], split['train_genes'], split['valid_genes'], split['dev_test_genes']]
-
-    train_genes = set.union(*[set(partition[i]) for i in train_ids])
-    valid_genes = set.union(*[set(partition[i]) for i in valid_ids])
-    test_genes = set.union(*[set(partition[i]) for i in test_ids])
-    
-    train_ix = df['a_id'].isin(train_genes) & df['b_id'].isin(train_genes)
-    valid_ix = df['a_id'].isin(valid_genes) & df['b_id'].isin(valid_genes)
-    test_ix = df['a_id'].isin(test_genes) & df['b_id'].isin(test_genes)
-
-    train_df = df[train_ix]
-    valid_df = df[valid_ix]
-    test_df = df[test_ix]
-
-    model, mus, stds, single_gene_inputs = train_model(model_spec, smf_df, train_df, valid_df)
-    
-    if model_output_path is not None:
-        weights = model.get_weights()
-        np.savez(model_output_path,
-            model_spec=model_spec, 
-            weights=np.array(weights, dtype=object), 
-            mus=np.array(mus, dtype=object), 
-            stds=np.array(stds, dtype=object))
-
-    r = evaluate_model(model_spec, model, single_gene_inputs, test_df, mus, stds)
-
-    return r 
-
-# def evaluate_saved_model(saved_model_path, smf_df, df):
-
-#     d = np.load(saved_model_path, allow_pickle=True)
-#     weights = d['weights']
-#     mus = d['mus'].tolist()
-#     stds = d['stds'].tolist()
-#     model_spec = d['model_spec'].item()
-    
-#     model = create_model(model_spec)
-#     model.set_weights(weights)
-
-#     # prepare single gene inputs
-#     single_gene_inputs = create_smf_inputs(model_spec['single_gene_spec'], smf_df)
-    
-#     return evaluate_model(model_spec, model, single_gene_inputs, df)
-    
-
-def evaluate_model(model_spec, model, single_gene_inputs, df, mus, stds):
-    # prepare double inputs
-    dgs = model_spec['double_gene_spec']
-    test_double_gene_inputs = models.nn_single.create_inputs(dgs, df)
-    test_double_gene_inputs, _, _ = models.nn_single.normalize_inputs(dgs, test_double_gene_inputs, mus, stds)
-
-    batch_size =  model_spec['batch_size']*10
-    test_iterator = create_data_iterator(df, np.zeros((df.shape[0], model_spec['n_output_dim'])), single_gene_inputs, test_double_gene_inputs, batch_size, True)
-
-    preds = model.predict(x=test_iterator(), steps=np.ceil(df.shape[0] / batch_size))
-    
-    r = evaluate(np.array(df[model_spec['target_col']]), preds)
-    
-    return r
-
-def evaluate(ytrue, preds):
-    
-    yhat = np.argmax(preds, axis=1)
-
-    bacc = sklearn.metrics.balanced_accuracy_score(ytrue, yhat)
-    acc = sklearn.metrics.accuracy_score(ytrue, yhat)
-    cm = sklearn.metrics.confusion_matrix(ytrue, yhat)
-
-    Ytrue = keras.utils.to_categorical(ytrue)
-    auc_roc = sklearn.metrics.roc_auc_score(Ytrue, preds, average=None)
-
-    print("Accuracy: %0.2f" % acc)
-    print("Balanced Accuracy: %0.2f" % bacc)
-    print("AUC-ROC: ", auc_roc)
-    print("Confusion Matrix: ")
-    print(cm)
-
-    return {
-        "bacc" : bacc,
-        "acc" : acc,
-        "auc_roc" : auc_roc.tolist(),
-        "cm" : cm.tolist()
-    }
-
-def load_split(splits_path, rep):
-
-    d = np.load(splits_path)
-    splits = d['splits']
-    return splits[rep,:]
-
-def add_extra_info_to_spec(model_spec, smf_df, df):
-
-    # calculate output dimension size (number of classes)
-    model_spec['n_output_dim'] = np.unique(df[model_spec['target_col']]).shape[0]
-
-    add_extra_info_to_subspec(model_spec['single_gene_spec'], smf_df)
-    add_extra_info_to_subspec(model_spec['double_gene_spec'], df)
-    
-def add_extra_info_to_subspec(model_spec, df):
-    if len(model_spec['selected_feature_sets']) == 0:
-        model_spec['selected_feature_sets'] = list(model_spec['feature_sets'].keys())
-        
-    # add the feature dimensions and column names for each feature set
-    for feature_set, props in model_spec['feature_sets'].items():
-        ix = df.columns.str.startswith('%s-' % feature_set)
-        props['dim'] = np.sum(ix)
-        props['cols'] = list(df.columns[ix])
-
 
 if __name__ == "__main__":
     import sys 
@@ -240,11 +174,22 @@ if __name__ == "__main__":
     with open(model_spec_path, 'r') as f:
         model_spec = json.load(f)
     
-    smf_df = pd.read_feather(smf_dataset_path)
     df = pd.read_feather(dataset_path)
 
     splits = np.load(splits_path, allow_pickle=True)['splits']
     split = splits[split]
 
-    train_and_evaluate_model(model_spec, smf_df, df, split, model_output_path)
+    m = DoubleInputNNModel(model_spec, smf_dataset_path)
+    
+    train_df, valid_df, test_df = models.common.get_dfs(df, split)
 
+    m.train(train_df, valid_df)
+
+    m.save(model_output_path)
+
+    m = DoubleInputNNModel.load(model_output_path)
+
+
+    preds = m.predict(test_df)
+
+    models.common.evaluate(np.array(test_df[model_spec['target_col']]), preds)
