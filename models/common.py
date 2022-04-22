@@ -4,6 +4,31 @@ import sklearn.metrics
 import tensorflow as tf 
 import tensorflow.keras as keras 
 
+def create_inputs(model_spec, df):
+
+    inputs = []
+    for feature_set in model_spec['selected_feature_sets']:
+        props = model_spec['feature_sets'][feature_set]
+        F = np.array(df[ props['cols'] ])
+        inputs.append(F)
+    
+    return inputs
+
+def normalize_inputs(inputs, mus = None, stds = None):
+
+    if mus is None:
+        mus = [None for inp in inputs]
+        stds = [None for inp in inputs]
+        
+    normalized_inputs = []
+    for i, F in enumerate(inputs):
+        F, mu, std = normalize(F, mus[i], stds[i])
+        mus[i] = mu
+        stds[i] = std
+        normalized_inputs.append(F)
+    
+    return normalized_inputs, mus, stds
+
 def normalize(F, mu = None, std = None):
 
     if mu is None:
