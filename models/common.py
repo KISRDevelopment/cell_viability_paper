@@ -4,12 +4,13 @@ import sklearn.metrics
 import tensorflow as tf 
 import tensorflow.keras as keras 
 
-def create_inputs(model_spec, df):
+def create_inputs(model_spec, df, prefix=''):
 
     inputs = []
     for feature_set in model_spec['selected_feature_sets']:
         props = model_spec['feature_sets'][feature_set]
-        F = np.array(df[ props['cols'] ])
+        eff_cols = ['%s%s' % (prefix, c) for c in props['cols']]
+        F = np.array(df[ eff_cols ])
         inputs.append(F)
     
     return inputs
