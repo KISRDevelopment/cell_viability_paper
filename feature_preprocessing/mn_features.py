@@ -3,7 +3,7 @@ import pandas as pd
 import json 
 import tensorflow.keras.utils  as utils
 
-GI_SMF_MAP = np.array([0, 1, 2, 1, 3, 4, 2, 4, 5])
+GI_SMF_MAP = np.array([0, 1, 2, 1, 3, 4, 2, 4, 5, 6])
 GI_SMF_LABELS = ['LL', 'LR', 'LN', 'RR', 'RN', 'NN']
 
 def create_double_gene_mn_features(spec, smf_df, gi_df, output_path):
@@ -25,10 +25,10 @@ def create_double_gene_mn_features(spec, smf_df, gi_df, output_path):
             dfs.append(sdf)
         
         # pairwise feature based on single gene features
-        if type(feature) == dict:
+        elif type(feature) == dict:
 
             cols = smf_df_cols[ smf_df_cols.str.startswith(feature['feature']) ]
-                
+            
             a_features = np.array(smf_df.loc[a_id][cols])
             b_features = np.array(smf_df.loc[b_id][cols])
 
@@ -37,9 +37,21 @@ def create_double_gene_mn_features(spec, smf_df, gi_df, output_path):
                 sdf = pd.DataFrame(data=added_features, index=gi_df.index, columns=cols)
                 dfs.append(sdf)
             elif feature['op'] == 'combs':
-                eff_bins = 3 * a_features + b_features
+                
+                # convert combinations to flat index
+                eff_bins = (3 * a_features + b_features).squeeze()
+
+                # identify pairs with one or both genes have no SMF
+                nan_ix = np.isnan(eff_bins)
+
+                # set those to a unique index
+                eff_bins[nan_ix] = 9
                 eff_bins = GI_SMF_MAP[eff_bins.astype(int)]
-                cat_bins = utils.to_categorical(eff_bins, num_classes=6)
+                
+                # only set bits for pairs where both genes have smf
+                cat_bins = np.zeros((gi_df.shape[0], 6))
+                cat_bins[~nan_ix, eff_bins[~nan_ix]] = 1
+                
                 sdf = pd.DataFrame(data=cat_bins, index=gi_df.index, columns=['smf-%s' % l for l in GI_SMF_LABELS])
                 dfs.append(sdf)
     
@@ -58,7 +70,7 @@ if __name__ == "__main__":
         { "op" : "add", "feature" : "sgo-" }
     ]
 
-    smf_df = pd.read_feather("../generated-data/dataset_yeast_smf.feather")
-    gi_df = pd.read_feather("../generated-data/dataset_yeast_gi_costanzo.feather")
+    smf_df = pd.read_feather("../generated-data/dataset_yeast_allppc.feather")
+    gi_df = pd.read_feather("../generated-data/dataset_yeast_gi_hybrid.feather")
 
     create_double_gene_mn_features(spec, smf_df, gi_df, "../tmp/mnfeatures.feather")

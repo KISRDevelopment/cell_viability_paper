@@ -1,10 +1,11 @@
 import numpy as np 
 import pandas as pd 
+import networkx as nx 
 
 def main():
 
-    compile_dataset("../generated-data/task_yeast_smf_30",
-                              [
+    yeast_single_features_spec = [
+        [
                                 "../generated-data/features/ppc_yeast_topology.npz",
                                 "../generated-data/features/ppc_yeast_common_sgo.npz",
                                 "../generated-data/features/ppc_yeast_redundancy.npz",
@@ -33,7 +34,14 @@ def main():
                                 'localization_rap',
                                 'localization_wt3',
                                 'smf'
-                            ], "../generated-data/dataset_yeast_smf")
+                            ]
+    ]
+    compile_dataset("../generated-data/task_yeast_smf_30", 
+        yeast_single_features_spec[0], yeast_single_features_spec[1], 
+        "../generated-data/dataset_yeast_allppc", True, "../generated-data/ppc_yeast")
+    compile_dataset("../generated-data/task_yeast_smf_30", 
+        yeast_single_features_spec[0], yeast_single_features_spec[1], 
+        "../generated-data/dataset_yeast_smf")
     
     compile_dataset("../generated-data/task_pombe_smf",
                     [
@@ -183,12 +191,32 @@ def main():
                           "../generated-data/dataset_%s_gi" % org)
     
     
-def compile_dataset(path, feature_files, feature_sets, output_path):
+def compile_dataset(path, feature_files, feature_sets, output_path, all_features=False, ppc_path=None):
     print("Compiling ", path)
 
     df = pd.read_csv(path)
     gene_id = np.array(df['id'])
     
+    if not all_features:
+        F_df,_ = compile_gene_features(feature_files, feature_sets, gene_id)
+        df = pd.concat((df, F_df), axis=1)
+    else:
+        F_df, gene_id = compile_gene_features(feature_files, feature_sets)
+        df = df.set_index('id')
+        
+        G = nx.read_gpickle(ppc_path)
+        nodes = sorted(G.nodes())
+        
+        F_df = F_df.set_index(gene_id)
+
+        df = pd.concat((df, F_df), axis=1, join='outer').sort_index()
+        df['gene'] = nodes 
+        df['id'] = df.index 
+
+    df.to_feather(output_path + '.feather')
+
+def compile_gene_features(feature_files, feature_sets, gene_id=None):
+
     fs = []
     cols = []
     mus = []
@@ -197,6 +225,9 @@ def compile_dataset(path, feature_files, feature_sets, output_path):
         d = np.load(feature_file)
         F = d['F']
 
+        if gene_id is None:
+            gene_id = np.arange(F.shape[0])
+        
         if len(F.shape) == 2:
             f = F[gene_id,:]
             f_cols = ['%s-%s' % (feature_set,c) for c in d['feature_labels']]
@@ -234,10 +265,9 @@ def compile_dataset(path, feature_files, feature_sets, output_path):
     assert np.sum(np.isnan(F)) == 0
     
     F_df = pd.DataFrame(data=F, columns=cols)
-    
-    df = pd.concat((df, F_df), axis=1)
-    df.to_feather(output_path + '.feather')
-    
+
+    return F_df, gene_id 
+
 def compile_gi_dataset(path, spec, output_path):
     print("Compiling ", path)
 
