@@ -6,6 +6,7 @@ import models.nn_double
 import models.nn_triple
 import models.mn 
 import models.common
+import multiprocessing 
 
 MODELS = {
     "nn_single" : models.nn_single.SingleInputNNModel,
@@ -32,8 +33,17 @@ SPLIT_MODES = {
     }
 }
 
-def train_and_evaluate(model_spec, df, split, split_mode, model_output_path, sg_path=None):
+def single_split(model_spec_path, dataset_path, splits_path, split_id, split_mode, model_output_path, sg_path=None, verbose=True):
 
+    with open(model_spec_path, 'r') as f:
+        model_spec = json.load(f)
+    model_spec['verbose'] = verbose 
+    
+    df = pd.read_feather(dataset_path)
+
+    splits = np.load(splits_path, allow_pickle=True)['splits']
+    split = splits[int(split_id)]
+    
     model_class = MODELS[model_spec['class']]
 
     m = model_class(model_spec, sg_path=sg_path)
@@ -48,22 +58,26 @@ def train_and_evaluate(model_spec, df, split, split_mode, model_output_path, sg_
 
     target_col = model_spec['target_col']
     r = models.common.evaluate(np.array(test_df[target_col]), preds)
+    r['split_id'] = split_id
 
     return r 
 
-def main(model_spec_path, dataset_path, splits_path, split_id, split_mode, model_output_path, sg_path=None):
+def cv_f(packed):
+    return single_split(*packed)
 
-    with open(model_spec_path, 'r') as f:
-        model_spec = json.load(f)
+def cv(model_spec_path, dataset_path, splits_path, split_mode, model_output_path, sg_path=None, n_workers=4, **kwargs):
+
+    d = np.load(splits_path)
+    n_splits = len(d['splits'])
+
+    with multiprocessing.Pool(processes=n_workers) as pool:
+        results = pool.map(cv_f, 
+            [(model_spec_path, dataset_path, splits_path, i, split_mode, "%s/model%d.npz" % (model_output_path, i), sg_path, False) for i in range(n_splits)])
     
-    df = pd.read_feather(dataset_path)
+    with open("%s/results.json" % model_output_path, "w") as f:
+        json.dump(results, f, indent=4)
 
-    splits = np.load(splits_path, allow_pickle=True)['splits']
-    split = splits[int(split_id)]
-    
-    r = train_and_evaluate(model_spec, df, split, split_mode, model_output_path, sg_path)
-
-    return r 
+    return results 
 
 if __name__ == "__main__":
     import argparse
@@ -71,11 +85,15 @@ if __name__ == "__main__":
     parser.add_argument("model_spec_path", type=str, help="Path to json file specifying model configuration.")
     parser.add_argument("dataset_path", type=str, help="Path to the dataset .feather file.")
     parser.add_argument("splits_path", type=str, help="Path to the splits file which specifies the training/validation/testing splits.")
-    parser.add_argument("split_id", type=int, help="Split number in the splits file.")
     parser.add_argument("split_mode", type=str, choices=SPLIT_MODES.keys(), help="Split mode.")
-    parser.add_argument("model_output_path", type=str, help="Where to store the trained model.")
+    parser.add_argument("model_output_path", type=str, help="Where to store the trained model. For CV, this should be a path to a directory.")
     parser.add_argument("--sg_path", type=str, help="Path to file containing features for single genes (relevant for double and triple nn models).")
+    parser.add_argument("--split_id", type=int, default=-1, help="Run only the given split number in the splits file. Otherwise, CV will be done.")
+    parser.add_argument("--n_workers", type=int, default=1, help="Number of worker processes to use when doing CV.")
 
     args = vars(parser.parse_args())
-    
-    main(**args)
+
+    if args['split_id'] > -1:
+        single_split(**args)
+    else:
+        cv(**args)

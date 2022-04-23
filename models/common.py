@@ -86,11 +86,11 @@ def evaluate(ytrue, preds):
     Ytrue = keras.utils.to_categorical(ytrue)
     auc_roc = sklearn.metrics.roc_auc_score(Ytrue, preds, average=None)
 
-    print("Accuracy: %0.2f" % acc)
-    print("Balanced Accuracy: %0.2f" % bacc)
-    print("AUC-ROC: ", auc_roc)
-    print("Confusion Matrix: ")
-    print(cm)
+    # print("Accuracy: %0.2f" % acc)
+    # print("Balanced Accuracy: %0.2f" % bacc)
+    # print("AUC-ROC: ", auc_roc)
+    # print("Confusion Matrix: ")
+    # print(cm)
 
     return {
         "bacc" : bacc,
