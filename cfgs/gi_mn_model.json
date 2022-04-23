@@ -1,4 +1,5 @@
 {
+    "class" : "mn",
     "features" : [
         "pairwise-spl",
         "topology-",

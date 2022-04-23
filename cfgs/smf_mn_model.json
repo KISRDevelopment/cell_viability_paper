@@ -1,5 +1,5 @@
 {
-    "class" : "nn_single",
+    "class" : "mn",
     "features" : [
         "topology-lid",
         "redundancy-pident",

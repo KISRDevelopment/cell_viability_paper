@@ -1,5 +1,5 @@
 {
-    "class" : "nn_single",
+    "class" : "nn_triple",
     "single_gene_spec" : {
         "modules" : {
             "topology" : {
