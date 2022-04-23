@@ -66,10 +66,15 @@ class DoubleInputNNModel:
             stds=np.array(self._stds, dtype=object)) 
     
     @staticmethod
-    def load(path):
+    def load(path, sg_path=None):
         d = np.load(path, allow_pickle=True)
         model_spec = d['model_spec'].item()
-        sg_path = d['sg_path'].item()
+
+        # this is to enable overriding where the single gene features come from
+        # used in generalization experiments
+        if sg_path is None:
+            sg_path = d['sg_path'].item()
+        
         weights = d['weights']
         mus = d['mus'].tolist()
         stds = d['stds'].tolist()
@@ -82,12 +87,17 @@ class DoubleInputNNModel:
 
         return m 
     
-    def predict(self, test_df):
+    def predict(self, test_df, train_norm=True):
 
         dgs = self._model_spec['double_gene_spec']
+        
         test_double_gene_inputs = models.common.create_inputs(dgs, test_df)
-        test_double_gene_inputs, _, _ = models.common.normalize_inputs(test_double_gene_inputs, self._mus, self._stds)
 
+        if train_norm:
+            test_double_gene_inputs, _, _ = models.common.normalize_inputs(test_double_gene_inputs, self._mus, self._stds)
+        else:
+            test_double_gene_inputs, _, _ = models.common.normalize_inputs(test_double_gene_inputs)
+        
         batch_size =  self._model_spec['batch_size']*10
         test_iterator = create_data_iterator(test_df, np.zeros((test_df.shape[0], self._model_spec['n_output_dim'])),
             self._sg_inputs, test_double_gene_inputs, batch_size, False)

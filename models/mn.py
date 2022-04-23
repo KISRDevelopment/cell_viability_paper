@@ -67,9 +67,12 @@ class MnModel:
 
         return m
     
-    def predict(self, test_df):
+    def predict(self, test_df, training_norm=True):
         test_X = np.array(test_df[self._model_spec['features']])
-        test_X, _, _ = models.common.normalize(test_X, self._mu, self._std)
+        if training_norm:
+            test_X, _, _ = models.common.normalize(test_X, self._mu, self._std)
+        else:
+            test_X, _, _ = models.common.normalize(test_X)
         preds = self._model.predict(test_X, batch_size=1000000)
         return preds 
     

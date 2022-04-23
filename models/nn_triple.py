@@ -89,15 +89,19 @@ class TripleInputNNModel:
 
         return m 
     
-    def predict(self, test_df):
+    def predict(self, test_df, train_norm=True):
 
         dgs = self._model_spec['double_gene_spec']
         test_double_gene_inputs_ab = models.common.create_inputs(dgs, test_df, 'ab-')
         test_double_gene_inputs_ac = models.common.create_inputs(dgs, test_df, 'ac-')
         test_double_gene_inputs_bc = models.common.create_inputs(dgs, test_df, 'bc-')
         test_double_gene_inputs_all = test_double_gene_inputs_ab + test_double_gene_inputs_ac + test_double_gene_inputs_bc
-        test_double_gene_inputs_all, _, _ = models.common.normalize_inputs(test_double_gene_inputs_all, self._mus, self._stds)
 
+        if train_norm:
+            test_double_gene_inputs_all, _, _ = models.common.normalize_inputs(test_double_gene_inputs_all, self._mus, self._stds)
+        else:
+            test_double_gene_inputs_all, _, _ = models.common.normalize_inputs(test_double_gene_inputs_all)
+        
         batch_size =  self._model_spec['batch_size']*10
         test_iterator = create_data_iterator(test_df, np.zeros((test_df.shape[0], self._model_spec['n_output_dim'])),
             self._sg_inputs, test_double_gene_inputs_all, batch_size, False)
