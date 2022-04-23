@@ -24,14 +24,19 @@ SPLIT_MODES = {
         "train_ids" : [1, 3],
         "valid_ids" : [2],
         "test_ids" : [0]
+    },
+    "full" : { # used for generalization experiments (test is irrelevant here)
+        "train_ids" : [0, 1, 3],
+        "valid_ids" : [2],
+        "test_ids" : [2]
     }
 }
 
-def train_and_evaluate(model_spec, df, split, split_mode, model_output_path):
+def train_and_evaluate(model_spec, df, split, split_mode, model_output_path, sg_path=None):
 
     model_class = MODELS[model_spec['class']]
 
-    m = model_class(model_spec)
+    m = model_class(model_spec, sg_path=sg_path)
     
     train_df, valid_df, test_df = models.common.get_dfs(df, split, **SPLIT_MODES[split_mode])
     
@@ -46,7 +51,7 @@ def train_and_evaluate(model_spec, df, split, split_mode, model_output_path):
 
     return r 
 
-def main(model_spec_path, dataset_path, splits_path, split_id, split_mode, model_output_path):
+def main(model_spec_path, dataset_path, splits_path, split_id, split_mode, model_output_path, sg_path=None):
 
     with open(model_spec_path, 'r') as f:
         model_spec = json.load(f)
@@ -56,7 +61,7 @@ def main(model_spec_path, dataset_path, splits_path, split_id, split_mode, model
     splits = np.load(splits_path, allow_pickle=True)['splits']
     split = splits[int(split_id)]
     
-    r = train_and_evaluate(model_spec, df, split, split_mode, model_output_path)
+    r = train_and_evaluate(model_spec, df, split, split_mode, model_output_path, sg_path)
 
     return r 
 
@@ -69,6 +74,8 @@ if __name__ == "__main__":
     parser.add_argument("split_id", type=int, help="Split number in the splits file.")
     parser.add_argument("split_mode", type=str, choices=SPLIT_MODES.keys(), help="Split mode.")
     parser.add_argument("model_output_path", type=str, help="Where to store the trained model.")
-    args = vars(parser.parse_args())
+    parser.add_argument("--sg_path", type=str, help="Path to file containing features for single genes (relevant for double and triple nn models).")
 
+    args = vars(parser.parse_args())
+    
     main(**args)

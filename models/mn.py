@@ -8,7 +8,7 @@ import models.common
 
 class MnModel:
 
-    def __init__(self, model_spec):
+    def __init__(self, model_spec, **kwargs):
         self._model_spec = model_spec 
     
     def train(self, train_df, valid_df):
