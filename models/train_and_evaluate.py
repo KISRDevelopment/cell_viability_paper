@@ -33,7 +33,7 @@ SPLIT_MODES = {
     }
 }
 
-def single_split(model_spec_path, dataset_path, splits_path, split_id, split_mode, model_output_path, sg_path=None, verbose=True):
+def single_split(model_spec_path, dataset_path, splits_path, split_id, split_mode, model_output_path, sg_path=None, verbose=True, no_train=True):
 
     with open(model_spec_path, 'r') as f:
         model_spec = json.load(f)
@@ -46,14 +46,16 @@ def single_split(model_spec_path, dataset_path, splits_path, split_id, split_mod
     
     model_class = MODELS[model_spec['class']]
 
-    m = model_class(model_spec, sg_path=sg_path)
-    
     train_df, valid_df, test_df = models.common.get_dfs(df, split, **SPLIT_MODES[split_mode])
     
-    m.train(train_df, valid_df)
-
-    m.save(model_output_path)
-
+    if no_train:
+        m = model_class.load(model_output_path)
+    else:
+        m = model_class(model_spec, sg_path=sg_path)    
+        m.train(train_df, valid_df)
+        m.save(model_output_path)
+        
+    
     preds = m.predict(test_df)
 
     target_col = model_spec['target_col']
@@ -65,14 +67,14 @@ def single_split(model_spec_path, dataset_path, splits_path, split_id, split_mod
 def cv_f(packed):
     return single_split(*packed)
 
-def cv(model_spec_path, dataset_path, splits_path, split_mode, model_output_path, sg_path=None, n_workers=4, **kwargs):
+def cv(model_spec_path, dataset_path, splits_path, split_mode, model_output_path, sg_path=None, n_workers=4, no_train=True, **kwargs):
 
     d = np.load(splits_path)
     n_splits = len(d['splits'])
 
     with multiprocessing.Pool(processes=n_workers) as pool:
         results = pool.map(cv_f, 
-            [(model_spec_path, dataset_path, splits_path, i, split_mode, "%s/model%d.npz" % (model_output_path, i), sg_path, False) for i in range(n_splits)])
+            [(model_spec_path, dataset_path, splits_path, i, split_mode, "%s/model%d.npz" % (model_output_path, i), sg_path, False, no_train) for i in range(n_splits)])
     
     with open("%s/results.json" % model_output_path, "w") as f:
         json.dump(results, f, indent=4)
@@ -90,6 +92,7 @@ if __name__ == "__main__":
     parser.add_argument("--sg_path", type=str, help="Path to file containing features for single genes (relevant for double and triple nn models).")
     parser.add_argument("--split_id", type=int, default=-1, help="Run only the given split number in the splits file. Otherwise, CV will be done.")
     parser.add_argument("--n_workers", type=int, default=1, help="Number of worker processes to use when doing CV.")
+    parser.add_argument("--no-train", action='store_true', default=False, help="Train the model or evaluate pre-traiend models on the test set.")
 
     args = vars(parser.parse_args())
 
