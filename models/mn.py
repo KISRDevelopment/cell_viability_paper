@@ -28,8 +28,10 @@ class MnModel:
 
         earlystopping_callback = keras.callbacks.EarlyStopping(monitor='val_loss', 
                                     patience=model_spec['patience'], restore_best_weights=True)
-        callbacks = [earlystopping_callback]
-
+        callbacks = []
+        if model_spec['early_stopping']:
+            callbacks=[earlystopping_callback]
+        
         model.fit(train_X, 
                 train_Y, 
                 batch_size=int(model_spec['batch_size_p'] * train_Y.shape[0]),
@@ -76,6 +78,14 @@ class MnModel:
         preds = self._model.predict(test_X, batch_size=1000000)
         return preds 
     
+    def get_coefficients(self, ref_class=0):
+        coefficients, biases = self._model.get_weights()
+
+        biases = biases - biases[ref_class]
+        coefficients = coefficients - coefficients[:,[ref_class]]
+
+        return biases, coefficients, self._model_spec['features']
+
     def _add_extra_info_to_spec(self, df):
         model_spec = self._model_spec
 
