@@ -11,9 +11,7 @@
     "verbose": true,
     "patience": 10,
     "balanced_loss" : true,
-    "batch_size_p" : 1,
-    "embedding_size" : 5,
-    "embedding_activation" : "tanh",
+    "batch_size_p" : 0.1,
     "target_col" : "bin",
     "learning_rate" : 0.001,
     "hyperparams" : {

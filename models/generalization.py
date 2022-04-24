@@ -57,5 +57,29 @@ def main():
     r = evaluate(model_spec, 10, "../tmp/yeast_mn_model", test_df)
     print(r)
 
+def main():
+
+    with open('cfgs/gi_mn_model.json', 'r') as f:
+        model_spec = json.load(f)
+    
+    model_spec['target_col'] = 'is_neutral'
+
+    df = pd.read_feather('../generated-data/dataset_yeast_gi_hybrid.feather')
+
+    splits = np.load("../generated-data/splits/task_yeast_gi_hybrid.npz", allow_pickle=True)['splits']
+
+    train_df, valid_df, _ = models.common.get_dfs(df, splits[0], train_ids=[0, 1, 3], valid_ids=[2], test_ids=[0])
+
+    # train(model_spec, 10, train_df, valid_df, "../tmp/yeast_mn_model_gi", 
+    #     sg_path="../generated-data/dataset_yeast_smf_allppc.feather"
+    # )
+
+    test_df = pd.read_feather('../generated-data/dataset_dro_gi.feather')
+
+    r = evaluate(model_spec, 10, "../tmp/yeast_mn_model_gi", test_df,
+        sg_path="../generated-data/dataset_dro_smf.feather"
+    )
+    print(r)
+
 if __name__ == "__main__":
     main()

@@ -52,7 +52,7 @@ class MnModel:
             std=self._std)
     
     @staticmethod
-    def load(path):
+    def load(path, **kwargs):
         d = np.load(path, allow_pickle=True)
         model_spec = d['model_spec'].item()
         weights = d['weights']
