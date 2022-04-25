@@ -34,18 +34,14 @@ SPLIT_MODES = {
     }
 }
 
-def single_split(model_spec_path, dataset_path, splits_path, split_id, split_mode, model_output_path, sg_path=None, verbose=True, no_train=True):
+# global variable that are shared among processes (in unix)
+# this is to avoid loading a large dataset into memory in every subprocess during CV
+df = None
 
-    with open(model_spec_path, 'r') as f:
-        model_spec = json.load(f)
-    model_spec['verbose'] = verbose 
-    
-    df = pd.read_feather(dataset_path)
+def single_split(model_spec, df, splits, split_id, split_mode, model_output_path, sg_path=None, no_train=True):
 
-    splits = np.load(splits_path, allow_pickle=True)['splits']
-    split = splits[int(split_id)]
-    
     model_class = MODELS[model_spec['class']]
+    split = splits[split_id]
 
     train_df, valid_df, test_df = models.common.get_dfs(df, split, **SPLIT_MODES[split_mode])
     
@@ -67,10 +63,19 @@ def single_split(model_spec_path, dataset_path, splits_path, split_id, split_mod
 
     return r 
 
-def cv_f(packed):
-    return single_split(*packed)
+def cv_f(task):
+    global df 
+    global splits 
+
+    task['df'] = df 
+    task['splits'] = splits 
+
+    return single_split(**task)
    
 def cv(model_spec_path, dataset_path, splits_path, split_mode, model_output_path, sg_path=None, n_workers=4, no_train=True, **kwargs):
+    global df 
+    global splits 
+
     os.makedirs(model_output_path, exist_ok=True)
 
     d = np.load(splits_path, allow_pickle=True)
@@ -79,17 +84,28 @@ def cv(model_spec_path, dataset_path, splits_path, split_mode, model_output_path
     if split_mode == 'dev_test':
         n_splits = 1
     
-    
-    if n_workers == 1:
-        for i in range(n_splits):
-            cv_f((model_spec_path, dataset_path, splits_path, i, split_mode, "%s/model%d.npz" % (model_output_path, i), sg_path, False, no_train))
-    else:
-        with multiprocessing.Pool(processes=n_workers) as pool:
-            results = pool.map(cv_f, 
-                [(model_spec_path, dataset_path, splits_path, i, split_mode, "%s/model%d.npz" % (model_output_path, i), sg_path, False, no_train) for i in range(n_splits)])
-        
     with open(model_spec_path, 'r') as f:
         model_spec = json.load(f)
+    model_spec['verbose'] = False 
+
+    df = pd.read_feather(dataset_path)
+
+    splits = np.load(splits_path, allow_pickle=True)['splits']
+
+    tasks = [{ "model_spec" : model_spec, 
+               "split_id" : i,
+               "split_mode" : split_mode, 
+               "model_output_path" : "%s/model%d.npz" % (model_output_path, i), 
+               "sg_path" : sg_path,
+               "no_train" : no_train } for i in range(n_splits)]
+    
+    if n_workers == 1:
+        for task in tasks:
+            cv_f(task)
+    else:
+        with multiprocessing.Pool(processes=n_workers) as pool:
+            results = pool.map(cv_f, tasks)
+                
     
     with open("%s/results.json" % model_output_path, "w") as f:
         json.dump({ "model_spec" : model_spec, "results" : results }, f, indent=4)

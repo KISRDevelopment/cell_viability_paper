@@ -16,14 +16,15 @@ def main():
     #                      '../generated-data/splits/task_yeast_smf_30_dev_test.npz',
     #                      '../results/smf_nn_model_hyperparam_opt')
     
-    # optimize_hyperparams('cfgs/gi_nn_model.json', 
-    #                      '../generated-data/dataset_yeast_gi_hybrid.feather', 
-    #                      '../generated-data/splits/task_yeast_gi_hybrid_dev_test.npz',
-    #                      '../results/gi_nn_model_hyperparam_opt',
-    #                      sg_path='../generated-data/dataset_yeast_allppc.feather')
+    optimize_hyperparams('cfgs/gi_nn_model.json', 
+                         '../generated-data/dataset_yeast_gi_hybrid.feather', 
+                         '../generated-data/splits/task_yeast_gi_hybrid_dev_test.npz',
+                         '../results/gi_nn_model_hyperparam_opt',
+                         sg_path='../generated-data/dataset_yeast_allppc.feather')
 
-    #smf_df = summarize_results('../results/smf_nn_model_hyperparam_opt', SMF_LABELS)
+    smf_df = summarize_results('../results/smf_nn_model_hyperparam_opt', SMF_LABELS)
     gi_df = summarize_results('../results/gi_nn_model_hyperparam_opt', GI_LABELS)
+
 
 def optimize_hyperparams(model_spec_path, dataset_path, splits_path, output_path, **kwargs):
 
@@ -33,12 +34,12 @@ def optimize_hyperparams(model_spec_path, dataset_path, splits_path, output_path
     model_specs = make_hyperparam_combinations(model_spec)
 
     for i, model_spec in enumerate(model_specs):
-        model_spec['epochs'] = 1 # DEBUGGING
+        model_spec['epochs'] = 1000 # DEBUGGING
 
         with open('../tmp/model_spec.json', 'w') as f:
             json.dump(model_spec, f, indent=4)
         
-        models.train_and_evaluate.cv("../tmp/model_spec.json", dataset_path, splits_path, "cv", "%s/comb%d" % (output_path, i), no_train=False, n_workers=10, **kwargs)
+        models.train_and_evaluate.cv("../tmp/model_spec.json", dataset_path, splits_path, "cv", "%s/comb%d" % (output_path, i), no_train=False, n_workers=32, **kwargs)
 
 def summarize_results(results_path, class_labels):
 
