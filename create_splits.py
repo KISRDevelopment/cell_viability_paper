@@ -112,6 +112,16 @@ cfgs = [
         "valid_p" : 0.2,
         "dev_test" : True,
         "test_p" : 0.2,
+        "output_path" : "../generated-data/splits/task_yeast_gi_hybrid_dev_test"
+    },
+    {
+        "dataset_path" : "../generated-data/task_yeast_gi_hybrid",
+        "function" : utils.split_gi.main,
+        "reps" : 10,
+        "folds" : 4,
+        "valid_p" : 0.2,
+        "dev_test" : False,
+        "test_p" : 0.2,
         "output_path" : "../generated-data/splits/task_yeast_gi_hybrid"
     },
     {

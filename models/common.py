@@ -84,7 +84,16 @@ def evaluate(ytrue, preds):
     cm = sklearn.metrics.confusion_matrix(ytrue, yhat)
 
     Ytrue = keras.utils.to_categorical(ytrue)
+    
+    # per class
     auc_roc = sklearn.metrics.roc_auc_score(Ytrue, preds, average=None)
+    pr = sklearn.metrics.average_precision_score(Ytrue, preds, average=None)
+    per_class_bacc = []
+    for b in range(Ytrue.shape[1]):
+        y_bin = ytrue == b
+        target_pred = yhat == b
+        per_class_bacc.append(sklearn.metrics.balanced_accuracy_score(y_bin, target_pred))
+
 
     # print("Accuracy: %0.2f" % acc)
     # print("Balanced Accuracy: %0.2f" % bacc)
@@ -96,7 +105,9 @@ def evaluate(ytrue, preds):
         "bacc" : bacc,
         "acc" : acc,
         "auc_roc" : auc_roc.tolist(),
-        "cm" : cm.tolist()
+        "cm" : cm.tolist(),
+        "pr" : pr.tolist(),
+        "per_class_bacc" : per_class_bacc
     }
 
 

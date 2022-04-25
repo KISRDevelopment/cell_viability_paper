@@ -7,6 +7,7 @@ import models.nn_triple
 import models.mn 
 import models.common
 import multiprocessing 
+import os 
 
 MODELS = {
     "nn_single" : models.nn_single.SingleInputNNModel,
@@ -62,22 +63,36 @@ def single_split(model_spec_path, dataset_path, splits_path, split_id, split_mod
     r = models.common.evaluate(np.array(test_df[target_col]), preds)
     r['split_id'] = split_id
 
+    print("Done %d" % split_id)
+
     return r 
 
 def cv_f(packed):
     return single_split(*packed)
-
+   
 def cv(model_spec_path, dataset_path, splits_path, split_mode, model_output_path, sg_path=None, n_workers=4, no_train=True, **kwargs):
+    os.makedirs(model_output_path, exist_ok=True)
 
-    d = np.load(splits_path)
+    d = np.load(splits_path, allow_pickle=True)
     n_splits = len(d['splits'])
 
-    with multiprocessing.Pool(processes=n_workers) as pool:
-        results = pool.map(cv_f, 
-            [(model_spec_path, dataset_path, splits_path, i, split_mode, "%s/model%d.npz" % (model_output_path, i), sg_path, False, no_train) for i in range(n_splits)])
+    if split_mode == 'dev_test':
+        n_splits = 1
+    
+    
+    if n_workers == 1:
+        for i in range(n_splits):
+            cv_f((model_spec_path, dataset_path, splits_path, i, split_mode, "%s/model%d.npz" % (model_output_path, i), sg_path, False, no_train))
+    else:
+        with multiprocessing.Pool(processes=n_workers) as pool:
+            results = pool.map(cv_f, 
+                [(model_spec_path, dataset_path, splits_path, i, split_mode, "%s/model%d.npz" % (model_output_path, i), sg_path, False, no_train) for i in range(n_splits)])
+        
+    with open(model_spec_path, 'r') as f:
+        model_spec = json.load(f)
     
     with open("%s/results.json" % model_output_path, "w") as f:
-        json.dump(results, f, indent=4)
+        json.dump({ "model_spec" : model_spec, "results" : results }, f, indent=4)
 
     return results 
 
@@ -87,7 +102,7 @@ if __name__ == "__main__":
     parser.add_argument("model_spec_path", type=str, help="Path to json file specifying model configuration.")
     parser.add_argument("dataset_path", type=str, help="Path to the dataset .feather file.")
     parser.add_argument("splits_path", type=str, help="Path to the splits file which specifies the training/validation/testing splits.")
-    parser.add_argument("split_mode", type=str, choices=SPLIT_MODES.keys(), help="Split mode.")
+    parser.add_argument("split_mode", type=str, choices=SPLIT_MODES.keys(), help="Split mode. If dev_test, only one split will be run.")
     parser.add_argument("model_output_path", type=str, help="Where to store the trained model. For CV, this should be a path to a directory.")
     parser.add_argument("--sg_path", type=str, help="Path to file containing features for single genes (relevant for double and triple nn models).")
     parser.add_argument("--split_id", type=int, default=-1, help="Run only the given split number in the splits file. Otherwise, CV will be done.")

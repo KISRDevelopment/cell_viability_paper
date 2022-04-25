@@ -69,7 +69,7 @@ class SingleInputNNModel:
         return m
     
     def predict(self, test_df, train_norm=True):
-        test_inputs = models.common.create_inputs(model_spec, test_df)
+        test_inputs = models.common.create_inputs(self._model_spec, test_df)
         if train_norm:
             test_inputs, _, _ = models.common.normalize_inputs(test_inputs, self._mus, self._stds)
         else:
