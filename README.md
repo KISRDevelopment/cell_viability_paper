@@ -13,6 +13,9 @@ This repository includes the code to process source data and run all experiments
 
 The code relies on Python 3.6+ and requires Tensorflow 2+ for modeling. 
 
+## Required files
+- `../generated-data/go_ids_to_names.json`
+
 
 [**Live GI Prediction Tool**](http://ssdd.kisr.edu.kw/gi_pred/static/search_gi.html)
 
