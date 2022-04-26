@@ -16,7 +16,9 @@ The code relies on Python 3.6+ and requires Tensorflow 2+ for modeling.
 ## Required files
 - `../generated-data/go_ids_to_names.json`
 
-
+## Figures need fixing
+- Sum LID in pairwise and triple
+- 
 [**Live GI Prediction Tool**](http://ssdd.kisr.edu.kw/gi_pred/static/search_gi.html)
 
 (link will change once we get assigned a permanant address)

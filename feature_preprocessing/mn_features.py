@@ -146,6 +146,8 @@ if __name__ == "__main__":
     # create_double_gene_mn_features(spec, smf_df, gi_df, "../tmp/mnfeatures.feather")
 
     spec = [
+        { "op" : "add", "feature" : "sgo-", "type" : "single" },
+        { "op" : "add", "feature" : "topology-lid", "type" : "single" },
         { "op" : "add", "feature" : "pairwise-spl", "type" : "pair" },
         { "op" : "combs", "feature" : "bin", "type" : "single" }
     ]
