@@ -1,9 +1,17 @@
 import numpy as np 
 import pandas as pd 
 import networkx as nx 
+import utils.yeast_name_resolver as nr
+from collections import defaultdict 
+import json
+
+res = nr.NameResolver()
 
 def main():
 
+    compile_complexes("../generated-data/yeast_complexes.json")
+    compile_pathways("../generated-data/yeast_pathways.json")
+    
     yeast_single_features_spec = [
         [
                                 "../generated-data/features/ppc_yeast_topology.npz",
@@ -392,7 +400,44 @@ def read_pairwise_comms(a_id, b_id, path):
     
     return np.array(F), ['within_comm', 'cross_comm', 'same_comm']
 
+def compile_pathways(output_path):
 
+    with open('../data-sources/yeast/kegg_pathways', 'r') as f:
+        genes_to_pathways = json.load(f)
+    
+    with open('../data-sources/yeast/kegg_names.json', 'r') as f:
+        kegg_names = json.load(f)
+    
+    for k in genes_to_pathways.keys():
+        pnames = [kegg_names[p] for p in genes_to_pathways[k]]
+        genes_to_pathways[k] = pnames 
+
+    genes_to_pathways = {res.get_unified_name(g) : set(genes_to_pathways[g]) for g in genes_to_pathways}
+
+    serialize_groups(output_path, genes_to_pathways)
+
+def compile_complexes(output_path):
+
+    df = pd.read_excel('../data-sources/yeast/CYC2008_complex.xls')
+
+    df['gene'] = [res.get_unified_name(g.lower()) for g in df['ORF']]
+
+    df_gene = list(df['gene'])
+    df_complex = list(df['Complex'])
+
+    genes_to_complexes = defaultdict(set)
+    for i in range(df.shape[0]):
+        g = df_gene[i]
+        genes_to_complexes[g].add(df_complex[i])
+    
+    serialize_groups(output_path, genes_to_complexes)
+
+
+def serialize_groups(output_path, genes_to_groups):
+    for g in genes_to_groups:
+        genes_to_groups[g] = list(genes_to_groups[g])
+    with open(output_path, 'w') as f:
+        json.dump(genes_to_groups, f, indent=4)
 
 if __name__ == "__main__":
     main()
