@@ -154,3 +154,6 @@ if __name__ == "__main__":
     smf_df = pd.read_feather("../generated-data/dataset_yeast_allppc.feather")
     gi_df = pd.read_feather("../generated-data/dataset_yeast_tgi.feather")
     create_triple_gene_mn_features(spec, smf_df, gi_df, "../tmp/tgi_mn.feather")
+
+    gi_df = pd.read_feather("../generated-data/dataset_yeast_pseudo_triplets.feather")
+    create_triple_gene_mn_features(spec, smf_df, gi_df, "../tmp/pseudo_triplets_mn.feather")
