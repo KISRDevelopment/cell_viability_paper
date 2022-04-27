@@ -120,42 +120,14 @@ def main():
     
 
     compile_gi_dataset("../generated-data/task_yeast_gi_costanzo", yeast_pair_spec(), "../generated-data/dataset_yeast_gi_costanzo")
-    compile_gi_mn_dataset("../generated-data/dataset_yeast_gi_costanzo.feather",
-                         "../generated-data/dataset_yeast_allppc.feather",
-                         "../generated-data/dataset_yeast_gi_costanzo_mn.feather")
-
     compile_gi_dataset("../generated-data/task_yeast_gi_hybrid", yeast_pair_spec(), "../generated-data/dataset_yeast_gi_hybrid")
-    compile_gi_mn_dataset("../generated-data/dataset_yeast_gi_hybrid.feather",
-                         "../generated-data/dataset_yeast_allppc.feather",
-                         "../generated-data/dataset_yeast_gi_hybrid_mn.feather")
-    
-
     compile_tgi_dataset("../generated-data/task_yeast_tgi", yeast_pair_spec(), "../generated-data/dataset_yeast_tgi")
-    compile_tgi_mn_dataset("../generated-data/dataset_yeast_tgi.feather",
-                         "../generated-data/dataset_yeast_allppc.feather",
-                         "../generated-data/dataset_yeast_tgi_mn.feather")
-                     
     compile_tgi_dataset("../generated-data/pseudo_triplets",
         yeast_pair_spec(),
         "../generated-data/dataset_yeast_pseudo_triplets")
-    compile_tgi_mn_dataset("../generated-data/dataset_yeast_pseudo_triplets.feather",
-                         "../generated-data/dataset_yeast_allppc.feather",
-                         "../generated-data/dataset_yeast_pseudo_triplets_mn.feather")
-
     compile_gi_dataset("../generated-data/task_pombe_gi", other_pair_spec('pombe'), "../generated-data/dataset_pombe_gi")
-    compile_gi_mn_dataset("../generated-data/dataset_pombe_gi.feather",
-                         "../generated-data/dataset_pombe_smf.feather",
-                         "../generated-data/dataset_pombe_gi_mn.feather")
-
     compile_gi_dataset("../generated-data/task_human_gi", other_pair_spec('human'), "../generated-data/dataset_human_gi")
-    compile_gi_mn_dataset("../generated-data/dataset_human_gi.feather",
-                         "../generated-data/dataset_human_smf.feather",
-                         "../generated-data/dataset_human_gi_mn.feather")
-
     compile_gi_dataset("../generated-data/task_dro_gi", other_pair_spec('dro'), "../generated-data/dataset_dro_gi")
-    compile_gi_mn_dataset("../generated-data/dataset_dro_gi.feather",
-                         "../generated-data/dataset_dro_smf.feather",
-                         "../generated-data/dataset_dro_gi_mn.feather")
     
 def compile_dataset(path, spec, output_path, ppc_path=None):
     print("Compiling ", path)
