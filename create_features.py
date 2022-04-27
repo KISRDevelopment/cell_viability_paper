@@ -22,6 +22,17 @@ import feature_preprocessing.common_sgo
 import feature_preprocessing.const 
 import feature_preprocessing.sgo 
 import feature_preprocessing.binned_smf
+import feature_preprocessing.pairwise_acdd
+import feature_preprocessing.amino_acid_features
+import feature_preprocessing.shared_go_count
+import feature_preprocessing.yeast_idc
+import feature_preprocessing.pairwise_mistry2017_rma
+import feature_preprocessing.diffslc_ppc
+import feature_preprocessing.pairwise_common_functions
+import feature_preprocessing.pairwise_go_semsim
+import feature_preprocessing.pairwise_pathway_comembership
+import feature_preprocessing.pairwise_overlay
+import feature_preprocessing.sgo
 
 os.makedirs('../generated-data/features', exist_ok=True)
 
@@ -47,6 +58,26 @@ feature_preprocessing.const.main(gpath)
 ppc_creation.find_comms.main(gpath_gml, 5)
 feature_preprocessing.pairwise_comms_sparse.main(gpath, '../generated-data/communities/%s_5steps.json' % os.path.basename(gpath))
 feature_preprocessing.binned_smf.main(gpath, "../generated-data/task_yeast_smf_30")
+
+# yeast features that are derived from literature (for model comparison)
+
+feature_preprocessing.pairwise_acdd.main("../generated-data/ppc_yeast")
+feature_preprocessing.amino_acid_features.main("../generated-data/ppc_yeast", "../tmp/amino_acid_features.Rda")
+feature_preprocessing.shared_go_count.main("../generated-data/ppc_yeast", "../generated-data/features/ppc_yeast_full_go.npz")
+feature_preprocessing.yeast_idc.main("../generated-data/ppc_yeast")
+#feature_preprocessing.pairwise_mistry2017_rma.main("../generated-data/ppc_yeast")
+feature_preprocessing.diffslc_ppc.main("../generated-data/ppc_yeast", " ../generated-data/pairwise_features/ppc_yeast_rma_dcor.npy")
+# feature_preprocessing.pairwise_common_functions.main()
+# feature_preprocessing.pairwise_go_semsim.main("biological_process")
+# feature_preprocessing.pairwise_go_semsim.main("cellular_component")
+# feature_preprocessing.pairwise_pathway_comembership.main()
+# feature_preprocessing.pairwise_overlay.main("../generated-data/ppc_yeast", "../generated-data/pairwise_features/ppc_yeast_semsim_biological_process.npy", 
+#     "../generated-data/pairwise_features/ppc_yeast_overlay_ppi_semsim_biological_process.npy"
+# )
+feature_preprocessing.sgo.main("../generated-data/ppc_yeast", "../data-sources/yeast/sgd.gaf", 
+    gene_name_col=0,
+    output_path="../generated-data/features/ppc_yeast_full_go",
+    annotations_reader=feature_preprocessing.sgo.read_annotations_yeast)
 
 # pombe features
 gpath = "../generated-data/ppc_pombe"

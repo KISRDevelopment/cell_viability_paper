@@ -10,11 +10,10 @@ myers2006path = "../data-sources/myers2006.csv"
 
 res = nr.NameResolver()
 
-
 gpath = "../generated-data/ppc_yeast"
 def main():
-    #download.obo("go-basic")
-    #download.gaf("sgd")
+    download.obo("go-basic")
+    download.gaf("sgd")
 
     G = nx.read_gpickle(gpath)
     nodes = sorted(G.nodes())

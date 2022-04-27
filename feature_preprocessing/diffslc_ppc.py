@@ -28,7 +28,7 @@ def main(gpath, rma_corr_path):
     #             ecc = (numerator / (denominator * 1.0))
     #             G[nodes[i]][nodes[j]]['ecc'] = ecc 
     
-    #nx.write_gpickle(G, "../tmp/ppc_test")
+    # nx.write_gpickle(G, "../tmp/ppc_test")
     G = nx.read_gpickle('../tmp/ppc_test')
 
     # calculate diffslc

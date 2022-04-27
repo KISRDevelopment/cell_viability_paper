@@ -41,6 +41,12 @@ yeast_single_spec = lambda: (
     ]
 )
 
+yeast_single_lit_spec = lambda: (["../generated-data/features/ppc_yeast_amino_acid.npz",
+          "../generated-data/features/ppc_yeast_idc.npz",
+          "../generated-data/features/ppc_yeast_diffslc.npz",
+          "../generated-data/features/ppc_yeast_full_go.npz"
+    ], ["amino_acid","idc","diffslc","go"])
+
 other_single_spec = lambda org: ([
     "../generated-data/features/ppc_%s_topology.npz" % org ,
     "../generated-data/features/ppc_%s_common_sgo.npz" % org,
@@ -87,6 +93,20 @@ yeast_pair_spec = lambda: [
     },
 ]
 
+yeast_pair_lit_spec = lambda: [
+    {
+        "path" : "../generated-data/pairwise_features/ppc_yeast_acdd.npy",
+        "name" : "pairwise-acdd",
+        "reader" : read_dense_pairwise
+    },
+    
+    {
+        "path" : "../generated-data/pairwise_features/ppc_yeast_shared_sgo.npy",
+        "name" : "pairwise-shared_sgo",
+        "reader" : read_dense_pairwise
+    }
+]
+
 other_pair_spec = lambda org: [
     {
         "path" : "../generated-data/pairwise_features/ppc_%s_shortest_path_len_sparse.npz" % org,
@@ -101,8 +121,8 @@ def main():
     compile_pathways("../generated-data/yeast_pathways.json")
 
     compile_dataset("../generated-data/task_yeast_smf_30", yeast_single_spec(), "../generated-data/dataset_yeast_allppc", "../generated-data/ppc_yeast")
-
     compile_dataset("../generated-data/task_yeast_smf_30", yeast_single_spec(), "../generated-data/dataset_yeast_smf")
+    compile_dataset("../generated-data/task_yeast_smf_30", yeast_single_lit_spec(), "../generated-data/dataset_yeast_smf_lit")
     
     compile_dataset("../generated-data/task_pombe_smf", other_single_spec('pombe'),"../generated-data/dataset_pombe_smf")
     
@@ -121,6 +141,8 @@ def main():
 
     compile_gi_dataset("../generated-data/task_yeast_gi_costanzo", yeast_pair_spec(), "../generated-data/dataset_yeast_gi_costanzo")
     compile_gi_dataset("../generated-data/task_yeast_gi_hybrid", yeast_pair_spec(), "../generated-data/dataset_yeast_gi_hybrid")
+    compile_gi_dataset("../generated-data/task_yeast_gi_hybrid", yeast_pair_lit_spec(), "../generated-data/dataset_yeast_gi_hybrid_lit")
+    
     compile_tgi_dataset("../generated-data/task_yeast_tgi", yeast_pair_spec(), "../generated-data/dataset_yeast_tgi")
     compile_tgi_dataset("../generated-data/pseudo_triplets",
         yeast_pair_spec(),
@@ -314,8 +336,11 @@ def expand_col_names(name, f_cols):
 
 def read_dense_pairwise(a_id, b_id, path):
     F = np.load(path)
-    return F[a_id, b_id, None], None
-
+    if len(F.shape) == 2:
+        return F[a_id, b_id, None], None
+    else:
+        return F[a_id, b_id, :], np.arange(F.shape[2]).astype(str)
+    
 def read_sparse_spl(a_id, b_id, path):
     d = np.load(path, allow_pickle=True)
     
