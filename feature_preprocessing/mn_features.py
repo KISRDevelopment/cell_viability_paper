@@ -3,8 +3,7 @@ import pandas as pd
 import json 
 import tensorflow.keras.utils  as utils
 
-GI_SMF_MAP = np.array([0, 1, 2, 1, 3, 4, 2, 4, 5, 6])
-GI_SMF_LABELS = ['LL', 'LR', 'LN', 'RR', 'RN', 'NN']
+SMF_BIN_LABELS = np.array(['L', 'R', 'N'])
 
 def create_double_gene_mn_features(spec, smf_df, gi_df, output_path):
     smf_df_cols = smf_df.columns
@@ -37,30 +36,24 @@ def create_double_gene_mn_features(spec, smf_df, gi_df, output_path):
                 sdf = pd.DataFrame(data=added_features, index=gi_df.index, columns=cols)
                 dfs.append(sdf)
             elif feature['op'] == 'combs':
-                
-                # convert combinations to flat index
-                eff_bins = (3 * a_features + b_features).squeeze()
+                gi_smf = np.hstack((a_features, b_features))
+                nan_ix = np.isnan(np.sum(gi_smf, axis=1))
+                gi_smf = gi_smf[~nan_ix,:]
+                gi_smf = np.sort(gi_smf, axis=1)
+                unique_combs, r_index = np.unique(gi_smf, axis=0, return_inverse=True)
+                n_combs = unique_combs.shape[0]
+                unique_combs = unique_combs.astype(int)
+                cat_bins = np.zeros((gi_df.shape[0], n_combs))
+                cat_bins[~nan_ix, r_index] = 1    
 
-                # identify pairs with one or both genes have no SMF
-                nan_ix = np.isnan(eff_bins)
-
-                # set those to a unique index
-                eff_bins[nan_ix] = 9
-                eff_bins = GI_SMF_MAP[eff_bins.astype(int)]
-                
-                # only set bits for pairs where both genes have smf
-                cat_bins = np.zeros((gi_df.shape[0], 6))
-                cat_bins[~nan_ix, eff_bins[~nan_ix]] = 1
-                
-                sdf = pd.DataFrame(data=cat_bins, index=gi_df.index, columns=['smf-%s' % l for l in GI_SMF_LABELS])
+                colnames = ['smf-%s' % (''.join(r)) for r in SMF_BIN_LABELS[unique_combs]]
+                sdf = pd.DataFrame(data=cat_bins, index=gi_df.index, columns=colnames)
                 dfs.append(sdf)
     
     final_df = pd.concat(dfs, axis=1)
     
     final_df.to_feather(output_path)
     print(final_df)
-
-SMF_BIN_LABELS = np.array(['L', 'R', 'N'])
 
 def create_triple_gene_mn_features(spec, smf_df, gi_df, output_path):
     smf_df_cols = smf_df.columns
@@ -133,27 +126,27 @@ def create_triple_gene_mn_features(spec, smf_df, gi_df, output_path):
 if __name__ == "__main__":
     import sys 
 
-    # spec = [
-    #     "pairwise-spl",
-    #     { "op" : "add", "feature" : "topology-lid" },
-    #     { "op" : "combs", "feature" : "bin" },
-    #     { "op" : "add", "feature" : "sgo-" }
-    # ]
-
-    # smf_df = pd.read_feather("../generated-data/dataset_yeast_allppc.feather")
-    # gi_df = pd.read_feather("../generated-data/dataset_yeast_gi_hybrid.feather")
-
-    # create_double_gene_mn_features(spec, smf_df, gi_df, "../tmp/mnfeatures.feather")
-
     spec = [
-        { "op" : "add", "feature" : "sgo-", "type" : "single" },
-        { "op" : "add", "feature" : "topology-lid", "type" : "single" },
-        { "op" : "add", "feature" : "pairwise-spl", "type" : "pair" },
-        { "op" : "combs", "feature" : "bin", "type" : "single" }
+        "pairwise-spl",
+        { "op" : "add", "feature" : "topology-lid" },
+        { "op" : "combs", "feature" : "bin" },
+        { "op" : "add", "feature" : "sgo-" }
     ]
-    smf_df = pd.read_feather("../generated-data/dataset_yeast_allppc.feather")
-    gi_df = pd.read_feather("../generated-data/dataset_yeast_tgi.feather")
-    create_triple_gene_mn_features(spec, smf_df, gi_df, "../tmp/tgi_mn.feather")
 
-    gi_df = pd.read_feather("../generated-data/dataset_yeast_pseudo_triplets.feather")
-    create_triple_gene_mn_features(spec, smf_df, gi_df, "../tmp/pseudo_triplets_mn.feather")
+    smf_df = pd.read_feather("../generated-data/dataset_yeast_allppc.feather")
+    gi_df = pd.read_feather("../generated-data/dataset_yeast_gi_hybrid.feather")
+
+    create_double_gene_mn_features(spec, smf_df, gi_df, "../tmp/mnfeatures.feather")
+
+    # spec = [
+    #     { "op" : "add", "feature" : "sgo-", "type" : "single" },
+    #     { "op" : "add", "feature" : "topology-lid", "type" : "single" },
+    #     { "op" : "add", "feature" : "pairwise-spl", "type" : "pair" },
+    #     { "op" : "combs", "feature" : "bin", "type" : "single" }
+    # ]
+    # smf_df = pd.read_feather("../generated-data/dataset_yeast_allppc.feather")
+    # gi_df = pd.read_feather("../generated-data/dataset_yeast_tgi.feather")
+    # create_triple_gene_mn_features(spec, smf_df, gi_df, "../tmp/tgi_mn.feather")
+
+    # gi_df = pd.read_feather("../generated-data/dataset_yeast_pseudo_triplets.feather")
+    # create_triple_gene_mn_features(spec, smf_df, gi_df, "../tmp/pseudo_triplets_mn.feather")

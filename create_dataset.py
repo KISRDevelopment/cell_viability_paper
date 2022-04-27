@@ -4,215 +4,172 @@ import networkx as nx
 import utils.yeast_name_resolver as nr
 from collections import defaultdict 
 import json
+import feature_preprocessing.mn_features
 
 res = nr.NameResolver()
+
+yeast_single_spec = lambda: (
+    [
+        "../generated-data/features/ppc_yeast_topology.npz",
+        "../generated-data/features/ppc_yeast_common_sgo.npz",
+        "../generated-data/features/ppc_yeast_redundancy.npz",
+        "../generated-data/features/ppc_yeast_phosphotase.npz",
+        "../generated-data/features/ppc_yeast_kinase.npz",
+        "../generated-data/features/ppc_yeast_transcription.npz",
+        "../generated-data/features/ppc_yeast_abundance_hu.npz",
+        "../generated-data/features/ppc_yeast_abundance_rap.npz",
+        "../generated-data/features/ppc_yeast_abundance_wt3.npz",
+        "../generated-data/features/ppc_yeast_localization_hu.npz",
+        "../generated-data/features/ppc_yeast_localization_rap.npz",
+        "../generated-data/features/ppc_yeast_localization_wt3.npz",
+        "../generated-data/features/ppc_yeast_smf_binned.npz" # this is only used for double- and triple-prediction
+    ],
+    [
+        'topology',
+        'sgo',
+        'redundancy',
+        'phosphotase',
+        'kinase',
+        'transcription',
+        'abundance_hu',
+        'abundance_rap',
+        'abundance_wt3',
+        'localization_hu',
+        'localization_rap',
+        'localization_wt3',
+        'smf'
+    ]
+)
+
+other_single_spec = lambda org: ([
+    "../generated-data/features/ppc_%s_topology.npz" % org ,
+    "../generated-data/features/ppc_%s_common_sgo.npz" % org,
+    "../generated-data/features/ppc_%s_redundancy.npz" % org,
+    "../generated-data/features/ppc_%s_smf_binned.npz" % org, # this is only used for double- and triple-prediction
+],
+[
+    "topology",
+    "sgo",
+    "redundancy",
+    "smf"
+])
+
+yeast_pair_spec = lambda: [
+    {
+        "path" : "../generated-data/pairwise_features/ppc_yeast_shortest_path_len.npy",
+        "name" : "pairwise-spl",
+        "reader" : read_dense_pairwise
+    },
+    {
+        "path" : "../generated-data/pairwise_features/ppc_yeast_adhesion.npy",
+        "name" : "pairwise-adhesion",
+        "reader" : read_dense_pairwise
+    },
+    {
+        "path" : "../generated-data/pairwise_features/ppc_yeast_cohesion.npy",
+        "name" : "pairwise-cohesion",
+        "reader" : read_dense_pairwise
+    },
+    {
+        "path" : "../generated-data/pairwise_features/ppc_yeast_mutual_neighbors.npy",
+        "name" : "pairwise-mutual_neighbors",
+        "reader" : read_dense_pairwise
+    },
+    {
+        "path" : "../generated-data/pairwise_features/ppc_yeast_adjacent.npy",
+        "name" : "pairwise-adjacent",
+        "reader" : read_dense_pairwise
+    },
+    {
+        "path" : "../generated-data/pairwise_features/ppc_yeast_5steps_comms.npz",
+        "name" : "pairwise",
+        "reader" : read_pairwise_comms
+    },
+]
+
+other_pair_spec = lambda org: [
+    {
+        "path" : "../generated-data/pairwise_features/ppc_%s_shortest_path_len_sparse.npz" % org,
+        "name" : "pairwise-spl",
+        "reader" : read_sparse_spl
+    }
+]
 
 def main():
 
     compile_complexes("../generated-data/yeast_complexes.json")
     compile_pathways("../generated-data/yeast_pathways.json")
-    
-    yeast_single_features_spec = [
-        [
-                                "../generated-data/features/ppc_yeast_topology.npz",
-                                "../generated-data/features/ppc_yeast_common_sgo.npz",
-                                "../generated-data/features/ppc_yeast_redundancy.npz",
-                                "../generated-data/features/ppc_yeast_phosphotase.npz",
-                                "../generated-data/features/ppc_yeast_kinase.npz",
-                                "../generated-data/features/ppc_yeast_transcription.npz",
-                                "../generated-data/features/ppc_yeast_abundance_hu.npz",
-                                "../generated-data/features/ppc_yeast_abundance_rap.npz",
-                                "../generated-data/features/ppc_yeast_abundance_wt3.npz",
-                                "../generated-data/features/ppc_yeast_localization_hu.npz",
-                                "../generated-data/features/ppc_yeast_localization_rap.npz",
-                                "../generated-data/features/ppc_yeast_localization_wt3.npz",
-                                "../generated-data/features/ppc_yeast_smf_binned.npz" # this is only used for double- and triple-prediction
-                            ],
-                            [
-                                'topology',
-                                'sgo',
-                                'redundancy',
-                                'phosphotase',
-                                'kinase',
-                                'transcription',
-                                'abundance_hu',
-                                'abundance_rap',
-                                'abundance_wt3',
-                                'localization_hu',
-                                'localization_rap',
-                                'localization_wt3',
-                                'smf'
-                            ]
-    ]
-    compile_dataset("../generated-data/task_yeast_smf_30", 
-        yeast_single_features_spec[0], yeast_single_features_spec[1], 
-        "../generated-data/dataset_yeast_allppc", True, "../generated-data/ppc_yeast")
-    compile_dataset("../generated-data/task_yeast_smf_30", 
-        yeast_single_features_spec[0], yeast_single_features_spec[1], 
-        "../generated-data/dataset_yeast_smf")
-    
-    compile_dataset("../generated-data/task_pombe_smf",
-                    [
-                        "../generated-data/features/ppc_pombe_topology.npz",
-                        "../generated-data/features/ppc_pombe_common_sgo.npz",
-                        "../generated-data/features/ppc_pombe_redundancy.npz",
-                        "../generated-data/features/ppc_pombe_smf_binned.npz", # this is only used for double- and triple-prediction
-                    ],
-                    [
-                        "topology",
-                        "sgo",
-                        "redundancy",
-                        "smf"
-                    ], "../generated-data/dataset_pombe_smf")
-    
-    compile_dataset("../generated-data/task_human_smf",
-                    [
-                        "../generated-data/features/ppc_human_topology.npz",
-                        "../generated-data/features/ppc_human_common_sgo.npz",
-                        "../generated-data/features/ppc_human_redundancy.npz",
-                        "../generated-data/features/ppc_human_smf_binned.npz",# this is only used for double- and triple-prediction
-                    ],
-                    [
-                        "topology",
-                        "sgo",
-                        "redundancy",
-                        "smf"
-                    ], "../generated-data/dataset_human_smf")
 
-    compile_dataset("../generated-data/task_human_smf_ca_mo_v",
-                    [
-                        "../generated-data/features/ppc_human_topology.npz",
-                        "../generated-data/features/ppc_human_common_sgo.npz",
-                        "../generated-data/features/ppc_human_redundancy.npz",
-                    ],
-                    [
-                        "topology",
-                        "sgo",
-                        "redundancy"
-                    ], "../generated-data/dataset_human_smf_ca_mo_v")
-    
-    compile_dataset("../generated-data/task_human_smf_mo_v",
-                    [
-                        "../generated-data/features/ppc_human_topology.npz",
-                        "../generated-data/features/ppc_human_common_sgo.npz",
-                        "../generated-data/features/ppc_human_redundancy.npz",
-                    ],
-                    [
-                        "topology",
-                        "sgo",
-                        "redundancy"
-                    ], "../generated-data/dataset_human_smf_mo_v")
+    compile_dataset("../generated-data/task_yeast_smf_30", yeast_single_spec(), "../generated-data/dataset_yeast_allppc", "../generated-data/ppc_yeast")
 
-    compile_dataset("../generated-data/task_dro_smf",
-                    [
-                        "../generated-data/features/ppc_dro_topology.npz",
-                        "../generated-data/features/ppc_dro_common_sgo.npz",
-                        "../generated-data/features/ppc_dro_redundancy.npz",
-                        "../generated-data/features/ppc_dro_smf_binned.npz",# this is only used for double- and triple-prediction
-                    ],
-                    [
-                        "topology",
-                        "sgo",
-                        "redundancy",
-                        "smf"
-                    ], "../generated-data/dataset_dro_smf")
+    compile_dataset("../generated-data/task_yeast_smf_30", yeast_single_spec(), "../generated-data/dataset_yeast_smf")
     
-    compile_dataset("../generated-data/task_dro_smf_ca_mo_v",
-                    [
-                        "../generated-data/features/ppc_dro_topology.npz",
-                        "../generated-data/features/ppc_dro_common_sgo.npz",
-                        "../generated-data/features/ppc_dro_redundancy.npz",
-                    ],
-                    [
-                        "topology",
-                        "sgo",
-                        "redundancy"
-                    ], "../generated-data/dataset_dro_smf_ca_mo_v")
-
-    compile_dataset("../generated-data/task_dro_smf_mo_v",
-                    [
-                        "../generated-data/features/ppc_dro_topology.npz",
-                        "../generated-data/features/ppc_dro_common_sgo.npz",
-                        "../generated-data/features/ppc_dro_redundancy.npz",
-                    ],
-                    [
-                        "topology",
-                        "sgo",
-                        "redundancy"
-                    ], "../generated-data/dataset_dro_smf_mo_v")
+    compile_dataset("../generated-data/task_pombe_smf", other_single_spec('pombe'),"../generated-data/dataset_pombe_smf")
     
-    yeast_features_spec = [
-            {
-                "path" : "../generated-data/pairwise_features/ppc_yeast_shortest_path_len.npy",
-                "name" : "pairwise-spl",
-                "reader" : read_dense_pairwise
-            },
-            {
-                "path" : "../generated-data/pairwise_features/ppc_yeast_adhesion.npy",
-                "name" : "pairwise-adhesion",
-                "reader" : read_dense_pairwise
-            },
-            {
-                "path" : "../generated-data/pairwise_features/ppc_yeast_cohesion.npy",
-                "name" : "pairwise-cohesion",
-                "reader" : read_dense_pairwise
-            },
-            {
-                "path" : "../generated-data/pairwise_features/ppc_yeast_mutual_neighbors.npy",
-                "name" : "pairwise-mutual_neighbors",
-                "reader" : read_dense_pairwise
-            },
-            {
-                "path" : "../generated-data/pairwise_features/ppc_yeast_adjacent.npy",
-                "name" : "pairwise-adjacent",
-                "reader" : read_dense_pairwise
-            },
-            {
-                "path" : "../generated-data/pairwise_features/ppc_yeast_5steps_comms.npz",
-                "name" : "pairwise",
-                "reader" : read_pairwise_comms
-            },
-    ]
+    compile_dataset("../generated-data/task_human_smf", other_single_spec('human'), "../generated-data/dataset_human_smf")
 
-    compile_gi_dataset("../generated-data/task_yeast_gi_costanzo", 
-        yeast_features_spec, 
-        "../generated-data/dataset_yeast_gi_costanzo")
-    compile_gi_dataset("../generated-data/task_yeast_gi_hybrid", 
-        yeast_features_spec, 
-        "../generated-data/dataset_yeast_gi_hybrid")
-    compile_tgi_dataset("../generated-data/task_yeast_tgi",
-        yeast_features_spec,
-        "../generated-data/dataset_yeast_tgi"
-    )
-    other_organisms = ['pombe', 'human', 'dro']
-    for org in other_organisms:
-        other_org_spec = [
-            {
-                "path" : "../generated-data/pairwise_features/ppc_%s_shortest_path_len_sparse.npz" % org,
-                "name" : "pairwise-spl",
-                "reader" : read_sparse_spl
-            }
-        ]
-
-        compile_gi_dataset("../generated-data/task_%s_gi" % org, 
-                          other_org_spec,
-                          "../generated-data/dataset_%s_gi" % org)
+    compile_dataset("../generated-data/task_human_smf_ca_mo_v", other_single_spec('human'), "../generated-data/dataset_human_smf_ca_mo_v")
     
+    compile_dataset("../generated-data/task_human_smf_mo_v", other_single_spec('human'), "../generated-data/dataset_human_smf_mo_v")
+
+    compile_dataset("../generated-data/task_dro_smf", other_single_spec('dro'), "../generated-data/dataset_dro_smf")
+    
+    compile_dataset("../generated-data/task_dro_smf_ca_mo_v", other_single_spec('dro'), "../generated-data/dataset_dro_smf_ca_mo_v")
+
+    compile_dataset("../generated-data/task_dro_smf_mo_v", other_single_spec('dro'), "../generated-data/dataset_dro_smf_mo_v")
+    
+
+    compile_gi_dataset("../generated-data/task_yeast_gi_costanzo", yeast_pair_spec(), "../generated-data/dataset_yeast_gi_costanzo")
+    compile_gi_mn_dataset("../generated-data/dataset_yeast_gi_costanzo.feather",
+                         "../generated-data/dataset_yeast_allppc.feather",
+                         "../generated-data/dataset_yeast_gi_costanzo_mn.feather")
+
+    compile_gi_dataset("../generated-data/task_yeast_gi_hybrid", yeast_pair_spec(), "../generated-data/dataset_yeast_gi_hybrid")
+    compile_gi_mn_dataset("../generated-data/dataset_yeast_gi_hybrid.feather",
+                         "../generated-data/dataset_yeast_allppc.feather",
+                         "../generated-data/dataset_yeast_gi_hybrid_mn.feather")
+    
+
+    compile_tgi_dataset("../generated-data/task_yeast_tgi", yeast_pair_spec(), "../generated-data/dataset_yeast_tgi")
+    compile_tgi_mn_dataset("../generated-data/dataset_yeast_tgi.feather",
+                         "../generated-data/dataset_yeast_allppc.feather",
+                         "../generated-data/dataset_yeast_tgi_mn.feather")
+                     
     compile_tgi_dataset("../generated-data/pseudo_triplets",
-        yeast_features_spec,
-        "../generated-data/dataset_yeast_pseudo_triplets"
-    )
+        yeast_pair_spec(),
+        "../generated-data/dataset_yeast_pseudo_triplets")
+    compile_tgi_mn_dataset("../generated-data/dataset_yeast_pseudo_triplets.feather",
+                         "../generated-data/dataset_yeast_allppc.feather",
+                         "../generated-data/dataset_yeast_pseudo_triplets_mn.feather")
 
-def compile_dataset(path, feature_files, feature_sets, output_path, all_features=False, ppc_path=None):
+    compile_gi_dataset("../generated-data/task_pombe_gi", other_pair_spec('pombe'), "../generated-data/dataset_pombe_gi")
+    compile_gi_mn_dataset("../generated-data/dataset_pombe_gi.feather",
+                         "../generated-data/dataset_pombe_smf.feather",
+                         "../generated-data/dataset_pombe_gi_mn.feather")
+
+    compile_gi_dataset("../generated-data/task_human_gi", other_pair_spec('human'), "../generated-data/dataset_human_gi")
+    compile_gi_mn_dataset("../generated-data/dataset_human_gi.feather",
+                         "../generated-data/dataset_human_smf.feather",
+                         "../generated-data/dataset_human_gi_mn.feather")
+
+    compile_gi_dataset("../generated-data/task_dro_gi", other_pair_spec('dro'), "../generated-data/dataset_dro_gi")
+    compile_gi_mn_dataset("../generated-data/dataset_dro_gi.feather",
+                         "../generated-data/dataset_dro_smf.feather",
+                         "../generated-data/dataset_dro_gi_mn.feather")
+    
+def compile_dataset(path, spec, output_path, ppc_path=None):
     print("Compiling ", path)
+
+    feature_files, feature_sets = spec 
 
     df = pd.read_csv(path)
     gene_id = np.array(df['id'])
     
-    if not all_features:
+    if ppc_path is None:
         F_df,_ = compile_gene_features(feature_files, feature_sets, gene_id)
         df = pd.concat((df, F_df), axis=1)
     else:
+        # generate dataset for all genes, whether they have smf or not
         F_df, gene_id = compile_gene_features(feature_files, feature_sets)
         df = df.set_index('id')
         
@@ -312,6 +269,21 @@ def compile_gi_dataset(path, spec, output_path):
 
     df.to_feather(output_path + '.feather')
     print(df.shape)
+
+def compile_gi_mn_dataset(path, smf_path, output_path):
+
+    spec = [
+        "pairwise-spl",
+        { "op" : "add", "feature" : "topology-lid" },
+        { "op" : "combs", "feature" : "bin" },
+        { "op" : "add", "feature" : "sgo-" }
+    ]
+
+    smf_df = pd.read_feather(smf_path)
+    gi_df = pd.read_feather(path)
+
+    feature_preprocessing.mn_features.create_double_gene_mn_features(spec, smf_df, gi_df, output_path)
+
 def compile_tgi_dataset(path, spec, output_path):
     print("Compiling ", path)
 
@@ -345,6 +317,22 @@ def compile_tgi_dataset(path, spec, output_path):
 
     df.to_feather(output_path + '.feather')
     print(df.shape)
+
+def compile_tgi_mn_dataset(path, smf_path, output_path):
+
+    spec = [
+        { "op" : "add", "feature" : "sgo-", "type" : "single" },
+        { "op" : "add", "feature" : "topology-lid", "type" : "single" },
+        { "op" : "add", "feature" : "pairwise-spl", "type" : "pair" },
+        { "op" : "combs", "feature" : "bin", "type" : "single" }
+    ]
+
+    smf_df = pd.read_feather(smf_path)
+    tgi_df = pd.read_feather(path)
+
+    feature_preprocessing.mn_features.create_triple_gene_mn_features(spec, smf_df, tgi_df, output_path)
+
+
 def expand_col_names(name, f_cols):
     if f_cols is None:
         f_cols = [name]

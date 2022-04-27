@@ -65,7 +65,8 @@ def main(n_samples_within=5000, n_samples_across=5000):
             for a,b,c in triplets_in_diff_complexes
     ]
     df = pd.DataFrame(rows)
-    print(df)
+    
+
     df.to_csv('../generated-data/pseudo_triplets')
 
 if __name__ == "__main__":
