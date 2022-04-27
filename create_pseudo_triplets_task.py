@@ -66,7 +66,7 @@ def main(n_samples_within=5000, n_samples_across=5000):
     ]
     df = pd.DataFrame(rows)
     print(df)
-    df.to_feather('../generated-data/pseudo_triplets.feather')
+    df.to_csv('../generated-data/pseudo_triplets')
 
 if __name__ == "__main__":
     main()

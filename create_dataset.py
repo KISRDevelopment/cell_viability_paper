@@ -198,7 +198,11 @@ def main():
                           other_org_spec,
                           "../generated-data/dataset_%s_gi" % org)
     
-    
+    compile_tgi_dataset("../generated-data/pseudo_triplets",
+        yeast_features_spec,
+        "../generated-data/dataset_yeast_pseudo_triplets"
+    )
+
 def compile_dataset(path, feature_files, feature_sets, output_path, all_features=False, ppc_path=None):
     print("Compiling ", path)
 
