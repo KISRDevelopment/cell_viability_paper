@@ -9,15 +9,15 @@ import pandas as pd
 SMF_LABELS = ['Lethal', 'Reduced', 'Normal']
 GI_LABELS = ['Negative', 'Neutral', 'Positive', 'Supp']
 
-DEBUGGING = True # reduces number of combinations if true ... for testing purposes
+DEBUGGING = False # reduces number of combinations if true ... for testing purposes
 
 def main():
 
-    # optimize_hyperparams('cfgs/smf_nn_model.json', 
-    #                      '../generated-data/dataset_yeast_smf.feather', 
-    #                      '../generated-data/splits/dataset_yeast_smf_dev_test.npz',
-    #                      '../results/smf_nn_model_hyperparam_opt')
-    # smf_df = summarize_results('../results/smf_nn_model_hyperparam_opt', SMF_LABELS)
+    optimize_hyperparams('cfgs/smf_nn_model.json', 
+                         '../generated-data/dataset_yeast_smf.feather', 
+                         '../generated-data/splits/dataset_yeast_smf_dev_test.npz',
+                         '../results/smf_nn_model_hyperparam_opt')
+    smf_df = summarize_results('../results/smf_nn_model_hyperparam_opt', SMF_LABELS)
 
     optimize_hyperparams('cfgs/gi_nn_model.json', 
                          '../generated-data/dataset_yeast_gi_hybrid.feather', 
@@ -42,7 +42,7 @@ def optimize_hyperparams(model_spec_path, dataset_path, splits_path, output_path
     
     model_output_paths = ["%s/comb%d" % (output_path, i) for i in range(len(model_specs))]
     
-    models.train_and_evaluate.multiple_cv(model_specs, model_output_paths, dataset_path, splits_path, "cv", no_train=False, n_workers, **kwargs)
+    models.train_and_evaluate.multiple_cv(model_specs, model_output_paths, dataset_path, splits_path, "cv", n_workers=n_workers, no_train=False, **kwargs)
 
 def summarize_results(results_path, class_labels):
 
