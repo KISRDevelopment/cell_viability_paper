@@ -293,7 +293,6 @@
                 "normalize" : true
             }
         },
-        "selected_feature_sets" : [],
         "embedding_size" : 5,
         "embedding_activation" : "tanh"
     },
@@ -315,7 +314,7 @@
         "embedding_activation" : "tanh"
     },
     "optimizer": "nadam",
-    "epochs": 1,
+    "epochs": 1000,
     "verbose": true,
     "patience": 10,
     "batch_size" : 10000,

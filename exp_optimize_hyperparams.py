@@ -9,37 +9,40 @@ import pandas as pd
 SMF_LABELS = ['Lethal', 'Reduced', 'Normal']
 GI_LABELS = ['Negative', 'Neutral', 'Positive', 'Supp']
 
+DEBUGGING = True # reduces number of combinations if true ... for testing purposes
+
 def main():
 
     # optimize_hyperparams('cfgs/smf_nn_model.json', 
     #                      '../generated-data/dataset_yeast_smf.feather', 
-    #                      '../generated-data/splits/task_yeast_smf_30_dev_test.npz',
+    #                      '../generated-data/splits/dataset_yeast_smf_dev_test.npz',
     #                      '../results/smf_nn_model_hyperparam_opt')
-    
+    # smf_df = summarize_results('../results/smf_nn_model_hyperparam_opt', SMF_LABELS)
+
     optimize_hyperparams('cfgs/gi_nn_model.json', 
                          '../generated-data/dataset_yeast_gi_hybrid.feather', 
-                         '../generated-data/splits/task_yeast_gi_hybrid_dev_test.npz',
+                         '../generated-data/splits/dataset_yeast_gi_hybrid_dev_test.npz',
                          '../results/gi_nn_model_hyperparam_opt',
-                         sg_path='../generated-data/dataset_yeast_allppc.feather')
-
-    smf_df = summarize_results('../results/smf_nn_model_hyperparam_opt', SMF_LABELS)
+                         sg_path='../generated-data/dataset_yeast_allppc.feather', n_workers=16)
     gi_df = summarize_results('../results/gi_nn_model_hyperparam_opt', GI_LABELS)
 
+    writer = pd.ExcelWriter('../results/hyperparam_opt_results.xlsx')
+    smf_df.to_excel(writer, sheet_name='S-Full', index=False)
+    gi_df.to_excel(writer, sheet_name='D-Full', index=False)
+    writer.save()
 
-def optimize_hyperparams(model_spec_path, dataset_path, splits_path, output_path, **kwargs):
+def optimize_hyperparams(model_spec_path, dataset_path, splits_path, output_path, n_workers=32, **kwargs):
 
     with open(model_spec_path, 'r') as f:
         model_spec = json.load(f)
-    
+
     model_specs = make_hyperparam_combinations(model_spec)
-
-    for i, model_spec in enumerate(model_specs):
-        model_spec['epochs'] = 1000 # DEBUGGING
-
-        with open('../tmp/model_spec.json', 'w') as f:
-            json.dump(model_spec, f, indent=4)
-        
-        models.train_and_evaluate.cv("../tmp/model_spec.json", dataset_path, splits_path, "cv", "%s/comb%d" % (output_path, i), no_train=False, n_workers=32, **kwargs)
+    if DEBUGGING:
+        model_specs = model_specs[:5]
+    
+    model_output_paths = ["%s/comb%d" % (output_path, i) for i in range(len(model_specs))]
+    
+    models.train_and_evaluate.multiple_cv(model_specs, model_output_paths, dataset_path, splits_path, "cv", no_train=False, n_workers, **kwargs)
 
 def summarize_results(results_path, class_labels):
 

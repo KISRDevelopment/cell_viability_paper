@@ -10,7 +10,7 @@ def create_inputs(model_spec, df, prefix=''):
     for feature_set in model_spec['selected_feature_sets']:
         props = model_spec['feature_sets'][feature_set]
         eff_cols = ['%s%s' % (prefix, c) for c in props['cols']]
-        F = np.array(df[ eff_cols ])
+        F = df[ eff_cols ].to_numpy()
         inputs.append(F)
     
     return inputs

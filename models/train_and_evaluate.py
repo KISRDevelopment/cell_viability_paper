@@ -37,6 +37,7 @@ SPLIT_MODES = {
 # global variable that are shared among processes (in unix)
 # this is to avoid loading a large dataset into memory in every subprocess during CV
 df = None
+splits = None 
 
 def single_split(model_spec, df, splits, split_id, split_mode, model_output_path, sg_path=None, no_train=True):
 
@@ -59,7 +60,7 @@ def single_split(model_spec, df, splits, split_id, split_mode, model_output_path
     r = models.common.evaluate(np.array(test_df[target_col]), preds)
     r['split_id'] = split_id
 
-    print("Done %d" % split_id)
+    print("Done %s %d" % (model_output_path, split_id))
 
     return r 
 
@@ -70,8 +71,10 @@ def cv_f(task):
     task['df'] = df 
     task['splits'] = splits 
 
-    return single_split(**task)
-   
+    r = single_split(**task)
+    
+    return r 
+
 def cv(model_spec_path, dataset_path, splits_path, split_mode, model_output_path, sg_path=None, n_workers=4, no_train=True, **kwargs):
     global df 
     global splits 
@@ -109,6 +112,56 @@ def cv(model_spec_path, dataset_path, splits_path, split_mode, model_output_path
     
     with open("%s/results.json" % model_output_path, "w") as f:
         json.dump({ "model_spec" : model_spec, "results" : results }, f, indent=4)
+
+    return results 
+
+
+def multiple_cv(model_specs, model_output_paths, dataset_path, splits_path, split_mode, sg_path=None, n_workers=4, no_train=True, **kwargs):
+    """ 
+        Optimized processor utilization when running same dataset CV with multiple specs (like in feature selection and hyperparam opt) 
+        This is done by feeding the multiprocessing pool all the CV tasks for all model specs at once.
+    """
+    global df 
+    global splits 
+
+    d = np.load(splits_path, allow_pickle=True)
+    n_splits = len(d['splits'])
+
+    if split_mode == 'dev_test':
+        n_splits = 1
+    
+    df = pd.read_feather(dataset_path)
+
+    splits = np.load(splits_path, allow_pickle=True)['splits']
+
+    tasks = []
+    for model_spec, model_output_path in zip(model_specs, model_output_paths):   
+        os.makedirs(model_output_path, exist_ok=True)
+        model_spec['verbose'] = False 
+
+        tasks.extend([{ "model_spec" : model_spec, 
+                "split_id" : i,
+                "split_mode" : split_mode, 
+                "model_output_path" : "%s/model%d.npz" % (model_output_path, i), 
+                "sg_path" : sg_path,
+                "no_train" : no_train } for i in range(n_splits)])
+    
+    print("Total tasks: %d" % len(tasks))
+    
+    if n_workers == 1:
+        for task in tasks:
+            cv_f(task)
+    else:
+        with multiprocessing.Pool(processes=n_workers,maxtasksperchild=1) as pool:
+            results = pool.map(cv_f, tasks, chunksize=1) # chunk size controls the number of tasks
+                
+    offset = 0
+    for model_spec, model_output_path in zip(model_specs, model_output_paths):
+        results_subset = results[offset:(offset+n_splits)]
+    
+        offset += n_splits
+        with open("%s/results.json" % model_output_path, "w") as f:
+            json.dump({ "model_spec" : model_spec, "results" : results_subset }, f, indent=4)
 
     return results 
 

@@ -43,7 +43,7 @@ class DoubleInputNNModel:
 
         # create data iterators (necessary because some feature sets are too large to put in ram)
         train_iterator = create_data_iterator(train_df, train_Y, self._sg_inputs, train_double_gene_inputs, model_spec['batch_size'])
-        valid_iterator = create_data_iterator(valid_df, valid_Y, self._sg_inputs, valid_double_gene_inputs, model_spec['batch_size']*10, False)
+        valid_iterator = create_data_iterator(valid_df, valid_Y, self._sg_inputs, valid_double_gene_inputs, model_spec['batch_size'], False)
 
         self._model.fit(x=train_iterator(),
                 steps_per_epoch=np.ceil(train_df.shape[0] / model_spec['batch_size']),
@@ -98,7 +98,7 @@ class DoubleInputNNModel:
         else:
             test_double_gene_inputs, _, _ = models.common.normalize_inputs(test_double_gene_inputs)
         
-        batch_size =  self._model_spec['batch_size']*10
+        batch_size =  self._model_spec['batch_size']
         test_iterator = create_data_iterator(test_df, np.zeros((test_df.shape[0], self._model_spec['n_output_dim'])),
             self._sg_inputs, test_double_gene_inputs, batch_size, False)
 
@@ -167,6 +167,7 @@ def create_data_iterator(df, Y, single_fsets, pairwise_fsets, batch_size, traini
         while True:
             if training:
                 np.random.shuffle(idx)
+
             for i in range(0, len(idx), batch_size):
                 indecies = idx[i:(i+batch_size)]
                 
@@ -176,8 +177,8 @@ def create_data_iterator(df, Y, single_fsets, pairwise_fsets, batch_size, traini
                 a_id = batch_df['a_id']
                 b_id = batch_df['b_id']
                 
-                inputs_a = [np.array(fs.loc[a_id]) for fs in single_fsets]
-                inputs_b = [np.array(fs.loc[b_id]) for fs in single_fsets]
+                inputs_a = [fs.loc[a_id].to_numpy() for fs in single_fsets]
+                inputs_b = [fs.loc[b_id].to_numpy() for fs in single_fsets]
                 inputs_ab = [fs[indecies,:] for fs in pairwise_fsets] 
 
                 inputs = inputs_a + inputs_b + inputs_ab
@@ -217,4 +218,4 @@ if __name__ == "__main__":
 
     preds = m.predict(test_df)
 
-    models.common.evaluate(np.array(test_df[model_spec['target_col']]), preds)
+    print(models.common.evaluate(np.array(test_df[model_spec['target_col']]), preds))

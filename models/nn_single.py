@@ -154,9 +154,18 @@ def add_extra_info_to_spec(model_spec, df):
         
     # add the feature dimensions and column names for each feature set
     for feature_set, props in model_spec['feature_sets'].items():
-        ix = df.columns.str.startswith('%s-' % feature_set)
-        props['dim'] = np.sum(ix)
-        props['cols'] = list(df.columns[ix])
+        sub_features = props.get('selected_features', [])
+        if len(sub_features) > 0:
+            candidate_cols = ['%s-%s' % (feature_set, sf) for sf in sub_features]
+            ix = df.columns.isin(candidate_cols)
+            assert(np.sum(ix) == len(sub_features))
+        else:
+            ix = df.columns.str.startswith("%s-" % feature_set)
+        
+        cols = list(df.columns[ix]) 
+        
+        props['dim'] = len(cols)
+        props['cols'] = cols
 
 
 if __name__ == "__main__":
