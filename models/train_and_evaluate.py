@@ -5,6 +5,7 @@ import models.nn_single
 import models.nn_double
 import models.nn_triple
 import models.mn 
+import models.null
 import models.common
 import multiprocessing 
 import os 
@@ -13,7 +14,8 @@ MODELS = {
     "nn_single" : models.nn_single.SingleInputNNModel,
     "nn_double" : models.nn_double.DoubleInputNNModel,
     "nn_triple" : models.nn_triple.TripleInputNNModel,
-    "mn" : models.mn.MnModel
+    "mn" : models.mn.MnModel,
+    "null" : models.null.NullModel
 }
 
 SPLIT_MODES = {
@@ -34,7 +36,7 @@ SPLIT_MODES = {
     }
 }
 
-# global variable that are shared among processes (in unix)
+# global variables that are shared among processes (in unix)
 # this is to avoid loading a large dataset into memory in every subprocess during CV
 df = None
 splits = None 
@@ -75,7 +77,7 @@ def cv_f(task):
     
     return r 
 
-def cv(model_spec_path, dataset_path, splits_path, split_mode, model_output_path, sg_path=None, n_workers=4, no_train=True, **kwargs):
+def cv(model_spec, dataset_path, splits_path, split_mode, model_output_path, sg_path=None, n_workers=4, no_train=True, **kwargs):
     global df 
     global splits 
 
@@ -87,8 +89,6 @@ def cv(model_spec_path, dataset_path, splits_path, split_mode, model_output_path
     if split_mode == 'dev_test':
         n_splits = 1
     
-    with open(model_spec_path, 'r') as f:
-        model_spec = json.load(f)
     model_spec['verbose'] = False 
 
     df = pd.read_feather(dataset_path)
@@ -102,9 +102,10 @@ def cv(model_spec_path, dataset_path, splits_path, split_mode, model_output_path
                "sg_path" : sg_path,
                "no_train" : no_train } for i in range(n_splits)]
     
-    if n_workers == 1:
+    if n_workers == 1 or n_splits == 1:
+        results = []
         for task in tasks:
-            cv_f(task)
+            results.append(cv_f(task))
     else:
         with multiprocessing.Pool(processes=n_workers) as pool:
             results = pool.map(cv_f, tasks)
@@ -149,8 +150,9 @@ def multiple_cv(model_specs, model_output_paths, dataset_path, splits_path, spli
     print("Total tasks: %d" % len(tasks))
     
     if n_workers == 1:
+        results = []
         for task in tasks:
-            cv_f(task)
+            results.append(cv_f(task))
     else:
         with multiprocessing.Pool(processes=n_workers,maxtasksperchild=1) as pool:
             results = pool.map(cv_f, tasks, chunksize=1) # chunk size controls the number of tasks
@@ -164,23 +166,3 @@ def multiple_cv(model_specs, model_output_paths, dataset_path, splits_path, spli
             json.dump({ "model_spec" : model_spec, "results" : results_subset }, f, indent=4)
 
     return results 
-
-if __name__ == "__main__":
-    import argparse
-    parser = argparse.ArgumentParser()
-    parser.add_argument("model_spec_path", type=str, help="Path to json file specifying model configuration.")
-    parser.add_argument("dataset_path", type=str, help="Path to the dataset .feather file.")
-    parser.add_argument("splits_path", type=str, help="Path to the splits file which specifies the training/validation/testing splits.")
-    parser.add_argument("split_mode", type=str, choices=SPLIT_MODES.keys(), help="Split mode. If dev_test, only one split will be run.")
-    parser.add_argument("model_output_path", type=str, help="Where to store the trained model. For CV, this should be a path to a directory.")
-    parser.add_argument("--sg_path", type=str, help="Path to file containing features for single genes (relevant for double and triple nn models).")
-    parser.add_argument("--split_id", type=int, default=-1, help="Run only the given split number in the splits file. Otherwise, CV will be done.")
-    parser.add_argument("--n_workers", type=int, default=1, help="Number of worker processes to use when doing CV.")
-    parser.add_argument("--no-train", action='store_true', default=False, help="Train the model or evaluate pre-traiend models on the test set.")
-
-    args = vars(parser.parse_args())
-
-    if args['split_id'] > -1:
-        single_split(**args)
-    else:
-        cv(**args)
