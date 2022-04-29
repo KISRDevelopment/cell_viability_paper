@@ -10,13 +10,8 @@ plot_cfg = {
     "xlabel_size" : 60,
     "ylabel_size" : 65,
     "border_size" : 10,
-    "bar_border_size" : 2.5,
-    "bar_label_size" : 65,
-    "stars_label_size" : 48,
-    "annot_size" : 72,
-    "max_cm_classes" : 4,
-    "max_bars" : 5,
-    "legend_font_size" : 60
+    "legend_font_size" : 60,
+    "title_size" : 60
 }
 
 
@@ -35,7 +30,9 @@ def plot_auc_roc_curves(spec, klass, output_path):
     fpr = models.common.BASE_FPR
 
     for model in spec['models']:
-
+        if model['name'] == 'null':
+            continue 
+        
         results = load_results(model['results_path'])
         mean_tpr = np.mean([r['per_class_tpr'][klass] for r in results], axis=0)
         mean_auc_roc = np.mean([r['per_class_bacc'][klass] for r in results])
@@ -59,7 +56,7 @@ def plot_auc_roc_curves(spec, klass, output_path):
         ax.yaxis.set_tick_params(length=10, width=1, which='both')
         xticks = ax.xaxis.get_major_ticks()
         xticks[0].label1.set_visible(False)
-
+        ax.set_title(spec['classes'][klass], fontsize=plot_cfg['title_size'], fontweight='bold')
         plt.setp(ax.spines.values(), linewidth=6, color='black')
 
         plt.savefig(output_path, bbox_inches='tight')
