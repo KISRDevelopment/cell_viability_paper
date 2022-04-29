@@ -3,6 +3,7 @@ import pandas as pd
 import sklearn.metrics 
 import tensorflow as tf 
 import tensorflow.keras as keras 
+from scipy import interp
 
 def create_inputs(model_spec, df, prefix=''):
 
@@ -75,6 +76,9 @@ def get_dfs(df, split, train_ids=[1], valid_ids=[2], test_ids=[3]):
     
     return train_df, valid_df, test_df 
 
+
+BASE_FPR = np.linspace(0, 1, 101)
+
 def evaluate(ytrue, preds):
     
     yhat = np.argmax(preds, axis=1)
@@ -89,12 +93,19 @@ def evaluate(ytrue, preds):
     auc_roc = sklearn.metrics.roc_auc_score(Ytrue, preds, average=None)
     pr = sklearn.metrics.average_precision_score(Ytrue, preds, average=None)
     per_class_bacc = []
+    per_class_tpr = []
+
     for b in range(Ytrue.shape[1]):
         y_bin = ytrue == b
         target_pred = yhat == b
         per_class_bacc.append(sklearn.metrics.balanced_accuracy_score(y_bin, target_pred))
 
+        fpr, tpr, _ = sklearn.metrics.roc_curve(y_bin, preds[:,b])
+        tpr = interp(BASE_FPR, fpr, tpr)
+        tpr[0] = 0.0
 
+        per_class_tpr.append(tpr.tolist())
+    
     # print("Accuracy: %0.2f" % acc)
     # print("Balanced Accuracy: %0.2f" % bacc)
     # print("AUC-ROC: ", auc_roc)
@@ -107,7 +118,8 @@ def evaluate(ytrue, preds):
         "auc_roc" : auc_roc.tolist(),
         "cm" : cm.tolist(),
         "pr" : pr.tolist(),
-        "per_class_bacc" : per_class_bacc
+        "per_class_bacc" : per_class_bacc,
+        "per_class_tpr" : per_class_tpr,
     }
 
 
