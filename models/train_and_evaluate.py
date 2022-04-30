@@ -110,8 +110,8 @@ def cv(model_spec, dataset_path, splits_path, split_mode, model_output_path, sg_
         for task in tasks:
             results.append(cv_f(task))
     else:
-        with multiprocessing.Pool(processes=n_workers) as pool:
-            results = pool.map(cv_f, tasks)
+        with multiprocessing.Pool(processes=n_workers,maxtasksperchild=1) as pool:
+            results = pool.map(cv_f, tasks, chunksize=1)
                 
     
     with open("%s/results.json" % model_output_path, "w") as f:

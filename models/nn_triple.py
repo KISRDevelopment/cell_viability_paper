@@ -3,9 +3,9 @@ import tensorflow.keras as keras
 import numpy as np
 import json 
 import pandas as pd 
-import sklearn.metrics 
 import models.common
 import models.nn_single 
+import copy 
 
 class TripleInputNNModel:
 
@@ -22,21 +22,31 @@ class TripleInputNNModel:
         model_spec = self._model_spec 
         dgs = model_spec['double_gene_spec']
 
-        models.nn_single.add_extra_info_to_spec(dgs, train_df)
+        dgs_ab = copy.deepcopy(dgs)
+        dgs_ac = copy.deepcopy(dgs)
+        dgs_bc = copy.deepcopy(dgs)
+        model_spec['dgs_ab'] = dgs_ab 
+        model_spec['dgs_ac'] = dgs_ac
+        model_spec['dgs_bc'] = dgs_bc 
+        
+        models.nn_single.add_extra_info_to_spec(dgs_ab, train_df, 'ab-')
+        models.nn_single.add_extra_info_to_spec(dgs_ac, train_df, 'ac-')
+        models.nn_single.add_extra_info_to_spec(dgs_bc, train_df, 'bc-')
+        
         model_spec['n_output_dim'] = models.common.calculate_output_dim(train_df, model_spec['target_col'])
 
         self._create_model() 
 
         # prepare pairwise inputs
-        train_double_gene_inputs_ab = models.common.create_inputs(dgs, train_df, 'ab-')
-        train_double_gene_inputs_ac = models.common.create_inputs(dgs, train_df, 'ac-')
-        train_double_gene_inputs_bc = models.common.create_inputs(dgs, train_df, 'bc-')
+        train_double_gene_inputs_ab = models.common.create_inputs(dgs_ab, train_df)
+        train_double_gene_inputs_ac = models.common.create_inputs(dgs_ac, train_df)
+        train_double_gene_inputs_bc = models.common.create_inputs(dgs_bc, train_df)
         train_double_gene_inputs_all = train_double_gene_inputs_ab + train_double_gene_inputs_ac + train_double_gene_inputs_bc
         train_double_gene_inputs_all, mus, stds = models.common.normalize_inputs(train_double_gene_inputs_all)
-
-        valid_double_gene_inputs_ab = models.common.create_inputs(dgs, valid_df, 'ab-')
-        valid_double_gene_inputs_ac = models.common.create_inputs(dgs, valid_df, 'ac-')
-        valid_double_gene_inputs_bc = models.common.create_inputs(dgs, valid_df, 'bc-')
+        
+        valid_double_gene_inputs_ab = models.common.create_inputs(dgs_ab, valid_df)
+        valid_double_gene_inputs_ac = models.common.create_inputs(dgs_ac, valid_df)
+        valid_double_gene_inputs_bc = models.common.create_inputs(dgs_bc, valid_df)
         valid_double_gene_inputs_all = valid_double_gene_inputs_ab + valid_double_gene_inputs_ac + valid_double_gene_inputs_bc
         valid_double_gene_inputs_all, mus, stds = models.common.normalize_inputs(valid_double_gene_inputs_all)
         
@@ -91,10 +101,13 @@ class TripleInputNNModel:
     
     def predict(self, test_df, train_norm=True):
 
-        dgs = self._model_spec['double_gene_spec']
-        test_double_gene_inputs_ab = models.common.create_inputs(dgs, test_df, 'ab-')
-        test_double_gene_inputs_ac = models.common.create_inputs(dgs, test_df, 'ac-')
-        test_double_gene_inputs_bc = models.common.create_inputs(dgs, test_df, 'bc-')
+        dgs_ab = self._model_spec['dgs_ab']
+        dgs_ac = self._model_spec['dgs_ac']
+        dgs_bc = self._model_spec['dgs_bc']
+
+        test_double_gene_inputs_ab = models.common.create_inputs(dgs_ab, test_df)
+        test_double_gene_inputs_ac = models.common.create_inputs(dgs_ac, test_df)
+        test_double_gene_inputs_bc = models.common.create_inputs(dgs_bc, test_df)
         test_double_gene_inputs_all = test_double_gene_inputs_ab + test_double_gene_inputs_ac + test_double_gene_inputs_bc
 
         if train_norm:
@@ -116,7 +129,7 @@ class TripleInputNNModel:
         output_dim = model_spec['n_output_dim']
 
         sgs = model_spec['single_gene_spec']
-        dgs = model_spec['double_gene_spec']
+        dgs = model_spec['dgs_ab']
 
         has_single_gene_features = len(sgs['selected_feature_sets']) > 0
         has_double_gene_features = len(dgs['selected_feature_sets']) > 0
@@ -161,8 +174,7 @@ class TripleInputNNModel:
         model = keras.Model(inputs=inputs_a + inputs_b + inputs_c + inputs_ab + inputs_ac + inputs_bc, outputs=output_layer)
         opt = keras.optimizers.Nadam(learning_rate=model_spec['learning_rate'])
         model.compile(opt, loss=models.common.weighted_categorical_xentropy)
-        #print(model.summary())
-
+        
         self._model = model
 
 def create_sg_inputs(model_spec, df):
@@ -195,7 +207,8 @@ def create_data_iterator(df, Y, single_fsets, pairwise_fsets, batch_size, traini
                 inputs_a = [np.array(fs.loc[a_id]) for fs in single_fsets]
                 inputs_b = [np.array(fs.loc[b_id]) for fs in single_fsets]
                 inputs_c = [np.array(fs.loc[c_id]) for fs in single_fsets]
-
+                
+                
                 inputs_all_pairs = [fs[indecies,:] for fs in pairwise_fsets] 
 
                 inputs = inputs_a + inputs_b + inputs_c + inputs_all_pairs

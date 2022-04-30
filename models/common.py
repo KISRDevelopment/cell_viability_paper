@@ -5,12 +5,12 @@ import tensorflow as tf
 import tensorflow.keras as keras 
 from scipy import interp
 
-def create_inputs(model_spec, df, prefix=''):
+def create_inputs(model_spec, df):
 
     inputs = []
     for feature_set in model_spec['selected_feature_sets']:
         props = model_spec['feature_sets'][feature_set]
-        eff_cols = ['%s%s' % (prefix, c) for c in props['cols']]
+        eff_cols = ['%s' % c for c in props['cols']]
         F = df[ eff_cols ].to_numpy()
         inputs.append(F)
     

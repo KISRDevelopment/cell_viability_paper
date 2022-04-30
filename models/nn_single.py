@@ -147,7 +147,7 @@ def create_module(module_spec, dim):
     
     return module 
 
-def add_extra_info_to_spec(model_spec, df):
+def add_extra_info_to_spec(model_spec, df, prefix=''):
     
     if 'selected_feature_sets' not in model_spec:
         model_spec['selected_feature_sets'] = list(model_spec['feature_sets'].keys())
@@ -156,11 +156,11 @@ def add_extra_info_to_spec(model_spec, df):
     for feature_set, props in model_spec['feature_sets'].items():
         sub_features = props.get('selected_features', [])
         if len(sub_features) > 0:
-            candidate_cols = ['%s-%s' % (feature_set, sf) for sf in sub_features]
+            candidate_cols = ['%s%s-%s' % (prefix, feature_set, sf) for sf in sub_features]
             ix = df.columns.isin(candidate_cols)
             assert(np.sum(ix) == len(sub_features))
         else:
-            ix = df.columns.str.startswith("%s-" % feature_set)
+            ix = df.columns.str.startswith("%s%s-" % (prefix, feature_set))
         
         cols = list(df.columns[ix]) 
         

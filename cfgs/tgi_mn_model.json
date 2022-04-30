@@ -1,0 +1,17 @@
+{
+    "class" : "mn",
+    "features" : [
+        "abc-pairwise-spl",
+        "topology-",
+        "sgo-",
+        "smf-"
+    ],
+    "optimizer": "nadam",
+    "epochs": 1000,
+    "verbose": true,
+    "patience": 10,
+    "batch_size_n" : 10000,
+    "target_col" : "bin",
+    "learning_rate" : 0.001,
+    "early_stopping" : true
+}
