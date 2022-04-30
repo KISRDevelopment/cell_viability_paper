@@ -103,6 +103,9 @@ def cv(model_spec, dataset_path, splits_path, split_mode, model_output_path, sg_
                "no_train" : no_train } for i in range(n_splits)]
     
     if n_workers == 1 or n_splits == 1:
+
+        model_spec['verbose'] = True 
+
         results = []
         for task in tasks:
             results.append(cv_f(task))

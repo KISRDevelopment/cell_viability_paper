@@ -10,13 +10,8 @@
     "epochs": 1000,
     "verbose": true,
     "patience": 10,
-    "balanced_loss" : true,
-    "batch_size_p" : 0.1,
+    "batch_size_n" : 10000,
     "target_col" : "bin",
     "learning_rate" : 0.001,
-    "hyperparams" : {
-        "layer_sizes" : [[1], [5], [10], [5, 2], [10, 5]],
-        "embedding_size" : [1, 5, 10],
-        "learning_rate" : [0.1, 0.01, 0.001]
-    }
+    "early_stopping" : true
 }

@@ -32,9 +32,13 @@ class MnModel:
         if model_spec['early_stopping']:
             callbacks=[earlystopping_callback]
         
+        if 'batch_size_n' in model_spec:
+            batch_size = model_spec['batch_size_n']
+        elif 'batch_size_p' in model_spec:
+            batch_size = int(model_spec['batch_size_p'] * train_Y.shape[0])
         model.fit(train_X, 
                 train_Y, 
-                batch_size=int(model_spec['batch_size_p'] * train_Y.shape[0]),
+                batch_size=batch_size,
                 epochs=model_spec['epochs'],
                 verbose=model_spec['verbose'],
                 validation_data=(valid_X, valid_Y),
