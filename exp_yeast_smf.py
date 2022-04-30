@@ -108,26 +108,6 @@ def generate_figures(output_dir):
         figure_auc_roc_curve.plot_auc_roc_curves(spec, i, '../results/exp_yeast_smf/figures/curve_auc_roc_dev_test_%s.png' % spec["short_classes"][i])
     
     
-# def summarize_results(model_output_path, class_labels):
-#     with open("%s/results.json" % model_output_path, 'r') as f:
-#         r = json.load(f)
-
-#         results = r['results']
-
-#         row = {}
-
-#         row['bacc'] = np.mean([e['bacc'] for e in results])
-#         row['acc'] = np.mean([e['acc'] for e in results])
-#         row['cm'] = np.mean([e['cm'] for e in results], axis=0)
-
-#         num_classes = len(class_labels)
-            
-#         for c in range(num_classes):
-#             row['%s_auc_roc' % class_labels[c]] = np.mean([e['auc_roc'][c] for e in results])
-#             row['%s_bacc' % class_labels[c]] = np.mean([e['per_class_bacc'][c] for e in results])
-#             row['%s_auc_pr' % class_labels[c]] = np.mean([e['pr'][c] for e in results])
-                
-#     print(row)
 
 if __name__ == "__main__":
     main()
