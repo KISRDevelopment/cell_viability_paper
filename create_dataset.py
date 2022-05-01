@@ -44,8 +44,12 @@ yeast_single_spec = lambda: (
 yeast_single_lit_spec = lambda: (["../generated-data/features/ppc_yeast_amino_acid.npz",
           "../generated-data/features/ppc_yeast_idc.npz",
           "../generated-data/features/ppc_yeast_diffslc.npz",
-          "../generated-data/features/ppc_yeast_full_go.npz"
-    ], ["amino_acid","idc","diffslc","go"])
+          "../generated-data/features/ppc_yeast_topology.npz"
+    ], ["amino_acid","idc","diffslc","topology"])
+
+yeast_single_yu_spec = lambda: ([
+    "../generated-data/features/ppc_yeast_full_go.npz",
+], ["go"])
 
 other_single_spec = lambda org: ([
     "../generated-data/features/ppc_%s_topology.npz" % org ,
@@ -93,10 +97,10 @@ yeast_pair_spec = lambda: [
     },
 ]
 
-yeast_pair_lit_spec = lambda: [
+yeast_pair_lit_spec = lambda: yeast_pair_spec() + [
     {
         "path" : "../generated-data/pairwise_features/ppc_yeast_acdd.npy",
-        "name" : "pairwise-acdd",
+        "name" : "acdd",
         "reader" : read_dense_pairwise
     },
     
@@ -124,6 +128,9 @@ def main():
     compile_dataset("../generated-data/task_yeast_smf_30", yeast_single_spec(), "../generated-data/dataset_yeast_smf")
     compile_dataset("../generated-data/task_yeast_smf_30", yeast_single_lit_spec(), "../generated-data/dataset_yeast_smf_lit")
     
+    compile_dataset("../generated-data/task_yeast_smf_30", yeast_single_yu_spec(), 
+        "../generated-data/dataset_yeast_smf_yu", "../generated-data/ppc_yeast")
+    
     compile_dataset("../generated-data/task_pombe_smf", other_single_spec('pombe'),"../generated-data/dataset_pombe_smf")
     
     compile_dataset("../generated-data/task_human_smf", other_single_spec('human'), "../generated-data/dataset_human_smf")
@@ -143,6 +150,7 @@ def main():
     compile_gi_dataset("../generated-data/task_yeast_gi_hybrid", yeast_pair_spec(), "../generated-data/dataset_yeast_gi_hybrid")
     compile_gi_dataset("../generated-data/task_yeast_gi_hybrid", yeast_pair_lit_spec(), "../generated-data/dataset_yeast_gi_hybrid_lit")
     
+
     compile_tgi_dataset("../generated-data/task_yeast_tgi", yeast_pair_spec(), "../generated-data/dataset_yeast_tgi")
     compile_tgi_dataset("../generated-data/pseudo_triplets",
         yeast_pair_spec(),
@@ -263,7 +271,7 @@ def compile_gi_dataset(path, spec, output_path):
 
     df.to_feather(output_path + '.feather')
     print(df.shape)
-
+    print(df.columns)
 def compile_gi_mn_dataset(path, smf_path, output_path):
 
     spec = [

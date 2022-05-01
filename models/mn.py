@@ -51,9 +51,12 @@ class MnModel:
     
     def save(self, path):
         weights = self._model.get_weights()
+        final_weights = np.empty(len(weights),dtype=object)
+        final_weights[:] = weights 
+
         np.savez(path,
             model_spec=self._model_spec, 
-            weights=np.array(weights, dtype=object), 
+            weights=np.array(final_weights, dtype=object), 
             mu=self._mu, 
             std=self._std)
     
@@ -102,8 +105,6 @@ class MnModel:
             ix = ix | df.columns.str.startswith(f)
         model_spec['features'] = list(df.columns[ix])
 
-        assert(set(df.columns) & set(model_spec['features']) == set(model_spec['features']))
-        
     def _create_model(self):
         
         model_spec = self._model_spec

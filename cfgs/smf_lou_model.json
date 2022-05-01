@@ -1,0 +1,14 @@
+{
+    "class" : "mn",
+    "features" : [
+        "idc-",
+        "topology-lid"
+    ],
+    "epochs": 1000,
+    "verbose": true,
+    "patience": 50,
+    "batch_size_p" : 1,
+    "target_col" : "is_viable",
+    "learning_rate" : 0.001,
+    "early_stopping" : true
+}

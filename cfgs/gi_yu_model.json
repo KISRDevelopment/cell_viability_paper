@@ -1,0 +1,39 @@
+{
+    "class" : "nn_double",
+    "single_gene_spec" : {
+        "modules" : {
+            "go" : {
+                "layer_sizes" : [100, 10],
+                "hidden_activation" : "tanh"
+            }
+        },
+        "feature_sets" : {
+            "go" : {
+                "module" : "go"
+            }
+        },
+        "embedding_size" : 5,
+        "embedding_activation" : "tanh"
+    },
+    "double_gene_spec" : {
+        "modules" : {
+        },
+        "feature_sets" : {
+        },
+        "selected_feature_sets" : [],
+        "embedding_size" : 5,
+        "embedding_activation" : "tanh"
+    },
+    "optimizer": "nadam",
+    "epochs": 1000,
+    "verbose": true,
+    "patience": 10,
+    "batch_size" : 10000,
+    "target_col" : "is_not_negative",
+    "learning_rate" : 0.001,
+    "hyperparams" : {
+        "layer_sizes" : [[1], [5], [10], [5, 2], [10, 5]],
+        "embedding_size" : [1, 5, 10],
+        "learning_rate" : [0.1, 0.01, 0.001]
+    }
+}
