@@ -20,32 +20,32 @@ def main():
     refined_spec['selected_feature_sets'] = ['topology', 'sgo', 'redundancy']
     refined_spec['feature_sets']['topology']['selected_features'] = ['lid']
     refined_spec['feature_sets']['redundancy']['selected_features'] = ['pident']
-    for org in ['pombe', 'human', 'dro']:
-       run_cv_on_spec(refined_spec, 'refined', org)
-
-    mn_spec = load_spec("cfgs/smf_mn_model.json")
-    for org in ['pombe', 'human', 'dro']:
-        run_cv_on_spec(mn_spec, 'mn', org)
     
-    null_spec = { 'target_col' : 'bin', 'class' : 'null' }
-    for org in ['pombe', 'human', 'dro']:
-        run_cv_on_spec(null_spec, 'null', org)
+    # run_cv_on_spec(refined_spec, 'refined', 'human')
+    # run_cv_on_spec(refined_spec, 'refined', 'dro')
+    
+    # mn_spec = load_spec("cfgs/smf_mn_model.json")
+    # run_cv_on_spec(mn_spec, 'mn', 'human')
+    # run_cv_on_spec(mn_spec, 'mn', 'dro')
+    
+    # null_spec = { 'target_col' : 'bin', 'class' : 'null' }
+    # run_cv_on_spec(null_spec, 'null', 'human')
+    # run_cv_on_spec(null_spec, 'null', 'dro')
         
-    for org in ['pombe', 'human', 'dro']:
-        generate_figures(org)
+    generate_figures('human')
+    generate_figures('dro')
 
-def run_cv_on_spec(model_spec, name, org, mo_v=False):
-
+def run_cv_on_spec(model_spec, name, org):
     models.train_and_evaluate.cv(model_spec, 
-                                "../generated-data/dataset_%s_smf.feather" % (org), 
-                                "../generated-data/splits/dataset_%s_smf.npz" % (org),
+                                "../generated-data/dataset_%s_smf_ca_mo_v.feather" % (org), 
+                                "../generated-data/splits/dataset_%s_smf_ca_mo_v.npz" % (org),
                                 "cv",
-                                "../results/exp_smf_other_orgs/%s_%s" % (name, org),
+                                "../results/exp_smf_ca_mo_v/%s_%s" % (name, org),
                                 n_workers=25,
                                 no_train=False)
 
 def generate_figures(org):
-    output_dir = "../results/exp_smf_other_orgs/figures/%s" % org
+    output_dir = "../results/exp_smf_ca_mo_v/figures/%s" % org
     os.makedirs(output_dir, exist_ok=True)
 
     spec = {
@@ -70,23 +70,23 @@ def generate_figures(org):
             }
         ],
         "classes": [
-            "Lethal",
-            "Reduced growth",
-            "Normal"
-        ],
-        "short_classes": [
-            "L",
-            "R",
+            "CA",
+            "MO",
             "V"
         ],
-        "ylim" : [0,0.65],
+        "short_classes": [
+            "CA",
+            "MO",
+            "V"
+        ],
+        "ylim" : [0,1],
         "aspect" : 1
     }
 
-    figure_cv_bacc.generate_figures(spec, "../results/exp_smf_other_orgs", os.path.join(output_dir, 'overall_bacc.png'))
+    figure_cv_bacc.generate_figures(spec, "../results/exp_smf_ca_mo_v", os.path.join(output_dir, 'overall_bacc.png'))
 
     for model in spec['models']:
-        model['results_path'] = "../results/exp_smf_other_orgs/%s/results.json" % (model['name'])
+        model['results_path'] = "../results/exp_smf_ca_mo_v/%s/results.json" % (model['name'])
         figure_cm.plot_cm(model['results_path'], model['color'], spec['short_classes'], os.path.join(output_dir, "cm_%s.png" % model['name']))
     
     for i in range(len(spec['classes'])):
