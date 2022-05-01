@@ -1,5 +1,3 @@
-from genericpath import exists
-import numpy as np 
 import models.train_and_evaluate
 import json 
 import copy 

@@ -102,6 +102,8 @@ class MnModel:
             ix = ix | df.columns.str.startswith(f)
         model_spec['features'] = list(df.columns[ix])
 
+        assert(set(df.columns) & set(model_spec['features']) == set(model_spec['features']))
+        
     def _create_model(self):
         
         model_spec = self._model_spec

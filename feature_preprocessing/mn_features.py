@@ -14,7 +14,10 @@ def create_double_gene_mn_features(spec, smf_df, gi_df, output_path):
 
     smf_df = smf_df.set_index('id')
 
-    dfs = [gi_df[['a_id', 'b_id', 'bin']]]
+    aux_bins = list(gi_df.columns[gi_df.columns.str.startswith('is_')])
+    print(aux_bins)
+    dfs = [gi_df[['a_id', 'b_id', 'bin'] + aux_bins]]
+
     for feature in spec:
         
         # direct column feature from the gi_df
