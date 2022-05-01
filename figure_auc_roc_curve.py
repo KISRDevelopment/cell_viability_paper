@@ -30,12 +30,12 @@ def plot_auc_roc_curves(spec, klass, output_path):
     fpr = models.common.BASE_FPR
 
     for model in spec['models']:
-        if model['name'] == 'null':
+        if 'null' in model['name']:
             continue 
         
         results = load_results(model['results_path'])
         mean_tpr = np.mean([r['per_class_tpr'][klass] for r in results], axis=0)
-        mean_auc_roc = np.mean([r['per_class_bacc'][klass] for r in results])
+        mean_auc_roc = np.mean([r['auc_roc'][klass] for r in results])
 
         ax.plot(fpr, mean_tpr, linewidth=7, color=model['color'], label="%0.2f" % mean_auc_roc)
 
