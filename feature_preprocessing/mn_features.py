@@ -14,8 +14,9 @@ def create_double_gene_mn_features(spec, smf_df, gi_df, output_path):
 
     smf_df = smf_df.set_index('id')
 
-    aux_bins = list(gi_df.columns[gi_df.columns.str.startswith('is_')])
-    print(aux_bins)
+    col_ix = gi_df.columns.str.startswith('is_') | gi_df.columns.str.startswith('rel_')
+    aux_bins = list(gi_df.columns[col_ix])
+    
     dfs = [gi_df[['a_id', 'b_id', 'bin'] + aux_bins]]
 
     for feature in spec:
@@ -57,6 +58,8 @@ def create_double_gene_mn_features(spec, smf_df, gi_df, output_path):
     
     final_df.to_feather(output_path)
     print(final_df)
+
+    return final_df
 
 def create_triple_gene_mn_features(spec, smf_df, gi_df, output_path):
     smf_df_cols = smf_df.columns
@@ -125,6 +128,8 @@ def create_triple_gene_mn_features(spec, smf_df, gi_df, output_path):
     
     final_df.to_feather(output_path)
     print(final_df)
+
+    return final_df
 
 if __name__ == "__main__":
     import sys 

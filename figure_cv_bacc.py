@@ -35,8 +35,10 @@ def create_plot_df(spec, path):
 
     rows = []
     for model in spec['models']:
-
-        cv_results = load_results(os.path.join(path, model['name'], "results.json"))
+        results_path = os.path.join(path, model['name'], "results.json")
+        if 'results_path' in model:
+            results_path = model['results_path']
+        cv_results = load_results(results_path)
         
         for r in cv_results:
             rows.append({

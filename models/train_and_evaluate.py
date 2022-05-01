@@ -77,7 +77,7 @@ def cv_f(task):
     
     return r 
 
-def cv(model_spec, dataset_path, splits_path, split_mode, model_output_path, sg_path=None, n_workers=4, no_train=True, **kwargs):
+def cv(model_spec, dataset_path, splits_path, split_mode, model_output_path, sg_path=None, n_workers=4, no_train=True, results_path=None, **kwargs):
     global df 
     global splits 
 
@@ -113,8 +113,9 @@ def cv(model_spec, dataset_path, splits_path, split_mode, model_output_path, sg_
         with multiprocessing.Pool(processes=n_workers,maxtasksperchild=1) as pool:
             results = pool.map(cv_f, tasks, chunksize=1)
                 
-    
-    with open("%s/results.json" % model_output_path, "w") as f:
+    if results_path is None :
+        results_path = model_output_path + "/results.json"
+    with open(results_path, "w") as f:
         json.dump({ "model_spec" : model_spec, "results" : results }, f, indent=4)
 
     return results 

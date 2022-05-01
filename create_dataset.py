@@ -1,10 +1,12 @@
 import numpy as np 
 import pandas as pd 
-import networkx as nx 
+import networkx as nx
+from requests import post 
 import utils.yeast_name_resolver as nr
 from collections import defaultdict 
 import json
 import feature_preprocessing.mn_features
+import re 
 
 res = nr.NameResolver()
 
@@ -147,7 +149,8 @@ def main():
     
 
     compile_gi_dataset("../generated-data/task_yeast_gi_costanzo", yeast_pair_spec(), "../generated-data/dataset_yeast_gi_costanzo")
-    compile_gi_dataset("../generated-data/task_yeast_gi_hybrid", yeast_pair_spec(), "../generated-data/dataset_yeast_gi_hybrid")
+    compile_gi_dataset("../generated-data/task_yeast_gi_hybrid", yeast_pair_spec(), "../generated-data/dataset_yeast_gi_hybrid", postproc=add_ppi_cols)
+
     compile_gi_dataset("../generated-data/task_yeast_gi_hybrid", yeast_pair_lit_spec(), "../generated-data/dataset_yeast_gi_hybrid_lit")
     
 
@@ -239,7 +242,7 @@ def compile_gene_features(feature_files, feature_sets, gene_id=None):
 
     return F_df, gene_id 
 
-def compile_gi_dataset(path, spec, output_path):
+def compile_gi_dataset(path, spec, output_path, postproc=None):
     print("Compiling ", path)
 
     df = pd.read_csv(path)
@@ -269,6 +272,9 @@ def compile_gi_dataset(path, spec, output_path):
 
     df = pd.concat([df, F_df], axis=1)
 
+    if postproc:
+        postproc(df)
+    
     df.to_feather(output_path + '.feather')
     print(df.shape)
     print(df.columns)
@@ -435,6 +441,92 @@ def serialize_groups(output_path, genes_to_groups):
         genes_to_groups[g] = list(genes_to_groups[g])
     with open(output_path, 'w') as f:
         json.dump(genes_to_groups, f, indent=4)
+
+def add_ppi_cols(df):
+    G = nx.read_gpickle("../generated-data/ppc_yeast")
+    nodes = sorted(G.nodes())
+    node_ix = dict(zip(nodes, np.arange(len(nodes))))
+
+    p_relations = extract_kinase_relations('../data-sources/yeast/kinase.txt', node_ix)
+    dp_relations = extract_kinase_relations('../data-sources/yeast/phosphotase.txt', node_ix)
+    t_relations = extract_transcription_relations('../data-sources/yeast/transcript_25c.xlsx', node_ix)
+    ppc_relations = list(G.edges())
+
+    # sorting gets rid of the order of genes in a pair
+    # which is fine for the GI-cross prediction task as the GI
+    # models are symmetric
+    phosph_rels = sort_rels(p_relations + dp_relations)
+    t_rels = sort_rels(t_relations)
+    ppc_rels = sort_rels(ppc_relations)
+
+    pair = pd.Series([tuple(sorted((a,b))) for a,b in zip(df['a'], df['b'])])
+
+    df['rel_phospho'] = pair.isin(phosph_rels).astype(int)
+    df['rel_trans'] = pair.isin(t_rels).astype(int)
+    df['rel_ppc'] = pair.isin(ppc_rels).astype(int)
+
+    df['rel_not_phospho'] = (~pair.isin(phosph_rels)).astype(int)
+    df['rel_not_trans'] = (~pair.isin(t_rels)).astype(int)
+    df['rel_not_ppc'] = (~pair.isin(ppc_rels)).astype(int)
+
+    print("Kinase: %d, Transcription: %d, PPC: %d" % (np.sum(df['rel_phospho']), np.sum(df['rel_trans']), np.sum(df['rel_ppc'])))
+
+def extract_kinase_relations(file_path, node_ix):
+    
+
+    relations = []
+    with open(file_path, 'r') as f:
+        for line in f:
+            m = re.match(r'^(.+?)\s', line)
+            if not m:
+                continue   
+            source = res.get_unified_name(m.group(1))
+            m = re.search(r'\[(.+?)\]', line)
+            if not m:
+                continue 
+            targets = res.get_unified_names([t.lower() for t in m.group(1).split(', ')])
+            for target in targets:
+                relations.append((source,target))
+    
+    print("# relations: %d" % len(relations))
+    relations = [rel for rel in relations if rel[0] in node_ix and rel[1] in node_ix]
+    print("# relations in network: %d" % len(relations))
+    
+    return relations
+
+def extract_transcription_relations(file_path, node_ix):
+
+    df = pd.read_excel(file_path)
+    
+    factors = [res.get_unified_name(f) for f in df.columns[2:]]
+        
+    all_columns = np.array(df.columns[:])
+    all_columns[2:] = factors
+    df.columns = all_columns
+
+    factors = [f for f in factors if f in node_ix]
+
+    TF_THRESHOLD = 1.0
+
+    # read transcription matrix
+    # 0 = In, 1 = Out
+    t_relations = set()
+    for i, r in df.iterrows():
+        utarget = res.get_unified_name(r['Factor'])
+        if utarget not in node_ix:
+            continue
+            
+        for factor in factors:
+                
+            if r[factor] >= TF_THRESHOLD:
+                
+                t_relations.add((factor, utarget))
+    
+    return t_relations
+
+def sort_rels(rels):
+    return set(sorted([tuple(sorted(r)) for r in rels]))
+
 
 if __name__ == "__main__":
     main()
