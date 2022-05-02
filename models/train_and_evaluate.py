@@ -86,7 +86,7 @@ def cv(model_spec, dataset_path, splits_path, split_mode, model_output_path, sg_
     d = np.load(splits_path, allow_pickle=True)
     n_splits = len(d['splits'])
 
-    if split_mode == 'dev_test':
+    if split_mode == 'dev_test' or split_mode == 'full':
         n_splits = 1
     
     model_spec['verbose'] = False 

@@ -56,6 +56,10 @@ def load_results(path):
     with open(path, 'r') as f:
         results = json.load(f)['results']
     
+    
+    if len(results) == 1:
+        return results 
+
     return sorted(results, key=lambda r: r['split_id'])
 
 def plot_df(spec, df, output_path):
