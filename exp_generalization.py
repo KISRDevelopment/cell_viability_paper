@@ -64,7 +64,7 @@ def main():
 def train_smf_model(mn_spec, trained_model_path):
     
     df = pd.read_feather('../generated-data/dataset_yeast_smf.feather')
-    d = np.load("../generated-data/splits/dataset_yeast_smf_dev_test.npz", allow_pickle=True)
+    d = np.load("../generated-data/splits/dataset_yeast_smf.npz", allow_pickle=True)
 
     splits = d['splits']
     n_reps = d['reps']
@@ -76,7 +76,7 @@ def train_smf_model(mn_spec, trained_model_path):
 
 def train_gi_model(mn_spec, trained_model_path):
     df = pd.read_feather('../generated-data/dataset_yeast_gi_hybrid_mn.feather')
-    d = np.load("../generated-data/splits/dataset_yeast_gi_hybrid_dev_test.npz", 
+    d = np.load("../generated-data/splits/dataset_yeast_gi_hybrid.npz", 
         allow_pickle=True)
 
     splits = d['splits']
