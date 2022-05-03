@@ -1,8 +1,0 @@
-{
-    "ref_path" : "../results/mn_crosspred.csv",
-    "alt_path" : "../results/mn_strict_crosspred.csv",
-    "ylabel" : "Balanced Accuracy",
-    "cols" : ["bacc_is_neutral", "bacc_rel_not_ppc", "bacc_rel_not_phospho", "bacc_rel_not_trans"],
-    "col_labels" : ["GI", "Coprecipitation", "Phosphorylation", "Transcription"],
-    "colors" : ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728"]
-}
