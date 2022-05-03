@@ -105,6 +105,8 @@ def train(model_spec, df, splits, split_ids, output_path):
     return model_output_paths
     
 def _train_model(model_spec, train_df, valid_df, output_path):
+    model_spec = copy.deepcopy(model_spec)
+    
     if model_spec['class'] == 'mn':
         model = models.mn.MnModel(model_spec)
     else:

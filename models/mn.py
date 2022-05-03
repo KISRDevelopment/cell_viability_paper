@@ -6,6 +6,8 @@ import pandas as pd
 import sklearn.metrics 
 import models.common 
 
+MAX_BATCH_SIZE = 10000
+
 class MnModel:
 
     def __init__(self, model_spec, **kwargs):
@@ -22,26 +24,31 @@ class MnModel:
         train_X, mu, std = models.common.normalize(train_X)
         train_Y = keras.utils.to_categorical(train_df[model_spec['target_col']])
         
-        valid_X = np.array(valid_df[model_spec['features']])
-        valid_X, _, _ = models.common.normalize(valid_X, mu, std)
-        valid_Y = keras.utils.to_categorical(valid_df[model_spec['target_col']])
-
-        earlystopping_callback = keras.callbacks.EarlyStopping(monitor='val_loss', 
-                                    patience=model_spec['patience'], restore_best_weights=True)
         callbacks = []
+        validation_data = None
         if model_spec['early_stopping']:
+            
+            valid_X = np.array(valid_df[model_spec['features']])
+            valid_X, _, _ = models.common.normalize(valid_X, mu, std)
+            valid_Y = keras.utils.to_categorical(valid_df[model_spec['target_col']])
+
+            earlystopping_callback = keras.callbacks.EarlyStopping(monitor='val_loss', 
+                                        patience=model_spec['patience'], restore_best_weights=True)
             callbacks=[earlystopping_callback]
-        
+            validation_data = (valid_X, valid_Y) 
+
         if 'batch_size_n' in model_spec:
             batch_size = model_spec['batch_size_n']
         elif 'batch_size_p' in model_spec:
             batch_size = int(model_spec['batch_size_p'] * train_Y.shape[0])
+        batch_size = min(MAX_BATCH_SIZE, batch_size)
+        
         model.fit(train_X, 
                 train_Y, 
                 batch_size=batch_size,
                 epochs=model_spec['epochs'],
                 verbose=model_spec['verbose'],
-                validation_data=(valid_X, valid_Y),
+                validation_data=validation_data,
                 validation_batch_size=100000,
                 callbacks=callbacks)
 
