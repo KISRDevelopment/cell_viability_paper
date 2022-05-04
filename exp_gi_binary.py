@@ -19,27 +19,27 @@ def main():
     refined_spec['single_gene_spec']['feature_sets']['topology']['selected_features'] = ['lid']
     refined_spec['double_gene_spec']['feature_sets']['pairwise']['selected_features'] = ['spl']
     refined_spec['target_col'] = 'is_neutral'
-    #for org in ['yeast', 'pombe', 'human', 'dro']:
-    #   run_cv_on_spec(refined_spec, 'refined', org)
+    for org in ['yeast', 'pombe', 'human', 'dro']:
+      run_cv_on_spec(refined_spec, 'refined', org)
 
     refined_no_sgo_spec = copy.deepcopy(refined_spec)
     refined_no_sgo_spec['single_gene_spec']['selected_feature_sets'] = ['topology', 'smf']
-    # for org in ['yeast', 'pombe', 'human', 'dro']:
-    #    run_cv_on_spec(refined_no_sgo_spec, 'refined_no_sgo', org)
+    for org in ['yeast', 'pombe', 'human', 'dro']:
+       run_cv_on_spec(refined_no_sgo_spec, 'refined_no_sgo', org)
 
     mn_spec = load_spec("cfgs/gi_mn_model.json")
     mn_spec['target_col'] = 'is_neutral'
-    # for org in ['yeast', 'pombe', 'human', 'dro']:
-    #    run_cv_on_spec(mn_spec, 'mn', org)
+    for org in ['yeast', 'pombe', 'human', 'dro']:
+       run_cv_on_spec(mn_spec, 'mn', org)
     
     mn_spec_no_sgo = copy.deepcopy(mn_spec)
     mn_spec_no_sgo['features'].remove('sgo-')
-    # for org in ['yeast', 'pombe', 'human', 'dro']:
-    #    run_cv_on_spec(mn_spec_no_sgo, 'mn_no_sgo', org)
+    for org in ['yeast', 'pombe', 'human', 'dro']:
+       run_cv_on_spec(mn_spec_no_sgo, 'mn_no_sgo', org)
 
     null_spec = { 'target_col' : 'is_neutral', 'class' : 'null' }
-    # for org in ['yeast', 'pombe', 'human', 'dro']:
-    #    run_cv_on_spec(null_spec, 'null', org)
+    for org in ['yeast', 'pombe', 'human', 'dro']:
+       run_cv_on_spec(null_spec, 'null', org)
 
     for org in ['yeast', 'pombe', 'human', 'dro']:
        generate_figures(org)

@@ -21,16 +21,16 @@ def main():
     refined_spec['feature_sets']['topology']['selected_features'] = ['lid']
     refined_spec['feature_sets']['redundancy']['selected_features'] = ['pident']
     
-    # run_cv_on_spec(refined_spec, 'refined', 'human')
-    # run_cv_on_spec(refined_spec, 'refined', 'dro')
+    run_cv_on_spec(refined_spec, 'refined', 'human')
+    run_cv_on_spec(refined_spec, 'refined', 'dro')
     
-    # mn_spec = load_spec("cfgs/smf_mn_model.json")
-    # run_cv_on_spec(mn_spec, 'mn', 'human')
-    # run_cv_on_spec(mn_spec, 'mn', 'dro')
+    mn_spec = load_spec("cfgs/smf_mn_model.json")
+    run_cv_on_spec(mn_spec, 'mn', 'human')
+    run_cv_on_spec(mn_spec, 'mn', 'dro')
     
-    # null_spec = { 'target_col' : 'bin', 'class' : 'null' }
-    # run_cv_on_spec(null_spec, 'null', 'human')
-    # run_cv_on_spec(null_spec, 'null', 'dro')
+    null_spec = { 'target_col' : 'bin', 'class' : 'null' }
+    run_cv_on_spec(null_spec, 'null', 'human')
+    run_cv_on_spec(null_spec, 'null', 'dro')
         
     generate_figures('human')
     generate_figures('dro')

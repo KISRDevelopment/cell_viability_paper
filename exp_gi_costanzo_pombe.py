@@ -15,22 +15,22 @@ def main():
 
 
     full_spec = load_spec("cfgs/gi_nn_model.json")
-    # run_cv_on_spec(full_spec, 'full', 'yeast')
+    run_cv_on_spec(full_spec, 'full', 'yeast')
 
     refined_spec = copy.deepcopy(full_spec)
     refined_spec['single_gene_spec']['selected_feature_sets'] = ['topology', 'sgo', 'smf']
     refined_spec['single_gene_spec']['feature_sets']['topology']['selected_features'] = ['lid']
     refined_spec['double_gene_spec']['feature_sets']['pairwise']['selected_features'] = ['spl']
-    # run_cv_on_spec(refined_spec, 'refined', 'yeast')
-    # run_cv_on_spec(refined_spec, 'refined', 'pombe')
+    run_cv_on_spec(refined_spec, 'refined', 'yeast')
+    run_cv_on_spec(refined_spec, 'refined', 'pombe')
 
     mn_spec = load_spec("cfgs/gi_mn_model.json")
-    # run_cv_on_spec(mn_spec, 'mn', 'yeast')
-    # run_cv_on_spec(mn_spec, 'mn', 'pombe')
+    run_cv_on_spec(mn_spec, 'mn', 'yeast')
+    run_cv_on_spec(mn_spec, 'mn', 'pombe')
     
     null_spec = { 'target_col' : 'bin', 'class' : 'null' }
-    # run_cv_on_spec(null_spec, 'null', 'yeast')
-    # run_cv_on_spec(null_spec, 'null', 'pombe')
+    run_cv_on_spec(null_spec, 'null', 'yeast')
+    run_cv_on_spec(null_spec, 'null', 'pombe')
 
     generate_figures('yeast')
     generate_figures('pombe')
