@@ -32,7 +32,7 @@ def main():
         dataset_path='../generated-data/dataset_yeast_gi_hybrid.feather', 
         splits_path='../generated-data/splits/dataset_yeast_gi_hybrid_dev_test.npz',
         output_path='../results/exp_feature_selection/gi',
-        sg_path="../generated-data/dataset_yeast_allppc.feather")
+        sg_path="../generated-data/dataset_yeast_allppc.feather", n_workers=10)
     gi_df = summarize_results('../results/exp_feature_selection/gi', GI_LABELS)
     gi_df.to_excel("../results/exp_feature_selection/gi.xlsx", index=False)
 
@@ -57,6 +57,7 @@ def brute_force_fs(model_specs, dataset_path, splits_path, output_path, n_worker
         "cv", 
         n_workers=n_workers, 
         no_train=False, 
+        skip_if_exists=True,
         **kwargs)
 
 def summarize_results(results_path, class_labels):

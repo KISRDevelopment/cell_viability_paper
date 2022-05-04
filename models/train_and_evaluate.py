@@ -41,14 +41,14 @@ SPLIT_MODES = {
 df = None
 splits = None 
 
-def single_split(model_spec, df, splits, split_id, split_mode, model_output_path, sg_path=None, no_train=True):
+def single_split(model_spec, df, splits, split_id, split_mode, model_output_path, sg_path=None, no_train=True, skip_if_exists=False):
 
     model_class = MODELS[model_spec['class']]
     split = splits[split_id]
 
     train_df, valid_df, test_df = models.common.get_dfs(df, split, **SPLIT_MODES[split_mode])
     
-    if no_train:
+    if no_train or (skip_if_exists and os.path.exists(model_output_path)):
         m = model_class.load(model_output_path)
     else:
         m = model_class(model_spec, sg_path=sg_path)    
@@ -121,7 +121,7 @@ def cv(model_spec, dataset_path, splits_path, split_mode, model_output_path, sg_
     return results 
 
 
-def multiple_cv(model_specs, model_output_paths, dataset_path, splits_path, split_mode, sg_path=None, n_workers=4, no_train=True, **kwargs):
+def multiple_cv(model_specs, model_output_paths, dataset_path, splits_path, split_mode, sg_path=None, n_workers=4, no_train=True, skip_if_exists=False):
     """ 
         Optimized processor utilization when running same dataset CV with multiple specs (like in feature selection and hyperparam opt) 
         This is done by feeding the multiprocessing pool all the CV tasks for all model specs at once.
@@ -149,6 +149,7 @@ def multiple_cv(model_specs, model_output_paths, dataset_path, splits_path, spli
                 "split_mode" : split_mode, 
                 "model_output_path" : "%s/model%d.npz" % (model_output_path, i), 
                 "sg_path" : sg_path,
+                "skip_if_exists" : skip_if_exists,
                 "no_train" : no_train } for i in range(n_splits)])
     
     print("Total tasks: %d" % len(tasks))
