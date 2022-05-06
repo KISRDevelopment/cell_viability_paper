@@ -13,7 +13,7 @@ class MnModel:
     def __init__(self, model_spec, **kwargs):
         self._model_spec = model_spec 
     
-    def train(self, train_df, valid_df):
+    def train(self, train_df, valid_df, mu=None, std=None):
         model_spec = self._model_spec
 
         self._add_extra_info_to_spec(train_df)
@@ -21,7 +21,8 @@ class MnModel:
         model = self._create_model()
 
         train_X = np.array(train_df[model_spec['features']])
-        train_X, mu, std = models.common.normalize(train_X)
+
+        train_X, mu, std = models.common.normalize(train_X, mu=mu, std=std)
         train_Y = keras.utils.to_categorical(train_df[model_spec['target_col']])
         
         callbacks = []
@@ -87,6 +88,7 @@ class MnModel:
         test_X = np.array(test_df[self._model_spec['features']])
         if training_norm:
             test_X, _, _ = models.common.normalize(test_X, self._mu, self._std)
+
         else:
             test_X, _, _ = models.common.normalize(test_X)
         preds = self._model.predict(test_X, batch_size=1000000)
@@ -105,12 +107,7 @@ class MnModel:
 
         # calculate output dimension size (number of classes)
         model_spec['n_output_dim'] = np.unique(df[model_spec['target_col']]).shape[0]
-
-        # calculate actual features
-        ix = np.zeros_like(df.columns, dtype=bool)
-        for f in model_spec['features']:
-            ix = ix | df.columns.str.startswith(f)
-        model_spec['features'] = list(df.columns[ix])
+        model_spec['features'] = expand_features(model_spec, df)
 
     def _create_model(self):
         
@@ -125,6 +122,15 @@ class MnModel:
         #print(model.summary())
 
         return model
+
+def expand_features(model_spec, df):
+
+    # calculate actual features
+    ix = np.zeros_like(df.columns, dtype=bool)
+    for f in model_spec['features']:
+        ix = ix | df.columns.str.startswith(f)
+    return list(df.columns[ix])
+
 
 if __name__ == "__main__":
     import sys 
