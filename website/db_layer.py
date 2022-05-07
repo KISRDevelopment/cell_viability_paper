@@ -1,246 +1,336 @@
-import sqlite3 
 import json 
 import numpy as np 
-from contextlib import closing 
+import pandas as pd
+import igraph as ig
+
+class FeatureMaker:
+    
+    def __init__(self, ppc_path, sg_path):
+        G = ig.read(ppc_path)
+        G_node_ix = { l: i for i, l in enumerate(G.vs['label']) }
+        
+        sorted_nodes = sorted(G_node_ix.keys())
+        nix_to_gix = np.array([G_node_ix[n] for n in sorted_nodes])
+        
+        df = pd.read_feather(sg_path)
+        df = df.set_index('id')
+        df_node_ix = dict(zip(df['gene'], df.index))
+        
+        target_node_ix = [G_node_ix[n] for n in df['gene']]
+        
+        self.G = G
+        self.G_node_ix = G_node_ix 
+        self.nix_to_gix = nix_to_gix 
+        
+        self.df = df 
+        self.df_node_ix = df_node_ix 
+        
+        self.target_node_ix = target_node_ix
+        
+        self.sgo_cols = df.columns[df.columns.str.startswith('sgo-')]
+
+    def make(self, gene_a_id, b_id=None):
+        df = self.df 
+        sgo_cols = self.sgo_cols
+        if b_id is None:
+            b_id = np.array(df.index)
+        a_id = np.ones(b_id.shape[0], dtype=int)*gene_a_id
+        
+        
+        sum_lid = df.loc[a_id][['topology-lid']].to_numpy() + df.loc[b_id][['topology-lid']].to_numpy()
+        sum_sgo = df.loc[a_id][sgo_cols].to_numpy() + df.loc[b_id][sgo_cols].to_numpy()
+
+        smf_a = df.loc[a_id][['bin']].to_numpy()
+        smf_b = df.loc[b_id][['bin']].to_numpy()
+        
+        gi_smf = np.hstack((smf_a, smf_b)).astype(int)
+        
+        nan_ix = (np.isnan(smf_a) | np.isnan(smf_b))[:,0]
+        
+        gi_smf = gi_smf[~nan_ix,:]
+        gi_smf = np.sort(gi_smf, axis=1)
+
+        rindex_map = np.array([
+            [0, 1, 2],
+            [1, 3, 4],
+            [2, 4, 5]
+        ])
+
+        rindex = rindex_map[gi_smf[:,0], gi_smf[:,1]]
+        smf_combs = np.zeros((b_id.shape[0], np.max(rindex_map)+1))
+        smf_combs[~nan_ix, rindex] = 1   
+        
+        spl = np.array(self.G.shortest_paths_dijkstra(source=self.nix_to_gix[gene_a_id], 
+                                                 target=self.nix_to_gix[b_id])[0])
+        spl[np.isinf(spl)] = 1e5
+        spl = spl[:,None]
+        
+        # make sure the order of the features matches the order expected by the model
+        F = np.hstack((np.ones_like(spl), spl, sum_lid, smf_combs, sum_sgo))
+        
+        return F, a_id, b_id 
+    
+    def get_spl(self, F):
+        return F[:, 1]
+    
+    def get_single_gene_features(self, gid):
+        df = self.df 
+        smf_cols = df.columns[df.columns.str.startswith('smf-')].tolist()
+        lid_cols = ['topology-lid']
+        sgo_cols = df.columns[df.columns.str.startswith('sgo-')].tolist()
+        
+        features =  lid_cols + smf_cols + sgo_cols 
+
+        return features, np.array(df.loc[gid, features])
+
+class NameMapper:
+    
+    def __init__(self, path):
+        with open(path, 'r') as f:
+            name_map = json.load(f)
+        
+        self.locus_to_id = { l: i for i, l in enumerate(name_map['locus']) }
+        self.common_to_id = { c: i for i, c in enumerate(name_map['common']) }
+        self.id_to_common = { i: c for i, c in enumerate(name_map['common']) }
+        self.id_to_locus = { i: l for i, l in enumerate(name_map['locus']) }
+    
+    def get_id(self, name):
+        if name in self.locus_to_id:
+            return self.locus_to_id[name]
+        elif name in self.common_to_id:
+            return self.common_to_id[name]
+        else:
+            return None
+    
+    def get_common(self, id):
+        return self.id_to_common.get(id, None)
+    
+    def get_locus(self, id):
+        return self.id_to_locus.get(id, None)
+
+class LRModelEnsemble:
+    
+    def __init__(self, path):
+        d = np.load(path, allow_pickle=True)
+        self.W = d['W']
+        self.mu = d['mu']
+        self.std = d['std']
+        self.features = d['features']
+    
+    def predict(self, X):
+        
+        X = (X - self.mu) / self.std
+
+        # (NxR)
+        logit = np.dot(X, self.W)
+        
+        # (NxR)
+        probs = 1/(1+np.exp(-logit))
+        
+        # (N,)
+        mean_probs = np.mean(probs, axis=1)
+        
+        return mean_probs
 
 class DbLayer:
 
-    def __init__(self, path, entries_per_page):
+    def __init__(self):
 
-        self._conn = sqlite3.connect(path)
-        self._conn.row_factory = sqlite3.Row
-        self._entries_per_page = entries_per_page
+        self._makers = {
+            1: FeatureMaker("data/ppc_yeast.gml", "data/dataset_yeast_allppc.feather"),
+            2: FeatureMaker("data/ppc_pombe.gml", "data/dataset_pombe_smf.feather"),
+            3: FeatureMaker("data/ppc_human.gml", "data/dataset_human_smf.feather"),
+            4: FeatureMaker("data/ppc_dro.gml", "data/dataset_dro_smf.feather")
+        }
+        
+        self._names = {
+            1 : NameMapper("data/yeast.json"),
+            2 : NameMapper("data/pombe.json"),
+            3 : NameMapper("data/human.json"),
+            4 : NameMapper("data/dro.json")
+        }
+        
+        self._models = {
+            1: LRModelEnsemble("models/gi_yeast.npz"),
+            2: LRModelEnsemble("models/gi_pombe.npz"),
+            3: LRModelEnsemble("models/gi_human.npz"),
+            4: LRModelEnsemble("models/gi_dro.npz"),
+        }
 
-    def close(self):
-        self._conn.close()
+        with open('data/go_ids_to_names.json', 'r') as f:
+            goid_names = json.load(f)
+        
+        self.goid_names = goid_names
     
-    def get_gene(self, species_id, gene):
-        if gene is None:
-            return 
-        
-        gene = gene.lower().strip()
-        if gene == '':
-            return None 
-        
-        query = "SELECT * FROM genes WHERE species_id = :species_id AND (locus_tag = :gene OR common_name = :gene)"
+    def get_pairs(self, species_id, threshold, gene_a, gene_b, published_only=False, max_spl = "inf"):
+        names = self._names[species_id]
+        maker = self._makers[species_id]
+        model = self._models[species_id]
 
-        with closing(self._conn.cursor()) as c:
-            c.execute(query, { "species_id" : species_id, "gene" : gene })
-            row = c.fetchone()
-            
-            return dict(row) if row is not None else None
+        gene_a_id = names.get_id(gene_a)
+        gene_b_id = names.get_id(gene_b)
 
-    def get_pairs(self, species_id, threshold, gene_a, gene_b, page, published_only=False, max_spl = "inf"):
-        #print("get_pairs(%d, %0.2f, %s, %s)" % (species_id, threshold, gene_a, gene_b))
-        
-        both_genes_clause = """
-            AND ((g.gene_a_id = :gene_a_id AND g.gene_b_id = :gene_b_id) OR
-                 (g.gene_a_id = :gene_b_id AND g.gene_b_id = :gene_a_id))
-        """
-        one_gene_clause = """
-            AND ((g.gene_a_id = :gene_a_id OR g.gene_b_id = :gene_b_id) OR
-                 (g.gene_a_id = :gene_b_id OR g.gene_b_id = :gene_a_id))
-        """
+        b_id = None
+        if gene_a_id is None and gene_b_id is None:
+            return [], 0
+        elif gene_a_id is not None and gene_b_id is not None:
+            b_id = np.array([gene_b_id])
         
         if max_spl == "inf":
             max_spl = 1e5
         max_spl = int(max_spl)
-        print(max_spl)
-        genes_clause = ""
-        if gene_a and gene_b:
-            genes_clause = both_genes_clause
-        elif gene_a or gene_b:
-            genes_clause = one_gene_clause
-        else:
-            return [], 0
-        
-        gene_a_row = self.get_gene(species_id, gene_a)
-        gene_b_row = self.get_gene(species_id, gene_b)
 
-        gene_a_id = -1 if not gene_a_row else gene_a_row['gene_id']
-        gene_b_id = -1 if not gene_b_row else gene_b_row['gene_id']
-        if gene_a_id == -1 and gene_b_id == -1:
-            return [], 0
+        F, a_id, b_id = maker.make(gene_a_id, b_id)
+        preds = model.predict(F)
 
-        query = """
-                SELECT  g.gi_id gi_id,
-                            a.gene_id gene_a_id,
-                            b.gene_id gene_b_id,
-                            g.species_id species_id,
-                            a.locus_tag gene_a_locus_tag, 
-                            b.locus_tag gene_b_locus_tag,
-                            a.common_name gene_a_common_name,
-                            b.common_name gene_b_common_name, 
-                            g.observed, 
-                            g.observed_gi, 
-                            g.prob_gi,
-                            g.spl_unnormed spl_unnormed
-                FROM    genetic_interactions g 
-                JOIN    genes a on g.gene_a_id = a.gene_id 
-                JOIN    genes b on g.gene_b_id = b.gene_id
-                WHERE   (a.species_id = :species_id) AND
-                        (g.prob_gi >= :threshold) AND
-                        (NOT :published_only OR (g.observed = :published_only AND g.observed_gi = 1)) AND 
-                        spl_unnormed <= :max_spl
-                        %s
-                        ORDER BY g.prob_gi DESC
-                        
-                LIMIT :entries_per_page OFFSET :offset
-        """ % genes_clause
+
+        spl = maker.get_spl(F)
+        ix = (spl <= max_spl) & (preds >= threshold)
+
+        spl = spl[ix]
+        a_id = a_id[ix]
+        b_id = b_id[ix]
+        preds = preds[ix]
         
-        count_query = """
-                SELECT COUNT(g.gi_id) as n_rows
-                FROM    genetic_interactions g 
-                JOIN    genes a on g.gene_a_id = a.gene_id 
-                JOIN    genes b on g.gene_b_id = b.gene_id
-                WHERE   (a.species_id = :species_id) AND
-                        (g.prob_gi >= :threshold) AND 
-                        (NOT :published_only OR (g.observed = :published_only AND g.observed_gi = 1)) AND
-                        spl_unnormed <= :max_spl
-                        %s
-        """ % genes_clause
+        rows = [
+            {
+                "gi_id" : None, 
+                "gene_a_id" : a_id[i],
+                "gene_b_id" : b_id[i],
+                "species_id" : species_id,
+                "gene_a_locus_tag" : names.get_locus(gene_a_id),
+                "gene_b_locus_tag" : names.get_locus(gene_b_id),
+                "gene_a_common_name" : names.get_common(gene_a_id),
+                "gene_b_common_name" : names.get_common(gene_b_id),
+                "observed" : False,
+                "observed_gi" : False,
+                "prob_gi" : preds[i],
+                "spl" : spl[i]
+            }
+            for i in range(preds.shape[0])
+        ]
         
-        params = { 
-            "species_id" : species_id, 
-            "threshold" : threshold,
+        return sorted(rows, key=lambda r: r['prob_gi'], reverse=True), len(rows)
+    
+    def get_gi(self, species_id, gene_a_id, gene_b_id):
+        names = self._names[species_id]
+        maker = self._makers[species_id]
+        model = self._models[species_id]
+
+        F, _, _ = maker.make(gene_a_id, np.array([gene_b_id]))
+        preds = model.predict(F)
+        
+        # joint features
+        z = F[0, :].tolist()
+        labels = model.features 
+
+        # individual gene features
+        single_features, gene_a_features = maker.get_single_gene_features(gene_a_id)
+        _, gene_b_features = maker.get_single_gene_features(gene_b_id)
+        
+        return {
             "gene_a_id" : gene_a_id,
             "gene_b_id" : gene_b_id,
-            "max_spl" : max_spl,
-            "published_only" : published_only,
-            "entries_per_page" : self._entries_per_page,
-            "offset" : self._entries_per_page * page, 
+            "species_id" : species_id,
+            "prob_gi" : preds[0],
+            "joint_features_labels" : self.process_labels(labels),
+            "joint_features" : z,
+            "single_feature_labels" : self.process_labels(single_features),
+            "gene_a_features" : gene_a_features,
+            "gene_b_features" : gene_b_features,
+            "gene_a_locus_tag" : names.get_locus(gene_a_id),
+            "gene_b_locus_tag" : names.get_locus(gene_b_id),
+            "gene_a_common_name" : names.get_common(gene_a_id),
+            "gene_b_common_name" : names.get_common(gene_b_id),
         }
-        with closing(self._conn.cursor()) as c:
-            c.execute(query, params)
-            rows = [dict(r) for r in c.fetchall()]
-
-            c.execute(count_query, params)
-            n_rows = c.fetchone()['n_rows']
-            return rows, n_rows
     
-    def get_gi(self, gi_id):
-        query = """
-                SELECT  g.gi_id gi_id,
-                            a.gene_id gene_a_id,
-                            b.gene_id gene_b_id,
-                            g.species_id species_id,
-                            a.locus_tag gene_a_locus_tag, 
-                            b.locus_tag gene_b_locus_tag,
-                            a.common_name gene_a_common_name,
-                            b.common_name gene_b_common_name, 
-                            g.observed, 
-                            g.observed_gi, 
-                            g.prob_gi,
-                            a.lid gene_a_lid,
-                            b.lid gene_b_lid,
-                            a.smf gene_a_smf,
-                            b.smf gene_b_smf,
-                            a.sgo_terms gene_a_sgo,
-                            b.sgo_terms gene_b_sgo,
-                            g.spl spl
-                FROM    genetic_interactions g 
-                JOIN    genes a on g.gene_a_id = a.gene_id 
-                JOIN    genes b on g.gene_b_id = b.gene_id
-                WHERE   g.gi_id = :gi_id
-        """
+    def process_labels(self, labels):
+        lookup = {
+            'pairwise-spl' : 'Shortest Path Length',
+            'topology-lid' : 'LID',
+            'smf-LL' : 'Lethal/Lethal',
+            'smf-LR' : 'Lethal/Reduced',
+            'smf-LN' : 'Lethal/Normal',
+            'smf-RR' : 'Reduced/Reduced',
+            'smf-RN' : 'Reduced/Normal',
+            'smf-NN' : 'Normal/Normal',
+            'smf-L' : 'Lethal',
+            'smf-R' : 'Reduced',
+            'smf-N' : 'Normal',
+        }
+        processed = []
+        for lbl in labels:
+            if lbl.startswith('sgo-'):
+                v = self.goid_names[lbl.replace('sgo-','')].title()
+            else:
+                v = lookup.get(lbl, lbl)
+            processed.append(v)
+        return processed
 
-        pub_query = "SELECT p.identifier identifier FROM gi_pubs p WHERE p.gi_id = ?"
+    def get_interactors(self, species_id, genes, threshold, published_only, max_spl="inf"):
+        names = self._names[species_id]
+        maker = self._makers[species_id]
+        model = self._models[species_id]
 
-        with closing(self._conn.cursor()) as c:
-            c.execute(query, { 
-                "gi_id" : gi_id
-            })
-            row = c.fetchone()
-            gi_row = dict(row) if row is not None else None
-            if gi_row is not None:
-                c.execute(pub_query, (gi_id,))
-                rows = c.fetchall()
-                gi_row['pubs'] = [dict(r) for r in rows]
-            return gi_row
-    
-    def get_interactors(self, species_id, gene_id, threshold, published_only, max_spl="inf"):
         if max_spl == "inf":
             max_spl = 1e5
         max_spl = int(max_spl)
 
-        query = """
-                SELECT  g.gi_id gi_id,
-                            a.gene_id gene_a_id,
-                            b.gene_id gene_b_id,
-                            a.locus_tag gene_a_locus_tag, 
-                            b.locus_tag gene_b_locus_tag,
-                            a.common_name gene_a_common_name,
-                            b.common_name gene_b_common_name, 
-                            g.prob_gi prob_gi,
-                            g.spl_unnormed spl
-                FROM    genetic_interactions g 
-                JOIN    genes a on g.gene_a_id = a.gene_id 
-                JOIN    genes b on g.gene_b_id = b.gene_id
-                WHERE   (g.prob_gi >= :threshold) AND (g.species_id = :species_id) AND
-                        ((a.gene_id = :gene_id) OR (b.gene_id = :gene_id)) AND
-                        (g.spl_unnormed <= :max_spl) AND
-                        (NOT :published_only OR (g.observed = :published_only AND g.observed_gi = 1))
-        """
-        with closing(self._conn.cursor()) as c:
-            c.execute(query, { 
+        all_preds = []
+        ix = None
+        for gene in genes: 
+            gene_id = names.get_id(gene)
+            if gene_id is None:
+                continue 
+
+            F, _, b_id = maker.make(gene_id, None)
+            preds = model.predict(F)
+            all_preds.append(preds)
+        
+            spl = maker.get_spl(F)
+            if ix is None:
+                ix = (spl <= max_spl) & (preds >= threshold)
+            else:
+                ix = ix & (spl <= max_spl) & (preds >= threshold)
+        
+        preds = preds[ix]
+        
+        rows = [
+            {
+                "gene_a_id" : a_id[i],
+                "gene_b_id" : b_id[i],
                 "species_id" : species_id,
-                "gene_id" : gene_id, 
-                "threshold" : threshold,
-                "max_spl" : max_spl,
-                "published_only" : published_only
-            })
-            rows = c.fetchall()
-            
-            interactors = {}
-            for r in rows:
-                prob_gi = r['prob_gi']
-                if gene_id == r['gene_b_id']:
-                    target_name = (r['gene_a_locus_tag'], r['gene_a_common_name'])
-                else:
-                    target_name = (r['gene_b_locus_tag'], r['gene_b_common_name'])
-                interactors[target_name] = [prob_gi, r['spl']]
-            return interactors
-    
+                "gene_a_locus_tag" : names.get_locus(gene_a_id),
+                "gene_b_locus_tag" : names.get_locus(gene_b_id),
+                "gene_a_common_name" : names.get_common(gene_a_id),
+                "gene_b_common_name" : names.get_common(gene_b_id),
+                "observed" : False,
+                "observed_gi" : False,
+                "prob_gi" : preds[i],
+                "spl" : spl[i]
+            }
+            for i in range(preds.shape[0])
+        ]
+
 if __name__ == "__main__":
+    import time 
+    import pprint 
 
-    layer = DbLayer('db.sqlite', 50)
+    layer = DbLayer()
 
-    rows, _ = layer.get_pairs(3, 0.5, 'myc', '', 0)
-    assert(len(rows) > 0)
+    # start_time = time.time()
 
-    rows, _ = layer.get_pairs(3, 0.5, '', 'myc', 0)
-    assert(len(rows) > 0)
+    # for r in range(100):
+    #     rows, count = layer.get_pairs(3, 0.9, 'myc', None, 0, max_spl=3)
+        
+    # end_time = time.time()
+    # elapsed = (end_time - start_time)
+    # print(" Elapsed: %0.2f sec, average: %0.2f sec" % (elapsed, elapsed/100))
+    # print(count)
 
-    rows, _ = layer.get_pairs(3, 0.5, 'myc', 'a12m1', 0)
-    assert(len(rows) == 1)
-    
-    rows, _ = layer.get_pairs(3, 0.5, 'a12m1', 'myc', 0)
-    assert(len(rows) == 1)
+    #rows, count = layer.get_pairs(3, 0.9, 'myc', None, 0, max_spl=3)
+    #print(rows[0])
 
-    rows, _ = layer.get_pairs(3, 0.5, '', 'myc', 100)
-    assert(len(rows) > 0)
+    r = layer.get_gi(3, 23717, 23603)
 
-    rows, _ = layer.get_pairs(3, 0.5, '', '', 100)
-    assert(len(rows) == 0)
-
-    row = layer.get_gi(3)
-    assert(row is not None)
-
-    row = layer.get_gi('adf')
-    assert(row is None)
-
-    rows, _ = layer.get_pairs(1, 0.5, '', 'snf1', 0)
-    assert(len(rows) > 0)
-    print(len(rows))
-
-    rows, n_rows = layer.get_pairs(3, 0.5, 'myc', '', 0)
-    assert(n_rows > 0)
-    print(n_rows)
-
-    rows, n_rows = layer.get_pairs(3, 0.5, 'myc', '', 0, True)
-    assert(n_rows > 0)
-    #print(n_rows)
-    #print(rows)
-
-    row = layer.get_gi(3, 0.8)
-    print(row['common'])
+    pprint.pprint(r)

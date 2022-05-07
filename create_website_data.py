@@ -1,4 +1,6 @@
 import os
+from unicodedata import name
+from nbformat import write
 import pandas as pd
 import sys
 from collections import defaultdict
@@ -23,35 +25,39 @@ PATHS = [
 ]
 
 FB_PATH = '../data-sources/dro/gene_genetic_interactions_fb_2020_01.tsv'
-OUTPUT_PATH = '../web-data'
+OUTPUT_PATH = 'website'
 
 def main():
-    os.makedirs(OUTPUT_PATH, exist_ok=True)
+    os.makedirs(os.path.join(OUTPUT_PATH, 'data'), exist_ok=True)
 
-    yeast_refs = extract_biogrid_refs(559292)
-    pombe_refs = extract_biogrid_refs(284812)
-    human_refs = extract_biogrid_refs(9606)
-    dro_refs = extract_fb_refs()
-    with open(os.path.join(OUTPUT_PATH, 'refs.json'), 'w') as f:
-        json.dump({
-            "yeast" : yeast_refs,
-            "pombe" : pombe_refs,
-            "human" : human_refs,
-            "dro_refs" : dro_refs
-        }, f)
+    # yeast_refs = extract_biogrid_refs(559292)
+    # pombe_refs = extract_biogrid_refs(284812)
+    # human_refs = extract_biogrid_refs(9606)
+    # dro_refs = extract_fb_refs()
+    # with open(os.path.join(OUTPUT_PATH, 'refs.json'), 'w') as f:
+    #     json.dump({
+    #         "yeast" : yeast_refs,
+    #         "pombe" : pombe_refs,
+    #         "human" : human_refs,
+    #         "dro_refs" : dro_refs
+    #     }, f)
     
     yeast_names = map_common_names_yeast()
-    pombe_names = map_common_names_pombe()
-    human_names = map_common_names_human()
-    dro_names = map_common_names_dro()
-    with open(os.path.join(OUTPUT_PATH, 'names.json'), 'w') as f:
-        json.dump({
-            "yeast" : yeast_names,
-            "pombe" : pombe_names,
-            "human" : human_names,
-            "dro_refs" : dro_names
-        }, f)
+    write_name_map(yeast_names, "yeast")
 
+    pombe_names = map_common_names_pombe()
+    write_name_map(pombe_names, "pombe")
+    
+    human_names = map_common_names_human()
+    write_name_map(human_names, "human")
+    
+    dro_names = map_common_names_dro()
+    write_name_map(dro_names, "dro")
+    
+
+def write_name_map(name_map, fname):
+    with open(os.path.join(OUTPUT_PATH, 'data', '%s.json' % fname), 'w') as f:
+        json.dump(name_map, f)
 
 def extract_biogrid_refs(taxid):
     taxid_str = "taxid:%d" % taxid
@@ -141,9 +147,9 @@ def map_common_names_yeast():
     full_names = sorted(G.nodes())
 
     tag_common = [n.split('  ') for n in full_names]
-    tag_common = [(a, '' if a == b else b) for a, b in tag_common]
+    tag_common = [b for a, b in tag_common]
 
-    return dict(zip(full_names, tag_common))
+    return { "locus" : full_names, "common" : tag_common }
 
 def map_common_names_pombe():
     
@@ -153,13 +159,15 @@ def map_common_names_pombe():
     tags = gene_names_df['locus'].str.lower()
     common = gene_names_df['common'].fillna('').str.lower()
 
-    tag_common = list(zip(tags, common))
+    tag_common = dict(zip(tags, common))
 
     G = nx.read_gpickle('../generated-data/ppc_pombe')
-    nodes = set(G.nodes())
-    assert nodes.intersection(tags) == nodes 
+    full_names = sorted(G.nodes())
+    #assert full_names.intersection(tags) == full_names 
 
-    return dict(zip(tags, tag_common))
+    common = [tag_common[t] for t in full_names]
+
+    return { "locus" : full_names, "common" : common }
 
 def map_common_names_human():
 
@@ -169,19 +177,15 @@ def map_common_names_human():
     tags = gene_names_df['Approved symbol'].fillna('').str.lower()
     common = gene_names_df['HGNC ID'].fillna('').str.lower()
 
-    tag_common = list(zip(tags, common))
+    tag_common = dict(zip(tags, common))
 
     G = nx.read_gpickle('../generated-data/ppc_human')
-    nodes = set(G.nodes())
+    full_names = sorted(G.nodes())
 
-    # print(len(nodes.intersection(tags)))
-    # print(set(tags) - nodes)
-    # print(nodes - set(tags))
-    # assert nodes.intersection(tags) == nodes 
+    common = [tag_common.get(t, '') for t in full_names]
 
-    r = dict(zip(tags, tag_common))
-    r['nan'] = ['nan','']
-    return r
+    return { "locus" : full_names, "common" : common }
+
 def map_common_names_dro():
 
     MAP_FILE = "../data-sources/dro/fbgn_NAseq_Uniprot_fb_2020_01.tsv"
@@ -195,13 +199,14 @@ def map_common_names_dro():
     tags = df['primary_FBgn#'].str.lower()
     common = df['gene_symbol'].fillna('').str.lower()
 
-    tag_common = list(zip(tags, common))
+    tag_common = dict(zip(tags, common))
 
     G = nx.read_gpickle('../generated-data/ppc_dro')
-    nodes = set(G.nodes())
-    assert nodes.intersection(tags) == nodes 
+    full_names = sorted(G.nodes())
+    
+    common = [tag_common[t] for t in full_names]
 
-    return dict(zip(tags, tag_common))
+    return { "locus" : full_names, "common" : common }
 
 if __name__ == "__main__":
     main()
