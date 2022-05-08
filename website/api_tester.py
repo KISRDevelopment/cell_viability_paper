@@ -4,10 +4,10 @@ import json
 
 def main():
 
-    #test_gi_pairs()
+    test_gi_pairs()
     
     #test_interpret()
-    test_common_interactors()
+    #test_common_interactors()
 
 def test_gi_pairs():
 
@@ -17,15 +17,15 @@ def test_gi_pairs():
         "gene_a" : "snf1",
         "gene_b" : "",
         "published_only" : False,
-        "page" : 0
+        "page" : 0,
+        "max_spl" : 9
     }
 
-    res = requests.post('http://localhost:5000/gi_pairs', json=rp)
+    res = requests.post('http://localhost:8090/gi_pairs', json=rp)
     if res.ok:
         d = res.json()
-        print(len(d['rows']))
-        print(d['pagination'])
-        print(json.dumps(d['rows'], indent=4))
+        print(d['rows'])
+        #print(json.dumps(d['rows'], indent=4))
     else:
         print(res.reason)
 

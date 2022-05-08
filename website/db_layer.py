@@ -106,7 +106,10 @@ class NameMapper:
         return self.id_to_common.get(id, None)
     
     def get_locus(self, id):
-        return self.id_to_locus.get(id, None)
+        r = self.id_to_locus.get(id, None)
+        if r is not None:
+            return r.split('  ')[0]
+        return r
 
 class LRModelEnsemble:
     
@@ -163,6 +166,7 @@ class DbLayer:
         self.goid_names = goid_names
     
     def get_pairs(self, species_id, threshold, gene_a, gene_b, published_only=False, max_spl = "inf"):
+        
         names = self._names[species_id]
         maker = self._makers[species_id]
         model = self._models[species_id]
@@ -199,9 +203,9 @@ class DbLayer:
                 "gene_b_id" : b_id[i],
                 "species_id" : species_id,
                 "gene_a_locus_tag" : names.get_locus(gene_a_id),
-                "gene_b_locus_tag" : names.get_locus(gene_b_id),
+                "gene_b_locus_tag" : names.get_locus(b_id[i]),
                 "gene_a_common_name" : names.get_common(gene_a_id),
-                "gene_b_common_name" : names.get_common(gene_b_id),
+                "gene_b_common_name" : names.get_common(b_id[i]),
                 "observed" : False,
                 "observed_gi" : False,
                 "prob_gi" : preds[i],
@@ -354,5 +358,7 @@ if __name__ == "__main__":
 
     #pprint.pprint(r)
 
-    rows = layer.get_common_interactors(1, ['snf1', 'snf2', 'spo7'], 0.9, False)
-    pprint.pprint(rows[0])
+    # rows = layer.get_common_interactors(1, ['snf1', 'snf2', 'spo7'], 0.9, False)
+    # pprint.pprint(rows[0])
+
+    rows, count = layer.get_pairs(3, 0.9, 'myc', None, 0, max_spl=3)

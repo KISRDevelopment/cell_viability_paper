@@ -11,13 +11,8 @@ function main()
 
     let curr_form = null;
 
-    const paginator = new Paginator(document.querySelector('.js-search-results-paginator'), function(page) {
-        curr_form['page'] = page;
-
-        call_api('../gi_pairs', curr_form, function(res) {
-            populate_gi_pairs(res);
-        });
-    });
+    const paginator = new Paginator(
+        document.querySelector('.js-search-results-paginator'), 50);
 
 
     const btnSearch = document.getElementById('btnSearch');
@@ -28,8 +23,7 @@ function main()
         form['page'] = 0;
 
         call_api('../gi_pairs', form, function(res) {
-            populate_gi_pairs(res);
-            paginator.update(res.pagination);
+            paginator.setRows(res.rows);
             curr_form = form;
             nostartups.forEach((e) => e.style.visibility = 'visible');
         });
@@ -140,12 +134,12 @@ function gather_form()
 /*
     Populates GI Search Results
 */
-function populate_gi_pairs(res)
+function populate_gi_pairs(rows)
 {
     const searchResults = document.getElementById('searchResults');
     searchResults.innerHTML = "";
 
-    res.rows.forEach((row) => {
+    rows.forEach((row) => {
 
         const tr = createElement('tr', searchResults);
         
@@ -155,7 +149,7 @@ function populate_gi_pairs(res)
         tds[1].innerHTML = row.gene_a_common_name;
         tds[2].innerHTML = row.gene_b_locus_tag;
         tds[3].innerHTML = row.gene_b_common_name;
-        tds[4].innerHTML = row.spl_unnormed;
+        tds[4].innerHTML = row.spl;
         tds[5].innerHTML = row.prob_gi.toFixed(2);
         tds[6].innerHTML = (row.reported_gi === 1) ? '<strong>Yes</strong>' : 'No';
         tds[7].innerHTML = "<span class='btn-details'>Details</span>";
@@ -180,48 +174,64 @@ function search_result_clicked()
 
 class Paginator
 {
-    constructor(elm, callback)
+    constructor(elm, rowsPerPage)
     {
         this._elm = elm;
         this._pagination = null;
-        this._callback = callback;
+        this._rowsPerPage = rowsPerPage;
 
         const lastPageElm = this._elm.querySelector('.js-last-page');
         const nextPageElm = this._elm.querySelector('.js-next-page');
+        
+        this._rows = null;
+        this._currPage = 0;
 
         lastPageElm.onclick = () => {
-            if (this._pagination.page > 0)
+            if (this._currPage > 0)
             {
-                this._pagination.page -= 1;
-                callback(this._pagination.page);
-                this.update(this._pagination);
+                this._currPage -= 1;
+                this.updateRows();
             }
             
         }
 
         nextPageElm.onclick = () => {
-            if (this._pagination.page < this._pagination.pages - 1)
+            if (this._currPage < this._totalPages-1)
             {
-                this._pagination.page += 1;
-                callback(this._pagination.page);
-                this.update(this._pagination);
+                this._currPage += 1;
+                this.updateRows();
             }
             
         }
     }
 
-    update(pagination)
+    setRows(rows)
     {
+
+        this._currPage = 0;
+        this._rows = rows;
+        this._totalPages = Math.ceil(rows.length / this._rowsPerPage);
+        
+        this.updateRows();
+
         const totalRecordsElm = this._elm.querySelector('.js-total-records');
-        totalRecordsElm.innerHTML = pagination.n_rows;
+        totalRecordsElm.innerHTML = rows.length;
 
         const currPageElm = this._elm.querySelector('.js-curr-page');
-        currPageElm.innerHTML = pagination.page + 1;
+        currPageElm.innerHTML = 1;
 
         const totalPagesElm = this._elm.querySelector('.js-total-pages');
-        totalPagesElm.innerHTML = pagination.pages;
+        totalPagesElm.innerHTML = this._totalPages;
+        
+    }
 
-        this._pagination = pagination;
+    updateRows() {
+        const page = this._currPage;
+        const rows = this._rows.slice(page * this._rowsPerPage, (page+1) * this._rowsPerPage);
+        populate_gi_pairs(rows);
+
+        const currPageElm = this._elm.querySelector('.js-curr-page');
+        currPageElm.innerHTML = this._currPage + 1;
     }
 }
 

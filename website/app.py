@@ -1,17 +1,21 @@
 from flask import Flask, request, send_from_directory, render_template, g, current_app, jsonify
+from flask_compress import Compress
 import db_layer 
 import lrm 
 import numpy as np 
 import waitress
 import sys 
 
+from numpyencoder import NumpyEncoder
 app = Flask(__name__)
+app.json_encoder = NumpyEncoder
+Compress(app)
 
-DB_PATH = "db.sqlite"
 ENTRIES_PER_PAGE = 50
+DB = db_layer.DbLayer()
 
 def init():
-    app.teardown_appcontext(close_db)
+    pass
 
 @app.route('/gi', methods=['POST'])
 def gi():
@@ -96,25 +100,39 @@ def gi_pairs():
 
     rp = request.json 
 
-    db = get_db()
 
-    rows, n_rows = db.get_pairs(rp['species_id'], 
+    if rp['gene_a'] == '':
+        rp['gene_a'] = None 
+    if rp['gene_b'] == '':
+        rp['gene_b'] = None 
+        
+    pairs,_ = DB.get_pairs(rp['species_id'], 
         rp['threshold'], 
         rp['gene_a'], 
         rp['gene_b'], 
-        rp['page'], 
-        rp['published_only'])
+        rp['published_only'], rp['max_spl'])
 
-    for r in rows:
-        r['reported_gi'] = r['observed'] and r['observed_gi']
+    return jsonify({ "rows" : pairs })
+
+    # db = get_db()
+
+    # rows, n_rows = db.get_pairs(rp['species_id'], 
+    #     rp['threshold'], 
+    #     rp['gene_a'], 
+    #     rp['gene_b'], 
+    #     rp['page'], 
+    #     rp['published_only'])
+
+    # for r in rows:
+    #     r['reported_gi'] = r['observed'] and r['observed_gi']
         
-    pagination = paginate(n_rows, ENTRIES_PER_PAGE, rp['page'])
+    # pagination = paginate(n_rows, ENTRIES_PER_PAGE, rp['page'])
 
-    return jsonify({
-        "pagination" : pagination,
-        "request_params" : rp,
-        "rows" : rows
-    })
+    # return jsonify({
+    #     "pagination" : pagination,
+    #     "request_params" : rp,
+    #     "rows" : rows
+    # })
 
 
 def paginate(n_rows, page_size, page):
