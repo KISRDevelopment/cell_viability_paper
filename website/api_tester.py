@@ -7,8 +7,25 @@ def main():
     #test_gi_pairs()
     
     #test_interpret()
-    test_common_interactors()
+    #test_common_interactors()
+    test_gi_triplets()
+def test_gi_triplets():
 
+    rp = {
+        "threshold" : 0.9,
+        "gene_a" : "snf1",
+        "gene_b" : "snf2",
+        "published_only" : False,
+        "max_scl" : 9
+    }
+
+    res = requests.post('http://localhost:5000/gi_triplets', json=rp)
+    if res.ok:
+        d = res.json()
+        print(d['rows'])
+        #print(json.dumps(d['rows'], indent=4))
+    else:
+        print(res.reason)
 def test_gi_pairs():
 
     rp = {

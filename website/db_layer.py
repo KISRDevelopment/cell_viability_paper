@@ -165,7 +165,12 @@ class TripletFeatureMaker:
                        scl,
                        smf_combs))
         
+        self._scl_index = 1 + sum_sgo.shape[1] + sum_lid.shape[1]
+
         return F, a_id, b_id, c_id 
+    
+    def get_scl(self, F):
+        return F[:, self._scl_index]
     
 class NameMapper:
     
@@ -247,6 +252,9 @@ class DbLayer:
             4: LRModelEnsemble("models/gi_dro.npz"),
         }
 
+        self._tripletMaker = TripletFeatureMaker("data/ppc_yeast.gml", "data/dataset_yeast_allppc.feather")
+        self._tripletModel = LRModelEnsemble("models/tgi_yeast.npz")
+
         with open('data/go_ids_to_names.json', 'r') as f:
             goid_names = json.load(f)
         
@@ -301,6 +309,62 @@ class DbLayer:
         ]
         
         return sorted(rows, key=lambda r: r['prob_gi'], reverse=True), len(rows)
+    
+    def get_triplets(self, threshold, gene_a, gene_b, gene_c, published_only=False, max_scl = "inf"):
+        
+        species_id = 1
+
+        names = self._names[species_id]
+        maker = self._tripletMaker
+        model = self._tripletModel
+
+        gene_a_id = names.get_id(gene_a)
+        gene_b_id = names.get_id(gene_b)
+        gene_c_id = names.get_id(gene_c)
+
+        c_id = None
+        if gene_a_id is None or gene_b_id is None:
+            return []
+        if gene_c_id is not None:
+            c_id = np.array([gene_c_id])
+        
+        if max_scl == "inf":
+            max_scl = 1e5
+        max_scl = int(max_scl)
+
+        F, a_id, b_id, c_id = maker.make(gene_a_id, gene_b_id, c_id)
+        preds = model.predict(F)
+
+        scl = maker.get_scl(F)
+        ix = (scl <= max_scl) & (preds >= threshold)
+
+        scl = scl[ix]
+        a_id = a_id[ix]
+        b_id = b_id[ix]
+        c_id = c_id[ix]
+        preds = preds[ix]
+        
+        rows = [
+            {
+                "gene_a_id" : a_id[i],
+                "gene_b_id" : b_id[i],
+                "gene_c_id" : c_id[i],
+                "species_id" : species_id,
+                "gene_a_locus_tag" : names.get_locus(gene_a_id),
+                "gene_b_locus_tag" : names.get_locus(gene_b_id),
+                "gene_c_locus_tag" : names.get_locus(c_id[i]),
+                "gene_a_common_name" : names.get_common(gene_a_id),
+                "gene_b_common_name" : names.get_common(gene_b_id),
+                "gene_c_common_name" : names.get_common(c_id[i]),
+                "observed" : False,
+                "observed_gi" : False,
+                "prob_gi" : preds[i],
+                "scl" : scl[i]
+            }
+            for i in range(preds.shape[0])
+        ]
+        
+        return sorted(rows, key=lambda r: r['prob_gi'], reverse=True)
     
     def get_gi(self, species_id, gene_a_id, gene_b_id):
         names = self._names[species_id]
@@ -455,11 +519,15 @@ if __name__ == "__main__":
     #rows, count = layer.get_pairs(3, 0.9, 'myc', None, 0, max_spl=3)
     #print(rows[0])
 
-    r = layer.get_gi(3, 23717, 23603)
-    print(r)
+    # r = layer.get_gi(3, 23717, 23603)
+    # print(r)
     #pprint.pprint(r)
 
     # rows = layer.get_common_interactors(1, ['snf1', 'snf2', 'spo7'], 0.9, False)
     # pprint.pprint(rows[0])
 
     #rows, count = layer.get_pairs(3, 0.9, 'myc', None, 0, max_spl=3)
+
+    r = layer.get_triplets(0.7, "", "", None, True)
+
+    print(r)

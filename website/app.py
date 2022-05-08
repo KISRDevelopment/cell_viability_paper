@@ -68,6 +68,28 @@ def gi_pairs():
 
     return jsonify({ "rows" : pairs })
 
+@app.route('/gi_triplets', methods=['POST'])
+def gi_triplets():
+
+    rp = request.json 
+
+
+    if rp['gene_a'] == '':
+        rp['gene_a'] = None 
+    if rp['gene_b'] == '':
+        rp['gene_b'] = None 
+    if rp['gene_c'] == '':
+        rp['gene_c'] = None 
+    
+    triplets = DB.get_triplets(
+        rp['threshold'], 
+        rp['gene_a'], 
+        rp['gene_b'], 
+        rp['gene_c'],
+        rp['published_only'], rp['max_spl'])
+
+    return jsonify({ "rows" : triplets })
+
 
 if __name__ == "__main__":
     init()
