@@ -60,7 +60,7 @@ def gi_pairs():
     if rp['gene_b'] == '':
         rp['gene_b'] = None 
         
-    pairs,_ = DB.get_pairs(rp['species_id'], 
+    pairs = DB.get_pairs(rp['species_id'], 
         rp['threshold'], 
         rp['gene_a'], 
         rp['gene_b'], 

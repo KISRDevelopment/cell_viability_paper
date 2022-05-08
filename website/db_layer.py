@@ -171,7 +171,7 @@ class TripletFeatureMaker:
     
     def get_scl(self, F):
         return F[:, self._scl_index]
-        
+
     def get_single_gene_features(self, gid):
         df = self.df 
         smf_cols = df.columns[df.columns.str.startswith('smf-')].tolist()
@@ -268,12 +268,21 @@ class DbLayer:
             goid_names = json.load(f)
         
         self.goid_names = goid_names
-    
+
+        with open('data/refs.json', 'r') as f:
+            refs = json.load(f)
+
+        self._refs = {}
+        for sid, species_refs_pairs in refs.items():
+            keys, vals = species_refs_pairs
+            self._refs[int(sid)] = dict(zip([tuple(k) for k in keys], vals))
+            
     def get_pairs(self, species_id, threshold, gene_a, gene_b, published_only=False, max_spl = "inf"):
         
         names = self._names[species_id]
         maker = self._makers[species_id]
         model = self._models[species_id]
+        refs = self._refs[species_id]
 
         gene_a_id = names.get_id(gene_a)
         gene_b_id = names.get_id(gene_b)
@@ -309,15 +318,20 @@ class DbLayer:
                 "gene_b_locus_tag" : names.get_locus(b_id[i]),
                 "gene_a_common_name" : names.get_common(gene_a_id),
                 "gene_b_common_name" : names.get_common(b_id[i]),
-                "observed" : False,
-                "observed_gi" : False,
                 "prob_gi" : preds[i],
                 "spl" : spl[i]
             }
             for i in range(preds.shape[0])
         ]
+        for r in rows:
+            key = tuple(sorted([r['gene_a_id'], r['gene_b_id']]))
+            
+            r["reported_gi"] = int(key in refs) 
         
-        return sorted(rows, key=lambda r: r['prob_gi'], reverse=True), len(rows)
+        if published_only:
+            rows = [r for r in rows if r['reported_gi']]
+        
+        return sorted(rows, key=lambda r: r['prob_gi'], reverse=True)
     
     def get_triplets(self, threshold, gene_a, gene_b, gene_c, published_only=False, max_scl = "inf"):
         
