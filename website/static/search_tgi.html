@@ -1,0 +1,182 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset='utf-8'>
+        <title>Predicted Triple Genetic Interactions</title>
+        <link rel='stylesheet' href="./search_gi_style.css" type='text/css'>
+        <script src="https://cdn.plot.ly/plotly-latest.min.js" charset="utf-8"></script>
+        <script type="module" src="search_tgi_app.js"></script>
+    </head>
+    <body>
+        
+        <div class='c-header'>
+            <div class='c-header__title'>
+                <h1 class='c-header__maintitle'>Discover Genetic Interactions</h1>
+            </div>
+            <img class='c-header__logo' src='./kisr.png' alt='KISR logo'>
+        </div>
+        
+        <div class='c-search-panel'>
+            <div class='c-search-panel__tabs'>
+                <div class='c-search-panel__tab'>Search GIs</div>
+                <div class='c-search-panel__tab c-search-panel__tab--selected'>Search Triple GIs (Budding yeast)</div>
+                <div class='c-search-panel__tab'><a href='./common_gi.html'>Find Common Interactors</a></div>
+            </div>
+            <div class='c-search-panel__body'>
+                <p>Find predicted triple-knockout genetic interactions involving a minimum of two given genes.</p>
+                
+                <div class='c-search-panel__row'>
+                    <div class='c-search-panel__label'>
+                        <div class='c-input-label'>Genes:</div>
+                    </div>
+                    <div class='c-search-panel__input'>
+                        <label class='c-input-label' for="tbGeneA">Gene A</label>
+                        <input type="text" id="tbGeneA" name='gene_a'  class='js-input'>
+                        
+                        &nbsp;<label class='c-input-label' for="tbGeneB">Gene B</label>
+                        <input type="text" id="tbGeneB" name='gene_b'  class='js-input'>
+                        &nbsp;
+                        <label class='c-input-label' for="tbGeneC">Gene C</label>
+                        <input type="text" id="tbGeneC" name='gene_c'  class='js-input'>
+                        <p>Find interaction triplets involving two genes or search for a specific interaction between three genes.</p>
+                    </div>
+                    
+                </div>
+                <div class='c-search-panel__row'>
+                    <div class='c-search-panel__label'>
+                        <label class='c-input-label' for="selectThres">Interaction Threshold: </label>
+                    </div>
+                    <div class='c-search-panel__input'>
+                        <select id="selectThres" name='threshold'  class='js-input'>
+                            <option value="0.5">0.5</option>
+                            <option value="0.6">0.6</option>
+                            <option value="0.7">0.7</option>
+                            <option value="0.8">0.8</option>
+                            <option value="0.9">0.9</option>
+                        </select>
+                        <p>The minimum probability above which a prediction is classified as a genetic interaction.</p>
+                    </div>
+                </div>
+                <div class='c-search-panel__row'>
+                    <div class='c-search-panel__label'>
+                        <label class='c-input-label' for="selectMaxSpl">Maximum Co-PPI Shortest Circuit Length:</label>
+                    </div>
+                    <div class='c-search-panel__input'>
+                        <select id="selectMaxSpl" name='max_spl'  class='js-input'>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="10">10</option>
+                            <option value="11">11</option>
+                            <option value="12">12</option>
+                            <option value="13">13</option>
+                            <option value="14">14</option>
+                            <option value="15">15</option>
+                            <option value="16">16</option>
+                            <option value="17">17</option>
+                            <option value="19">19</option>
+                            <option value="inf" selected>Infinity</option>
+                        </select>
+                        <p>The maximum Coprecipitation Protein-Protein Interaction (PPI) network shortest circuit length connecting the gene triplet. Choose <strong>Infinity</strong> if you do not care about this filter.</p>
+                    </div>
+                </div>
+                <div class='c-search-panel__row'>
+                    <div class='c-search-panel__label'>
+                        <label class='c-input-label' for="cbPublishedOnly">Published Only:</label>
+                    </div>
+                    <div class='c-search-panel__input'>
+                        <input type="checkbox" id="cbPublishedOnly" name='published_only' class='js-input'>
+                        <p>Only search for genetic interactions that were experimentally reported.</p>
+                    </div>
+                </div>
+                <div class='c-search-panel__row'>
+                    <button id='btnSearch' class='button'>Search</button>
+                </div>
+            </div>
+            
+        </div>
+        
+        <div class='c-pagination js-search-results-paginator js-nostartup'>
+            <div class='c-pagination__count'>
+                <span class='js-total-records'>0</span> records found
+            </div>
+            <div class='c-pagination__pages'>
+                <span class='c-pagination__page-control js-last-page noSelect'>Last</span>
+                <span>Page <span class='js-curr-page'>1</span> out of <span class='js-total-pages'>1</span></span>
+                <span class='c-pagination__page-control js-next-page noSelect'>Next</span>
+            </div>
+        </div>
+
+        <table class='c-search-results js-nostartup'>
+            <thead>
+                <tr>
+                    <th colspan='2'>Gene A</th>
+                    <th colspan='2'>Gene B</th>
+                    <th colspan="2">Gene C</th>
+                    <th rowspan="2">Co-PPI Circuit Length</th>
+                    <th rowspan="2">Model GI Probability</th>
+                    <th rowspan="2">Reported GI</th>
+                    <th></th>
+                </tr>
+                <tr>
+                    <th>Locus Tag</th>
+                    <th>Common Name</th>
+                    <th>Locus Tag</th>
+                    <th>Common Name</th>
+                    <th>Locus Tag</th>
+                    <th>Common Name</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id='searchResults'></tbody>
+                
+        </table>
+
+        <div class='l-modal' id='gi_details_modal' style='display: none'>
+            <div class='l-modal__content'>
+                <h1 class='c-modal-title'>Genetic Interaction Details</h1>
+                <span class='c-modal-close js-close'>Close</span>
+                <div class='l-cards js-tabs'>
+                    <div id='card_gene_a' class='c-card c-card--gene_a' data-for='plot_gene_a'>
+                        XYZ
+                    </div>
+                    <div id='card_gene_b' class='c-card c-card--gene_b' data-for='plot_gene_b'>
+                        YXZ
+                    </div>
+                    <div id='card_gene_c' class='c-card c-card--gene_c' data-for='plot_gene_c'>
+                        YXZ
+                    </div>
+                    <div id='card_joint' class='c-card c-card--joint' data-for='plot_joint'>
+                        Joint Gene Features
+                    </div>
+                    <div class='c-card c-card--gi_prob' data-for='plot_z'>
+                        Model GI Probability
+                        <div id='card_prob_gi'>1.00</div>
+                    </div>
+                    
+                    <div class='c-card c-card--pubs' data-for='content_pubs'>
+                        Reported?
+                        <div id='card_pubs'>Yes</div>
+                    </div>
+                </div>
+
+                <div class='c-expansion js-expansion'></div>
+                <div class='l-scrollable js-scrollable'>
+                    <!-- need margin bottom to fully show the graph -->
+                    <div id='plot_gene_a'  ></div>
+                    <div id="plot_gene_b" ></div>
+                    <div id="plot_gene_c"></div>
+                    <div id="plot_joint"></div>
+                    <div id="plot_z"></div>
+                    <div id="content_pubs" ></div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
