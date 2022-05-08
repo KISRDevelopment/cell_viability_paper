@@ -155,7 +155,9 @@ function populate_gi_pairs(rows)
         tds[7].innerHTML = "<span class='btn-details'>Details</span>";
 
         tds[7].onclick = search_result_clicked;
-        tds[7].dataset.gi_id = row.gi_id;
+        tds[7].dataset.species_id = row.species_id;
+        tds[7].dataset.a_id = row.gene_a_id;
+        tds[7].dataset.b_id = row.gene_b_id;
         tds[7].classList.add('clickable');
 
     });
@@ -163,8 +165,11 @@ function populate_gi_pairs(rows)
 
 function search_result_clicked()
 {
-    const gi_id = this.dataset.gi_id;
-    call_api('../gi', { "gi_id" : gi_id }, 
+    call_api('../gi', {
+        "species_id" : parseInt(this.dataset.species_id),
+        "gene_a_id" : parseInt(this.dataset.a_id),
+        "gene_b_id" : parseInt(this.dataset.b_id)
+    }, 
     function(res) {
         populate_gi_details(res);
         
@@ -273,7 +278,7 @@ function populate_gi_details(data)
     const titles = [geneAName + " features", geneBName + " features", "Joint features", "Model components"];
     const colors = ['#ffb700', '#0095ff', '#b2ff00', '#d000ff'];
     keys.forEach((k, i) => {
-        plot("plot_" + k, data.components[k], true, titles[i], colors[i], colors[i]);
+        plot("plot_" + k, data[k], true, titles[i], colors[i], colors[i]);
     });
 
     document.getElementById('card_gene_a').innerHTML = geneAName;

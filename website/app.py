@@ -23,32 +23,9 @@ def gi():
 
     rp = request.json 
 
-    SPECIES_MODELS = {
-        1: "./models/yeast_gi_hybrid_mn.npz",
-        2: './models/pombe_gi_mn.npz',
-        3: './models/human_gi_mn.npz',
-        4: './models/dro_gi_mn.npz'
-    }
-    db = get_db()
-
-    row = db.get_gi(rp['gi_id'])
-
-    if row:
-        m = lrm.LogisticRegressionModel(SPECIES_MODELS[row['species_id']])
-        components = m.interpret(row)
-        return jsonify({
-            "components" : components,
-            "pubs" : row['pubs'],
-            "prob_gi" : row['prob_gi'],
-            "reported_gi" : row['observed'] and row['observed_gi'],
-            "gene_a_locus_tag" : row['gene_a_locus_tag'],
-            "gene_b_locus_tag" : row['gene_b_locus_tag'],
-            "gene_a_common_name" : row['gene_a_common_name'],
-            "gene_b_common_name" : row['gene_b_common_name'],
-            
-        })
-    else:
-        return jsonify({})
+    return DB.get_gi(rp['species_id'], 
+        rp['gene_a_id'],
+        rp['gene_b_id'])
 
 
 @app.route('/common_interactors', methods=['POST'])

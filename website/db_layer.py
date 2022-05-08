@@ -120,7 +120,7 @@ class LRModelEnsemble:
         self.std = d['std']
         self.features = d['features']
     
-    def predict(self, X):
+    def predict(self, X, return_mean_terms=False):
         
         X = (X - self.mu) / self.std
 
@@ -132,6 +132,9 @@ class LRModelEnsemble:
         
         # (N,)
         mean_probs = np.mean(probs, axis=1)
+        
+        if return_mean_terms:
+            return mean_probs, (X * np.mean(self.W, axis=1))[0]
         
         return mean_probs
 
@@ -198,7 +201,6 @@ class DbLayer:
         
         rows = [
             {
-                "gi_id" : None, 
                 "gene_a_id" : a_id[i],
                 "gene_b_id" : b_id[i],
                 "species_id" : species_id,
@@ -222,12 +224,12 @@ class DbLayer:
         model = self._models[species_id]
 
         F, _, _ = maker.make(gene_a_id, np.array([gene_b_id]))
-        preds = model.predict(F)
+        preds, mean_logit = model.predict(F, return_mean_terms=True)
         
         # joint features
-        z = F[0, :].tolist()
+        joint_features = F[0, :].tolist()
         labels = model.features 
-
+        
         # individual gene features
         single_features, gene_a_features = maker.get_single_gene_features(gene_a_id)
         _, gene_b_features = maker.get_single_gene_features(gene_b_id)
@@ -237,15 +239,27 @@ class DbLayer:
             "gene_b_id" : gene_b_id,
             "species_id" : species_id,
             "prob_gi" : preds[0],
-            "joint_features_labels" : self.process_labels(labels),
-            "joint_features" : z,
-            "single_feature_labels" : self.process_labels(single_features),
-            "gene_a_features" : gene_a_features,
-            "gene_b_features" : gene_b_features,
+            "joint" : {
+                "labels" : self.process_labels(labels),
+                "features" : joint_features,
+            },
+            "z" : {
+                "labels" : self.process_labels(labels),
+                "features" : mean_logit
+            },
+            "gene_a" : {
+                "labels" : self.process_labels(single_features),
+                "features" : gene_a_features
+            },
+            "gene_b" : {
+                "labels" : self.process_labels(single_features),
+                "features" : gene_b_features
+            },
             "gene_a_locus_tag" : names.get_locus(gene_a_id),
             "gene_b_locus_tag" : names.get_locus(gene_b_id),
             "gene_a_common_name" : names.get_common(gene_a_id),
             "gene_b_common_name" : names.get_common(gene_b_id),
+            "pubs" : []
         }
     
     def process_labels(self, labels):
@@ -357,11 +371,11 @@ if __name__ == "__main__":
     #rows, count = layer.get_pairs(3, 0.9, 'myc', None, 0, max_spl=3)
     #print(rows[0])
 
-    #r = layer.get_gi(3, 23717, 23603)
-
+    r = layer.get_gi(3, 23717, 23603)
+    print(r)
     #pprint.pprint(r)
 
     # rows = layer.get_common_interactors(1, ['snf1', 'snf2', 'spo7'], 0.9, False)
     # pprint.pprint(rows[0])
 
-    rows, count = layer.get_pairs(3, 0.9, 'myc', None, 0, max_spl=3)
+    #rows, count = layer.get_pairs(3, 0.9, 'myc', None, 0, max_spl=3)
