@@ -4,10 +4,10 @@ import json
 
 def main():
 
-    test_gi_pairs()
+    #test_gi_pairs()
     
     #test_interpret()
-    #test_common_interactors()
+    test_common_interactors()
 
 def test_gi_pairs():
 
@@ -52,7 +52,8 @@ def test_common_interactors():
         "gene_d" : "",
         "threshold" : 0.9,
         "species_id" : 1,
-        "published_only" : False
+        "published_only" : False,
+        "max_spl" : 9
     }
 
     res = requests.post('http://localhost:5000/common_interactors', json=rp)

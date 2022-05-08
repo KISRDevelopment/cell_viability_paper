@@ -5,16 +5,11 @@ function main()
     let current_results = null;
     const nostartups = document.querySelectorAll('.js-nostartup');
     
-    const paginator = new Paginator(document.querySelector('.js-search-results-paginator'), showPage);
+    const paginator = new Paginator(document.querySelector('.js-search-results-paginator'), ENTRIES_PER_PAGE);
+
     const loading = document.getElementById('loadingScreen');
     const loadingDisplay = loading.style.display;
     loading.style.display = 'none';
-
-    function showPage(page)
-    {
-        const paged_results = current_results.rows.slice(page * ENTRIES_PER_PAGE, (page+1) * ENTRIES_PER_PAGE);
-        populate_results(paged_results, current_results.full_names);
-    }
 
     const btnSearch = document.getElementById('btnSearch');
     btnSearch.onclick = function()
@@ -23,15 +18,8 @@ function main()
         loading.style.display = loadingDisplay;
 
         call_api('../common_interactors', form, function(res) {
-            current_results = res;
-            showPage(0);
-            paginator.update({
-                "n_rows" : res.rows.length,
-                "pages" : numPages(res.rows.length, ENTRIES_PER_PAGE),
-                "page" : 0
-            });
+            paginator.setRows(res.rows);
             loading.style.display = 'none';
-            
             nostartups.forEach((e) => e.style.visibility = 'visible');
         });
     }
@@ -84,14 +72,14 @@ function gather_form()
 /*
     Populates GI Search Results
 */
-function populate_results(res, full_names)
+function populate_results(rows)
 {
     function showProb(v)
     {
         if (typeof(v) === 'undefined')
             return "";
         
-        return `${v[0].toFixed(2)}`;
+        return `${v.toFixed(2)}`;
     }
 
     function showSpl(v)
@@ -99,7 +87,7 @@ function populate_results(res, full_names)
         if (typeof(v) === 'undefined')
             return "";
         
-        let spl = v[1];
+        let spl = v;
         if (spl === 1e5)
             spl = '∞';
         else
@@ -111,109 +99,110 @@ function populate_results(res, full_names)
     const searchResults = document.getElementById('searchResults');
     searchResults.innerHTML = "";
     
-    res.forEach((row) => {
+    rows.forEach((row) => {
 
         const tr = createElement('tr', searchResults);
     
         const tds = createElements('td', tr, 10);
-        tds[0].innerHTML = row.interactor[0];
-        tds[1].innerHTML = row.interactor[1];
+        tds[0].innerHTML = row.ci_locus_tag;
+        tds[1].innerHTML = row.ci_common_name;
 
-
-        tds[2].innerHTML = showSpl(row.gene_a);
-        tds[3].innerHTML = showSpl(row.gene_b);
-        tds[4].innerHTML = showSpl(row.gene_c);
-        tds[5].innerHTML = showSpl(row.gene_d);
-
-        tds[6].innerHTML = showProb(row.gene_a);
-        tds[7].innerHTML = showProb(row.gene_b);
-        tds[8].innerHTML = showProb(row.gene_c);
-        tds[9].innerHTML = showProb(row.gene_d);
-
+        for (let i = 0; i < 4; ++i)
+        {
+            if (i >= row.interaction_props.length)
+                break;
+            tds[2+i].innerHTML = showSpl(row.interaction_props[i].spl);
+            tds[6+i].innerHTML = showProb(row.interaction_props[i].gi_prob);
+        }
     });
     
+    if (rows.length === 0)
+        return ;
+    
+    const firstRow = rows[0];
+
     const cols = ['gene_a', 'gene_b', 'gene_c', 'gene_d'];
-    cols.forEach((c) => {
-        const col = document.getElementById("col_" + c);
 
-        if (c in full_names)
-        {
-            col.innerHTML = `${full_names[c][0]} (${full_names[c][1]})`;
-        }
-        else 
-        {
-            col.innerHTML = "";
-        }
+    cols.forEach((c, i) => {
+        const giCol = document.getElementById("col_" + c);
+        const splCol = document.getElementById("col_" + c + '_spl');
+        
+        giCol.innerHTML = "";
+        splCol.innerHTML = "";
+
+        if (i >= firstRow.interaction_props.length)
+            return;
+        const gene_name = `${firstRow.interaction_props[i].gene_locus_tag} (${firstRow.interaction_props[i].gene_common_name})`;
+        giCol.innerHTML = gene_name;
+        splCol.innerHTML = gene_name;
     });
 
-    cols.forEach((c) => {
-        const col = document.getElementById("col_" + c + "_spl");
-
-        if (c in full_names)
-        {
-            col.innerHTML = `${full_names[c][0]} (${full_names[c][1]})`;
-        }
-        else 
-        {
-            col.innerHTML = "";
-        }
-    });
 }
 
-function numPages(n_rows, entries_per_page)
-{
-    let pages = Math.floor(n_rows / entries_per_page);
-    if (n_rows % entries_per_page > 0)
-        pages += 1;
-    return pages; 
-}
 
 class Paginator
 {
-    constructor(elm, callback)
+    constructor(elm, rowsPerPage)
     {
         this._elm = elm;
         this._pagination = null;
-        this._callback = callback;
+        this._rowsPerPage = rowsPerPage;
 
         const lastPageElm = this._elm.querySelector('.js-last-page');
         const nextPageElm = this._elm.querySelector('.js-next-page');
+        
+        this._rows = null;
+        this._currPage = 0;
 
         lastPageElm.onclick = () => {
-            if (this._pagination.page > 0)
+            if (this._currPage > 0)
             {
-                this._pagination.page -= 1;
-                callback(this._pagination.page);
-                this.update(this._pagination);
+                this._currPage -= 1;
+                this.updateRows();
             }
             
         }
 
         nextPageElm.onclick = () => {
-            if (this._pagination.page < this._pagination.pages - 1)
+            if (this._currPage < this._totalPages-1)
             {
-                this._pagination.page += 1;
-                callback(this._pagination.page);
-                this.update(this._pagination);
+                this._currPage += 1;
+                this.updateRows();
             }
             
         }
     }
 
-    update(pagination)
+    setRows(rows)
     {
+
+        this._currPage = 0;
+        this._rows = rows;
+        this._totalPages = Math.ceil(rows.length / this._rowsPerPage);
+        
+        this.updateRows();
+
         const totalRecordsElm = this._elm.querySelector('.js-total-records');
-        totalRecordsElm.innerHTML = pagination.n_rows;
+        totalRecordsElm.innerHTML = rows.length;
 
         const currPageElm = this._elm.querySelector('.js-curr-page');
-        currPageElm.innerHTML = pagination.page + 1;
+        currPageElm.innerHTML = 1;
 
         const totalPagesElm = this._elm.querySelector('.js-total-pages');
-        totalPagesElm.innerHTML = pagination.pages;
+        totalPagesElm.innerHTML = this._totalPages;
+        
+    }
 
-        this._pagination = pagination;
+    updateRows() {
+        const page = this._currPage;
+        const rows = this._rows.slice(page * this._rowsPerPage, (page+1) * this._rowsPerPage);
+        populate_results(rows);
+
+        const currPageElm = this._elm.querySelector('.js-curr-page');
+        currPageElm.innerHTML = this._currPage + 1;
     }
 }
+
 
 function createElement(tag, parent)
 {
@@ -230,34 +219,6 @@ function createElements(tag, parent, n)
         elements.push(createElement(tag, parent))
     }
     return elements;
-}
-
-/*
-    Plot GI details
-*/
-function populate_gi_details(data)
-{
-    const modal = document.getElementById('gi_details_modal');
-    modal.style.display = 'block';
-    document.body.classList.add('modal-open');
-    
-    const geneAName = `${data.gene_a_locus_tag} (${data.gene_a_common_name})`;
-    const geneBName = `${data.gene_b_locus_tag} (${data.gene_b_common_name})`;
-
-    const keys = ["gene_a", "gene_b", "joint", "z"];
-    const titles = [geneAName + " features", geneBName + " features", "Joint features", "Model components"];
-
-    keys.forEach((k, i) => {
-        plot("plot_" + k, data.components[k], i === 1 || i === 3, titles[i]);
-    });
-
-    document.getElementById('card_gene_a').innerHTML = geneAName;
-    document.getElementById('card_gene_b').innerHTML = geneBName;
-    document.getElementById('card_prob_gi').innerHTML = data.prob_gi.toFixed(2);
-    document.getElementById('card_pubs').innerHTML = (data.pubs.length > 0) ? 
-        data.pubs.map((p) => p.identifier).join(', ') : "None";
-    
-    modal.querySelector('.js-scrollable').scrollTop = 0;
 }
 
 window.onload = main;

@@ -1,3 +1,4 @@
+import json
 from flask import Flask, request, send_from_directory, render_template, g, current_app, jsonify
 from flask_compress import Compress
 import db_layer 
@@ -54,46 +55,22 @@ def gi():
 def common_interactors():
     
     rp = request.json 
-    db = get_db()
 
-    interactor_dicts = {}
-    common_targets = []
-    full_names = {}
-    for k in ['gene_a', 'gene_b', 'gene_c', 'gene_d']:
-        if rp[k] is None or rp[k] == "":
-            continue 
-        
-        gene_row = db.get_gene(rp['species_id'], rp[k])
-        if not gene_row:
-            continue 
-        
-        gene_id = gene_row['gene_id']
-        full_names[k] = [gene_row['locus_tag'], gene_row['common_name']]
+    genes = [rp['gene_a'], rp['gene_b'], rp['gene_c'], rp['gene_d']]
+    genes = [g for g in genes if g is not None and g != '']
 
-        interactors = db.get_interactors(rp['species_id'], gene_id, rp['threshold'], rp['published_only'])
-        interactor_dicts[k] = interactors
+    if len(genes) == 0:
+        return jsonify({ "rows" : [] })
 
-        targets = set(interactors.keys())
-        if common_targets == []:
-            common_targets = targets
-        else:
-            common_targets = targets.intersection(common_targets)
-
-    results = []
-    for t in common_targets:
-        row = {
-            "interactor" : t
-        }
-
-        for k, interactors in interactor_dicts.items():
-            row[k] = interactors[t]
-        results.append(row)
-
-
-    return jsonify({
-        "rows" : results,
-        "full_names" : full_names
-    })
+    common_interactors = DB.get_common_interactors(
+        rp['species_id'],
+        genes,
+        rp['threshold'],
+        rp['published_only'],
+        rp['max_spl']
+    )
+    
+    return jsonify({ "rows" : common_interactors })
 
 @app.route('/gi_pairs', methods=['POST'])
 def gi_pairs():
@@ -114,56 +91,6 @@ def gi_pairs():
 
     return jsonify({ "rows" : pairs })
 
-    # db = get_db()
-
-    # rows, n_rows = db.get_pairs(rp['species_id'], 
-    #     rp['threshold'], 
-    #     rp['gene_a'], 
-    #     rp['gene_b'], 
-    #     rp['page'], 
-    #     rp['published_only'])
-
-    # for r in rows:
-    #     r['reported_gi'] = r['observed'] and r['observed_gi']
-        
-    # pagination = paginate(n_rows, ENTRIES_PER_PAGE, rp['page'])
-
-    # return jsonify({
-    #     "pagination" : pagination,
-    #     "request_params" : rp,
-    #     "rows" : rows
-    # })
-
-
-def paginate(n_rows, page_size, page):
-    
-    pages = int(np.ceil(n_rows / page_size))
-    
-    next_page = page + 1
-    if next_page >= pages:
-        next_page = -1 
-    
-    prev_page = page - 1
-    if prev_page < 0:
-        prev_page = -1 
-    
-    return {
-        "n_rows" : n_rows,
-        "pages" : pages,
-        "page" : page,
-        "next_page" : next_page,
-        "prev_page" : prev_page
-    }
-def get_db():
-    if 'db' not in g:
-        g.db = db_layer.DbLayer(DB_PATH, ENTRIES_PER_PAGE)
-
-    return g.db
-
-def close_db(e=None):
-    db = g.pop('db', None)
-    if db is not None:
-        db.close()
 
 if __name__ == "__main__":
     init()

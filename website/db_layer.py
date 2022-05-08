@@ -300,6 +300,9 @@ class DbLayer:
             else:
                 ix = ix & (spl <= max_spl) & (preds >= threshold)
         
+        if ix is None:
+            return []
+        
         all_preds = np.array(all_preds)
         all_spls = np.array(all_spls)
 
@@ -307,8 +310,8 @@ class DbLayer:
         all_spls = all_spls[:, ix]
         b_id = b_id[ix]
 
-        rows = []
 
+        rows = []
         gene_ids = [names.get_id(g) for g in genes]
         
         for i in range(all_preds.shape[1]):
