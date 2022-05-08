@@ -171,7 +171,16 @@ class TripletFeatureMaker:
     
     def get_scl(self, F):
         return F[:, self._scl_index]
-    
+        
+    def get_single_gene_features(self, gid):
+        df = self.df 
+        smf_cols = df.columns[df.columns.str.startswith('smf-')].tolist()
+        lid_cols = ['topology-lid']
+        sgo_cols = df.columns[df.columns.str.startswith('sgo-')].tolist()
+        
+        features =  lid_cols + smf_cols + sgo_cols 
+
+        return features, np.array(df.loc[gid, features])
 class NameMapper:
     
     def __init__(self, path):
@@ -410,6 +419,60 @@ class DbLayer:
             "pubs" : []
         }
     
+    def get_tgi(self, gene_a_id, gene_b_id, gene_c_id):
+        species_id = 1
+
+        names = self._names[species_id]
+        maker = self._tripletMaker
+        model = self._tripletModel
+
+        F, _, _,_ = maker.make(gene_a_id, gene_b_id, np.array([gene_c_id]))
+        preds, mean_logit = model.predict(F, return_mean_terms=True)
+        
+        # joint features
+        joint_features = F[0, :].tolist()
+        labels = model.features 
+        
+        # individual gene features
+        single_features, gene_a_features = maker.get_single_gene_features(gene_a_id)
+        _, gene_b_features = maker.get_single_gene_features(gene_b_id)
+        _, gene_c_features = maker.get_single_gene_features(gene_c_id)
+
+        return {
+            "gene_a_id" : gene_a_id,
+            "gene_b_id" : gene_b_id,
+            "gene_c_id" : gene_c_id,
+            "species_id" : species_id,
+            "prob_gi" : preds[0],
+            "joint" : {
+                "labels" : self.process_labels(labels),
+                "features" : joint_features,
+            },
+            "z" : {
+                "labels" : self.process_labels(labels),
+                "features" : mean_logit
+            },
+            "gene_a" : {
+                "labels" : self.process_labels(single_features),
+                "features" : gene_a_features
+            },
+            "gene_b" : {
+                "labels" : self.process_labels(single_features),
+                "features" : gene_b_features
+            },
+            "gene_c" : {
+                "labels" : self.process_labels(single_features),
+                "features" : gene_c_features
+            },
+            "gene_a_locus_tag" : names.get_locus(gene_a_id),
+            "gene_b_locus_tag" : names.get_locus(gene_b_id),
+            "gene_c_locus_tag" : names.get_locus(gene_c_id),
+            "gene_a_common_name" : names.get_common(gene_a_id),
+            "gene_b_common_name" : names.get_common(gene_b_id),
+            "gene_c_common_name" : names.get_common(gene_c_id),
+            "pubs" : []
+        }
+
     def process_labels(self, labels):
         lookup = {
             'pairwise-spl' : 'Shortest Path Length',
@@ -528,6 +591,9 @@ if __name__ == "__main__":
 
     #rows, count = layer.get_pairs(3, 0.9, 'myc', None, 0, max_spl=3)
 
-    r = layer.get_triplets(0.7, "", "", None, True)
+    #r = layer.get_triplets(0.7, "", "", None, True)
 
+    #print(r)
+
+    r = layer.get_tgi(0, 1, 2)
     print(r)

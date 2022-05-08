@@ -296,6 +296,13 @@ body.modal-open {
     color: var(--font-color);
 }
 
+.c-card--gene_c {
+    --color: #00ffea;
+    --font-color: #008075;
+    background-color: var(--color);
+    color: var(--font-color);
+}
+
 .c-card--joint {
     --color: #b2ff00;
     --font-color: #476600;

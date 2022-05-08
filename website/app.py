@@ -90,6 +90,13 @@ def gi_triplets():
 
     return jsonify({ "rows" : triplets })
 
+@app.route('/tgi', methods=['POST'])
+def tgi():
+
+    rp = request.json 
+
+    return DB.get_tgi(rp['gene_a_id'], rp['gene_b_id'], rp['gene_c_id'])
+
 
 if __name__ == "__main__":
     init()

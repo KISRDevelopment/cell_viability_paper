@@ -27,7 +27,7 @@ function main()
             nostartups.forEach((e) => e.style.visibility = 'visible');
         });
     }
-    const colors = ['#ffb700', '#0095ff', '#b2ff00', '#d000ff', '#7d8282'];
+    const colors = ['#ffb700', '#0095ff', '#00ffea', '#b2ff00', '#d000ff'];
     create_tabs(document.getElementById('gi_details_modal'), colors);
 }
 
@@ -271,16 +271,19 @@ function populate_gi_details(data)
     
     const geneAName = `${data.gene_a_locus_tag} (${data.gene_a_common_name})`;
     const geneBName = `${data.gene_b_locus_tag} (${data.gene_b_common_name})`;
+    const geneCName = `${data.gene_c_locus_tag} (${data.gene_c_common_name})`;
 
-    const keys = ["gene_a", "gene_b", "joint", "z"];
+    const keys = ["gene_a", "gene_b", "gene_c", "joint", "z"];
     const titles = [geneAName + " features", geneBName + " features", "Joint features", "Model components"];
-    const colors = ['#ffb700', '#0095ff', '#b2ff00', '#d000ff'];
+    const colors = ['#ffb700', '#0095ff', '#00ffea', '#b2ff00', '#d000ff'];
     keys.forEach((k, i) => {
         plot("plot_" + k, data[k], true, titles[i], colors[i], colors[i]);
     });
 
     document.getElementById('card_gene_a').innerHTML = geneAName;
     document.getElementById('card_gene_b').innerHTML = geneBName;
+    document.getElementById('card_gene_c').innerHTML = geneCName;
+    
     document.getElementById('card_prob_gi').innerHTML = data.prob_gi.toFixed(2);
     document.getElementById('card_pubs').innerHTML = (data.pubs.length > 0) ? 'Yes' : 'No';
     
