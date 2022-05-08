@@ -34,7 +34,7 @@ def main():
     pombe_refs = extract_biogrid_refs(284812, "../generated-data/ppc_pombe")
     human_refs = extract_biogrid_refs(9606, "../generated-data/ppc_human")
     dro_refs = extract_fb_refs("../generated-data/ppc_dro")
-    with open(os.path.join(OUTPUT_PATH, 'refs.json'), 'w') as f:
+    with open(os.path.join(OUTPUT_PATH, 'data/refs.json'), 'w') as f:
         json.dump({
             1 : yeast_refs,
             2 : pombe_refs,
