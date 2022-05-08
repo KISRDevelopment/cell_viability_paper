@@ -267,7 +267,7 @@ class DbLayer:
             processed.append(v)
         return processed
 
-    def get_interactors(self, species_id, genes, threshold, published_only, max_spl="inf"):
+    def get_common_interactors(self, species_id, genes, threshold, published_only, max_spl="inf"):
         names = self._names[species_id]
         maker = self._makers[species_id]
         model = self._models[species_id]
@@ -277,7 +277,9 @@ class DbLayer:
         max_spl = int(max_spl)
 
         all_preds = []
+        all_spls = []
         ix = None
+
         for gene in genes: 
             gene_id = names.get_id(gene)
             if gene_id is None:
@@ -288,29 +290,46 @@ class DbLayer:
             all_preds.append(preds)
         
             spl = maker.get_spl(F)
+            all_spls.append(spl)
             if ix is None:
                 ix = (spl <= max_spl) & (preds >= threshold)
             else:
                 ix = ix & (spl <= max_spl) & (preds >= threshold)
         
-        preds = preds[ix]
+        all_preds = np.array(all_preds)
+        all_spls = np.array(all_spls)
+
+        all_preds = all_preds[:, ix]
+        all_spls = all_spls[:, ix]
+        b_id = b_id[ix]
+
+        rows = []
+
+        gene_ids = [names.get_id(g) for g in genes]
         
-        rows = [
-            {
-                "gene_a_id" : a_id[i],
-                "gene_b_id" : b_id[i],
-                "species_id" : species_id,
-                "gene_a_locus_tag" : names.get_locus(gene_a_id),
-                "gene_b_locus_tag" : names.get_locus(gene_b_id),
-                "gene_a_common_name" : names.get_common(gene_a_id),
-                "gene_b_common_name" : names.get_common(gene_b_id),
-                "observed" : False,
-                "observed_gi" : False,
-                "prob_gi" : preds[i],
-                "spl" : spl[i]
-            }
-            for i in range(preds.shape[0])
-        ]
+        for i in range(all_preds.shape[1]):
+            common_gene_id = b_id[i]
+            
+            if common_gene_id in gene_ids:
+                continue 
+            
+            interaction_props = []
+            for g, gene in enumerate(genes):
+                gene_id = names.get_id(gene)
+                interaction_props.append({
+                    "gene_locus_tag" : names.get_locus(gene_id),
+                    "gene_common_name" : names.get_common(gene_id),
+                    "spl" : all_spls[g, i],
+                    "gi_prob" : all_preds[g, i]
+                })
+            
+            rows.append({
+                "ci_locus_tag" : names.get_locus(common_gene_id),
+                "ci_common_name" : names.get_common(common_gene_id),
+                "interaction_props" : interaction_props
+            })
+        
+        return rows
 
 if __name__ == "__main__":
     import time 
@@ -331,6 +350,9 @@ if __name__ == "__main__":
     #rows, count = layer.get_pairs(3, 0.9, 'myc', None, 0, max_spl=3)
     #print(rows[0])
 
-    r = layer.get_gi(3, 23717, 23603)
+    #r = layer.get_gi(3, 23717, 23603)
 
-    pprint.pprint(r)
+    #pprint.pprint(r)
+
+    rows = layer.get_common_interactors(1, ['snf1', 'snf2', 'spo7'], 0.9, False)
+    pprint.pprint(rows[0])
