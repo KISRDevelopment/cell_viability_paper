@@ -30,18 +30,18 @@ OUTPUT_PATH = 'website'
 def main():
     os.makedirs(os.path.join(OUTPUT_PATH, 'data'), exist_ok=True)
 
-    # yeast_refs = extract_biogrid_refs(559292)
-    # pombe_refs = extract_biogrid_refs(284812)
-    # human_refs = extract_biogrid_refs(9606)
-    # dro_refs = extract_fb_refs()
-    # with open(os.path.join(OUTPUT_PATH, 'refs.json'), 'w') as f:
-    #     json.dump({
-    #         "yeast" : yeast_refs,
-    #         "pombe" : pombe_refs,
-    #         "human" : human_refs,
-    #         "dro_refs" : dro_refs
-    #     }, f)
-    
+    yeast_refs = extract_biogrid_refs(559292)
+    pombe_refs = extract_biogrid_refs(284812)
+    human_refs = extract_biogrid_refs(9606)
+    dro_refs = extract_fb_refs()
+    with open(os.path.join(OUTPUT_PATH, 'refs.json'), 'w') as f:
+        json.dump({
+            1 : yeast_refs,
+            2 : pombe_refs,
+            3 : human_refs,
+            4 : dro_refs
+        }, f)
+        
     yeast_names = map_common_names_yeast()
     write_name_map(yeast_names, "yeast")
 
