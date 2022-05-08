@@ -83,6 +83,90 @@ class FeatureMaker:
 
         return features, np.array(df.loc[gid, features])
 
+
+class TripletFeatureMaker:
+    
+    def __init__(self, ppc_path, sg_path):
+        G = ig.read(ppc_path)
+        G_node_ix = { l: i for i, l in enumerate(G.vs['label']) }
+        
+        sorted_nodes = sorted(G_node_ix.keys())
+        nix_to_gix = np.array([G_node_ix[n] for n in sorted_nodes])
+        
+        df = pd.read_feather(sg_path)
+        df = df.set_index('id')
+        df_node_ix = dict(zip(df['gene'], df.index))
+        
+        target_node_ix = [G_node_ix[n] for n in df['gene']]
+        
+        self.G = G
+        self.G_node_ix = G_node_ix 
+        self.nix_to_gix = nix_to_gix 
+        
+        self.df = df 
+        self.df_node_ix = df_node_ix 
+        
+        self.target_node_ix = target_node_ix
+        
+        self.sgo_cols = df.columns[df.columns.str.startswith('sgo-')]
+
+    def make(self, gene_a_id, gene_b_id, c_id=None):
+        df = self.df 
+        sgo_cols = self.sgo_cols
+        if c_id is None:
+            c_id = np.array(df.index)
+            
+        a_id = np.ones(c_id.shape[0], dtype=int)*gene_a_id
+        b_id = np.ones(c_id.shape[0], dtype=int)*gene_b_id
+        
+        
+        sum_lid = df.loc[a_id][['topology-lid']].to_numpy() + \
+                  df.loc[b_id][['topology-lid']].to_numpy() + \
+                  df.loc[c_id][['topology-lid']].to_numpy()
+        
+        sum_sgo = df.loc[a_id][sgo_cols].to_numpy() + \
+                  df.loc[b_id][sgo_cols].to_numpy() + \
+                  df.loc[c_id][sgo_cols].to_numpy()
+
+        smf_a = df.loc[a_id][['bin']].to_numpy()
+        smf_b = df.loc[b_id][['bin']].to_numpy()
+        smf_c = df.loc[c_id][['bin']].to_numpy()
+        
+        gi_smf = np.hstack((smf_a, smf_b, smf_c)).astype(int)
+        
+        nan_ix = (np.isnan(smf_a) | np.isnan(smf_b) | np.isnan(smf_c))[:,0]
+
+        gi_smf = gi_smf[~nan_ix,:]
+        gi_smf = np.sort(gi_smf, axis=1)
+        
+        rindex_map = np.array(
+            [[[0, 1, 2], [1, 3, 4], [2, 4, 5]],
+             [[1, 3, 4], [3, 6, 7], [4, 7, 8]],
+             [[2, 4, 5], [4, 7, 8], [5, 8, 9]]])
+
+        rindex = rindex_map[gi_smf[:,0], gi_smf[:,1], gi_smf[:,2]]
+        smf_combs = np.zeros((c_id.shape[0], np.max(rindex_map)+1))
+        smf_combs[~nan_ix, rindex] = 1   
+        
+        spl_ab = np.array(self.G.shortest_paths_dijkstra(source=self.nix_to_gix[gene_a_id], 
+                                                         target=self.nix_to_gix[gene_b_id])[0])
+        spl_ac = np.array(self.G.shortest_paths_dijkstra(source=self.nix_to_gix[gene_a_id], 
+                                                         target=self.nix_to_gix[c_id])[0])
+        spl_bc = np.array(self.G.shortest_paths_dijkstra(source=self.nix_to_gix[gene_b_id], 
+                                                         target=self.nix_to_gix[c_id])[0])
+        
+        scl = spl_ab + spl_ac + spl_bc 
+        
+        scl = scl[:,None]
+        
+        F = np.hstack((np.ones_like(scl), 
+                       sum_sgo,
+                       sum_lid, 
+                       scl,
+                       smf_combs))
+        
+        return F, a_id, b_id, c_id 
+    
 class NameMapper:
     
     def __init__(self, path):
