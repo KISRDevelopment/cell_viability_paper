@@ -393,6 +393,7 @@ class DbLayer:
         names = self._names[species_id]
         maker = self._makers[species_id]
         model = self._models[species_id]
+        refs = self._refs[species_id]
 
         F, _, _ = maker.make(gene_a_id, np.array([gene_b_id]))
         preds, mean_logit = model.predict(F, return_mean_terms=True)
@@ -404,6 +405,8 @@ class DbLayer:
         # individual gene features
         single_features, gene_a_features = maker.get_single_gene_features(gene_a_id)
         _, gene_b_features = maker.get_single_gene_features(gene_b_id)
+        
+        key = tuple(sorted([gene_a_id, gene_b_id]))
         
         return {
             "gene_a_id" : gene_a_id,
@@ -430,7 +433,7 @@ class DbLayer:
             "gene_b_locus_tag" : names.get_locus(gene_b_id),
             "gene_a_common_name" : names.get_common(gene_a_id),
             "gene_b_common_name" : names.get_common(gene_b_id),
-            "pubs" : []
+            "pubs" : refs.get(key, [])
         }
     
     def get_tgi(self, gene_a_id, gene_b_id, gene_c_id):

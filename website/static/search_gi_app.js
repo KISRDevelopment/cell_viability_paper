@@ -296,7 +296,7 @@ function populate_gi_details(data)
     const ul = createElement('ul', pubsContent);
     data.pubs.forEach((p) => {
         const li = createElement('li', ul);
-        li.innerHTML = p.identifier;
+        li.innerHTML = p;
     });
 }
 
