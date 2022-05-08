@@ -30,10 +30,10 @@ OUTPUT_PATH = 'website'
 def main():
     os.makedirs(os.path.join(OUTPUT_PATH, 'data'), exist_ok=True)
 
-    yeast_refs = extract_biogrid_refs(559292)
-    pombe_refs = extract_biogrid_refs(284812)
-    human_refs = extract_biogrid_refs(9606)
-    dro_refs = extract_fb_refs()
+    yeast_refs = extract_biogrid_refs(559292, "../generated-data/ppc_yeast")
+    pombe_refs = extract_biogrid_refs(284812, "../generated-data/ppc_pombe")
+    human_refs = extract_biogrid_refs(9606, "../generated-data/ppc_human")
+    dro_refs = extract_fb_refs("../generated-data/ppc_dro")
     with open(os.path.join(OUTPUT_PATH, 'refs.json'), 'w') as f:
         json.dump({
             1 : yeast_refs,
@@ -59,7 +59,11 @@ def write_name_map(name_map, fname):
     with open(os.path.join(OUTPUT_PATH, 'data', '%s.json' % fname), 'w') as f:
         json.dump(name_map, f)
 
-def extract_biogrid_refs(taxid):
+def extract_biogrid_refs(taxid, gpath):
+    G = nx.read_gpickle(gpath)
+    nodes = sorted(G.nodes())
+    node_ix = dict(zip(nodes, range(len(nodes))))
+
     taxid_str = "taxid:%d" % taxid
     name_extraction_func = getattr(thismodule, "extract_names_taxid%d" % taxid)
 
@@ -72,10 +76,14 @@ def extract_biogrid_refs(taxid):
         df = df[ix]
 
         a, b = name_extraction_func(df)
-
+        
         publications = list(df['Publication Identifiers'])
         for i in range(df.shape[0]):
-            key = tuple(sorted((a[i], b[i])))
+
+            if a[i] not in node_ix or b[i] not in node_ix:
+                continue 
+
+            key = tuple(sorted((node_ix[a[i]], node_ix[b[i]])))
             pairs_to_pubs[key].append(publications[i])
 
     return unzip(pairs_to_pubs)    
@@ -83,6 +91,7 @@ def extract_biogrid_refs(taxid):
 def unzip(d):
     keys = list(d.keys())
     vals = [d[k] for k in keys]
+    print(len(keys))
     return keys, vals
 def extract_names_taxid559292(df):
 
@@ -108,8 +117,11 @@ def extract_names_taxid284812(df):
 
 extract_names_taxid9606 = extract_names_taxid284812
 
-def extract_fb_refs():
-    
+def extract_fb_refs(gpath):
+    G = nx.read_gpickle(gpath)
+    nodes = sorted(G.nodes())
+    node_ix = dict(zip(nodes, range(len(nodes))))
+
     df = pd.read_csv(FB_PATH, sep='\t', header=3)
     ix = ~pd.isnull(df['Starting_gene(s)_FBgn']) & ~pd.isnull(df['Interacting_gene(s)_FBgn'])
     df = df[ix]
@@ -124,6 +136,12 @@ def extract_fb_refs():
     for i in range(df.shape[0]):
         a = df_sys_a[i].lower()
         b = df_sys_b[i].lower()
+        if a not in node_ix or b not in node_ix:
+            continue 
+
+        a = node_ix[a]
+        b = node_ix[b]
+
         cond = df_condition[i]
         pub = df_pubs[i]
         pair = tuple(sorted((a, b)))
