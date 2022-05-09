@@ -2,6 +2,11 @@
 
 This repositroy contains all the source code necessary to reproduce the results of our paper, "Predicting and explaining the impact of genetic disruptions and interactions on cell and organismal viability".
 
+
+[**Live GI Prediction Tool**](http://ssdd.kisr.edu.kw/gi_pred/static/search_gi.html)
+
+
+
 ## File Description
 
 ### Dataset Curation
@@ -71,6 +76,3 @@ The code was tested with the follow modules:
 - `seaborn 0.11.2`
 - `statsmodels 0.13.2`
 - `tensorflow 2.8.0`
-
-[**Live GI Prediction Tool**](http://ssdd.kisr.edu.kw/gi_pred/static/search_gi.html)
-
