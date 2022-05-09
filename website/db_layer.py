@@ -289,7 +289,7 @@ class DbLayer:
 
         b_id = None
         if gene_a_id is None and gene_b_id is None:
-            return [], 0
+            return []
         elif gene_a_id is not None and gene_b_id is not None:
             b_id = np.array([gene_b_id])
         

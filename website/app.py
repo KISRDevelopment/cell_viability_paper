@@ -1,9 +1,6 @@
-import json
 from flask import Flask, request, send_from_directory, render_template, g, current_app, jsonify
 from flask_compress import Compress
 import db_layer 
-import lrm 
-import numpy as np 
 import waitress
 import sys 
 
