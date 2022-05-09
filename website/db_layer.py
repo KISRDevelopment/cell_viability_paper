@@ -340,6 +340,7 @@ class DbLayer:
         names = self._names[species_id]
         maker = self._tripletMaker
         model = self._tripletModel
+        refs = self._refs[5]
 
         gene_a_id = names.get_id(gene_a)
         gene_b_id = names.get_id(gene_b)
@@ -379,14 +380,19 @@ class DbLayer:
                 "gene_a_common_name" : names.get_common(gene_a_id),
                 "gene_b_common_name" : names.get_common(gene_b_id),
                 "gene_c_common_name" : names.get_common(c_id[i]),
-                "observed" : False,
-                "observed_gi" : False,
                 "prob_gi" : preds[i],
                 "scl" : scl[i]
             }
             for i in range(preds.shape[0])
         ]
+        for r in rows:
+            key = tuple(sorted([r['gene_a_id'], r['gene_b_id'], r['gene_c_id']]))
+            
+            r["reported_gi"] = int(key in refs) 
         
+        if published_only:
+            rows = [r for r in rows if r['reported_gi']]
+
         return sorted(rows, key=lambda r: r['prob_gi'], reverse=True)
     
     def get_gi(self, species_id, gene_a_id, gene_b_id):
@@ -442,6 +448,7 @@ class DbLayer:
         names = self._names[species_id]
         maker = self._tripletMaker
         model = self._tripletModel
+        refs = self._refs[5]
 
         F, _, _,_ = maker.make(gene_a_id, gene_b_id, np.array([gene_c_id]))
         preds, mean_logit = model.predict(F, return_mean_terms=True)
@@ -455,6 +462,9 @@ class DbLayer:
         _, gene_b_features = maker.get_single_gene_features(gene_b_id)
         _, gene_c_features = maker.get_single_gene_features(gene_c_id)
 
+
+        key = tuple(sorted([gene_a_id, gene_b_id, gene_c_id]))
+        
         return {
             "gene_a_id" : gene_a_id,
             "gene_b_id" : gene_b_id,
@@ -487,7 +497,7 @@ class DbLayer:
             "gene_a_common_name" : names.get_common(gene_a_id),
             "gene_b_common_name" : names.get_common(gene_b_id),
             "gene_c_common_name" : names.get_common(gene_c_id),
-            "pubs" : []
+            "pubs" : refs.get(key, [])
         }
 
     def process_labels(self, labels):
@@ -513,10 +523,11 @@ class DbLayer:
             processed.append(v)
         return processed
 
-    def get_common_interactors(self, species_id, genes, threshold, published_only, max_spl="inf"):
+    def get_common_interactors(self, species_id, genes, threshold, published_only=False, max_spl="inf"):
         names = self._names[species_id]
         maker = self._makers[species_id]
         model = self._models[species_id]
+        refs = self._refs[species_id]
 
         if max_spl == "inf":
             max_spl = 1e5
@@ -537,10 +548,18 @@ class DbLayer:
         
             spl = maker.get_spl(F)
             all_spls.append(spl)
+
+            keys = [tuple(sorted((gene_id, bid))) for bid in b_id]
+            keys_in_refs = np.array([k in refs for k in keys])
+            
+            eligible_ix = (spl <= max_spl) & (preds >= threshold)
+            if published_only:
+                eligible_ix = eligible_ix & keys_in_refs
+            
             if ix is None:
-                ix = (spl <= max_spl) & (preds >= threshold)
+                ix = eligible_ix
             else:
-                ix = ix & (spl <= max_spl) & (preds >= threshold)
+                ix = ix &  eligible_ix
         
         if ix is None:
             return []
@@ -565,11 +584,13 @@ class DbLayer:
             interaction_props = []
             for g, gene in enumerate(genes):
                 gene_id = names.get_id(gene)
+                key = tuple(sorted((gene_id, common_gene_id)))
                 interaction_props.append({
                     "gene_locus_tag" : names.get_locus(gene_id),
                     "gene_common_name" : names.get_common(gene_id),
                     "spl" : all_spls[g, i],
-                    "gi_prob" : all_preds[g, i]
+                    "gi_prob" : all_preds[g, i],
+                    #"pubs" : refs.get(key,[])
                 })
             
             rows.append({
@@ -603,14 +624,22 @@ if __name__ == "__main__":
     # print(r)
     #pprint.pprint(r)
 
-    # rows = layer.get_common_interactors(1, ['snf1', 'snf2', 'spo7'], 0.9, False)
-    # pprint.pprint(rows[0])
+    # rows = layer.get_common_interactors(1, ['snf1', 'snf2', 'spo7'], 0.5, False)
+    # pprint.pprint(rows)
 
     #rows, count = layer.get_pairs(3, 0.9, 'myc', None, 0, max_spl=3)
 
-    #r = layer.get_triplets(0.7, "", "", None, True)
+    df = pd.read_feather("../../generated-data/dataset_yeast_tgi.feather")
+    ix = df['bin'] == 0
+    df = df[ix]
 
-    #print(r)
+    a = df['a'][1]
+    b = df['b'][1]
 
-    r = layer.get_tgi(0, 1, 2)
-    print(r)
+    print(a, " ", b)
+    # r = layer.get_triplets(0.7, a,b , None, True)
+
+    # print(r)
+
+    # r = layer.get_tgi(0, 1, 2)
+    # print(r)

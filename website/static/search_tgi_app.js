@@ -27,7 +27,7 @@ function main()
             nostartups.forEach((e) => e.style.visibility = 'visible');
         });
     }
-    const colors = ['#ffb700', '#0095ff', '#00ffea', '#b2ff00', '#d000ff'];
+    const colors = ['#ffb700', '#0095ff', '#00ffea', '#b2ff00', '#d000ff','#7d8282'];
     create_tabs(document.getElementById('gi_details_modal'), colors);
 }
 
@@ -297,7 +297,7 @@ function populate_gi_details(data)
     const ul = createElement('ul', pubsContent);
     data.pubs.forEach((p) => {
         const li = createElement('li', ul);
-        li.innerHTML = p.identifier;
+        li.innerHTML = p;
     });
 }
 

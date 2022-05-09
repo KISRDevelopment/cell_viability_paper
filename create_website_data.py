@@ -34,14 +34,17 @@ def main():
     pombe_refs = extract_biogrid_refs(284812, "../generated-data/ppc_pombe")
     human_refs = extract_biogrid_refs(9606, "../generated-data/ppc_human")
     dro_refs = extract_fb_refs("../generated-data/ppc_dro")
+    yeast_tgi_refs = extract_yeast_tgi_refs("../generated-data/ppc_yeast")
+
     with open(os.path.join(OUTPUT_PATH, 'data/refs.json'), 'w') as f:
         json.dump({
             1 : yeast_refs,
             2 : pombe_refs,
             3 : human_refs,
-            4 : dro_refs
+            4 : dro_refs,
+            5: yeast_tgi_refs
         }, f)
-        
+    
     yeast_names = map_common_names_yeast()
     write_name_map(yeast_names, "yeast")
 
@@ -88,6 +91,16 @@ def extract_biogrid_refs(taxid, gpath):
 
     return unzip(pairs_to_pubs)    
     
+def extract_yeast_tgi_refs(gpath):
+    
+    df = pd.read_feather("../generated-data/dataset_yeast_tgi.feather")
+    ix = df['bin'] == 0
+    df = df[ix]
+
+    pairs = [tuple(sorted([a,b,c])) for a,b,c in zip(df['a_id'], df['b_id'], df['c_id'])]
+    print(len(pairs))
+    return pairs, [['pmid:29674565'] for i in range(len(pairs))]
+
 def unzip(d):
     keys = list(d.keys())
     vals = [d[k] for k in keys]

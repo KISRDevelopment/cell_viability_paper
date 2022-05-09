@@ -48,11 +48,18 @@
                     </div>
                     <div class='c-search-panel__input'>
                         <label class='c-input-label' for="tbGeneA">Gene A</label>
-                        <input type="text" id="tbGeneA" name='gene_a'  class='js-input' value="snf1">
+                        <input type="text" id="tbGeneA" name='gene_a'  class='js-input' value="snf1" size="8">
                         
                         &nbsp;<label class='c-input-label' for="tbGeneB">Gene B</label>
-                        <input type="text" id="tbGeneB" name='gene_b'  class='js-input'>
-                        <p>Find the interactions of one gene or search for a specific interaction between two genes.</p>
+                        <input type="text" id="tbGeneB" name='gene_b'  class='js-input' size="8">
+                        <p>Find the interactions of one gene or search for a specific interaction between two genes. Example gene names:</p>
+                        <ul>
+                            <li><strong>S. cerevisiae</strong>: snf1, mnn10 (or their locus tags: ydr477w, ydr245w)</li> 
+                            <li><strong>S. pombe</strong>: q9p7g6, q09884 (or their locus tags: spap14e8.02, spcc188.13c)</li>
+                            <li><strong>H. sapiens</strong>: atm, smo (or their locus tags: hgnc:795, hgnc:11119)</li>
+                            <li><strong>D. melanogaster</strong>: al, ss (or their locus tags: fbgn0000061, fbgn0003513)</li>
+                            
+                        </ul>
                     </div>
                     
                 </div>

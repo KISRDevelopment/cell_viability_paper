@@ -132,6 +132,22 @@ function gather_form()
 }
 
 /*
+    processes shortest path length
+*/
+function showSpl(v)
+    {
+        if (typeof(v) === 'undefined')
+            return "";
+        
+        let spl = v;
+        if (spl === 1e5)
+            spl = '∞';
+        else
+            spl = Math.round(spl);
+        
+        return spl;
+}
+/*
     Populates GI Search Results
 */
 function populate_gi_pairs(rows)
@@ -149,7 +165,7 @@ function populate_gi_pairs(rows)
         tds[1].innerHTML = row.gene_a_common_name;
         tds[2].innerHTML = row.gene_b_locus_tag;
         tds[3].innerHTML = row.gene_b_common_name;
-        tds[4].innerHTML = row.spl;
+        tds[4].innerHTML = showSpl(row.spl);
         tds[5].innerHTML = row.prob_gi.toFixed(2);
         tds[6].innerHTML = (row.reported_gi === 1) ? '<strong>Yes</strong>' : 'No';
         tds[7].innerHTML = "<span class='btn-details'>Details</span>";
