@@ -9,7 +9,6 @@ app = Flask(__name__)
 app.json_encoder = NumpyEncoder
 Compress(app)
 
-ENTRIES_PER_PAGE = 50
 DB = db_layer.DbLayer()
 
 def init():
