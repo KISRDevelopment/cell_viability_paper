@@ -17,14 +17,14 @@
             <div class='c-header__title'>
                 <h1 class='c-header__maintitle'>Discover Genetic Interactions</h1>
             </div>
-            <img class='c-header__logo' src='./kisr.png' alt='KISR logo'>
+            <a href="https://www.kisr.edu.kw"><img class='c-header__logo' src='./kisr.jpg' alt='KISR logo'></a>
         </div>
 
         <div class='c-search-panel'>
             <div class='c-search-panel__tabs'>
-                <div class='c-search-panel__tab'><a href='./search_gi.html'>Search GIs</a></div>
+                <div class='c-search-panel__tab'><a href='/'>Search GIs</a></div>
                 <div class='c-search-panel__tab c-search-panel__tab'>
-                    <a href="./search_tgi.html">Search Triple GIs (Budding yeast)</a></div>
+                    <a href="/search_tgi">Search Triple GIs (Budding yeast)</a></div>
                 <div class='c-search-panel__tab c-search-panel__tab--selected'>Find Common Interactors</div>
                 
             </div>
@@ -113,8 +113,7 @@
                         <label class='c-input-label' for="cbPublishedOnly">Published Only:</label>
                     </div>
                     <div class='c-search-panel__input'>
-                        <input type="checkbox" id="cbPublishedOnly" name='published_only' class='js-input'>
-                        <p>Only search for genetic interactions that were experimentally reported in BioGRID.</p>
+                        <input type="checkbox" id="cbPublishedOnly" name='published_only' class='js-input'>&nbsp; Only search for genetic interactions that were experimentally reported in BioGRID.
                     </div>
                 </div>
                 <div class='c-search-panel__row'>
@@ -135,29 +134,32 @@
             </div>
         </div>
 
-        <table class='c-search-results js-nostartup'>
-            <thead>
-                <tr>
-                    <th colspan='2'>Common Interactor</th>
-                    <th colspan='4'>Shortest Coprecipitation PPI Distance To</th>
-                    <th colspan='4'>Model GI Probability with</th>
-                </tr>
-                <tr>
-                    <th>Official Name</th>
-                    <th>Common Name</th>
-                    <th id='col_gene_a_spl'>Gene A</th>
-                    <th id='col_gene_b_spl'>Gene B</th>
-                    <th id='col_gene_c_spl'>Gene C</th>
-                    <th id='col_gene_d_spl'>Gene D</th>
-                    <th id='col_gene_a'>Gene A</th>
-                    <th id='col_gene_b'>Gene B</th>
-                    <th id='col_gene_c'>Gene C</th>
-                    <th id='col_gene_d'>Gene D</th>
-                </tr>
-            </thead>
-            <tbody id='searchResults'></tbody>
-                
-        </table>
+        <div style="margin: 10px">
+            <table class='c-search-results js-nostartup'>
+                <thead>
+                    <tr>
+                        <th colspan='2'>Common Interactor</th>
+                        <th colspan='4'>Shortest Coprecipitation PPI Distance To</th>
+                        <th colspan='4'>Model GI Probability with</th>
+                    </tr>
+                    <tr>
+                        <th>Official Name</th>
+                        <th>Common Name</th>
+                        <th id='col_gene_a_spl'>Gene A</th>
+                        <th id='col_gene_b_spl'>Gene B</th>
+                        <th id='col_gene_c_spl'>Gene C</th>
+                        <th id='col_gene_d_spl'>Gene D</th>
+                        <th id='col_gene_a'>Gene A</th>
+                        <th id='col_gene_b'>Gene B</th>
+                        <th id='col_gene_c'>Gene C</th>
+                        <th id='col_gene_d'>Gene D</th>
+                    </tr>
+                </thead>
+                <tbody id='searchResults'></tbody>
+                    
+            </table>
+        </div>
+        
  
     </body>
 </html>
