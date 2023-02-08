@@ -17,7 +17,7 @@ function main()
         const form = gather_form();
         loading.style.display = loadingDisplay;
 
-        call_api('../common_interactors', form, function(res) {
+        call_api('./common_interactors', form, function(res) {
             paginator.setRows(res.rows);
             loading.style.display = 'none';
             nostartups.forEach((e) => e.style.visibility = 'visible');

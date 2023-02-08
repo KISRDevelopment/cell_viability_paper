@@ -166,7 +166,7 @@ def search_common_gi():
     response = send_static('search_common_gi.html')
     return response
 
-@app.route('/')
+@app.route('/search_gi')
 @track
 def index():
     response = send_static('search_gi.html')
@@ -187,8 +187,7 @@ def send_static(path):
 if __name__ == "__main__":
     init()
 
-    url_prefix = ''
-    if len(sys.argv) > 1:
-        url_prefix = sys.argv[1]
+    url_prefix = sys.argv[1]
     
+    print(url_prefix)
     waitress.serve(app, host='0.0.0.0', url_prefix=url_prefix, port=8090)

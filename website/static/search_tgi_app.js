@@ -21,7 +21,7 @@ function main()
         const form = gather_form();
         console.log(form)
 
-        call_api('../gi_triplets', form, function(res) {
+        call_api('./gi_triplets', form, function(res) {
             paginator.setRows(res.rows);
             curr_form = form;
             nostartups.forEach((e) => e.style.visibility = 'visible');
@@ -163,7 +163,7 @@ function populate_gi_triplets(rows)
 
 function search_result_clicked()
 {
-    call_api('../tgi', {
+    call_api('./tgi', {
         "gene_a_id" : parseInt(this.dataset.a_id),
         "gene_b_id" : parseInt(this.dataset.b_id),
         "gene_c_id" : parseInt(this.dataset.c_id)

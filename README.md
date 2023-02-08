@@ -3,7 +3,7 @@
 This repositroy contains all the source code necessary to reproduce the results of our paper, "Predicting and explaining the impact of genetic disruptions and interactions on cell and organismal viability".
 
 
-[**Live GI Prediction Tool**](http://ssdd.kisr.edu.kw/gi_pred/static/search_gi.html)
+[**Live GI Prediction Tool**](http://ssdd.kisr.edu.kw/gi_pred/search_gi)
 
 
 

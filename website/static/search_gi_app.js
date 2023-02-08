@@ -22,7 +22,7 @@ function main()
         console.log(form)
         form['page'] = 0;
 
-        call_api('../gi_pairs', form, function(res) {
+        call_api('./gi_pairs', form, function(res) {
             paginator.setRows(res.rows);
             curr_form = form;
             nostartups.forEach((e) => e.style.visibility = 'visible');
@@ -181,7 +181,7 @@ function populate_gi_pairs(rows)
 
 function search_result_clicked()
 {
-    call_api('../gi', {
+    call_api('./gi', {
         "species_id" : parseInt(this.dataset.species_id),
         "gene_a_id" : parseInt(this.dataset.a_id),
         "gene_b_id" : parseInt(this.dataset.b_id)
