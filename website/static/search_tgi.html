@@ -13,14 +13,14 @@
             <div class='c-header__title'>
                 <h1 class='c-header__maintitle'>Discover Genetic Interactions</h1>
             </div>
-            <img class='c-header__logo' src='./kisr.png' alt='KISR logo'>
+            <a href="https://www.kisr.edu.kw"><img class='c-header__logo' src='./kisr.jpg' alt='KISR logo'></a>
         </div>
         
         <div class='c-search-panel'>
             <div class='c-search-panel__tabs'>
-                <div class='c-search-panel__tab'><a href='./search_gi.html'>Search GIs</a></div>
+                <div class='c-search-panel__tab'><a href='/'>Search GIs</a></div>
                 <div class='c-search-panel__tab c-search-panel__tab--selected'>Search Triple GIs (Budding yeast)</div>
-                <div class='c-search-panel__tab'><a href='./common_gi.html'>Find Common Interactors</a></div>
+                <div class='c-search-panel__tab'><a href='/search_common_gi'>Find Common Interactors</a></div>
             </div>
             <div class='c-search-panel__body'>
                 <p>Find predicted triple-knockout genetic interactions involving a minimum of two given genes.</p>
@@ -91,8 +91,7 @@
                         <label class='c-input-label' for="cbPublishedOnly">Published Only:</label>
                     </div>
                     <div class='c-search-panel__input'>
-                        <input type="checkbox" id="cbPublishedOnly" name='published_only' class='js-input'>
-                        <p>Only search for genetic interactions that were experimentally reported.</p>
+                        <input type="checkbox" id="cbPublishedOnly" name='published_only' class='js-input'>&nbsp; Only search for genetic interactions that were experimentally reported.
                     </div>
                 </div>
                 <div class='c-search-panel__row'>
@@ -113,31 +112,33 @@
             </div>
         </div>
 
-        <table class='c-search-results js-nostartup'>
-            <thead>
-                <tr>
-                    <th colspan='2'>Gene A</th>
-                    <th colspan='2'>Gene B</th>
-                    <th colspan="2">Gene C</th>
-                    <th rowspan="2">Co-PPI Circuit Length</th>
-                    <th rowspan="2">Model GI Probability</th>
-                    <th rowspan="2">Reported GI</th>
-                    <th></th>
-                </tr>
-                <tr>
-                    <th>Locus Tag</th>
-                    <th>Common Name</th>
-                    <th>Locus Tag</th>
-                    <th>Common Name</th>
-                    <th>Locus Tag</th>
-                    <th>Common Name</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody id='searchResults'></tbody>
-                
-        </table>
+        <div style="margin: 10px">
+            <table class='c-search-results js-nostartup'>
+                <thead>
+                    
+                    <tr>
+                        <th>Gene A<br>Locus Tag</th>
+                        <th>Gene A<br>Common Name</th>
+        
+                        <th>Gene B<br>Locus Tag</th>
+                        <th>Gene B<br>Common Name</th>
+                        
+                        <th>Gene C<br>Locus Tag</th>
+                        <th>Gene C<br>Common Name</th>
+    
+                        <th>Co-PPI Circuit Length</th>
+                        <th>Model GI Probability</th>
+                        <th>Reported GI</th>
+                        <th>Details</th>
+                    </tr>
+                </thead>
+                <tbody id='searchResults'></tbody>
+                    
+            </table>
+        </div>
+        
 
+        
         <div class='l-modal' id='gi_details_modal' style='display: none'>
             <div class='l-modal__content'>
                 <h1 class='c-modal-title'>Genetic Interaction Details</h1>
