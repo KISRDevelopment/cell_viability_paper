@@ -3,6 +3,7 @@ from flask_compress import Compress
 import db_layer 
 import waitress
 import sys 
+from flask.json.provider import _default as _json_default
 
 import datetime 
 import json
@@ -13,6 +14,8 @@ import logging
 import secrets 
 from functools import wraps 
 import os 
+import numpy as np 
+
 os.makedirs("./tmp", exist_ok=True)
 logpath = "./tmp/log.log"
 logger = logging.getLogger('applog')
@@ -22,9 +25,33 @@ ch = logging.FileHandler(logpath)
 ch.setFormatter(logging.Formatter('%(message)s'))
 logger.addHandler(ch)
 
-from numpyencoder import NumpyEncoder
 app = Flask(__name__)
-app.json_encoder = NumpyEncoder
+
+def json_default(obj):
+    if isinstance(obj, (np.int_, np.intc, np.intp, np.int8,
+                            np.int16, np.int32, np.int64, np.uint8,
+                            np.uint16, np.uint32, np.uint64)):
+        return int(obj)
+
+    elif isinstance(obj, (np.float_, np.float16, np.float32, np.float64)):
+        return float(obj)
+        
+    elif isinstance(obj, (np.complex_, np.complex64, np.complex128)):
+        return {'real': obj.real, 'imag': obj.imag}
+        
+    elif isinstance(obj, (np.ndarray,)):
+        return obj.tolist()
+    
+    elif isinstance(obj, (np.bool_)):
+        return bool(obj)
+
+    elif isinstance(obj, (np.void)): 
+        return None
+
+    return _json_default(obj)
+
+app.json.default = json_default
+
 Compress(app)
 
 DB = db_layer.DbLayer()
